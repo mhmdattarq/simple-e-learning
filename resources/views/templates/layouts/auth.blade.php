@@ -1,3 +1,4 @@
+<!-- meta tags and other links -->
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
@@ -6,8 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>{{ $title ?? config('app.name') }}</title>
-    {{-- <link rel="icon" type="image/png" href="{{ asset('admin/assets/images/favicon.png') }}" sizes="16x16"> --}}
-
+    <link rel="icon" type="image/png" href="{{ asset('admin/assets/images/favicon.png') }}" sizes="16x16">
     <!-- remix icon font css  -->
     <link rel="stylesheet" href="{{ asset('admin/assets/css/remixicon.css') }}">
     <!-- BootStrap css -->
@@ -35,16 +35,8 @@
 </head>
 
 <body>
-    {{-- sidebar --}}
-    <livewire:admin.sidebar />
 
-    <main class="dashboard-main">
-        {{-- navbar / header --}}
-        <livewire:admin.header />
-
-        {{-- main contenct  --}}
-        {{ $slot }}
-    </main>
+    {{ $slot }}
 
     <!-- jQuery library js -->
     <script src="{{ asset('admin/assets/js/lib/jquery-3.7.1.min.js') }}"></script>
@@ -68,7 +60,23 @@
     <!-- main js -->
     <script src="{{ asset('admin/assets/js/app.js') }}"></script>
 
-    <script src="{{ asset('admin/assets/js/homeOneChart.js') }}"></script>
+    <script>
+        // ================== Password Show Hide Js Start ==========
+        function initializePasswordToggle(toggleSelector) {
+            $(toggleSelector).on('click', function() {
+                $(this).toggleClass("ri-eye-off-line");
+                var input = $($(this).attr("data-toggle"));
+                if (input.attr("type") === "password") {
+                    input.attr("type", "text");
+                } else {
+                    input.attr("type", "password");
+                }
+            });
+        }
+        // Call the function
+        initializePasswordToggle('.toggle-password');
+        // ========================= Password Show Hide Js End ===========================
+    </script>
 
     @livewireScripts
 </body>

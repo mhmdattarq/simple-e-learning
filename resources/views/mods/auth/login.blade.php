@@ -1,0 +1,176 @@
+<div class="auth-page-wrapper">
+    {{-- Left Showcase Pane (Subtle & Elegant) --}}
+    <div class="auth-hero-pane d-lg-flex d-none">
+        <div class="auth-hero-inner">
+            <div class="auth-hero-badge">
+                <span class="auth-hero-badge-dot"></span>
+                <span>Pemerintah Kabupaten Aceh Timur</span>
+            </div>
+
+            <h1 class="auth-hero-title">
+                Portal Pelatihan Mandiri Aparatur Sipil Negara
+            </h1>
+
+            <p class="auth-hero-subtitle">
+                Tingkatkan kompetensi digital dan profesionalitas aparatur secara efektif, efisien, transparan, dan akuntabel.
+            </p>
+
+            <div class="auth-preview-card">
+                <div class="auth-preview-card-head">
+                    <div class="auth-preview-seal">S</div>
+                    <div class="auth-preview-info">
+                        <strong>SIMPEL E-Learning</strong>
+                        <small>BKPSDM Kabupaten Aceh Timur</small>
+                    </div>
+                </div>
+
+                <div class="auth-pills-row">
+                    <span class="auth-pill-item">
+                        <iconify-icon icon="solar:laptop-minimalistic-linear"></iconify-icon>
+                        Akses Mandiri 24/7
+                    </span>
+                    <span class="auth-pill-item">
+                        <iconify-icon icon="solar:diploma-verified-linear"></iconify-icon>
+                        E-Sertifikat Resmi
+                    </span>
+                    <span class="auth-pill-item">
+                        <iconify-icon icon="solar:shield-check-linear"></iconify-icon>
+                        Integrasi SIASN BKN
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="auth-hero-footer">
+            <p>Aksi Perubahan Kinerja 2026 · BKPSDM Aceh Timur</p>
+        </div>
+    </div>
+
+    {{-- Right Authentication Form Pane (Clean & Airy) --}}
+    <div class="auth-form-pane">
+        <div class="auth-form-container">
+            {{-- Top Brand & Back to Home --}}
+            <div class="d-flex align-items-center justify-content-between mb-28">
+                <a href="{{ route('landing') }}" class="brand text-decoration-none">
+                    <div class="seal">S</div>
+                    <div>
+                        <strong>SIMPEL</strong>
+                        <small>BKPSDM Aceh Timur</small>
+                    </div>
+                </a>
+                <a href="{{ route('landing') }}" class="auth-back-btn">
+                    <iconify-icon icon="solar:arrow-left-linear"></iconify-icon>
+                    <span>Beranda</span>
+                </a>
+            </div>
+
+            {{-- Title & Subtitle --}}
+            <div class="mb-24">
+                <h2 class="auth-clean-title">Masuk ke Akun</h2>
+                <p class="auth-clean-desc">Silakan masukkan email atau NIP dan kata sandi Anda.</p>
+            </div>
+
+            @if (session()->has('error'))
+                <div class="alert alert-danger py-8 px-12 radius-8 text-xs mb-16 d-flex align-items-center gap-2 border-0 bg-danger-50 text-danger-600">
+                    <iconify-icon icon="solar:danger-circle-bold" class="text-base flex-shrink-0"></iconify-icon>
+                    <span>{{ session('error') }}</span>
+                </div>
+            @endif
+
+            {{-- Login Form --}}
+            <form wire:submit.prevent="authenticate" novalidate>
+                {{-- Email or NIP --}}
+                <div class="mb-16">
+                    <label class="form-label text-xs fw-semibold text-secondary-dark mb-6" for="email">
+                        Email atau NIP
+                    </label>
+                    <div class="auth-input-wrapper">
+                        <span class="auth-field-icon">
+                            <iconify-icon icon="solar:letter-linear"></iconify-icon>
+                        </span>
+                        <input type="text"
+                               id="email"
+                               wire:model.defer="email"
+                               class="form-control auth-input @error('email') is-invalid @enderror"
+                               placeholder="nama@email.com atau NIP"
+                               autocomplete="username">
+                    </div>
+                    @error('email')
+                        <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                {{-- Password --}}
+                <div class="mb-16">
+                    <div class="d-flex justify-content-between align-items-center mb-6">
+                        <label class="form-label text-xs fw-semibold text-secondary-dark mb-0" for="your-password">
+                            Kata Sandi
+                        </label>
+                        <a href="javascript:void(0)" class="text-xs text-decoration-none fw-medium text-muted hover-underline">Lupa Sandi?</a>
+                    </div>
+                    <div class="auth-input-wrapper">
+                        <span class="auth-field-icon">
+                            <iconify-icon icon="solar:lock-keyhole-linear"></iconify-icon>
+                        </span>
+                        <input type="password"
+                               id="your-password"
+                               wire:model.defer="password"
+                               class="form-control auth-input has-toggle @error('password') is-invalid @enderror"
+                               placeholder="Masukkan kata sandi"
+                               autocomplete="current-password">
+                        <span class="toggle-password ri-eye-line auth-toggle-icon"
+                              data-toggle="#your-password" title="Tampilkan/Sembunyikan sandi"></span>
+                    </div>
+                    @error('password')
+                        <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                {{-- Remember Me --}}
+                <div class="d-flex align-items-center justify-content-between mb-20">
+                    <div class="form-check style-check d-flex align-items-center">
+                        <input class="form-check-input border-secondary-light" type="checkbox" id="remember" wire:model.defer="remember">
+                        <label class="form-check-label text-xs text-secondary ms-2" for="remember">
+                            Ingat saya di perangkat ini
+                        </label>
+                    </div>
+                </div>
+
+                {{-- Submit Button --}}
+                <button type="submit" class="btn-auth-primary w-100" wire:loading.attr="disabled">
+                    <span wire:loading.remove>Masuk ke Portal</span>
+                    <span wire:loading style="display: none;">
+                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        Memproses...
+                    </span>
+                </button>
+
+                {{-- SSO ASN & Google --}}
+                <div class="center-border-horizontal text-center my-20">
+                    <span class="bg-white z-1 px-3 text-xs text-muted">atau masuk dengan</span>
+                </div>
+
+                <div class="d-flex gap-2 mb-24">
+                    <button type="button" class="btn-auth-sso-clean w-50" title="Single Sign-On BKN">
+                        <iconify-icon icon="solar:shield-user-bold" class="text-warning text-base"></iconify-icon>
+                        <span>SSO ASN</span>
+                    </button>
+                    <button type="button" class="btn-auth-sso-clean w-50" title="Google Workspace">
+                        <iconify-icon icon="logos:google-icon" class="text-sm"></iconify-icon>
+                        <span>Google</span>
+                    </button>
+                </div>
+
+                {{-- Footer Info --}}
+                <div class="text-center pt-16 border-top">
+                    <p class="text-xs text-muted mb-0">
+                        Belum memiliki akun?
+                        <a href="{{ route('landing') }}#katalog" class="fw-semibold text-dark text-decoration-none hover-underline">
+                            Katalog Pelatihan
+                        </a>
+                    </p>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

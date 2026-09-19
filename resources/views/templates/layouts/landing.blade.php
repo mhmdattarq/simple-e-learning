@@ -6,14 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{{ $title ?? config('app.name') }}</title>
     <!-- favicons Icons -->
-    <link rel="apple-touch-icon" sizes="180x180"
+    {{-- <link rel="apple-touch-icon" sizes="180x180"
         href="{{ asset('landing/assets/images/favicons/apple-touch-icon.png') }}" />
     <link rel="icon" type="image/png" sizes="32x32"
         href="{{ asset('landing/assets/images/favicons/favicon-32x32.png') }}" />
     <link rel="icon" type="image/png" sizes="16x16"
         href="{{ asset('landing/assets/images/favicons/favicon-16x16.png') }}" />
     <link rel="manifest" href="{{ asset('landing/assets/images/favicons/site.webmanifest') }}" />
-    <meta name="description" content="fistudy HTML 5 Template " />
+    <meta name="description" content="fistudy HTML 5 Template " /> --}}
 
     <!-- fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -90,9 +90,13 @@
             <span class="mobile-nav__close mobile-nav__toggler"><i class="fa fa-times"></i></span>
 
             <div class="logo-box">
-                <a href="index.html" aria-label="logo image"><img
-                        src="{{ asset('landing/assets/images/resources/logo-4.png') }}" width="105"
-                        alt="" /></a>
+                <a href="{{ route('landing') }}" class="brand text-decoration-none">
+                    <div class="seal">S</div>
+                    <div>
+                        <strong class="text-white">SIMPEL</strong>
+                        <small class="text-white-50">BKPSDM Aceh Timur</small>
+                    </div>
+                </a>
             </div>
             <!-- /.logo-box -->
             <div class="mobile-nav__container"></div>
