@@ -4,9 +4,6 @@
         {{-- Section Header --}}
         <div class="row justify-content-center text-center mb-5 wow fadeInUp" data-wow-delay="100ms">
             <div class="col-lg-8">
-                <span class="badge bg-gold-subtle text-gold-emphasis fw-bold px-3 py-1_5 rounded-pill fs-8 text-uppercase tracking-wider mb-2">
-                    Jalur Akademi Pelatihan
-                </span>
                 <h2 class="fw-extrabold text-navy display-6 mb-3">
                     Pilihan Akademi Berstandar Nasional
                 </h2>

@@ -1087,6 +1087,7 @@ ul {
   font-weight: 400;
   text-transform: capitalize;
   line-height: 18px;
+  text-decoration: none !important;
 }
 
 .main-menu .main-menu__list>li.current>a,
@@ -1094,6 +1095,7 @@ ul {
 .stricky-header .main-menu__list>li.current>a,
 .stricky-header .main-menu__list>li:hover>a {
   color: var(--fistudy-base);
+  text-decoration: none !important;
 }
 
 .main-menu .main-menu__list>li>a::before,
