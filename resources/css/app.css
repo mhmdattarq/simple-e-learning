@@ -1093,6 +1093,7 @@ body::-webkit-scrollbar,
     gap: 5px;
 }
 
+.auth-pill-item i,
 .auth-pill-item iconify-icon {
     color: #f3bc42;
     font-size: 13px;

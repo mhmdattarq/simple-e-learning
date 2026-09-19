@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>{{ $title ?? config('app.name') }}</title>
-    {{-- <link rel="icon" type="image/png" href="{{ asset('admin/assets/images/favicon.png') }}" sizes="16x16"> --}}
+    <link rel="icon" type="image/png" href="{{ asset('admin/assets/images/favicon.png') }}" sizes="16x16">
     <!-- remix icon font css  -->
     <link rel="stylesheet" href="{{ asset('admin/assets/css/remixicon.css') }}">
     <!-- BootStrap css -->
@@ -46,8 +46,6 @@
     <script src="{{ asset('admin/assets/js/lib/apexcharts.min.js') }}"></script>
     <!-- Data Table js -->
     <script src="{{ asset('admin/assets/js/lib/dataTables.min.js') }}"></script>
-    <!-- Iconify Font js -->
-    <script src="{{ asset('admin/assets/js/lib/iconify-icon.min.js') }}"></script>
     <!-- jQuery UI js -->
     <script src="{{ asset('admin/assets/js/lib/jquery-ui.min.js') }}"></script>
     <!-- Vector Map js -->

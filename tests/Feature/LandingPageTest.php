@@ -1,5 +1,8 @@
 <?php
 
+use App\Livewire\Admin\Dashboard\DashboardIndex;
+use Livewire\Livewire;
+
 test('landing page can be accessed successfully and displays core sections', function () {
     $response = $this->get('/');
 
@@ -26,4 +29,8 @@ test('admin dashboard can be accessed on /admin and /dashboard', function () {
 
     $responseDashboard = $this->get('/dashboard');
     $responseDashboard->assertStatus(200);
+
+    Livewire::test(DashboardIndex::class)
+        ->assertOk()
+        ->assertSee('Beranda Administrator');
 });

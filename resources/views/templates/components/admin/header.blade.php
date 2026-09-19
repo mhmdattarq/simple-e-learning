@@ -24,7 +24,7 @@ new class extends Component {
                     {{-- Search --}}
                     <form class="navbar-search d-none d-sm-block">
                         <input type="text" name="search" placeholder="Cari pelatihan, peserta, berkas...">
-                        <iconify-icon icon="ion:search-outline" class="icon"></iconify-icon>
+                        <i class="ri-search-line icon"></i>
                     </form>
 
                     {{-- Notifikasi --}}
@@ -32,8 +32,7 @@ new class extends Component {
                         <button
                             class="has-indicator w-40-px h-40-px bg-neutral-100 rounded-circle d-flex justify-content-center align-items-center"
                             type="button" data-bs-toggle="dropdown">
-                            <iconify-icon icon="solar:bell-bing-linear"
-                                class="icon text-xl text-primary-light"></iconify-icon>
+                            <i class="ri-notification-3-line icon text-xl text-primary-light"></i>
                             <span
                                 class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"></span>
                         </button>
@@ -48,7 +47,7 @@ new class extends Component {
                                     class="dropdown-item p-10 rounded d-flex gap-2 border-bottom">
                                     <span
                                         class="w-36-px h-36-px rounded-circle d-flex justify-content-center align-items-center bg-warning-subtle text-warning flex-shrink-0">
-                                        <iconify-icon icon="solar:user-plus-bold"></iconify-icon>
+                                        <i class="ri-user-add-fill"></i>
                                     </span>
                                     <div>
                                         <p class="mb-0 fw-semibold text-xs text-dark">Pendaftaran Baru: Nur Aini</p>
@@ -60,7 +59,7 @@ new class extends Component {
                                     class="dropdown-item p-10 rounded d-flex gap-2 border-bottom">
                                     <span
                                         class="w-36-px h-36-px rounded-circle d-flex justify-content-center align-items-center bg-success-subtle text-success flex-shrink-0">
-                                        <iconify-icon icon="solar:check-circle-bold"></iconify-icon>
+                                        <i class="ri-checkbox-circle-fill"></i>
                                     </span>
                                     <div>
                                         <p class="mb-0 fw-semibold text-xs text-dark">Verifikasi Selesai: Fauzan</p>
@@ -71,7 +70,7 @@ new class extends Component {
                                 <a href="javascript:void(0)" class="dropdown-item p-10 rounded d-flex gap-2">
                                     <span
                                         class="w-36-px h-36-px rounded-circle d-flex justify-content-center align-items-center bg-info-subtle text-info flex-shrink-0">
-                                        <iconify-icon icon="solar:diploma-verified-bold"></iconify-icon>
+                                        <i class="ri-award-fill"></i>
                                     </span>
                                     <div>
                                         <p class="mb-0 fw-semibold text-xs text-dark">Sertifikat Terbit: 12 Peserta</p>
@@ -99,8 +98,7 @@ new class extends Component {
                                 <span class="fw-bold text-dark fs-6" style="line-height: 1.2;">M. Suryasyah</span>
                                 <small class="text-secondary-light" style="font-size: 11px;">Admin Diklat</small>
                             </div>
-                            <iconify-icon icon="solar:alt-arrow-down-linear"
-                                class="text-secondary-light d-none d-lg-block"></iconify-icon>
+                            <i class="ri-arrow-down-s-line text-secondary-light d-none d-lg-block"></i>
                         </button>
                         <div class="dropdown-menu to-top dropdown-menu-sm">
                             <div class="py-12 px-16 radius-8 mb-12" style="background: #071a33; color: #fff;">
@@ -113,14 +111,14 @@ new class extends Component {
                                 <li>
                                     <a class="dropdown-item text-black px-12 py-8 hover-text-primary d-flex align-items-center gap-2 rounded"
                                         href="javascript:void(0)">
-                                        <iconify-icon icon="solar:user-linear" class="icon text-lg"></iconify-icon>
+                                        <i class="ri-user-line icon text-lg"></i>
                                         Profil Saya
                                     </a>
                                 </li>
                                 <li>
                                     <a class="dropdown-item text-black px-12 py-8 hover-text-primary d-flex align-items-center gap-2 rounded"
                                         href="javascript:void(0)">
-                                        <iconify-icon icon="solar:settings-outline" class="icon text-lg"></iconify-icon>
+                                        <i class="ri-settings-3-line icon text-lg"></i>
                                         Pengaturan Akun
                                     </a>
                                 </li>
@@ -130,7 +128,7 @@ new class extends Component {
                                 <li>
                                     <a class="dropdown-item text-danger px-12 py-8 hover-text-danger d-flex align-items-center gap-2 rounded"
                                         href="javascript:void(0)">
-                                        <iconify-icon icon="lucide:power" class="icon text-lg"></iconify-icon> Keluar
+                                        <i class="ri-logout-box-r-line icon text-lg"></i> Keluar
                                     </a>
                                 </li>
                             </ul>
