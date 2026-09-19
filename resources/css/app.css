@@ -4,6 +4,906 @@
 @source '../../storage/framework/views/*.php';
 
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
+
+/* ==========================================================================
+   SIMPEL BKPSDM Aceh Timur Design Tokens & Custom Overrides
+   ========================================================================== */
+:root {
+    --simpel-navy: #071a33;
+    --simpel-navy2: #0c3158;
+    --simpel-navy-dark: #061326;
+    --simpel-gold: #f3bc42;
+    --simpel-gold-hover: #e0aa34;
+    --simpel-ink: #172033;
+    --simpel-muted: #6b768a;
+    --simpel-line: #e6eaf0;
+    --simpel-bg: #f4f6fa;
+    --simpel-green: #16845b;
+    --simpel-green-bg: #def4e9;
+    --simpel-warn: #9a6700;
+    --simpel-warn-bg: #fff2d4;
+    --simpel-red: #c84d4d;
+    --simpel-red-bg: #fbe9e9;
+}
+
+body {
+    background-color: var(--simpel-bg) !important;
+    color: var(--simpel-ink);
+    font-family: 'Inter', Segoe UI, sans-serif !important;
+}
+
+/* === Sidebar Layout & Styling === */
+.sidebar {
+    position: fixed !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    height: 100vh !important;
+    background: linear-gradient(180deg, var(--simpel-navy), var(--simpel-navy-dark)) !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+    overscroll-behavior: contain !important;
+    z-index: 1020 !important;
+    transition: width 0.3s ease, inset-inline-start 0.3s ease !important;
+}
+
+@media (min-width: 1200px) {
+    .sidebar {
+        width: 260px !important;
+        inset-inline-start: 0 !important;
+    }
+    .dashboard-main {
+        margin-inline-start: 260px !important;
+    }
+}
+
+/* === Brand Area (matching prototype.html exactly) === */
+.brand-container {
+    flex-shrink: 0 !important;
+    padding: 16px 16px 0 16px !important;
+}
+
+.brand {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    padding-bottom: 14px !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+    text-decoration: none !important;
+}
+
+.seal {
+    width: 44px !important;
+    height: 44px !important;
+    border-radius: 13px !important;
+    display: grid !important;
+    place-items: center !important;
+    background: var(--simpel-gold) !important;
+    color: var(--simpel-navy) !important;
+    font-size: 22px !important;
+    font-weight: 900 !important;
+    line-height: 1 !important;
+    flex-shrink: 0 !important;
+}
+
+.brand strong {
+    font-size: 21px !important;
+    letter-spacing: 0.5px !important;
+    color: #ffffff !important;
+    font-weight: 800 !important;
+    line-height: 1.2 !important;
+    display: block !important;
+}
+
+.brand small {
+    display: block !important;
+    color: #aebbd0 !important;
+    font-size: 12px !important;
+    font-weight: 400 !important;
+    line-height: 1.3 !important;
+}
+
+/* ============================================================
+   Global: Completely hide all scrollbars across Admin interface
+   (All content remains fully scrollable via mouse wheel/touch)
+   ============================================================ */
+html,
+body,
+.dashboard-main,
+.sidebar,
+.sidebar-menu-area,
+.table-responsive,
+.scroll-sm,
+* {
+    scrollbar-width: none !important; /* Firefox */
+    -ms-overflow-style: none !important; /* IE and Edge */
+}
+
+*::-webkit-scrollbar,
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+.dashboard-main::-webkit-scrollbar,
+.sidebar::-webkit-scrollbar,
+.sidebar-menu-area::-webkit-scrollbar,
+.table-responsive::-webkit-scrollbar,
+.scroll-sm::-webkit-scrollbar {
+    display: none !important; /* Chrome, Safari, Opera */
+    width: 0 !important;
+    height: 0 !important;
+    background: transparent !important;
+}
+
+/* Scrollable Menu Area */
+.sidebar-menu-area {
+    flex: 1 1 0% !important;
+    height: 100% !important;
+    max-height: 100% !important;
+    min-height: 0 !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    overscroll-behavior: contain !important;
+    padding: 4px 8px 14px 8px !important;
+}
+
+.no-scrollbar {
+    -ms-overflow-style: none !important;
+    scrollbar-width: none !important;
+}
+
+.sidebar-menu {
+    padding: 0 !important;
+    margin: 0 !important;
+    list-style: none !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 3px !important;
+}
+
+.sidebar-menu-group-title {
+    font-size: 10.5px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1.4px !important;
+    color: #7287a6 !important;
+    padding: 8px 12px 4px !important;
+    margin-top: 2px !important;
+    font-weight: 700 !important;
+}
+
+.sidebar-menu li a {
+    color: #cfdaea !important;
+    border-radius: 10px !important;
+    margin: 1px 4px !important;
+    padding: 9px 12px !important;
+    height: 40px !important;
+    line-height: 1.2 !important;
+    transition: background 0.15s ease, color 0.15s ease !important;
+    font-weight: 500 !important;
+    font-size: 13.5px !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    box-sizing: border-box !important;
+    text-decoration: none !important;
+}
+
+.sidebar-menu li a span {
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    display: inline-block !important;
+}
+
+.sidebar-menu li a .menu-icon {
+    font-size: 18px !important;
+    flex-shrink: 0 !important;
+    color: #8da2c0 !important;
+    transition: color 0.15s ease !important;
+    margin: 0 !important;
+}
+
+.sidebar-menu li a:hover,
+.sidebar-menu li.active-page > a,
+.sidebar-menu li > a.active {
+    background: var(--simpel-gold) !important;
+    color: var(--simpel-navy) !important;
+    font-weight: 600 !important;
+}
+
+.sidebar-menu li a:hover .menu-icon,
+.sidebar-menu li.active-page > a .menu-icon,
+.sidebar-menu li > a.active .menu-icon {
+    color: var(--simpel-navy) !important;
+}
+
+/* Sidebar Footer */
+.sidebar-foot {
+    flex-shrink: 0 !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+    padding: 14px 18px !important;
+    background: rgba(6, 19, 38, 0.7) !important;
+}
+
+.motto-text {
+    color: #91a2ba;
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+.motto-text strong {
+    color: #cfdaea;
+}
+
+/* === Navbar / Header Topbar === */
+.navbar-header {
+    background: #ffffff !important;
+    border-bottom: 1px solid var(--simpel-line) !important;
+}
+
+/* === Cards & Panels === */
+.simpel-card {
+    background: #fff;
+    border: 1px solid var(--simpel-line);
+    border-radius: 16px;
+    box-shadow: 0 5px 20px rgba(14, 35, 75, 0.04);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.simpel-card:hover {
+    box-shadow: 0 8px 25px rgba(14, 35, 75, 0.08);
+}
+
+/* === Hero Banner (matching prototype.html flex layout & proportions) === */
+.simpel-hero {
+    background: linear-gradient(110deg, var(--simpel-navy), var(--simpel-navy2));
+    color: #fff;
+    padding: 20px 24px !important;
+    border-radius: 16px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 20px !important;
+    position: relative;
+    overflow: hidden;
+}
+
+.simpel-hero::after {
+    content: "";
+    position: absolute;
+    width: 240px;
+    height: 240px;
+    border: 50px solid rgba(255, 255, 255, 0.04);
+    border-radius: 50%;
+    right: 120px;
+    top: -90px;
+    pointer-events: none;
+}
+
+.simpel-hero-body {
+    position: relative;
+    z-index: 1;
+    flex: 1 1 auto;
+}
+
+.simpel-eyebrow {
+    text-transform: uppercase;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    font-size: 10px;
+}
+
+.simpel-hero-title {
+    font-size: 20px !important;
+    font-weight: 700 !important;
+    margin: 3px 0 5px 0 !important;
+    color: #ffffff !important;
+    line-height: 1.3 !important;
+    letter-spacing: -0.2px !important;
+}
+
+.simpel-hero-desc {
+    margin: 0 !important;
+    color: #c9d7e9 !important;
+    font-size: 12.5px !important;
+    line-height: 1.4 !important;
+}
+
+.btn-simpel-gold {
+    background: var(--simpel-gold) !important;
+    color: var(--simpel-navy) !important;
+    font-weight: 700 !important;
+    border: none !important;
+    border-radius: 11px !important;
+    padding: 10px 18px !important;
+    font-size: 13px !important;
+    cursor: pointer;
+    position: relative;
+    z-index: 1;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+    box-shadow: 0 4px 14px rgba(243, 188, 66, 0.25) !important;
+    transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.btn-simpel-gold:hover {
+    background: var(--simpel-gold-hover) !important;
+    color: var(--simpel-navy) !important;
+    transform: translateY(-1px);
+}
+
+/* === 8-Stage Flow (Siklus Diklat) === */
+.flow-grid {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 8px;
+}
+
+@media (max-width: 1200px) {
+    .flow-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .flow-grid {
+        display: flex;
+        overflow-x: auto;
+        padding-bottom: 8px;
+    }
+    .flow-card {
+        min-width: 115px;
+    }
+}
+
+.flow-card {
+    background: #fff;
+    border: 1px solid var(--simpel-line);
+    border-radius: 13px;
+    padding: 12px 6px;
+    text-align: center;
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+.flow-card:not(:last-child)::after {
+    content: "›";
+    position: absolute;
+    right: -8px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #b0b8c6;
+    font-size: 20px;
+    z-index: 2;
+}
+
+.flow-card .flow-n {
+    display: grid;
+    place-items: center;
+    margin: 0 auto;
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+    background: #edf2f8;
+    color: var(--simpel-navy2);
+    font-weight: 900;
+    font-size: 13px;
+}
+
+.flow-card.done .flow-n {
+    background: var(--simpel-green-bg);
+    color: var(--simpel-green);
+}
+
+.flow-card.current {
+    border-color: var(--simpel-gold);
+    box-shadow: 0 0 0 2px rgba(243, 188, 66, 0.25);
+}
+
+.flow-card.current .flow-n {
+    background: var(--simpel-gold);
+    color: var(--simpel-navy);
+}
+
+.flow-card span {
+    font-size: 11px;
+    font-weight: 700;
+    display: block;
+    margin-top: 7px;
+    color: var(--simpel-ink);
+}
+
+/* === Status Badges === */
+.simpel-badge {
+    border-radius: 99px;
+    padding: 5px 12px;
+    font-size: 11px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.simpel-badge-success {
+    background: var(--simpel-green-bg);
+    color: var(--simpel-green);
+}
+
+.simpel-badge-warn {
+    background: var(--simpel-warn-bg);
+    color: var(--simpel-warn);
+}
+
+.simpel-badge-danger {
+    background: var(--simpel-red-bg);
+    color: var(--simpel-red);
+}
+
+.simpel-badge-navy {
+    background: rgba(7, 26, 51, 0.08);
+    color: var(--simpel-navy);
+}
+
+.simpel-badge-gold {
+    background: rgba(243, 188, 66, 0.2);
+    color: #9a6700;
+}
+
+/* === Queue / Progress Widgets === */
+.queue-card {
+    border: 1px solid var(--simpel-line);
+    border-radius: 13px;
+    padding: 16px;
+    background: #fff;
+}
+
+.queue-progress {
+    height: 7px;
+    background: #edf0f4;
+    border-radius: 99px;
+    overflow: hidden;
+}
+
+.queue-progress-bar {
+    height: 100%;
+    background: var(--simpel-gold);
+    border-radius: inherit;
+    transition: width 0.4s ease;
+}
+
+/* === Interactive Bar Chart (CSS-based) === */
+.simpel-chart {
+    height: 220px;
+    display: flex;
+    align-items: flex-end;
+    gap: 16px;
+    border-left: 1px solid var(--simpel-line);
+    border-bottom: 1px solid var(--simpel-line);
+    padding: 20px 18px 0;
+    margin-top: 18px;
+}
+
+.simpel-bar-wrap {
+    height: 100%;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    text-align: center;
+    gap: 8px;
+    color: var(--simpel-muted);
+    font-size: 12px;
+}
+
+.simpel-bar {
+    border-radius: 8px 8px 2px 2px;
+    background: linear-gradient(180deg, var(--simpel-gold), var(--simpel-navy2));
+    min-height: 20px;
+    transition: height 0.4s ease;
+    cursor: pointer;
+}
+
+.simpel-bar:hover {
+    filter: brightness(1.1);
+}
+
+/* ============================================================
+   SIMPEL E-Learning: DTS-Inspired Landing Page Styles
+   ============================================================ */
+
+/* Utility colors */
+.text-navy { color: #0e234b !important; }
+.bg-navy { background-color: #0e234b !important; }
+.text-navy2 { color: #163672 !important; }
+.bg-navy2 { background-color: #163672 !important; }
+.text-gold { color: #c89524 !important; }
+.text-gold-light { color: #dfa837 !important; }
+.bg-gold { background-color: #c89524 !important; color: #0e234b !important; }
+.bg-gold-subtle { background-color: rgba(200, 149, 36, 0.12) !important; }
+.text-gold-emphasis { color: #9c6e08 !important; }
+.border-gold-subtle { border-color: rgba(200, 149, 36, 0.25) !important; }
+.border-simpel { border-color: #e5e9f0 !important; }
+.bg-gold-5 { background-color: rgba(200, 149, 36, 0.04) !important; }
+
+/* Font size utilities */
+.fs-7 { font-size: 0.85rem !important; }
+.fs-8 { font-size: 0.75rem !important; }
+.max-w-700 { max-width: 700px; }
+.shadow-xs { box-shadow: 0 1px 3px rgba(14, 35, 75, 0.05) !important; }
+.shadow-gold { box-shadow: 0 4px 18px rgba(200, 149, 36, 0.35) !important; }
+.shadow-2xl { box-shadow: 0 20px 40px rgba(6, 19, 38, 0.3) !important; }
+
+.backdrop-blur {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+.transition-all {
+    transition: all 0.25s ease-in-out;
+}
+
+/* Fix Bootstrap .collapse conflict with Tailwind CSS v4 */
+.collapse {
+    visibility: visible !important;
+}
+
+.navbar-collapse.collapse {
+    visibility: visible !important;
+}
+
+.accordion-collapse.collapse {
+    visibility: visible !important;
+}
+
+/* Landing Brand */
+.simpel-seal-landing,
+.simpel-seal {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--simpel-gold), var(--simpel-gold-hover));
+    color: var(--simpel-navy) !important;
+    font-size: 20px;
+    font-weight: 900;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.simpel-brand-title {
+    font-size: 1.15rem;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+}
+
+.simpel-brand-sub {
+    font-size: 11px;
+}
+
+/* Landing Navbar */
+.simpel-landing-header {
+    background: #ffffff;
+    z-index: 1020;
+}
+
+.simpel-search-pill .input-group {
+    background: #f1f4f8;
+    border-radius: 9999px;
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+}
+
+.simpel-search-pill .input-group:focus-within {
+    border-color: var(--simpel-gold);
+    box-shadow: 0 0 0 3px rgba(200, 149, 36, 0.15);
+}
+
+.simpel-bottom-nav .nav-link {
+    font-size: 0.9rem;
+    padding: 0.5rem 0.85rem !important;
+    border-radius: 8px;
+    transition: color 0.15s ease, background 0.15s ease;
+}
+
+.simpel-bottom-nav .nav-link:hover,
+.simpel-bottom-nav .nav-link.active {
+    color: var(--simpel-navy) !important;
+    background-color: rgba(14, 35, 75, 0.04);
+}
+
+.hover-gold:hover {
+    color: var(--simpel-gold) !important;
+}
+
+.hover-navy:hover {
+    color: var(--simpel-navy) !important;
+}
+
+/* Buttons */
+.btn-navy {
+    background-color: var(--simpel-navy);
+    border-color: var(--simpel-navy);
+    color: #ffffff !important;
+}
+
+.btn-navy:hover {
+    background-color: var(--simpel-navy2);
+    border-color: var(--simpel-navy2);
+    color: #ffffff !important;
+}
+
+.btn-outline-navy {
+    border-color: var(--simpel-navy);
+    color: var(--simpel-navy) !important;
+    background: transparent;
+}
+
+.btn-outline-navy:hover {
+    background-color: var(--simpel-navy);
+    color: #ffffff !important;
+}
+
+.btn-gold {
+    background: linear-gradient(135deg, var(--simpel-gold), var(--simpel-gold2));
+    border: 1px solid var(--simpel-gold);
+    color: var(--simpel-navy) !important;
+}
+
+.btn-gold:hover {
+    filter: brightness(1.06);
+    color: var(--simpel-navy) !important;
+}
+
+.btn-outline-gold {
+    border-color: var(--simpel-gold);
+    color: var(--simpel-gold) !important;
+    background: transparent;
+}
+
+.btn-outline-gold:hover {
+    background-color: var(--simpel-gold);
+    color: var(--simpel-navy) !important;
+}
+
+/* Landing Hero Section */
+.simpel-landing-hero {
+    background: linear-gradient(135deg, #091733 0%, #0e234b 50%, #173b7d 100%);
+}
+
+.simpel-hero-backdrop {
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 800px;
+    height: 800px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(200, 149, 36, 0.18) 0%, rgba(14, 35, 75, 0) 70%);
+    pointer-events: none;
+}
+
+.text-gold-gradient {
+    background: linear-gradient(90deg, #f7d277 0%, #dfa837 50%, #c89524 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.simpel-dot-pulse {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #38a169;
+    box-shadow: 0 0 0 3px rgba(56, 161, 105, 0.35);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(56, 161, 105, 0.7); }
+    70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(56, 161, 105, 0); }
+    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(56, 161, 105, 0); }
+}
+
+.bg-white-10 { background-color: rgba(255, 255, 255, 0.08) !important; }
+.bg-white-15 { background-color: rgba(255, 255, 255, 0.15) !important; }
+.border-white-10 { border-color: rgba(255, 255, 255, 0.10) !important; }
+.border-white-15 { border-color: rgba(255, 255, 255, 0.15) !important; }
+.border-white-20 { border-color: rgba(255, 255, 255, 0.20) !important; }
+.text-white-60 { color: rgba(255, 255, 255, 0.6) !important; }
+.text-white-70 { color: rgba(255, 255, 255, 0.7) !important; }
+.text-white-80 { color: rgba(255, 255, 255, 0.8) !important; }
+.text-white-90 { color: rgba(255, 255, 255, 0.9) !important; }
+
+/* Academy Cards */
+.simpel-academy-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.simpel-academy-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(14, 35, 75, 0.08) !important;
+    border-color: var(--simpel-gold) !important;
+}
+
+.simpel-academy-icon {
+    width: 48px;
+    height: 48px;
+}
+
+/* Course Cards */
+.simpel-course-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.simpel-course-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 34px rgba(14, 35, 75, 0.1) !important;
+}
+
+.simpel-course-thumb {
+    background: linear-gradient(135deg, var(--simpel-navy), var(--simpel-navy2));
+}
+
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* 8-Stage Lifecycle Box */
+.simpel-stage-box {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.simpel-stage-box:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(14, 35, 75, 0.08);
+    border-color: var(--simpel-gold) !important;
+}
+
+.simpel-stage-num {
+    width: 38px;
+    height: 38px;
+    font-size: 14px;
+}
+
+/* Post-Training Section */
+.simpel-post-training-glow {
+    position: absolute;
+    bottom: -40%;
+    left: -15%;
+    width: 700px;
+    height: 700px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(200, 149, 36, 0.15) 0%, rgba(14, 35, 75, 0) 70%);
+    pointer-events: none;
+}
+
+.simpel-benefit-card {
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.simpel-benefit-card:hover {
+    transform: translateX(4px);
+    background-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+.simpel-benefit-icon {
+    width: 44px;
+    height: 44px;
+}
+
+/* FAQ Accordion Styling */
+.simpel-accordion .accordion-button:not(.collapsed) {
+    background-color: rgba(200, 149, 36, 0.07);
+    color: var(--simpel-navy);
+    box-shadow: none;
+}
+
+.simpel-accordion .accordion-button:focus {
+    box-shadow: none;
+    border-color: rgba(200, 149, 36, 0.3);
+}
+
+.simpel-accordion .accordion-button::after {
+    filter: brightness(0.2);
+}
+
+/* Landing Footer */
+.simpel-landing-footer {
+    background-color: #08152e !important;
+}
+
+.border-navy-subtle {
+    border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.text-light-subtle {
+    color: #94a3b8 !important;
+}
+
+/* Digitalent DTS Hero & Cards */
+.simpel-dts-hero {
+    background: linear-gradient(135deg, #071a33 0%, #0c3158 55%, #15457a 100%);
+    min-height: 380px;
+}
+
+.simpel-hero-glow {
+    position: absolute;
+    top: -30%;
+    right: -20%;
+    width: 600px;
+    height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(243, 188, 66, 0.18) 0%, rgba(7, 26, 51, 0) 70%);
+    pointer-events: none;
+}
+
+.shadow-gold {
+    box-shadow: 0 4px 14px rgba(243, 188, 66, 0.35) !important;
+}
+
+.simpel-promo-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.simpel-promo-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px rgba(7, 26, 51, 0.12) !important;
+}
+
+.simpel-dts-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.simpel-dts-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(7, 26, 51, 0.08) !important;
+    border-color: var(--simpel-gold) !important;
+}
+
+.simpel-dts-icon {
+    width: 44px;
+    height: 44px;
+}
+
+.simpel-dts-course-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.simpel-dts-course-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 30px rgba(7, 26, 51, 0.10) !important;
+    border-color: var(--simpel-gold) !important;
+}
+
+.simpel-step-badge {
+    width: 48px;
+    height: 48px;
+    font-size: 18px;
+}
+
+.simpel-benefit-hover:hover {
+    background-color: rgba(255, 255, 255, 0.14) !important;
+    transform: translateX(4px);
+}
+
+.bg-gold-5 {
+    background-color: rgba(243, 188, 66, 0.05) !important;
+}
+
+.tracking-wider {
+    letter-spacing: 0.05em;
+}
+
+.max-w-700 {
+    max-width: 700px;
+}
+
