@@ -22,15 +22,15 @@
 
                 <div class="auth-pills-row">
                     <span class="auth-pill-item">
-                        <iconify-icon icon="solar:laptop-minimalistic-linear"></iconify-icon>
+                        <i class="ri-computer-line"></i>
                         Akses Mandiri 24/7
                     </span>
                     <span class="auth-pill-item">
-                        <iconify-icon icon="solar:diploma-verified-linear"></iconify-icon>
+                        <i class="ri-award-line"></i>
                         E-Sertifikat Resmi
                     </span>
                     <span class="auth-pill-item">
-                        <iconify-icon icon="solar:shield-check-linear"></iconify-icon>
+                        <i class="ri-shield-check-line"></i>
                         Integrasi SIASN BKN
                     </span>
                 </div>
@@ -55,7 +55,7 @@
                     </div>
                 </a>
                 <a href="{{ route('landing') }}" class="auth-back-btn">
-                    <iconify-icon icon="solar:arrow-left-linear"></iconify-icon>
+                    <i class="ri-arrow-left-line"></i>
                     <span>Beranda</span>
                 </a>
             </div>
@@ -70,7 +70,7 @@
             @if (session()->has('error'))
                 <div
                     class="alert alert-danger py-8 px-12 radius-8 text-xs mb-16 d-flex align-items-center gap-2 border-0 bg-danger-50 text-danger-600">
-                    <iconify-icon icon="solar:danger-circle-bold" class="text-base flex-shrink-0"></iconify-icon>
+                    <i class="ri-error-warning-fill text-base flex-shrink-0"></i>
                     <span>{{ session('error') }}</span>
                 </div>
             @endif
@@ -84,7 +84,7 @@
                     </label>
                     <div class="auth-input-wrapper">
                         <span class="auth-field-icon">
-                            <iconify-icon icon="solar:letter-linear"></iconify-icon>
+                            <i class="ri-mail-line"></i>
                         </span>
                         <input type="text" id="email" wire:model.defer="email"
                             class="form-control auth-input @error('email') is-invalid @enderror"
@@ -106,7 +106,7 @@
                     </div>
                     <div class="auth-input-wrapper">
                         <span class="auth-field-icon">
-                            <iconify-icon icon="solar:lock-keyhole-linear"></iconify-icon>
+                            <i class="ri-lock-line"></i>
                         </span>
                         <input type="password" id="your-password" wire:model.defer="password"
                             class="form-control auth-input has-toggle @error('password') is-invalid @enderror"

@@ -36,14 +36,16 @@
 
 <body>
     {{-- sidebar --}}
-    <livewire:admin.sidebar />
+    <livewire:admin.sidebar wire:key="admin-sidebar-nav" />
 
     <main class="dashboard-main">
         {{-- navbar / header --}}
-        <livewire:admin.header />
+        <livewire:admin.header wire:key="admin-header-nav" />
 
         {{-- main contenct  --}}
-        {{ $slot }}
+        <div class="dashboard-main-body">
+            {{ $slot }}
+        </div>
     </main>
 
     <!-- jQuery library js -->
@@ -54,8 +56,6 @@
     <script src="{{ asset('admin/assets/js/lib/apexcharts.min.js') }}"></script>
     <!-- Data Table js -->
     <script src="{{ asset('admin/assets/js/lib/dataTables.min.js') }}"></script>
-    <!-- Iconify Font js -->
-    <script src="{{ asset('admin/assets/js/lib/iconify-icon.min.js') }}"></script>
     <!-- jQuery UI js -->
     <script src="{{ asset('admin/assets/js/lib/jquery-ui.min.js') }}"></script>
     <!-- Vector Map js -->
@@ -67,8 +67,6 @@
     <script src="{{ asset('admin/assets/js/lib/slick.min.js') }}"></script>
     <!-- main js -->
     <script src="{{ asset('admin/assets/js/app.js') }}"></script>
-
-    <script src="{{ asset('admin/assets/js/homeOneChart.js') }}"></script>
 
     @livewireScripts
 </body>

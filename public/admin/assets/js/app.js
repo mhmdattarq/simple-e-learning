@@ -15,40 +15,21 @@
     item.toggleClass("dropdown-open");
   });
 
-  $(".sidebar-toggle").on("click", function(){
+  // sidebar toggle with delegation
+  $(document).on("click", ".sidebar-toggle", function(){
     $(this).toggleClass("active");
     $(".sidebar").toggleClass("active");
     $(".dashboard-main").toggleClass("active");
   });
 
-  $(".sidebar-mobile-toggle").on("click", function(){
+  $(document).on("click", ".sidebar-mobile-toggle", function(){
     $(".sidebar").addClass("sidebar-open");
     $("body").addClass("overlay-active");
   });
 
-  $(".sidebar-close-btn").on("click", function(){
+  $(document).on("click", ".sidebar-close-btn", function(){
     $(".sidebar").removeClass("sidebar-open");
     $("body").removeClass("overlay-active");
-  });
-
-  //to keep the current page active
-  $(function () {
-    for (
-      var nk = window.location,
-        o = $("ul#sidebar-menu a")
-          .filter(function () {
-            return this.href == nk;
-          })
-          .addClass("active-page") // anchor
-          .parent()
-          .addClass("active-page");
-      ;
-
-    ) {
-      // li
-      if (!o.is("li")) break;
-      o = o.parent().addClass("show").parent().addClass("open");
-    }
   });
 
 /**
@@ -68,9 +49,8 @@ function calculateSettingAsThemeString({ localStorageTheme }) {
 * Utility function to update the button text and aria-label.
 */
 function updateButton({ buttonEl, isDark }) {
+  if (!buttonEl) return;
   const newCta = isDark ? "dark" : "light";
-  // use an aria-label if you are omitting text on the button
-  // and using a sun/moon icon, for example
   buttonEl.setAttribute("aria-label", newCta);
   buttonEl.innerText = newCta;
 }
@@ -79,7 +59,10 @@ function updateButton({ buttonEl, isDark }) {
 * Utility function to update the theme setting on the html tag
 */
 function updateThemeOnHtmlEl({ theme }) {
-  document.querySelector("html").setAttribute("data-theme", theme);
+  const html = document.querySelector("html");
+  if (html) {
+    html.setAttribute("data-theme", theme);
+  }
 }
 
 /**
@@ -102,15 +85,17 @@ updateThemeOnHtmlEl({ theme: currentThemeSetting });
 /**
 * 4. Add an event listener to toggle the theme
 */
-button.addEventListener("click", (event) => {
-  const newTheme = currentThemeSetting === "dark" ? "light" : "dark";
+if (button) {
+  button.addEventListener("click", (event) => {
+    const newTheme = currentThemeSetting === "dark" ? "light" : "dark";
 
-  localStorage.setItem("theme", newTheme);
-  updateButton({ buttonEl: button, isDark: newTheme === "dark" });
-  updateThemeOnHtmlEl({ theme: newTheme });
+    localStorage.setItem("theme", newTheme);
+    updateButton({ buttonEl: button, isDark: newTheme === "dark" });
+    updateThemeOnHtmlEl({ theme: newTheme });
 
-  currentThemeSetting = newTheme;
-}); 
+    currentThemeSetting = newTheme;
+  }); 
+} 
 
 // =========================== Table Header Checkbox checked all js Start ================================
 $('#selectAll').on('change', function () {
