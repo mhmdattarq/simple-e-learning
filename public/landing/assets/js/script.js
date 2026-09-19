@@ -961,11 +961,18 @@
 
 
   function dynamicCurrentMenuClass(selector) {
-    let FileName = window.location.href.split("/").reverse()[0];
+    // If an active item is already set by server/Blade, keep it
+    if (selector.find("> li.current").length) {
+      return;
+    }
+
+    let rawEnd = window.location.href.split("/").reverse()[0];
+    let FileName = rawEnd.split("#")[0].split("?")[0];
 
     selector.find("li").each(function () {
       let anchor = $(this).find("a");
-      if ($(anchor).attr("href") == FileName) {
+      let href = $(anchor).attr("href");
+      if (href && href !== "#" && href !== "javascript:void(0)" && href == FileName) {
         $(this).addClass("current");
       }
     });
@@ -975,8 +982,8 @@
         $(this).addClass("current");
       }
     });
-    // if no file name return
-    if ("" == FileName) {
+    // if no file name and nothing selected, select first
+    if ("" == FileName && !selector.find("li.current").length) {
       selector.find("li").eq(0).addClass("current");
     }
   }

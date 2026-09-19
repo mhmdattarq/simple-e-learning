@@ -132,16 +132,16 @@ new class extends Component {
                         <div class="main-menu__main-menu-box">
                             <a href="#" class="mobile-nav__toggler"><i class="fa fa-bars"></i></a>
                             <ul class="main-menu__list">
-                                <li>
-                                    <a href="#">Beranda</a>
+                                <li class="{{ request()->routeIs('landing') ? 'current' : '' }}">
+                                    <a href="{{ route('landing') }}">Beranda</a>
                                 </li>
-                                <li>
+                                <li class="{{ request()->is('akademi*') ? 'current' : '' }}">
                                     <a href="#">Akademi</a>
                                 </li>
-                                <li>
+                                <li class="{{ request()->is('katalog-pelatihan*') || request()->is('pelatihan*') ? 'current' : '' }}">
                                     <a href="#">Katalog Pelatihan</a>
                                 </li>
-                                <li>
+                                <li class="{{ request()->is('alur-pendaftaran*') ? 'current' : '' }}">
                                     <a href="#">Alur Pendaftaran</a>
                                 </li>
                                 {{-- <li>
@@ -196,7 +196,7 @@ new class extends Component {
                                         <li><a href="blog-details.html">Blog Details</a></li>
                                     </ul>
                                 </li> --}}
-                                <li>
+                                <li class="{{ request()->is('kontak*') ? 'current' : '' }}">
                                     <a href="#">Kontak</a>
                                 </li>
                             </ul>
@@ -209,10 +209,10 @@ new class extends Component {
                             </div>
                             <div class="main-menu__btn-boxes">
                                 <div class="main-menu__btn-box-1">
-                                    <a href="#" class="thm-btn">Login</a>
+                                    <a href="{{ route('login') }}" class="thm-btn">Masuk</a>
                                 </div>
                                 <div class="main-menu__btn-box-2">
-                                    <a href="#" class="thm-btn">Register</a>
+                                    <a href="#" class="thm-btn">Daftar</a>
                                 </div>
                             </div>
                         </div>

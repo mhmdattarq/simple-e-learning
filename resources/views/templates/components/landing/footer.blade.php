@@ -38,136 +38,110 @@ new class extends Component {
         <div class="site-footer__top">
             <div class="container">
                 <div class="site-footer__top-inner">
-                    <div class="row">
-                        <div class="col-xl-6 col-lg-6 wow fadeInUp" data-wow-delay="300ms">
+                    <div class="row gy-4">
+                        {{-- Kolom Kiri: Profil & Visi SIMPEL + Media Sosial Resmi --}}
+                        <div class="col-xl-5 col-lg-5 wow fadeInUp" data-wow-delay="200ms">
                             <div class="site-footer__top-left">
-                                <div class="site-footer__contact-info">
-                                    <ul class="list-unstyled site-footer__contact-info-list">
-                                        <li>
-                                            <div class="site-footer__contact-info-icon-box">
-                                                <div class="site-footer__contact-info-icon">
-                                                    <span class="icon-envelope"></span>
-                                                    <p class="site-footer__contact-info-icon-text">Surel Resmi:
-                                                    </p>
-                                                </div>
-                                                <p class="site-footer__contact-info-text"><a
-                                                        href="mailto:bkpsdm@acehtimurkab.go.id">bkpsdm@acehtimurkab.go.id</a></p>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="site-footer__contact-info-icon-box">
-                                                <div class="site-footer__contact-info-icon">
-                                                    <span class="icon-location"></span>
-                                                    <p class="site-footer__contact-info-icon-text">Alamat Kantor:</p>
-                                                </div>
-                                                <p class="site-footer__contact-info-text">Pusat Pemerintahan Kab. Aceh Timur, <br> Jl. Medan - Banda Aceh, Idi Rayeuk</p>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                    <ul
-                                        class="list-unstyled site-footer__contact-info-list site-footer__contact-info-list--two">
-                                        <li>
-                                            <div class="site-footer__contact-info-icon-box">
-                                                <div class="site-footer__contact-info-icon">
-                                                    <span class="icon-phone"></span>
-                                                    <p class="site-footer__contact-info-icon-text">Layanan Pengaduan:
-                                                    </p>
-                                                </div>
-                                                <p class="site-footer__contact-info-text"><a
-                                                        href="tel:+626467000111">(0646) 7000-111</a></p>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="site-footer__contact-info-icon-box">
-                                                <div class="site-footer__contact-info-icon">
-                                                    <span class="icon-clock"></span>
-                                                    <p class="site-footer__contact-info-icon-text">Jam Layanan:
-                                                    </p>
-                                                </div>
-                                                <p class="site-footer__contact-info-text">Senin - Jumat <br>
-                                                    08:00 - 16:30 WIB</p>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div class="site-footer__app-and-social-box">
-                                    <div class="site-footer__app-download">
-                                        <h4 class="site-footer__app-and-social-title">Akses Mandiri</h4>
-                                        <div class="site-footer__app-download-inner">
-                                            <a href="#pelatihan" class="site-footer__app-box">
-                                                <div class="site-footer__app-icon">
-                                                    <img src="{{ asset('landing/assets/images/icon/google-play-icon.png') }}"
-                                                        alt="">
-                                                </div>
-                                            </a>
-                                            <a href="#pelatihan" class="site-footer__app-box">
-                                                <div class="site-footer__app-icon">
-                                                    <img src="{{ asset('landing/assets/images/icon/apple-icon.png') }}"
-                                                        alt="">
-                                                </div>
-                                            </a>
+                                <div class="site-footer__about-box pe-xl-3">
+                                    <h4 class="site-footer__title">Tentang SIMPEL</h4>
+                                    <p class="text-white-80 fs-7 lh-base mb-4">
+                                        Portal akselerasi kompetensi dan pembelajaran mandiri terpadu bagi seluruh Aparatur Sipil Negara di lingkungan Pemerintah Kabupaten Aceh Timur guna mewujudkan birokrasi berkelas dunia.
+                                    </p>
+                                    <div class="d-flex flex-column gap-2 mb-4">
+                                        <div class="d-flex align-items-center gap-2 text-white-80 fs-8">
+                                            <i class="ri-checkbox-circle-fill text-gold fs-6"></i>
+                                            <span>Pembelajaran Mandiri, Batch Berkala & Penugasan</span>
+                                        </div>
+                                        <div class="d-flex align-items-center gap-2 text-white-80 fs-8">
+                                            <i class="ri-checkbox-circle-fill text-gold fs-6"></i>
+                                            <span>Konversi Jam Pelajaran (JP) Resmi MenPAN-RB</span>
+                                        </div>
+                                        <div class="d-flex align-items-center gap-2 text-white-80 fs-8">
+                                            <i class="ri-checkbox-circle-fill text-gold fs-6"></i>
+                                            <span>E-Sertifikat Terintegrasi SIASN BKN</span>
                                         </div>
                                     </div>
-                                    <div class="site-footer__social-box">
-                                        <h4 class="site-footer__app-and-social-title">Media Sosial Resmi:</h4>
-                                        <div class="site-footer__social-box-inner">
-                                            <a href="javascript:void(0)"><span class="fab fa-facebook-f"></span></a>
-                                            <a href="javascript:void(0)"><span class="fab fa-instagram"></span></a>
-                                            <a href="javascript:void(0)"><span class="fab fa-youtube"></span></a>
-                                            <a href="javascript:void(0)"><span class="fab fa-twitter"></span></a>
-                                        </div>
+                                </div>
+
+                                <div class="site-footer__social-box mt-3">
+                                    <h4 class="site-footer__app-and-social-title" style="font-size: 16px; margin-bottom: 12px;">Media Sosial Resmi:</h4>
+                                    <div class="site-footer__social-box-inner">
+                                        <a href="javascript:void(0)" aria-label="Facebook"><span class="fab fa-facebook-f"></span></a>
+                                        <a href="javascript:void(0)" aria-label="Instagram"><span class="fab fa-instagram"></span></a>
+                                        <a href="javascript:void(0)" aria-label="YouTube"><span class="fab fa-youtube"></span></a>
+                                        <a href="javascript:void(0)" aria-label="Twitter"><span class="fab fa-twitter"></span></a>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-xl-6 col-lg-6 wow fadeInUp" data-wow-delay="300ms">
-                            <div class="site-footer__top-right">
-                                <div class="row">
+
+                        {{-- Kolom Kanan: Menu Utama, Tautan Lembaga, & Buletin --}}
+                        <div class="col-xl-7 col-lg-7 wow fadeInUp" data-wow-delay="300ms">
+                            <div class="site-footer__top-right" style="margin-left: 0;">
+                                <div class="row g-4">
+                                    {{-- Menu Utama (5 Menu Navbar) --}}
                                     <div class="col-xl-6 col-lg-6 col-md-6">
                                         <div class="site-footer__links">
-                                            <h4 class="site-footer__title">Navigasi Utama</h4>
+                                            <h4 class="site-footer__title">Menu Utama</h4>
                                             <ul class="site-footer__links-list list-unstyled">
-                                                <li><a href="{{ route('landing') }}"> <span class="icon-plus"></span> Beranda</a>
+                                                <li>
+                                                    <a href="{{ route('landing') }}"><span class="icon-plus"></span> Beranda</a>
                                                 </li>
-                                                <li><a href="#akademi"> <span class="icon-plus"></span> Akademi
-                                                        Pelatihan</a></li>
-                                                <li><a href="#pelatihan"> <span class="icon-plus"></span>
-                                                        Katalog Pelatihan</a></li>
-                                                <li><a href="#alur-pendaftaran"> <span class="icon-plus"></span> Alur Pendaftaran</a>
+                                                <li>
+                                                    <a href="#akademi"><span class="icon-plus"></span> Akademi</a>
                                                 </li>
-                                                <li><a href="{{ route('login') }}"> <span class="icon-plus"></span>
-                                                        Masuk ke Portal</a></li>
+                                                <li>
+                                                    <a href="#pelatihan"><span class="icon-plus"></span> Katalog Pelatihan</a>
+                                                </li>
+                                                <li>
+                                                    <a href="#alur-pendaftaran"><span class="icon-plus"></span> Alur Pendaftaran</a>
+                                                </li>
+                                                <li>
+                                                    <a href="#"><span class="icon-plus"></span> Kontak</a>
+                                                </li>
+                                                <li>
+                                                    <a href="{{ route('login') }}"><span class="icon-plus"></span> Masuk ke Akun</a>
+                                                </li>
                                             </ul>
                                         </div>
                                     </div>
+
+                                    {{-- Tautan Lembaga Eksternal --}}
                                     <div class="col-xl-6 col-lg-6 col-md-6">
-                                        <div class="site-footer__useful-links">
+                                        <div class="site-footer__useful-links" style="margin-left: 0;">
                                             <h4 class="site-footer__title">Tautan Lembaga</h4>
                                             <ul class="site-footer__links-list list-unstyled">
-                                                <li><a href="https://acehtimurkab.go.id" target="_blank"> <span class="icon-plus"></span>
-                                                        Pemkab Aceh Timur</a>
+                                                <li>
+                                                    <a href="https://acehtimurkab.go.id" target="_blank"><span class="icon-plus"></span> Pemkab Aceh Timur</a>
                                                 </li>
-                                                <li><a href="https://bkpsdm.acehtimurkab.go.id" target="_blank"> <span class="icon-plus"></span>
-                                                        BKPSDM Aceh Timur</a></li>
-                                                <li><a href="https://siasn.bkn.go.id" target="_blank"> <span class="icon-plus"></span>
-                                                        Portal SIASN BKN</a></li>
-                                                <li><a href="https://lan.go.id" target="_blank"> <span class="icon-plus"></span>
-                                                        LAN RI</a>
+                                                <li>
+                                                    <a href="https://bkpsdm.acehtimurkab.go.id" target="_blank"><span class="icon-plus"></span> BKPSDM Aceh Timur</a>
                                                 </li>
-                                                <li><a href="https://menpan.go.id" target="_blank"> <span class="icon-plus"></span>
-                                                        KemenPAN-RB</a></li>
+                                                <li>
+                                                    <a href="https://siasn.bkn.go.id" target="_blank"><span class="icon-plus"></span> Portal SIASN BKN</a>
+                                                </li>
+                                                <li>
+                                                    <a href="https://lan.go.id" target="_blank"><span class="icon-plus"></span> LAN RI</a>
+                                                </li>
+                                                <li>
+                                                    <a href="https://menpan.go.id" target="_blank"><span class="icon-plus"></span> KemenPAN-RB</a>
+                                                </li>
                                             </ul>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="site-footer__newsletter-box">
-                                    <h4 class="site-footer__title">Informasi Pelatihan</h4>
+
+                                {{-- Newsletter Box --}}
+                                <div class="site-footer__newsletter-box mt-4">
+                                    <h4 class="site-footer__title mb-2">Informasi Pelatihan</h4>
+                                    <p class="text-white-70 fs-8 mb-3">Dapatkan notifikasi jadwal pembukaan batch diklat dan pembaruan beasiswa kedinasan.</p>
                                     <form class="site-footer__newsletter-form" onsubmit="event.preventDefault();">
                                         <div class="site-footer__newsletter-input">
                                             <input type="email" placeholder="Masukkan Email Kedinasan">
                                         </div>
-                                        <button type="submit" class="thm-btn"> <span
-                                                class="icon-angles-right"></span> Langganan</button>
+                                        <button type="submit" class="thm-btn">
+                                            <span class="icon-angles-right"></span> Langganan
+                                        </button>
                                     </form>
                                 </div>
                             </div>
