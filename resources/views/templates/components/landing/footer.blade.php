@@ -16,15 +16,21 @@ new class extends Component {
                 <div class="site-footer__logo-and-contact-box-inner">
                     <div class="site-footer__logo-box wow fadeInLeft" data-wow-delay="100ms">
                         <div class="site-footer__logo">
-                            <a href="index.html"><img
-                                    src="{{ asset('landing/assets/images/resources/site-footer-logo-1.png') }}"
-                                    alt=""></a>
+                            <a href="{{ route('landing') }}" class="brand text-decoration-none">
+                                <div class="seal">S</div>
+                                <div>
+                                    <strong class="text-white">SIMPEL</strong>
+                                    <small class="text-white-50">BKPSDM Aceh Timur</small>
+                                </div>
+                            </a>
                         </div>
-                        <p class="site-footer__text">Lorem Ipsum is simply dummy text of <br> the printing and
-                            typesetting</p>
+                        <p class="site-footer__text">
+                            Sistem Informasi Manajemen Pelatihan Elektronik (SIMPEL) ASN<br>
+                            BKPSDM Pemerintah Kabupaten Aceh Timur.
+                        </p>
                     </div>
                     <div class="site-footer__contact-box wow fadeInRight" data-wow-delay="100ms">
-                        <a href="#">Contact Us</a>
+                        <a href="#pelatihan">Daftar Pelatihan</a>
                     </div>
                 </div>
             </div>
@@ -41,21 +47,20 @@ new class extends Component {
                                             <div class="site-footer__contact-info-icon-box">
                                                 <div class="site-footer__contact-info-icon">
                                                     <span class="icon-envelope"></span>
-                                                    <p class="site-footer__contact-info-icon-text">Email Address:
+                                                    <p class="site-footer__contact-info-icon-text">Surel Resmi:
                                                     </p>
                                                 </div>
                                                 <p class="site-footer__contact-info-text"><a
-                                                        href="mailto:info@example.com">info@example.com</a></p>
+                                                        href="mailto:bkpsdm@acehtimurkab.go.id">bkpsdm@acehtimurkab.go.id</a></p>
                                             </div>
                                         </li>
                                         <li>
                                             <div class="site-footer__contact-info-icon-box">
                                                 <div class="site-footer__contact-info-icon">
                                                     <span class="icon-location"></span>
-                                                    <p class="site-footer__contact-info-icon-text">Location:</p>
+                                                    <p class="site-footer__contact-info-icon-text">Alamat Kantor:</p>
                                                 </div>
-                                                <p class="site-footer__contact-info-text">1234 Elm Street,
-                                                    Springfield, IL <br> 62704</p>
+                                                <p class="site-footer__contact-info-text">Pusat Pemerintahan Kab. Aceh Timur, <br> Jl. Medan - Banda Aceh, Idi Rayeuk</p>
                                             </div>
                                         </li>
                                     </ul>
@@ -65,37 +70,37 @@ new class extends Component {
                                             <div class="site-footer__contact-info-icon-box">
                                                 <div class="site-footer__contact-info-icon">
                                                     <span class="icon-phone"></span>
-                                                    <p class="site-footer__contact-info-icon-text">Phone Number:
+                                                    <p class="site-footer__contact-info-icon-text">Layanan Pengaduan:
                                                     </p>
                                                 </div>
                                                 <p class="site-footer__contact-info-text"><a
-                                                        href="tel:1212345678900">+12 (123) 4567 8900</a></p>
+                                                        href="tel:+626467000111">(0646) 7000-111</a></p>
                                             </div>
                                         </li>
                                         <li>
                                             <div class="site-footer__contact-info-icon-box">
                                                 <div class="site-footer__contact-info-icon">
                                                     <span class="icon-clock"></span>
-                                                    <p class="site-footer__contact-info-icon-text">Working Hour:
+                                                    <p class="site-footer__contact-info-icon-text">Jam Layanan:
                                                     </p>
                                                 </div>
-                                                <p class="site-footer__contact-info-text">Saturday - Friday <br>
-                                                    10:00 - 18:00 </p>
+                                                <p class="site-footer__contact-info-text">Senin - Jumat <br>
+                                                    08:00 - 16:30 WIB</p>
                                             </div>
                                         </li>
                                     </ul>
                                 </div>
                                 <div class="site-footer__app-and-social-box">
                                     <div class="site-footer__app-download">
-                                        <h4 class="site-footer__app-and-social-title">Download Apps</h4>
+                                        <h4 class="site-footer__app-and-social-title">Akses Mandiri</h4>
                                         <div class="site-footer__app-download-inner">
-                                            <a href="#" class="site-footer__app-box">
+                                            <a href="#pelatihan" class="site-footer__app-box">
                                                 <div class="site-footer__app-icon">
                                                     <img src="{{ asset('landing/assets/images/icon/google-play-icon.png') }}"
                                                         alt="">
                                                 </div>
                                             </a>
-                                            <a href="#" class="site-footer__app-box">
+                                            <a href="#pelatihan" class="site-footer__app-box">
                                                 <div class="site-footer__app-icon">
                                                     <img src="{{ asset('landing/assets/images/icon/apple-icon.png') }}"
                                                         alt="">
@@ -104,12 +109,12 @@ new class extends Component {
                                         </div>
                                     </div>
                                     <div class="site-footer__social-box">
-                                        <h4 class="site-footer__app-and-social-title">Follow Us:</h4>
+                                        <h4 class="site-footer__app-and-social-title">Media Sosial Resmi:</h4>
                                         <div class="site-footer__social-box-inner">
-                                            <a href="#"><span class="fab fa-linkedin-in"></span></a>
-                                            <a href="#"><span class="fab fa-pinterest-p"></span></a>
-                                            <a href="#"><span class="fab fa-facebook-f"></span></a>
-                                            <a href="#"><span class="fab fa-instagram"></span></a>
+                                            <a href="javascript:void(0)"><span class="fab fa-facebook-f"></span></a>
+                                            <a href="javascript:void(0)"><span class="fab fa-instagram"></span></a>
+                                            <a href="javascript:void(0)"><span class="fab fa-youtube"></span></a>
+                                            <a href="javascript:void(0)"><span class="fab fa-twitter"></span></a>
                                         </div>
                                     </div>
                                 </div>
@@ -120,50 +125,49 @@ new class extends Component {
                                 <div class="row">
                                     <div class="col-xl-6 col-lg-6 col-md-6">
                                         <div class="site-footer__links">
-                                            <h4 class="site-footer__title">Quick Link</h4>
+                                            <h4 class="site-footer__title">Navigasi Utama</h4>
                                             <ul class="site-footer__links-list list-unstyled">
-                                                <li><a href="index.html"> <span class="icon-plus"></span> Home</a>
+                                                <li><a href="{{ route('landing') }}"> <span class="icon-plus"></span> Beranda</a>
                                                 </li>
-                                                <li><a href="about.html"> <span class="icon-plus"></span> About
-                                                        Us</a></li>
-                                                <li><a href="course.html"> <span class="icon-plus"></span>
-                                                        Courses</a></li>
-                                                <li><a href="faq.html"> <span class="icon-plus"></span> FAQs</a>
+                                                <li><a href="#akademi"> <span class="icon-plus"></span> Akademi
+                                                        Pelatihan</a></li>
+                                                <li><a href="#pelatihan"> <span class="icon-plus"></span>
+                                                        Katalog Pelatihan</a></li>
+                                                <li><a href="#alur-pendaftaran"> <span class="icon-plus"></span> Alur Pendaftaran</a>
                                                 </li>
-                                                <li><a href="contact.html"> <span class="icon-plus"></span>
-                                                        Contact</a></li>
+                                                <li><a href="{{ route('login') }}"> <span class="icon-plus"></span>
+                                                        Masuk ke Portal</a></li>
                                             </ul>
                                         </div>
                                     </div>
                                     <div class="col-xl-6 col-lg-6 col-md-6">
                                         <div class="site-footer__useful-links">
-                                            <h4 class="site-footer__title">Useful Links</h4>
+                                            <h4 class="site-footer__title">Tautan Lembaga</h4>
                                             <ul class="site-footer__links-list list-unstyled">
-                                                <li><a href="become-a-teacher.html"> <span class="icon-plus"></span>
-                                                        Became
-                                                        Partners</a>
+                                                <li><a href="https://acehtimurkab.go.id" target="_blank"> <span class="icon-plus"></span>
+                                                        Pemkab Aceh Timur</a>
                                                 </li>
-                                                <li><a href="about.html"> <span class="icon-plus"></span> Privacy &
-                                                        Policy</a></li>
-                                                <li><a href="about.html"> <span class="icon-plus"></span>
-                                                        Tearm & Condition</a></li>
-                                                <li><a href="about.html"> <span class="icon-plus"></span> Refund
-                                                        Policy</a>
+                                                <li><a href="https://bkpsdm.acehtimurkab.go.id" target="_blank"> <span class="icon-plus"></span>
+                                                        BKPSDM Aceh Timur</a></li>
+                                                <li><a href="https://siasn.bkn.go.id" target="_blank"> <span class="icon-plus"></span>
+                                                        Portal SIASN BKN</a></li>
+                                                <li><a href="https://lan.go.id" target="_blank"> <span class="icon-plus"></span>
+                                                        LAN RI</a>
                                                 </li>
-                                                <li><a href="course-details.html"> <span class="icon-plus"></span>
-                                                        Live Workshop</a></li>
+                                                <li><a href="https://menpan.go.id" target="_blank"> <span class="icon-plus"></span>
+                                                        KemenPAN-RB</a></li>
                                             </ul>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="site-footer__newsletter-box">
-                                    <h4 class="site-footer__title">Newsletter</h4>
-                                    <form class="site-footer__newsletter-form">
+                                    <h4 class="site-footer__title">Informasi Pelatihan</h4>
+                                    <form class="site-footer__newsletter-form" onsubmit="event.preventDefault();">
                                         <div class="site-footer__newsletter-input">
-                                            <input type="email" placeholder="Enter Your Email">
+                                            <input type="email" placeholder="Masukkan Email Kedinasan">
                                         </div>
                                         <button type="submit" class="thm-btn"> <span
-                                                class="icon-angles-right"></span> Subscribe</button>
+                                                class="icon-angles-right"></span> Langganan</button>
                                     </form>
                                 </div>
                             </div>
@@ -178,22 +182,12 @@ new class extends Component {
                     <div class="col-xl-12">
                         <div class="site-footer__bottom-inner">
                             <div class="site-footer__copyright">
-                                <p class="site-footer__copyright-text">Copyright © 2025 <a href="#">FiStudy</a>.
-                                    All
-                                    Rights Reserved</p>
+                                <p class="site-footer__copyright-text">Hak Cipta © 2026 <a href="{{ route('landing') }}">SIMPEL</a> · BKPSDM Pemerintah Kabupaten Aceh Timur. Seluruh Hak Cipta Dilindungi.</p>
                             </div>
                             <div class="site-footer__bottom-card-box">
-                                <ul class="list-unstyled site-footer__card-menu">
-                                    <li><a href="contact.html"><img
-                                                src="{{ asset('landing/assets/images/icon/card-icon-1.png') }}"
-                                                alt=""></a></li>
-                                    <li><a href="contact.html"><img
-                                                src="{{ asset('landing/assets/images/icon/card-icon-2.png') }}"
-                                                alt=""></a></li>
-                                    <li><a href="contact.html"><img
-                                                src="{{ asset('landing/assets/images/icon/card-icon-3.png') }}"
-                                                alt=""></a></li>
-                                </ul>
+                                <span class="text-white-50 text-xs" style="font-size: 12px; letter-spacing: 0.5px;">
+                                    Aksi Perubahan Kinerja 2026 · Efektif · Efisien · Transparan · Akuntabel
+                                </span>
                             </div>
                         </div>
                     </div>

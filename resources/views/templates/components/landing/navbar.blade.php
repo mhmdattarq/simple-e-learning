@@ -15,13 +15,18 @@ new class extends Component {
                     <div class="main-menu__wrapper-inner">
                         <div class="main-menu__left">
                             <div class="main-menu__logo">
-                                <a href="index.html"><img src="{{ asset('landing/assets/images/resources/logo-1.png') }}"
-                                        alt=""></a>
+                                <a href="{{ route('landing') }}" class="brand text-decoration-none">
+                                    <div class="seal">S</div>
+                                    <div>
+                                        <strong>SIMPEL</strong>
+                                        <small>BKPSDM Aceh Timur</small>
+                                    </div>
+                                </a>
                             </div>
                             <div class="main-menu__category-box">
                                 <div class="main-menu__category-btn">
                                     <i class="fas fa-th"></i>
-                                    <p>Category</p>
+                                    <p>Kategori Pelatihan</p>
                                     <span class="icon-down-arrow"></span>
                                 </div>
                                 <ul class="list-unstyled main-menu__category-sub-menu">
@@ -32,8 +37,8 @@ new class extends Component {
                                                     alt="">
                                             </div>
                                             <div class="main-menu__category-content">
-                                                <h5>Tech & <br> Programming</h5>
-                                                <p>3+ Courses</p>
+                                                <h5>Pelatihan mandiri</h5>
+                                                <p>Buka 24 Jam</p>
                                             </div>
                                         </a>
                                     </li>
@@ -44,8 +49,8 @@ new class extends Component {
                                                     alt="">
                                             </div>
                                             <div class="main-menu__category-content">
-                                                <h5>Creative <br> Art</h5>
-                                                <p>3+ Courses</p>
+                                                <h5>Batch Berkala</h5>
+                                                <p>Daring Terjadwal</p>
                                             </div>
                                         </a>
                                     </li>
@@ -56,12 +61,12 @@ new class extends Component {
                                                     alt="">
                                             </div>
                                             <div class="main-menu__category-content">
-                                                <h5>Business & <br> Finance</h5>
-                                                <p>3+ Courses</p>
+                                                <h5>Penugasan Khusus</h5>
+                                                <p>Rekomendasi OPD</p>
                                             </div>
                                         </a>
                                     </li>
-                                    <li>
+                                    {{-- <li>
                                         <a href="#">
                                             <div class="main-menu__category-icon">
                                                 <img src="{{ asset('landing/assets/images/icon/categoyr-two-icon-4.png') }}"
@@ -120,129 +125,30 @@ new class extends Component {
                                                 <p>3+ Courses</p>
                                             </div>
                                         </a>
-                                    </li>
+                                    </li> --}}
                                 </ul>
                             </div>
                         </div>
                         <div class="main-menu__main-menu-box">
                             <a href="#" class="mobile-nav__toggler"><i class="fa fa-bars"></i></a>
                             <ul class="main-menu__list">
-                                <li class="dropdown megamenu">
-                                    <a href="index.html">Home </a>
-                                    <ul>
-                                        <li>
-                                            <section class="home-showcase">
-                                                <div class="container">
-                                                    <div class="home-showcase__inner">
-                                                        <div class="row">
-                                                            <div class="col-lg-3">
-                                                                <div class="home-showcase__item">
-                                                                    <div class="home-showcase__image">
-                                                                        <img src="{{ asset('landing/assets/images/home-showcase/home-showcase-1-1.jpg') }}"
-                                                                            alt="">
-                                                                        <div class="home-showcase__buttons">
-                                                                            <a href="index.html"
-                                                                                class="thm-btn home-showcase__buttons__item">
-                                                                                <span class="icon-angles-right"></span>
-                                                                                Multi Page
-                                                                            </a>
-                                                                            <a href="index-one-page.html"
-                                                                                class="thm-btn home-showcase__buttons__item">
-                                                                                <span class="icon-angles-right"></span>
-                                                                                One Page
-                                                                            </a>
-                                                                        </div>
-                                                                        <!-- /.home-showcase__buttons -->
-                                                                    </div><!-- /.home-showcase__image -->
-                                                                    <h3 class="home-showcase__title">Home
-                                                                        Page
-                                                                        01</h3>
-                                                                    <!-- /.home-showcase__title -->
-                                                                </div><!-- /.home-showcase__item -->
-                                                            </div><!-- /.col-lg-3 -->
-                                                            <div class="col-lg-3">
-                                                                <div class="home-showcase__item">
-                                                                    <div class="home-showcase__image">
-                                                                        <img src="{{ asset('landing/assets/images/home-showcase/home-showcase-1-2.jpg') }}"
-                                                                            alt="">
-                                                                        <div class="home-showcase__buttons">
-                                                                            <a href="index2.html"
-                                                                                class="thm-btn home-showcase__buttons__item">
-                                                                                <span class="icon-angles-right"></span>
-                                                                                Multi Page
-                                                                            </a>
-                                                                            <a href="index2-one-page.html"
-                                                                                class="thm-btn home-showcase__buttons__item">
-                                                                                <span class="icon-angles-right"></span>
-                                                                                One Page
-                                                                            </a>
-                                                                        </div>
-                                                                        <!-- /.home-showcase__buttons -->
-                                                                    </div><!-- /.home-showcase__image -->
-                                                                    <h3 class="home-showcase__title">Home
-                                                                        Page
-                                                                        02
-                                                                    </h3><!-- /.home-showcase__title -->
-                                                                </div><!-- /.home-showcase__item -->
-                                                            </div><!-- /.col-lg-3 -->
-                                                            <div class="col-lg-3">
-                                                                <div class="home-showcase__item">
-                                                                    <div class="home-showcase__image">
-                                                                        <img src="{{ asset('landing/assets/images/home-showcase/home-showcase-1-3.jpg') }}"
-                                                                            alt="">
-                                                                        <div class="home-showcase__buttons">
-                                                                            <a href="index3.html"
-                                                                                class="thm-btn home-showcase__buttons__item">
-                                                                                <span class="icon-angles-right"></span>
-                                                                                Multi Page
-                                                                            </a>
-                                                                            <a href="index3-one-page.html"
-                                                                                class="thm-btn home-showcase__buttons__item">
-                                                                                <span class="icon-angles-right"></span>
-                                                                                View Page
-                                                                            </a>
-                                                                        </div>
-                                                                        <!-- /.home-showcase__buttons -->
-                                                                    </div><!-- /.home-showcase__image -->
-                                                                    <h3 class="home-showcase__title">Home
-                                                                        Page
-                                                                        03
-                                                                    </h3><!-- /.home-showcase__title -->
-                                                                </div><!-- /.home-showcase__item -->
-                                                            </div><!-- /.col-lg-3 -->
-                                                            <div class="col-lg-3">
-                                                                <div class="home-showcase__item">
-                                                                    <div class="home-showcase__image">
-                                                                        <img src="{{ asset('landing/assets/images/home-showcase/home-showcase-1-4.jpg') }}"
-                                                                            alt="">
-                                                                        <div class="home-showcase__buttons">
-                                                                            <a href="index-dark.html"
-                                                                                class="thm-btn home-showcase__buttons__item">
-                                                                                <span class="icon-angles-right"></span>
-                                                                                One Page
-                                                                            </a>
-                                                                        </div>
-                                                                        <!-- /.home-showcase__buttons -->
-                                                                    </div><!-- /.home-showcase__image -->
-                                                                    <h3 class="home-showcase__title">Home
-                                                                        Page
-                                                                        04
-                                                                    </h3><!-- /.home-showcase__title -->
-                                                                </div><!-- /.home-showcase__item -->
-                                                            </div><!-- /.col-lg-3 -->
-                                                        </div><!-- /.row -->
-                                                    </div><!-- /.home-showcase__inner -->
-
-                                                </div><!-- /.container -->
-                                            </section>
-                                        </li>
-                                    </ul>
+                                <li>
+                                    <a href="#">Beranda</a>
                                 </li>
                                 <li>
-                                    <a href="about.html">About</a>
+                                    <a href="#">Akademi</a>
                                 </li>
-                                <li class="dropdown">
-                                    <a href="#">Pages</a>
+                                <li>
+                                    <a href="#">Katalog Pelatihan</a>
+                                </li>
+                                <li>
+                                    <a href="#">Alur Pendaftaran</a>
+                                </li>
+                                {{-- <li>
+                                    <a href="about.html">About</a>
+                                </li> --}}
+                                {{-- <li class="dropdown">
+                                    <a href="#">Jadwal</a>
                                     <ul class="shadow-box">
                                         <li><a href="instructor.html">Instructors</a></li>
                                         <li><a href="instructor-carousel.html">Instructor Carousel</a></li>
@@ -289,9 +195,9 @@ new class extends Component {
                                         <li><a href="blog-list.html">Blog List</a></li>
                                         <li><a href="blog-details.html">Blog Details</a></li>
                                     </ul>
-                                </li>
+                                </li> --}}
                                 <li>
-                                    <a href="contact.html">Contact</a>
+                                    <a href="#">Kontak</a>
                                 </li>
                             </ul>
                         </div>
@@ -299,9 +205,6 @@ new class extends Component {
                             <div class="main-menu__search-cart-box">
                                 <div class="main-menu__search-box">
                                     <a href="#" class="main-menu__search searcher-toggler-box icon-search"></a>
-                                </div>
-                                <div class="main-menu__cart">
-                                    <a href="#"><span class="fas fa-shopping-cart"></span></a>
                                 </div>
                             </div>
                             <div class="main-menu__btn-boxes">
