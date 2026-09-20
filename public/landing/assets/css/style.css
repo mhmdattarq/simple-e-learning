@@ -2440,6 +2440,357 @@ ul {
   color: #ffffff !important;
 }
 
+/* ==========================================================================
+   SIMPEL Theme Colors & Buttons System
+   Harmonious design tokens for Admin & Landing
+   ========================================================================== */
+:root {
+  --simple-navy: #071a33;
+  --simple-navy-hover: #0c3158;
+  --simple-navy-active: #051427;
+  --simple-navy-light: #e9eff7;
+  --simple-gold: #f3bc42;
+  --simple-gold-hover: #e0aa34;
+  --simple-gold-active: #c89524;
+  --simple-gold-light: #fff4d8;
+  --simple-gold-dark: #9a6700;
+  --simple-border: #e6eaf0;
+}
+
+/* === Primary Simple / Simpel Button (Signature Admin Navy) === */
+.btn.btn-simple,
+.btn.btn-simpel,
+.btn-simple,
+.btn-simpel {
+  background-color: #071a33 !important;
+  border-color: #071a33 !important;
+  color: #ffffff !important;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 0.55rem 1.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 12px rgba(7, 26, 51, 0.16);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  text-decoration: none;
+}
+
+.btn.btn-simple:hover,
+.btn.btn-simpel:hover,
+.btn-simple:hover,
+.btn-simpel:hover {
+  background-color: #0c3158 !important;
+  border-color: #0c3158 !important;
+  color: #ffffff !important;
+  box-shadow: 0 6px 16px rgba(7, 26, 51, 0.25);
+  transform: translateY(-1px);
+}
+
+.btn.btn-simple:active,
+.btn.btn-simpel:active,
+.btn-simple:active,
+.btn-simpel:active,
+.btn.btn-simple:focus,
+.btn.btn-simpel:focus,
+.btn-simple:focus,
+.btn-simpel:focus {
+  background-color: #051427 !important;
+  border-color: #051427 !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 0 0.2rem rgba(7, 26, 51, 0.25) !important;
+  transform: translateY(0);
+}
+
+.btn.btn-simple:disabled,
+.btn.btn-simpel:disabled,
+.btn-simple.disabled,
+.btn-simpel.disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* === Gold Simple / Simpel Button (Signature Accent Gold) === */
+.btn.btn-simple-gold,
+.btn.btn-simpel-gold,
+.btn-simple-gold,
+.btn-simpel-gold {
+  background-color: #f3bc42 !important;
+  border-color: #f3bc42 !important;
+  color: #071a33 !important;
+  font-weight: 700;
+  border-radius: 8px;
+  padding: 0.55rem 1.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 14px rgba(243, 188, 66, 0.28);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  text-decoration: none;
+}
+
+.btn.btn-simple-gold:hover,
+.btn.btn-simpel-gold:hover,
+.btn-simple-gold:hover,
+.btn-simpel-gold:hover {
+  background-color: #e0aa34 !important;
+  border-color: #e0aa34 !important;
+  color: #071a33 !important;
+  box-shadow: 0 6px 18px rgba(243, 188, 66, 0.38);
+  transform: translateY(-1px);
+}
+
+.btn.btn-simple-gold:active,
+.btn.btn-simpel-gold:active,
+.btn-simple-gold:active,
+.btn-simpel-gold:active,
+.btn.btn-simple-gold:focus,
+.btn.btn-simpel-gold:focus,
+.btn-simple-gold:focus,
+.btn-simpel-gold:focus {
+  background-color: #c89524 !important;
+  border-color: #c89524 !important;
+  color: #071a33 !important;
+  box-shadow: 0 0 0 0.2rem rgba(243, 188, 66, 0.35) !important;
+  transform: translateY(0);
+}
+
+/* === Outline Navy Button === */
+.btn.btn-simple-outline,
+.btn.btn-simpel-outline,
+.btn-simple-outline,
+.btn-simpel-outline {
+  background-color: transparent !important;
+  border: 1.5px solid #071a33 !important;
+  color: #071a33 !important;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 0.55rem 1.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  text-decoration: none;
+}
+
+.btn.btn-simple-outline:hover,
+.btn.btn-simpel-outline:hover,
+.btn-simple-outline:hover,
+.btn-simpel-outline:hover {
+  background-color: #071a33 !important;
+  border-color: #071a33 !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 14px rgba(7, 26, 51, 0.2);
+  transform: translateY(-1px);
+}
+
+/* === Outline Gold Button === */
+.btn.btn-simple-outline-gold,
+.btn.btn-simpel-outline-gold,
+.btn-simple-outline-gold,
+.btn-simpel-outline-gold {
+  background-color: transparent !important;
+  border: 1.5px solid #f3bc42 !important;
+  color: #b37a05 !important;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 0.55rem 1.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  text-decoration: none;
+}
+
+.btn.btn-simple-outline-gold:hover,
+.btn.btn-simpel-outline-gold:hover,
+.btn-simple-outline-gold:hover,
+.btn-simpel-outline-gold:hover {
+  background-color: #f3bc42 !important;
+  border-color: #f3bc42 !important;
+  color: #071a33 !important;
+  box-shadow: 0 4px 14px rgba(243, 188, 66, 0.25);
+  transform: translateY(-1px);
+}
+
+/* === Soft/Light Navy Button === */
+.btn.btn-simple-light,
+.btn.btn-simpel-light,
+.btn-simple-light,
+.btn-simpel-light {
+  background-color: #e9eff7 !important;
+  border: 1px solid #d4e0ee !important;
+  color: #0c3158 !important;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 0.55rem 1.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.btn.btn-simple-light:hover,
+.btn.btn-simpel-light:hover,
+.btn-simple-light:hover,
+.btn-simpel-light:hover {
+  background-color: #dbe6f4 !important;
+  color: #071a33 !important;
+  border-color: #c2d4ea !important;
+}
+
+/* === Soft/Light Gold Button === */
+.btn.btn-simple-gold-light,
+.btn.btn-simpel-gold-light,
+.btn-simple-gold-light,
+.btn-simpel-gold-light {
+  background-color: #fff4d8 !important;
+  border: 1px solid #ffe7b0 !important;
+  color: #9a6700 !important;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 0.55rem 1.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.btn.btn-simple-gold-light:hover,
+.btn.btn-simpel-gold-light:hover,
+.btn-simple-gold-light:hover,
+.btn-simpel-gold-light:hover {
+  background-color: #ffeec2 !important;
+  color: #7a5200 !important;
+}
+
+/* === Background Color Utilities === */
+.bg-simple,
+.bg-simpel,
+.bg-simple-navy,
+.bg-simpel-navy {
+  background-color: #071a33 !important;
+  color: #ffffff !important;
+}
+
+.bg-simple-navy-dark,
+.bg-simpel-navy-dark {
+  background-color: #061326 !important;
+  color: #ffffff !important;
+}
+
+.bg-simple-gold,
+.bg-simpel-gold {
+  background-color: #f3bc42 !important;
+  color: #071a33 !important;
+}
+
+.bg-simple-subtle,
+.bg-simpel-subtle,
+.bg-simple-navy-subtle,
+.bg-simpel-navy-subtle {
+  background-color: #e9eff7 !important;
+  color: #0c3158 !important;
+}
+
+.bg-simple-gold-subtle,
+.bg-simpel-gold-subtle {
+  background-color: #fff4d8 !important;
+  color: #9a6700 !important;
+}
+
+/* === Text Color Utilities === */
+.text-simple,
+.text-simpel,
+.text-simple-navy,
+.text-simpel-navy {
+  color: #071a33 !important;
+}
+
+.text-simple-gold,
+.text-simpel-gold {
+  color: #b37a05 !important;
+}
+
+.text-simple-gold-bright,
+.text-simpel-gold-bright {
+  color: #f3bc42 !important;
+}
+
+.text-simple-muted,
+.text-simpel-muted {
+  color: #6b768a !important;
+}
+
+/* === Border Utilities === */
+.border-simple,
+.border-simpel,
+.border-simple-navy,
+.border-simpel-navy {
+  border-color: #071a33 !important;
+}
+
+.border-simple-gold,
+.border-simpel-gold {
+  border-color: #f3bc42 !important;
+}
+
+.border-simple-subtle,
+.border-simpel-subtle {
+  border-color: #e6eaf0 !important;
+}
+
+/* === Badges === */
+.badge-simple,
+.badge-simpel,
+.badge-simple-navy,
+.badge-simpel-navy {
+  background-color: #071a33 !important;
+  color: #ffffff !important;
+  font-weight: 600;
+  padding: 0.35rem 0.65rem;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.badge-simple-gold,
+.badge-simpel-gold {
+  background-color: #fff4d8 !important;
+  color: #9a6700 !important;
+  border: 1px solid #ffe7b0 !important;
+  font-weight: 600;
+  padding: 0.35rem 0.65rem;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.badge-simple-navy-subtle,
+.badge-simpel-navy-subtle {
+  background-color: #e9eff7 !important;
+  color: #0c3158 !important;
+  border: 1px solid #d4e0ee !important;
+  font-weight: 600;
+  padding: 0.35rem 0.65rem;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
 /*--------------------------------------------------------------
 # End
 --------------------------------------------------------------*/

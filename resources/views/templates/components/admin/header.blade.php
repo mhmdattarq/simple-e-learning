@@ -13,8 +13,7 @@ new class extends Component {
             <div class="col-auto">
                 <div class="d-flex flex-wrap align-items-center gap-3">
                     <div class="d-none d-md-flex align-items-center gap-2">
-                        <span class="simpel-badge simpel-badge-gold">BKPSDM Aceh Timur</span>
-                        <span class="text-secondary-light small d-none d-lg-inline">Sistem Informasi Manajemen
+                        <span class="text-simple-gold medium d-none d-lg-inline">Sistem Informasi Manajemen
                             Pelatihan</span>
                     </div>
                 </div>
