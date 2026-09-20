@@ -257,6 +257,33 @@ body::-webkit-scrollbar,
 .navbar-header {
     background: #ffffff !important;
     border-bottom: 1px solid var(--simpel-line) !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 1010 !important;
+}
+
+.navbar-header .dropdown-menu {
+    z-index: 1050 !important;
+}
+
+/* === Modal Backdrop Overlay (SIMPEL Theme - No Pitch-Black) === */
+.modal-backdrop {
+    --bs-backdrop-bg: rgba(7, 26, 51, 0.65) !important;
+    --bs-backdrop-opacity: 1 !important;
+    background-color: rgba(7, 26, 51, 0.65) !important;
+    opacity: 0;
+    transition: opacity 0.15s linear !important;
+    backdrop-filter: blur(4px) !important;
+    -webkit-backdrop-filter: blur(4px) !important;
+}
+
+.modal-backdrop.show {
+    opacity: 1 !important;
+}
+
+/* Guard against duplicate stacked backdrops */
+.modal-backdrop ~ .modal-backdrop {
+    display: none !important;
 }
 
 /* === Cards & Panels === */

@@ -1,0 +1,55 @@
+<?php
+
+use Livewire\Attributes\On;
+use Livewire\Component;
+
+new class extends Component {
+    public $isShow = false;
+
+    public $type = 'success';
+
+    public $msg = '';
+
+    public function mount()
+    {
+        if (session()->has('alert-show')) {
+            $this->show(session('alert-show'));
+        }
+    }
+
+    #[On('alert-show')]
+    public function show($data = [])
+    {
+        if (is_array($data)) {
+            $this->type = $data['type'] ?? 'success';
+            $this->msg = $data['message'] ?? ($data['msg'] ?? '');
+        } else {
+            $this->msg = (string) $data;
+        }
+
+        $this->isShow = true;
+    }
+};
+?>
+
+<div>
+    <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 9999;">
+        @if ($isShow)
+            <div class="toast show align-items-center text-white bg-{{ $type }} border-0 shadow-lg" role="alert"
+                style="border-radius: 12px; min-width: 300px;"
+                x-data="{ show: true }"
+                x-init="setTimeout(() => { show = false; $wire.set('isShow', false); }, 4000)"
+                x-show="show"
+                x-transition>
+                <div class="d-flex align-items-center justify-content-between p-2">
+                    <div class="toast-body d-flex align-items-center gap-2 py-1 px-2">
+                        <i class="ri-checkbox-circle-fill fs-5"></i>
+                        <span class="fs-7 fw-medium">{{ $msg }}</span>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2"
+                        wire:click="$set('isShow', false)" aria-label="Close"></button>
+                </div>
+            </div>
+        @endif
+    </div>
+</div>

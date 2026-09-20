@@ -32,9 +32,14 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     @livewireStyles
+    @stack('css')
 </head>
 
 <body>
+    {{-- Universal Modal & Toast (PRD-LW) --}}
+    <livewire:admin.modal />
+    <livewire:admin.toast />
+
     {{-- sidebar --}}
     <livewire:admin.sidebar wire:key="admin-sidebar-nav" />
 
@@ -67,8 +72,12 @@
     <script src="{{ asset('admin/assets/js/lib/slick.min.js') }}"></script>
     <!-- main js -->
     <script src="{{ asset('admin/assets/js/app.js') }}"></script>
+    <!-- global helper js (PRD-LW) -->
+    <script src="{{ asset('mine/script.js') }}"></script>
 
     @livewireScripts
+    @stack('js-stack')
+    @stack('scripts')
 </body>
 
 </html>

@@ -1,11 +1,12 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 new class extends Component {
     public function logout()
     {
-        auth()->logout();
+        Auth::logout();
         session()->invalidate();
         session()->regenerateToken();
 
@@ -34,15 +35,15 @@ new class extends Component {
                     </form>
 
                     {{-- Notifikasi --}}
-                    <div class="dropdown">
+                    <div class="dropdown" wire:ignore>
                         <button
                             class="has-indicator w-40-px h-40-px bg-neutral-100 rounded-circle d-flex justify-content-center align-items-center"
-                            type="button" data-bs-toggle="dropdown">
+                            type="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="ri-notification-3-line icon text-xl text-primary-light"></i>
                             <span
                                 class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"></span>
                         </button>
-                        <div class="dropdown-menu to-top dropdown-menu-lg p-0" style="width: 320px;">
+                        <div class="dropdown-menu to-top dropdown-menu-lg dropdown-menu-end p-0" style="width: 320px;">
                             <div class="py-12 px-16 border-bottom d-flex align-items-center justify-content-between"
                                 style="background-color: #071a33; border-radius: 8px 8px 0 0;">
                                 <h6 class="text-white fw-semibold mb-0 fs-6">Notifikasi SIMPEL</h6>
@@ -93,9 +94,9 @@ new class extends Component {
                     </div>
 
                     {{-- User Profile --}}
-                    <div class="dropdown">
+                    <div class="dropdown" wire:ignore>
                         <button class="d-flex align-items-center gap-2 border-0 bg-transparent p-0" type="button"
-                            data-bs-toggle="dropdown">
+                            data-bs-toggle="dropdown" aria-expanded="false">
                             <div class="seal sidebar-brand-seal"
                                 style="width: 38px !important; height: 38px !important; font-size: 15px !important; border-radius: 10px !important;">
                                 {{ auth()->user() ? strtoupper(substr(auth()->user()->name, 0, 2)) : 'MS' }}
@@ -106,7 +107,7 @@ new class extends Component {
                             </div>
                             <i class="ri-arrow-down-s-line text-secondary-light d-none d-lg-block"></i>
                         </button>
-                        <div class="dropdown-menu to-top dropdown-menu-sm">
+                        <div class="dropdown-menu to-top dropdown-menu-sm dropdown-menu-end shadow-sm">
                             <div class="py-12 px-16 radius-8 mb-12" style="background: #071a33; color: #fff;">
                                 <h6 class="text-white fw-semibold mb-1" style="font-size: 14px;">{{ auth()->user()->name ?? 'Administrator' }}</h6>
                                 <span class="badge"
@@ -131,10 +132,13 @@ new class extends Component {
                                     <hr class="dropdown-divider my-1">
                                 </li>
                                 <li>
-                                    <button type="button" wire:click="logout"
-                                        class="dropdown-item text-danger px-12 py-8 hover-text-danger d-flex align-items-center gap-2 rounded border-0 bg-transparent w-100 text-start">
-                                        <i class="ri-logout-box-r-line icon text-lg"></i> Keluar
-                                    </button>
+                                    <form method="POST" action="{{ route('logout') }}" class="m-0 p-0">
+                                        @csrf
+                                        <button type="submit"
+                                            class="dropdown-item text-danger px-12 py-8 hover-text-danger d-flex align-items-center gap-2 rounded border-0 bg-transparent w-100 text-start">
+                                            <i class="ri-logout-box-r-line icon text-lg"></i> Keluar
+                                        </button>
+                                    </form>
                                 </li>
                             </ul>
                         </div>
