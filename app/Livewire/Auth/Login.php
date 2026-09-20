@@ -2,9 +2,9 @@
 
 namespace App\Livewire\Auth;
 
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
-use Livewire\Attributes\Rule;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 
@@ -12,36 +12,107 @@ use Livewire\Component;
 #[Title('Masuk ke Portal - SIMPEL E-Learning BKPSDM Aceh Timur')]
 class Login extends Component
 {
-    #[Rule(['required', 'string'], message: [
-        'required' => 'Email atau NIP wajib diisi.',
-    ])]
+    public string $identifier = '';
+
     public string $email = '';
 
-    #[Rule(['required', 'string'], message: [
-        'required' => 'Kata sandi wajib diisi.',
-    ])]
     public string $password = '';
 
     public bool $remember = false;
+
+    public string $errorMessage = '';
+
+    /**
+     * Keep identifier and email in sync for backward compatibility.
+     */
+    public function updatedEmail($value): void
+    {
+        $this->identifier = (string) $value;
+    }
+
+    public function updatedIdentifier($value): void
+    {
+        $this->email = (string) $value;
+    }
+
+    public function rules(): array
+    {
+        return [
+            'identifier' => 'required_without:email|string',
+            'email' => 'required_without:identifier|string',
+            'password' => 'required|string',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'identifier.required_without' => 'Email atau NIP wajib diisi.',
+            'email.required_without' => 'Email atau NIP wajib diisi.',
+            'password.required' => 'Kata sandi wajib diisi.',
+        ];
+    }
 
     /**
      * Handle incoming authentication attempt.
      */
     public function authenticate()
     {
-        $this->validate();
+        $this->errorMessage = '';
 
-        $fieldType = filter_var($this->email, FILTER_VALIDATE_EMAIL) ? 'email' : 'name';
+        $resolvedIdentifier = trim($this->identifier !== '' ? $this->identifier : $this->email);
 
-        if (! Auth::attempt([$fieldType => $this->email, 'password' => $this->password], $this->remember)) {
-            $this->addError('email', 'Kredensial yang Anda masukkan tidak cocok dengan data akun kami.');
+        if ($resolvedIdentifier === '') {
+            $this->addError('identifier', 'Email atau NIP wajib diisi.');
+            $this->addError('email', 'Email atau NIP wajib diisi.');
+
+            if ($this->password === '') {
+                $this->addError('password', 'Kata sandi wajib diisi.');
+            }
 
             return;
         }
 
-        session()->regenerate();
+        if ($this->password === '') {
+            $this->addError('password', 'Kata sandi wajib diisi.');
 
-        return redirect()->intended(route('admin.dashboard'));
+            return;
+        }
+
+        // SMART DUAL-IDENTIFIER LOGIC (PRD-LW)
+        // Jika angka saja -> NIP (18 digit ASN), selain itu -> Email
+        $field = is_numeric($resolvedIdentifier) ? 'nip' : 'email';
+
+        $credentials = [
+            $field => $resolvedIdentifier,
+            'password' => $this->password,
+        ];
+
+        if (Auth::attempt($credentials, $this->remember)) {
+            session()->regenerate();
+
+            /** @var User $user */
+            $user = Auth::user();
+
+            // Role-based redirection (PRD.md):
+            // Internal Management (Admin, Mentor, Verifikator, Pimpinan) -> admin.dashboard
+            // Siswa ASN (Peserta) -> landing
+            return $user->hasAdminAccess()
+                ? redirect()->intended(route('admin.dashboard'))
+                : redirect()->intended(route('landing'));
+        }
+
+        $this->errorMessage = 'Email/NIP atau kata sandi yang Anda masukkan salah.';
+        $this->addError('identifier', $this->errorMessage);
+        $this->addError('email', $this->errorMessage);
+    }
+
+    /**
+     * Alias for authenticate() to match PRD-LW standard.
+     */
+    public function login()
+    {
+        return $this->authenticate();
     }
 
     public function render()
