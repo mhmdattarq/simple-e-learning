@@ -32,7 +32,8 @@
             </p>
         </div>
         <button type="button" class="btn-simpel-gold" data-bs-toggle="modal" data-bs-target="#modalRencanaPelatihan">
-            ＋ Buat Rencana Pelatihan
+            <i class="ri-add-line"></i>
+            Buat Rencana Pelatihan
         </button>
     </div>
 
@@ -466,74 +467,74 @@
 
     {{-- Modal Rencana Pelatihan Baru (prototype.html style) --}}
     <div class="modal fade" id="modalRencanaPelatihan" tabindex="-1" aria-labelledby="modalRencanaPelatihanLabel"
-    aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content"
-            style="border-radius: 20px; border: 1px solid #e6eaf0; box-shadow: 0 10px 40px rgba(7, 26, 51, 0.15);">
-            <div class="modal-header border-bottom py-20 px-24"
-                style="background-color: #071a33; border-radius: 19px 19px 0 0;">
-                <div>
-                    <span class="text-uppercase fw-bold text-xs"
-                        style="color: #f3bc42; letter-spacing: 1.5px;">Formulir Perencanaan</span>
-                    <h5 class="modal-title fw-bold text-white mb-0" id="modalRencanaPelatihanLabel">Rencana
-                        Pelatihan Baru</h5>
-                </div>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                    aria-label="Close"></button>
-            </div>
-            <div class="modal-body p-24">
-                <p class="text-muted small mb-20">
-                    Isi parameter utama pelatihan di bawah. Rencana dapat disimpan sebagai draf sebelum diajukan ke
-                    tahap pendaftaran publik.
-                </p>
-
-                <form>
-                    <div class="row g-3">
-                        <div class="col-12">
-                            <label class="form-label fw-bold text-dark small">Nama Program Pelatihan</label>
-                            <input type="text" class="form-control rounded-3"
-                                placeholder="Contoh: Pelatihan Manajemen Administrator Angkatan II">
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label fw-bold text-dark small">Kategori Pelatihan</label>
-                            <select class="form-select rounded-3">
-                                <option selected>Pelatihan Kepemimpinan</option>
-                                <option>Pelatihan Teknis Fungsional</option>
-                                <option>Pelatihan Sosial Kultural</option>
-                            </select>
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label fw-bold text-dark small">Metode Pelaksanaan</label>
-                            <select class="form-select rounded-3">
-                                <option selected>Luring (Tatap Muka di Aula)</option>
-                                <option>Daring (E-Learning Penuh)</option>
-                                <option>Hybrid (Kombinasi)</option>
-                            </select>
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label fw-bold text-dark small">Tanggal Mulai Pelaksanaan</label>
-                            <input type="date" class="form-control rounded-3">
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label fw-bold text-dark small">Kuota Peserta</label>
-                            <input type="number" class="form-control rounded-3" value="40" min="1">
-                        </div>
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content"
+                style="border-radius: 20px; border: 1px solid #e6eaf0; box-shadow: 0 10px 40px rgba(7, 26, 51, 0.15);">
+                <div class="modal-header border-bottom py-20 px-24"
+                    style="background-color: #071a33; border-radius: 19px 19px 0 0;">
+                    <div>
+                        <span class="text-uppercase fw-bold text-xs"
+                            style="color: #f3bc42; letter-spacing: 1.5px;">Formulir Perencanaan</span>
+                        <h5 class="modal-title fw-bold text-white mb-0" id="modalRencanaPelatihanLabel">Rencana
+                            Pelatihan Baru</h5>
                     </div>
-                </form>
-            </div>
-            <div class="modal-footer border-top py-16 px-24 d-flex justify-content-end gap-2"
-                style="background-color: #f8f9fb; border-radius: 0 0 19px 19px;">
-                <button type="button" class="btn btn-outline-secondary rounded-3 px-4"
-                    data-bs-dismiss="modal">Batal</button>
-                <button type="button" class="btn btn-simpel-gold px-4" data-bs-dismiss="modal">
-                    Simpan Draf Rencana
-                </button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-24">
+                    <p class="text-muted small mb-20">
+                        Isi parameter utama pelatihan di bawah. Rencana dapat disimpan sebagai draf sebelum diajukan ke
+                        tahap pendaftaran publik.
+                    </p>
+
+                    <form>
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label class="form-label fw-bold text-dark small">Nama Program Pelatihan</label>
+                                <input type="text" class="form-control rounded-3"
+                                    placeholder="Contoh: Pelatihan Manajemen Administrator Angkatan II">
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold text-dark small">Kategori Pelatihan</label>
+                                <select class="form-select rounded-3">
+                                    <option selected>Pelatihan Kepemimpinan</option>
+                                    <option>Pelatihan Teknis Fungsional</option>
+                                    <option>Pelatihan Sosial Kultural</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold text-dark small">Metode Pelaksanaan</label>
+                                <select class="form-select rounded-3">
+                                    <option selected>Luring (Tatap Muka di Aula)</option>
+                                    <option>Daring (E-Learning Penuh)</option>
+                                    <option>Hybrid (Kombinasi)</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold text-dark small">Tanggal Mulai Pelaksanaan</label>
+                                <input type="date" class="form-control rounded-3">
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold text-dark small">Kuota Peserta</label>
+                                <input type="number" class="form-control rounded-3" value="40" min="1">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer border-top py-16 px-24 d-flex justify-content-end gap-2"
+                    style="background-color: #f8f9fb; border-radius: 0 0 19px 19px;">
+                    <button type="button" class="btn btn-outline-secondary rounded-3 px-4"
+                        data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-simpel-gold px-4" data-bs-dismiss="modal">
+                        Simpan Draf Rencana
+                    </button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 </div>
