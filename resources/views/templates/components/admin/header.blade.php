@@ -3,7 +3,14 @@
 use Livewire\Component;
 
 new class extends Component {
-    //
+    public function logout()
+    {
+        auth()->logout();
+        session()->invalidate();
+        session()->regenerateToken();
+
+        return redirect()->route('login');
+    }
 };
 ?>
 
@@ -89,22 +96,21 @@ new class extends Component {
                     <div class="dropdown">
                         <button class="d-flex align-items-center gap-2 border-0 bg-transparent p-0" type="button"
                             data-bs-toggle="dropdown">
-                            <div class="sidebar-brand-seal"
-                                style="width: 38px; height: 38px; font-size: 15px; border-radius: 10px;">
-                                MS
+                            <div class="seal sidebar-brand-seal"
+                                style="width: 38px !important; height: 38px !important; font-size: 15px !important; border-radius: 10px !important;">
+                                {{ auth()->user() ? strtoupper(substr(auth()->user()->name, 0, 2)) : 'MS' }}
                             </div>
                             <div class="d-none d-lg-flex flex-column text-start">
-                                <span class="fw-bold text-dark fs-6" style="line-height: 1.2;">M. Suryasyah</span>
-                                <small class="text-secondary-light" style="font-size: 11px;">Admin Diklat</small>
+                                <span class="fw-bold text-dark fs-6" style="line-height: 1.2;">{{ auth()->user()->name ?? 'Administrator' }}</span>
+                                <small class="text-secondary-light" style="font-size: 11px;">{{ auth()->user()?->role?->label() ?? 'Admin Diklat' }}</small>
                             </div>
                             <i class="ri-arrow-down-s-line text-secondary-light d-none d-lg-block"></i>
                         </button>
                         <div class="dropdown-menu to-top dropdown-menu-sm">
                             <div class="py-12 px-16 radius-8 mb-12" style="background: #071a33; color: #fff;">
-                                <h6 class="text-white fw-semibold mb-1" style="font-size: 14px;">Muhammad Suryasyah</h6>
+                                <h6 class="text-white fw-semibold mb-1" style="font-size: 14px;">{{ auth()->user()->name ?? 'Administrator' }}</h6>
                                 <span class="badge"
-                                    style="background: #f3bc42; color: #071a33; font-weight: 700;">Administrator
-                                    Diklat</span>
+                                    style="background: #f3bc42; color: #071a33; font-weight: 700;">{{ auth()->user()?->role?->label() ?? 'Admin Diklat' }}</span>
                             </div>
                             <ul class="to-top-list list-unstyled p-0 m-0">
                                 <li>
@@ -125,10 +131,10 @@ new class extends Component {
                                     <hr class="dropdown-divider my-1">
                                 </li>
                                 <li>
-                                    <a class="dropdown-item text-danger px-12 py-8 hover-text-danger d-flex align-items-center gap-2 rounded"
-                                        href="javascript:void(0)">
+                                    <button type="button" wire:click="logout"
+                                        class="dropdown-item text-danger px-12 py-8 hover-text-danger d-flex align-items-center gap-2 rounded border-0 bg-transparent w-100 text-start">
                                         <i class="ri-logout-box-r-line icon text-lg"></i> Keluar
-                                    </a>
+                                    </button>
                                 </li>
                             </ul>
                         </div>

@@ -1,7 +1,11 @@
 <?php
 
 use App\Livewire\Admin\Dashboard\DashboardIndex;
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
+
+uses(RefreshDatabase::class);
 
 test('landing page can be accessed successfully and displays core sections', function () {
     $response = $this->get('/');
@@ -23,14 +27,78 @@ test('landing page can be accessed successfully and displays core sections', fun
     $response->assertDontSee('(0646) 7000-111');
 });
 
-test('admin dashboard can be accessed on /admin and /dashboard', function () {
-    $responseAdmin = $this->get('/admin');
+test('admin dashboard can be accessed on /admin and /dashboard by authenticated admin', function () {
+    $admin = User::factory()->admin()->create();
+
+    $responseAdmin = $this->actingAs($admin)->get('/admin');
     $responseAdmin->assertStatus(200);
 
-    $responseDashboard = $this->get('/dashboard');
+    $responseDashboard = $this->actingAs($admin)->get('/dashboard');
     $responseDashboard->assertStatus(200);
 
-    Livewire::test(DashboardIndex::class)
+    Livewire::actingAs($admin)
+        ->test(DashboardIndex::class)
         ->assertOk()
         ->assertSee('Beranda Administrator');
+});
+
+test('guest sees masuk and daftar buttons on landing navbar', function () {
+    $response = $this->get('/');
+
+    $response->assertStatus(200);
+    $response->assertSee('class="thm-btn">Masuk</a>', false);
+    $response->assertSee('class="thm-btn">Daftar</a>', false);
+    $response->assertDontSee('Keluar');
+    $response->assertDontSee('Profil Saya');
+
+    Livewire::test('landing.navbar')
+        ->assertSee('Masuk')
+        ->assertSee('Daftar')
+        ->assertDontSee('Keluar');
+});
+
+test('authenticated peserta sees user profile dropdown and does not see masuk and daftar buttons', function () {
+    $peserta = User::factory()->peserta()->create([
+        'name' => 'Cut Nyak Dien',
+        'nip' => '199501012020012001',
+    ]);
+
+    $response = $this->actingAs($peserta)->get('/');
+
+    $response->assertStatus(200);
+    $response->assertSee('Cut Nyak Dien');
+    $response->assertSee('Peserta');
+    $response->assertSee('199501012020012001');
+    $response->assertSee('Profil Saya');
+    $response->assertSee('Keluar');
+    $response->assertDontSee('class="thm-btn">Masuk</a>', false);
+    $response->assertDontSee('class="thm-btn">Daftar</a>', false);
+
+    Livewire::actingAs($peserta)
+        ->test('landing.navbar')
+        ->assertSee('Cut Nyak Dien')
+        ->assertSee('Peserta')
+        ->assertSee('199501012020012001')
+        ->assertSee('Keluar')
+        ->assertDontSee('class="thm-btn">Masuk</a>', false);
+});
+
+test('authenticated user can logout from landing navbar and is redirected to landing', function () {
+    $peserta = User::factory()->peserta()->create();
+
+    $this->actingAs($peserta);
+    $this->assertAuthenticatedAs($peserta);
+
+    Livewire::actingAs($peserta)
+        ->test('landing.navbar')
+        ->call('logout')
+        ->assertRedirect(route('landing'));
+
+    $this->assertGuest();
+
+    // Subsequent visit to landing shows guest buttons again
+    $this->get('/')
+        ->assertStatus(200)
+        ->assertSee('class="thm-btn">Masuk</a>', false)
+        ->assertSee('class="thm-btn">Daftar</a>', false);
 });

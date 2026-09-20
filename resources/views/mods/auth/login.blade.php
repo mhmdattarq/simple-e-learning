@@ -67,32 +67,34 @@
                 <p class="auth-clean-desc">Silakan masukkan email atau NIP dan kata sandi Anda.</p>
             </div>
 
-            @if (session()->has('error'))
+            @if ($errorMessage || session()->has('error'))
                 <div
                     class="alert alert-danger py-8 px-12 radius-8 text-xs mb-16 d-flex align-items-center gap-2 border-0 bg-danger-50 text-danger-600">
                     <i class="ri-error-warning-fill text-base flex-shrink-0"></i>
-                    <span>{{ session('error') }}</span>
+                    <span>{{ $errorMessage ?: session('error') }}</span>
                 </div>
             @endif
 
             {{-- Login Form --}}
-            <form wire:submit.prevent="authenticate" novalidate>
+            <form wire:submit="authenticate">
                 {{-- Email or NIP --}}
                 <div class="mb-16">
-                    <label class="form-label text-xs fw-semibold text-secondary-dark mb-6" for="email">
+                    <label class="form-label text-xs fw-semibold text-secondary-dark mb-6" for="identifier">
                         Email atau NIP
                     </label>
                     <div class="auth-input-wrapper">
                         <span class="auth-field-icon">
                             <i class="ri-mail-line"></i>
                         </span>
-                        <input type="text" id="email" wire:model.defer="email"
-                            class="form-control auth-input @error('email') is-invalid @enderror"
+                        <input type="text" id="identifier" wire:model="identifier"
+                            class="form-control auth-input @if ($errors->has('identifier') || $errors->has('email')) is-invalid @endif"
                             placeholder="nama@email.com atau NIP" autocomplete="username">
                     </div>
-                    @error('email')
-                        <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
-                    @enderror
+                    @if ($errors->has('identifier'))
+                        <div class="invalid-feedback d-block text-xs mt-1">{{ $errors->first('identifier') }}</div>
+                    @elseif ($errors->has('email'))
+                        <div class="invalid-feedback d-block text-xs mt-1">{{ $errors->first('email') }}</div>
+                    @endif
                 </div>
 
                 {{-- Password --}}
