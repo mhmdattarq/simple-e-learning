@@ -32,8 +32,8 @@ new class extends Component {
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('perencanaan*') ? 'active' : '' }}"
-                            href="{{ route('perencanaan') }}" title="Perencanaan" wire:navigate>
+                        <a class="nav-link {{ request()->routeIs('perencanaan*') || request()->routeIs('admin.dashboard') ? 'active' : '' }}"
+                            href="{{ route('perencanaan.data') }}" title="Perencanaan" wire:navigate>
                             <i class="ri-file-list-3-line menu-icon"></i>
                             <span>Perencanaan</span>
                         </a>
