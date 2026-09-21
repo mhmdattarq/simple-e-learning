@@ -3,7 +3,7 @@
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
         <div>
             <h5 class="fw-bold text-dark mb-1">Tahap 1: Perencanaan Diklat</h5>
-            <p class="text-muted text-xs mb-0">Manajemen perumusan program pelatihan, penetapan kuota, model
+            <p class="text-muted mb-0">Manajemen perumusan program pelatihan, penetapan kuota, model
                 permanen/batch, dan KAK.</p>
         </div>
         <div class="d-flex align-items-center gap-2">
