@@ -6,11 +6,9 @@ use App\Models\Category;
 use App\Models\Course;
 use App\Repositories\PerencanaanRepo;
 use Illuminate\Support\Collection;
-use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
-#[Title('Edit Pelatihan - Perencanaan Diklat SIMPEL')]
 class PerencanaanEdit extends Component
 {
     use WithFileUploads;

@@ -4,10 +4,8 @@ namespace App\Livewire\Admin\Perencanaan;
 
 use App\Repositories\PerencanaanRepo;
 use Livewire\Attributes\On;
-use Livewire\Attributes\Title;
 use Livewire\Component;
 
-#[Title('Perencanaan Diklat - SIMPEL BKPSDM Aceh Timur')]
 class PerencanaanData extends Component
 {
     public function hookModalDelete($id, $identity)

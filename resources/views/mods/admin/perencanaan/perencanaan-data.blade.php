@@ -17,7 +17,7 @@
     {{-- Main Card with Table --}}
     <div class="card simpel-card border-0 shadow-sm radius-16">
         <div
-            class="card-header bg-white py-16 px-20 border-bottom d-flex align-items-center justify-content-between flex-wrap gap-2">
+            class="card-header bg-white pt-20 pb-0 px-20 border-0 d-flex align-items-center justify-content-between flex-wrap gap-2">
             <div class="d-flex align-items-center gap-2">
                 <i class="ri-file-list-3-fill text-simple fs-5"></i>
                 <h6 class="fw-bold text-dark mb-0 fs-6">Daftar Pelatihan (Katalog Perencanaan)</h6>
