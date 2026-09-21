@@ -1,8 +1,11 @@
 <?php
 
+use App\Enums\Role;
 use App\Livewire\Auth\Login;
+use App\Livewire\Auth\Register;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Hash;
 use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
@@ -156,4 +159,102 @@ test('user can logout successfully via post request', function () {
         ->assertRedirect(route('login'));
 
     $this->assertGuest();
+});
+
+test('register page can be accessed by guest and shows registration fields', function () {
+    $response = $this->get(route('register'));
+
+    $response->assertStatus(200);
+    $response->assertSee('Pendaftaran Peserta / Siswa');
+    $response->assertSee('Identitas Kepegawaian ASN');
+    $response->assertSee('NIP (18 Digit)');
+    $response->assertSee('Nama Lengkap');
+    $response->assertSee('Instansi / OPD Asal');
+    $response->assertSee('Jabatan Saat Ini');
+    $response->assertSee('Pangkat / Golongan');
+    $response->assertSee('Kontak');
+    $response->assertSee('Daftarkan Akun Peserta');
+});
+
+test('guest user can register successfully as peserta with valid data', function () {
+    Livewire::test(Register::class)
+        ->set('form.name', 'Fauzan Akbar, S.STP')
+        ->set('form.nip', '199508172020121002')
+        ->set('form.email', 'fauzan@acehtimurkab.go.id')
+        ->set('form.phone_number', '081234567890')
+        ->set('form.opd_agency', 'Badan Kepegawaian dan Pengembangan SDM')
+        ->set('form.position', 'Pranata Komputer Ahli Pertama')
+        ->set('form.rank_class', 'Penata Muda - III/a')
+        ->set('form.password', 'rahasia123')
+        ->set('form.password_confirmation', 'rahasia123')
+        ->call('register')
+        ->assertHasNoErrors()
+        ->assertRedirect(route('login'));
+
+    $this->assertDatabaseHas('users', [
+        'name' => 'Fauzan Akbar, S.STP',
+        'nip' => '199508172020121002',
+        'email' => 'fauzan@acehtimurkab.go.id',
+        'role' => Role::Peserta->value,
+        'phone_number' => '081234567890',
+        'opd_agency' => 'Badan Kepegawaian dan Pengembangan SDM',
+        'position' => 'Pranata Komputer Ahli Pertama',
+        'rank_class' => 'Penata Muda - III/a',
+    ]);
+
+    $createdUser = User::where('nip', '199508172020121002')->first();
+    expect($createdUser->isPeserta())->toBeTrue();
+    expect(Hash::check('rahasia123', $createdUser->password))->toBeTrue();
+});
+
+test('registration validates required fields and 18 digits numeric nip', function () {
+    Livewire::test(Register::class)
+        ->set('form.name', '')
+        ->set('form.nip', '12345') // Less than 18 digits
+        ->set('form.email', 'bukan-email')
+        ->set('form.phone_number', '')
+        ->set('form.opd_agency', '')
+        ->set('form.position', '')
+        ->set('form.rank_class', '')
+        ->set('form.password', '123') // Less than 6 chars
+        ->set('form.password_confirmation', '456') // Mismatched
+        ->call('register')
+        ->assertHasErrors([
+            'form.name',
+            'form.nip',
+            'form.email',
+            'form.phone_number',
+            'form.opd_agency',
+            'form.position',
+            'form.rank_class',
+            'form.password',
+        ]);
+});
+
+test('registration fails when nip or email already exists in database', function () {
+    User::factory()->create([
+        'nip' => '199001012015011001',
+        'email' => 'existing@simpel.go.id',
+    ]);
+
+    Livewire::test(Register::class)
+        ->set('form.name', 'Peserta Baru')
+        ->set('form.nip', '199001012015011001') // Duplicate NIP
+        ->set('form.email', 'existing@simpel.go.id') // Duplicate Email
+        ->set('form.phone_number', '081299998888')
+        ->set('form.opd_agency', 'Dinas Pendidikan')
+        ->set('form.position', 'Guru Ahli Pertama')
+        ->set('form.rank_class', 'Penata Muda - III/a')
+        ->set('form.password', 'password123')
+        ->set('form.password_confirmation', 'password123')
+        ->call('register')
+        ->assertHasErrors(['form.nip', 'form.email']);
+});
+
+test('authenticated user is redirected away from register page by guest middleware', function () {
+    $peserta = User::factory()->peserta()->create();
+
+    $this->actingAs($peserta)
+        ->get(route('register'))
+        ->assertRedirect(route('dashboard'));
 });

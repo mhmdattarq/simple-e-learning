@@ -67,6 +67,15 @@
                 <p class="auth-clean-desc">Silakan masukkan email atau NIP dan kata sandi Anda.</p>
             </div>
 
+            @if (session()->has('success'))
+                <div
+                    class="alert alert-success py-8 px-12 radius-8 text-xs mb-16 d-flex align-items-center gap-2 border-0 bg-success-50 text-success-700"
+                    style="background-color: #def4e9; color: #16845b;">
+                    <i class="ri-checkbox-circle-fill text-base flex-shrink-0"></i>
+                    <span>{{ session('success') }}</span>
+                </div>
+            @endif
+
             @if ($errorMessage || session()->has('error'))
                 <div
                     class="alert alert-danger py-8 px-12 radius-8 text-xs mb-16 d-flex align-items-center gap-2 border-0 bg-danger-50 text-danger-600">
@@ -145,9 +154,9 @@
                 <div class="text-center pt-16 border-top">
                     <p class="text-xs text-muted mb-0">
                         Belum memiliki akun?
-                        <a href="{{ route('landing') }}#katalog"
-                            class="fw-semibold text-dark text-decoration-none hover-underline">
-                            Daftar
+                        <a href="{{ route('register') }}"
+                            class="fw-semibold text-dark text-decoration-none hover-underline" wire:navigate>
+                            Daftar Sekarang
                         </a>
                     </p>
                 </div>

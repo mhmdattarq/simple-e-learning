@@ -220,7 +220,7 @@ new class extends Component {
                                         <a href="{{ route('login') }}" class="thm-btn">Masuk</a>
                                     </div>
                                     <div class="main-menu__btn-box-2">
-                                        <a href="#" class="thm-btn">Daftar</a>
+                                        <a href="{{ route('register') }}" class="thm-btn">Daftar</a>
                                     </div>
                                 </div>
                             @else

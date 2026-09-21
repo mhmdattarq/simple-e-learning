@@ -6,6 +6,7 @@ use App\Livewire\Admin\Perencanaan\PerencanaanCreate;
 use App\Livewire\Admin\Perencanaan\PerencanaanData;
 use App\Livewire\Admin\Perencanaan\PerencanaanEdit;
 use App\Livewire\Auth\Login;
+use App\Livewire\Auth\Register;
 use App\Livewire\Landing\LandingIndex;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -16,6 +17,7 @@ Route::livewire('/', LandingIndex::class)->name('landing');
 // 2. Authentication (Guest)
 Route::middleware('guest')->group(function () {
     Route::livewire('/login', Login::class)->name('login');
+    Route::livewire('/register', Register::class)->name('register');
 });
 
 // 3. Logout (Authenticated - POST Aman per PRD-LW.md)

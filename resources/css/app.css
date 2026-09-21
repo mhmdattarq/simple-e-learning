@@ -258,6 +258,38 @@ body::-webkit-scrollbar,
     display: none !important;
 }
 
+/* === Global Placeholder Sizing & Color Normalize === */
+input::placeholder,
+textarea::placeholder,
+select::placeholder,
+.form-control::placeholder,
+.form-select::placeholder {
+    font-size: inherit !important;
+    color: #94a3b8 !important;
+    font-weight: 400 !important;
+    opacity: 0.9 !important;
+}
+
+::-webkit-input-placeholder {
+    font-size: inherit !important;
+    color: #94a3b8 !important;
+}
+
+::-moz-placeholder {
+    font-size: inherit !important;
+    color: #94a3b8 !important;
+}
+
+:-ms-input-placeholder {
+    font-size: inherit !important;
+    color: #94a3b8 !important;
+}
+
+:-moz-placeholder {
+    font-size: inherit !important;
+    color: #94a3b8 !important;
+}
+
 /* === Navbar / Header Topbar === */
 .navbar-header {
     background: #ffffff !important;
@@ -1518,6 +1550,14 @@ body::-webkit-scrollbar,
     color: #0f172a !important;
     transition: all 0.15s ease !important;
     box-shadow: none !important;
+}
+
+.auth-input-wrapper input.auth-input::placeholder,
+.auth-input-wrapper select.auth-input::placeholder,
+.auth-input-wrapper textarea.auth-input::placeholder {
+    font-size: 13px !important;
+    color: #94a3b8 !important;
+    font-weight: 400 !important;
 }
 
 .auth-input-wrapper input.auth-input.has-toggle {
