@@ -6,11 +6,9 @@ use App\Models\Category;
 use App\Repositories\PerencanaanRepo;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
-use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
-#[Title('Tambah Pelatihan Baru - Perencanaan Diklat SIMPEL')]
 class PerencanaanCreate extends Component
 {
     use WithFileUploads;
