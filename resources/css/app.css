@@ -253,17 +253,22 @@ body::-webkit-scrollbar,
     color: #cfdaea;
 }
 
+/* === Global Alpine x-cloak === */
+[x-cloak] {
+    display: none !important;
+}
+
 /* === Navbar / Header Topbar === */
 .navbar-header {
     background: #ffffff !important;
     border-bottom: 1px solid var(--simpel-line) !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 1010 !important;
+    z-index: 1040 !important;
 }
 
 .navbar-header .dropdown-menu {
-    z-index: 1050 !important;
+    z-index: 1060 !important;
 }
 
 /* === Modal Backdrop Overlay (SIMPEL Theme - No Pitch-Black) === */

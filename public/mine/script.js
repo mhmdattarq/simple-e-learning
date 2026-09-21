@@ -77,7 +77,7 @@ window.addEventListener("reloadDT", (param) => {
     }
 });
 
-// 4. Lifecycle Livewire Navigation: Bersihkan state modal dan dropdown
+// 4. Lifecycle Livewire Navigation: Bersihkan state modal dan backdrop yatim
 document.addEventListener("livewire:navigated", () => {
     if (typeof $ !== "undefined") {
         $(".modal-backdrop").remove();
@@ -85,9 +85,5 @@ document.addEventListener("livewire:navigated", () => {
             .removeClass("modal-open")
             .css("overflow", "")
             .css("padding-right", "");
-        $(".dropdown-menu.show").removeClass("show");
-        $('[data-bs-toggle="dropdown"].show')
-            .removeClass("show")
-            .attr("aria-expanded", "false");
     }
 });

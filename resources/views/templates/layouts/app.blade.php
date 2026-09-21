@@ -45,10 +45,12 @@
 
     <main class="dashboard-main">
         {{-- navbar / header --}}
-        <livewire:admin.header wire:key="admin-header-nav" />
+        <div style="position: sticky; top: 0; z-index: 1040;">
+            <livewire:admin.header wire:key="admin-header-nav" />
+        </div>
 
         {{-- main contenct  --}}
-        <div class="dashboard-main-body">
+        <div class="dashboard-main-body" style="position: relative; z-index: 1;">
             {{ $slot }}
         </div>
     </main>

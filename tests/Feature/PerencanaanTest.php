@@ -191,3 +191,35 @@ test('perencanaan delete event deletes course from database and dispatches event
         'id' => $course->id,
     ]);
 });
+
+test('header user profile dropdown and logout form render on beranda, data, create, and edit pages', function () {
+    $admin = User::factory()->admin()->create();
+    $category = Category::first();
+
+    $course = Course::create([
+        'code' => 'PLT-2026-077',
+        'title' => 'Pelatihan Pengujian Dropdown',
+        'category_id' => $category->id,
+        'type' => 'permanent',
+        'method' => 'daring',
+        'quota' => 25,
+        'status' => 'draft',
+        'created_by' => $admin->id,
+    ]);
+
+    $routes = [
+        route('admin.dashboard'),
+        route('perencanaan.data'),
+        route('perencanaan.create'),
+        route('perencanaan.edit', $course->id),
+    ];
+
+    foreach ($routes as $url) {
+        $response = $this->actingAs($admin)->get($url);
+        $response->assertOk();
+        $response->assertSee('Profil Saya');
+        $response->assertSee('Pengaturan Akun');
+        $response->assertSee('Keluar');
+        $response->assertSee(route('logout'));
+    }
+});
