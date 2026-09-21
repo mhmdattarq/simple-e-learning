@@ -15,7 +15,7 @@ new class extends Component {
 };
 ?>
 
-<div>
+<div style="position: sticky; top: 0; z-index: 1040;">
     <div class="navbar-header">
         <div class="row align-items-center justify-content-between">
             <div class="col-auto">
@@ -35,15 +35,22 @@ new class extends Component {
                     </form>
 
                     {{-- Notifikasi --}}
-                    <div class="dropdown" wire:ignore>
+                    <div class="dropdown position-relative" x-data="{ open: false }" @click.outside="open = false">
                         <button
-                            class="has-indicator w-40-px h-40-px bg-neutral-100 rounded-circle d-flex justify-content-center align-items-center"
-                            type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            class="has-indicator w-40-px h-40-px bg-neutral-100 rounded-circle d-flex justify-content-center align-items-center border-0"
+                            type="button"
+                            @click="open = !open"
+                            :aria-expanded="open.toString()">
                             <i class="ri-notification-3-line icon text-xl text-primary-light"></i>
                             <span
                                 class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"></span>
                         </button>
-                        <div class="dropdown-menu to-top dropdown-menu-lg dropdown-menu-end p-0" style="width: 320px;">
+                        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0 shadow-lg"
+                            x-show="open"
+                            x-cloak
+                            :class="{ 'show': open }"
+                            style="position: absolute; right: 0; top: calc(100% + 8px); z-index: 1060; width: 320px; display: none;"
+                            :style="open ? 'display: block;' : 'display: none;'">
                             <div class="py-12 px-16 border-bottom d-flex align-items-center justify-content-between"
                                 style="background-color: #071a33; border-radius: 8px 8px 0 0;">
                                 <h6 class="text-white fw-semibold mb-0 fs-6">Notifikasi SIMPEL</h6>
@@ -94,9 +101,11 @@ new class extends Component {
                     </div>
 
                     {{-- User Profile --}}
-                    <div class="dropdown" wire:ignore>
-                        <button class="d-flex align-items-center gap-2 border-0 bg-transparent p-0" type="button"
-                            data-bs-toggle="dropdown" aria-expanded="false">
+                    <div class="dropdown position-relative" x-data="{ open: false }" @click.outside="open = false">
+                        <button class="d-flex align-items-center gap-2 border-0 bg-transparent p-0"
+                            type="button"
+                            @click="open = !open"
+                            :aria-expanded="open.toString()">
                             <div class="seal sidebar-brand-seal"
                                 style="width: 38px !important; height: 38px !important; font-size: 15px !important; border-radius: 10px !important;">
                                 {{ auth()->user() ? strtoupper(substr(auth()->user()->name, 0, 2)) : 'MS' }}
@@ -105,9 +114,15 @@ new class extends Component {
                                 <span class="fw-bold text-dark fs-6" style="line-height: 1.2;">{{ auth()->user()->name ?? 'Administrator' }}</span>
                                 <small class="text-secondary-light" style="font-size: 11px;">{{ auth()->user()?->role?->label() ?? 'Admin Diklat' }}</small>
                             </div>
-                            <i class="ri-arrow-down-s-line text-secondary-light d-none d-lg-block"></i>
+                            <i class="ri-arrow-down-s-line text-secondary-light d-none d-lg-block"
+                                :style="open ? 'transform: rotate(180deg); transition: transform 0.2s;' : 'transition: transform 0.2s;'"></i>
                         </button>
-                        <div class="dropdown-menu to-top dropdown-menu-sm dropdown-menu-end shadow-sm">
+                        <div class="dropdown-menu dropdown-menu-sm dropdown-menu-end shadow-lg"
+                            x-show="open"
+                            x-cloak
+                            :class="{ 'show': open }"
+                            style="position: absolute; right: 0; top: calc(100% + 8px); z-index: 1060; min-width: 250px; display: none;"
+                            :style="open ? 'display: block;' : 'display: none;'">
                             <div class="py-12 px-16 radius-8 mb-12" style="background: #071a33; color: #fff;">
                                 <h6 class="text-white fw-semibold mb-1" style="font-size: 14px;">{{ auth()->user()->name ?? 'Administrator' }}</h6>
                                 <span class="badge"
