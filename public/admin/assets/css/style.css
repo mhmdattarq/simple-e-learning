@@ -10664,7 +10664,7 @@ div.dt-container .dt-paging .dt-paging-button:hover:hover, div.dt-container .dt-
 
 .form-select::placeholder, .form-control::placeholder, textarea::placeholder {
   color: var(--text-secondary-light);
-  font-size: 1rem !important;
+  font-size: inherit !important;
 }
 
 .form-select:focus, .form-select:active, .form-control:focus, .form-control:active, textarea:focus, textarea:active {
