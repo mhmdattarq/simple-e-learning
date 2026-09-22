@@ -20,6 +20,7 @@ class CourseUser extends Model
         return [
             'status' => RegistrationStatus::class,
             'enrolled_at' => 'datetime',
+            'verified_at' => 'datetime',
         ];
     }
 
@@ -37,5 +38,13 @@ class CourseUser extends Model
     public function course(): BelongsTo
     {
         return $this->belongsTo(Course::class, 'course_id');
+    }
+
+    /**
+     * Verifikator who processed the application.
+     */
+    public function verifier(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'verified_by');
     }
 }

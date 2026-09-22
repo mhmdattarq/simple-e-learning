@@ -1,11 +1,11 @@
 @push('css')
     <style>
-        /* === Custom DataTables 2 Styling for SIMPEL BKPSDM === */
+        /* === Custom DataTables 2 Styling for SIMPEL BKPSDM (Exact match to Pendaftaran) === */
         .dt-container {
             font-family: 'Inter', -apple-system, sans-serif;
         }
 
-        #tablePendaftaran thead tr:first-child th {
+        #tableVerifikasi thead tr:first-child th {
             background-color: #f8fafc !important;
             color: #475569 !important;
             font-size: 11.5px !important;
@@ -30,31 +30,31 @@
         table.dataTable thead>tr>th.dt-orderable-desc:hover,
         table.dataTable thead>tr>td.dt-orderable-asc:hover,
         table.dataTable thead>tr>td.dt-orderable-desc:hover,
-        #tablePendaftaran thead th,
-        #tablePendaftaran thead th:hover,
-        #tablePendaftaran thead th:focus,
-        #tablePendaftaran thead th:active {
+        #tableVerifikasi thead th,
+        #tableVerifikasi thead th:hover,
+        #tableVerifikasi thead th:focus,
+        #tableVerifikasi thead th:active {
             outline: none !important;
             outline-offset: 0 !important;
             box-shadow: none !important;
         }
 
-        #tablePendaftaran thead tr:first-child th.dt-orderable-asc:hover,
-        #tablePendaftaran thead tr:first-child th.dt-orderable-desc:hover {
+        #tableVerifikasi thead tr:first-child th.dt-orderable-asc:hover,
+        #tableVerifikasi thead tr:first-child th.dt-orderable-desc:hover {
             background-color: #f1f5f9 !important;
             color: #0f172a !important;
             cursor: pointer !important;
         }
 
-        #tablePendaftaran thead tr:first-child th.dt-orderable-asc,
-        #tablePendaftaran thead tr:first-child th.dt-orderable-desc,
-        #tablePendaftaran thead tr:first-child th.dt-ordering-asc,
-        #tablePendaftaran thead tr:first-child th.dt-ordering-desc {
+        #tableVerifikasi thead tr:first-child th.dt-orderable-asc,
+        #tableVerifikasi thead tr:first-child th.dt-orderable-desc,
+        #tableVerifikasi thead tr:first-child th.dt-ordering-asc,
+        #tableVerifikasi thead tr:first-child th.dt-ordering-desc {
             padding-right: 28px !important;
             position: relative !important;
         }
 
-        #tablePendaftaran thead tr:first-child th span.dt-column-order {
+        #tableVerifikasi thead tr:first-child th span.dt-column-order {
             position: absolute !important;
             right: 10px !important;
             top: 0 !important;
@@ -62,14 +62,14 @@
             width: 12px !important;
         }
 
-        #tablePendaftaran thead tr:first-child th span.dt-column-order:before,
-        #tablePendaftaran thead tr:first-child th span.dt-column-order:after {
+        #tableVerifikasi thead tr:first-child th span.dt-column-order:before,
+        #tableVerifikasi thead tr:first-child th span.dt-column-order:after {
             color: #94a3b8 !important;
             opacity: 0.5 !important;
         }
 
-        #tablePendaftaran thead tr:first-child th.dt-ordering-asc span.dt-column-order:before,
-        #tablePendaftaran thead tr:first-child th.dt-ordering-desc span.dt-column-order:after {
+        #tableVerifikasi thead tr:first-child th.dt-ordering-asc span.dt-column-order:before,
+        #tableVerifikasi thead tr:first-child th.dt-ordering-desc span.dt-column-order:after {
             color: #0f172a !important;
             opacity: 1 !important;
         }
@@ -109,7 +109,7 @@
             outline: none !important;
         }
 
-        #tablePendaftaran tbody td {
+        #tableVerifikasi tbody td {
             font-size: 13px !important;
             padding: 12px 12px !important;
             border-bottom: 1px solid #f1f5f9;
@@ -117,8 +117,15 @@
             vertical-align: middle;
         }
 
-        #tablePendaftaran tbody tr:hover td {
+        #tableVerifikasi tbody tr:hover td {
             background-color: #f8fafc !important;
+        }
+
+        #tableVerifikasi td.dt-empty {
+            text-align: center !important;
+            padding: 24px 12px !important;
+            color: #64748b !important;
+            font-size: 12.5px !important;
         }
 
         .dt-container .dt-length,
@@ -182,7 +189,7 @@
             opacity: 0.4 !important;
         }
 
-        #tablePendaftaran .dropdown-menu {
+        #tableVerifikasi .dropdown-menu {
             position: absolute;
             top: 100%;
             left: 0;
@@ -193,28 +200,30 @@
 
 @push('js-stack')
     <script>
-        function initPendaftaranTable() {
-            var tableEl = document.getElementById('tablePendaftaran');
+        function initVerifikasiTable() {
+            var tableEl = document.getElementById('tableVerifikasi');
             if (!tableEl) return;
 
-            if ($.fn.DataTable && $.fn.DataTable.isDataTable('#tablePendaftaran')) {
-                $('#tablePendaftaran').DataTable().destroy();
+            // 1. Hancurkan instance lama jika sudah terinisialisasi
+            if ($.fn.DataTable && $.fn.DataTable.isDataTable('#tableVerifikasi')) {
+                $('#tableVerifikasi').DataTable().destroy();
             }
 
+            // 2. Inisialisasi DataTables Baru
             if ($.fn.DataTable) {
-                window.dtTable = $('#tablePendaftaran').DataTable({
+                window.dtTable = $('#tableVerifikasi').DataTable({
                     processing: true,
                     serverSide: true,
                     responsive: false,
                     scrollX: false,
                     autoWidth: false,
-                    orderCellsTop: true,
+                    orderCellsTop: true, // Pastikan sorting hanya di row header pertama
                     pageLength: 25,
                     dom: 'lrtip',
                     order: [
                         [8, 'desc'] // Default order by Tgl Daftar
                     ],
-                    ajax: '{{ route('pendaftaran.dt') }}',
+                    ajax: '{{ route('verifikasi.dt') }}',
                     columns: [
                         // Kolom 0: Checkbox Baris
                         {
@@ -224,7 +233,8 @@
                             searchable: false,
                             className: 'text-center',
                             render: function(data) {
-                                return '<input class="form-check-input check-data-item" type="checkbox" value="' + data.id + '">';
+                                return '<input class="form-check-input check-data-item" type="checkbox" value="' +
+                                    data.id + '">';
                             }
                         },
 
@@ -236,23 +246,19 @@
                             searchable: false,
                             className: 'text-center',
                             render: function(data, type, row) {
-                                let identity = String(data.registration_number || '').replace(/'/g, "\\'");
-
                                 return `
                                 <div class="dropdown">
                                     <button type="button" class="btn btn-sm btn-light border text-dark" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 4px 8px; font-size: 12px; border-radius: 6px;">
                                         <i class="ri-more-2-fill"></i>
                                     </button>
-                                    <div class="dropdown-menu dropdown-menu-end shadow-sm border-0 p-2" style="border-radius: 10px; min-width: 160px;">
+                                    <div class="dropdown-menu dropdown-menu-end shadow-sm border-0 p-2" style="border-radius: 10px; min-width: 170px;">
+                                        <button type="button" class="dropdown-item d-flex align-items-center gap-2 py-2 px-3 rounded text-navy border-0 bg-transparent w-100 text-start"
+                                            wire:click="openVerifyModal(${data.id})">
+                                            <i class="ri-shield-check-line text-success"></i> Periksa Berkas
+                                        </button>
                                         <button type="button" class="dropdown-item d-flex align-items-center gap-2 py-2 px-3 rounded text-navy border-0 bg-transparent w-100 text-start"
                                             wire:click="showDetail(${data.id})">
                                             <i class="ri-eye-line text-primary"></i> Detail Berkas
-                                        </button>
-                                        <button type="button" class="dropdown-item text-danger d-flex align-items-center gap-2 py-2 px-3 rounded border-0 bg-transparent w-100 text-start"
-                                           data-bs-toggle="modal"
-                                           data-bs-target="#modalDelete"
-                                           wire:click="hookModalDelete(${data.id}, '${identity}')">
-                                            <i class="ri-delete-bin-line"></i> Hapus
                                         </button>
                                     </div>
                                 </div>
@@ -290,7 +296,7 @@
                             orderable: false,
                             searchable: true,
                             render: function(data, type, row) {
-                                let email = row.user ? (row.user.email || '') : '';
+                                let email = row.user_email || (row.user ? row.user.email : '') || '';
                                 return `
                                     <div>
                                         <span class="fw-bold text-dark d-block">${data}</span>
@@ -370,25 +376,34 @@
                         }
                     ],
                     language: {
-                        processing: '<div class="d-flex align-items-center justify-content-center gap-2 text-primary my-3"><div class="spinner-border spinner-border-sm"></div> Memuat data pendaftaran...</div>',
-                        emptyTable: 'Belum ada data pendaftaran diklat',
-                        info: 'Menampilkan _START_ sampai _END_ dari _TOTAL_ pendaftar',
-                        infoEmpty: 'Menampilkan 0 pendaftar',
-                        infoFiltered: '(disaring dari _MAX_ total pendaftar)',
+                        emptyTable: 'belum ada data verifikasi berkas',
+                        zeroRecords: 'belum ada data verifikasi berkas',
+                        processing: '<div class="d-flex align-items-center justify-content-center gap-2 text-primary my-3"><div class="spinner-border spinner-border-sm"></div> Memuat data verifikasi...</div>',
+                        info: 'Menampilkan _START_ sampai _END_ dari _TOTAL_ berkas',
+                        infoEmpty: 'Menampilkan 0 berkas',
+                        infoFiltered: '(disaring dari _MAX_ total berkas)',
                         paginate: {
                             first: '<i class="ri-arrow-left-double-line"></i>',
                             previous: '<i class="ri-arrow-left-s-line"></i>',
                             next: '<i class="ri-arrow-right-s-line"></i>',
                             last: '<i class="ri-arrow-right-double-line"></i>'
                         }
-                    }
-                });
+                    },
+                    initComplete: function(settings) {
+                        var table = settings.oInstance.api();
 
-                // Setup Search Per Kolom
-                $('#header-filter input.search-col-dt').on('keyup change clear', function() {
-                    let colIdx = $(this).parent().index();
-                    if (window.dtTable.column(colIdx).search() !== this.value) {
-                        window.dtTable.column(colIdx).search(this.value).draw();
+                        // 3. Filter Kolom Input pada Thead Kedua (#header-filter)
+                        $('#header-filter input.search-col-dt').on('keyup change clear', function() {
+                            var colIndex = $(this).closest('th').index();
+                            if (table.column(colIndex).search() !== this.value) {
+                                table.column(colIndex).search(this.value).draw();
+                            }
+                        });
+
+                        // 4. Checkbox Pilih Semua
+                        $('.check-data-all').on('change', function() {
+                            $('.check-data-item').prop('checked', this.checked);
+                        });
                     }
                 });
             }
@@ -396,11 +411,11 @@
 
         // Initialize on DOM ready and Livewire navigation
         $(document).ready(function() {
-            initPendaftaranTable();
+            initVerifikasiTable();
         });
 
         document.addEventListener('livewire:navigated', function() {
-            initPendaftaranTable();
+            initVerifikasiTable();
         });
 
         window.addEventListener('reloadDT', function() {

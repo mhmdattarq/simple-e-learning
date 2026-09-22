@@ -45,8 +45,9 @@ new class extends Component {
                             <span>Pendaftaran</span>
                         </a>
                     </li>
-                    <li>
-                        <a href="javascript:void(0)" title="Verifikasi">
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('verifikasi*') ? 'active' : '' }}"
+                            href="{{ route('verifikasi.data') }}" title="Verifikasi" wire:navigate>
                             <i class="ri-checkbox-circle-line menu-icon"></i>
                             <span>Verifikasi</span>
                         </a>
