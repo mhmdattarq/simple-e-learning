@@ -25,7 +25,7 @@ test('login page can be accessed and assets are correctly routed', function () {
     $response->assertSee('Masuk ke Akun');
 });
 
-test('admin can login using email and is redirected to admin dashboard', function () {
+test('admin can login using email and is redirected to admin dashboard with welcome toast', function () {
     $admin = User::factory()->admin()->create([
         'email' => 'admin@simpel.go.id',
         'password' => bcrypt('password123'),
@@ -35,13 +35,18 @@ test('admin can login using email and is redirected to admin dashboard', functio
         ->set('identifier', 'admin@simpel.go.id')
         ->set('password', 'password123')
         ->call('authenticate')
-        ->assertRedirect(route('admin.dashboard'));
+        ->assertRedirect(route('admin.dashboard'))
+        ->assertSessionHas('alert-show', [
+            'type' => 'success',
+            'title' => 'Berhasil',
+            'message' => 'berhasil login selamat datang admin',
+        ]);
 
     $this->assertAuthenticatedAs($admin);
     expect(auth()->user()->isAdmin())->toBeTrue();
 });
 
-test('peserta can login using 18 digit nip and is redirected to landing page', function () {
+test('peserta can login using 18 digit nip and is redirected to landing page without welcome toast', function () {
     $peserta = User::factory()->peserta()->create([
         'nip' => '199205052018011005',
         'email' => 'peserta@simpel.go.id',
@@ -52,7 +57,8 @@ test('peserta can login using 18 digit nip and is redirected to landing page', f
         ->set('identifier', '199205052018011005')
         ->set('password', 'password123')
         ->call('authenticate')
-        ->assertRedirect(route('landing'));
+        ->assertRedirect(route('landing'))
+        ->assertSessionMissing('alert-show');
 
     $this->assertAuthenticatedAs($peserta);
     expect(auth()->user()->isPeserta())->toBeTrue();
@@ -68,7 +74,12 @@ test('mentor and verifikator and pimpinan are redirected to admin dashboard', fu
         ->set('identifier', '198002022005011002')
         ->set('password', 'password123')
         ->call('authenticate')
-        ->assertRedirect(route('admin.dashboard'));
+        ->assertRedirect(route('admin.dashboard'))
+        ->assertSessionHas('alert-show', [
+            'type' => 'success',
+            'title' => 'Berhasil',
+            'message' => 'berhasil login selamat datang mentor',
+        ]);
 
     $this->assertAuthenticatedAs($mentor);
     expect($mentor->hasAdminAccess())->toBeTrue();
@@ -84,7 +95,12 @@ test('mentor and verifikator and pimpinan are redirected to admin dashboard', fu
         ->set('identifier', 'verifikator@simpel.go.id')
         ->set('password', 'password123')
         ->call('authenticate')
-        ->assertRedirect(route('admin.dashboard'));
+        ->assertRedirect(route('admin.dashboard'))
+        ->assertSessionHas('alert-show', [
+            'type' => 'success',
+            'title' => 'Berhasil',
+            'message' => 'berhasil login selamat datang verifikator',
+        ]);
 
     $this->assertAuthenticatedAs($verifikator);
     expect($verifikator->hasAdminAccess())->toBeTrue();
@@ -100,7 +116,12 @@ test('mentor and verifikator and pimpinan are redirected to admin dashboard', fu
         ->set('identifier', 'pimpinan@simpel.go.id')
         ->set('password', 'password123')
         ->call('authenticate')
-        ->assertRedirect(route('admin.dashboard'));
+        ->assertRedirect(route('admin.dashboard'))
+        ->assertSessionHas('alert-show', [
+            'type' => 'success',
+            'title' => 'Berhasil',
+            'message' => 'berhasil login selamat datang pimpinan',
+        ]);
 
     $this->assertAuthenticatedAs($pimpinan);
     expect($pimpinan->hasAdminAccess())->toBeTrue();

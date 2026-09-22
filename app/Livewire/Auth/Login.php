@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Auth;
 
+use App\Enums\Role;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
@@ -28,11 +29,21 @@ class Login extends Component
     public function updatedEmail($value): void
     {
         $this->identifier = (string) $value;
+        $this->errorMessage = '';
+        $this->resetErrorBag(['identifier', 'email']);
     }
 
     public function updatedIdentifier($value): void
     {
         $this->email = (string) $value;
+        $this->errorMessage = '';
+        $this->resetErrorBag(['identifier', 'email']);
+    }
+
+    public function updatedPassword($value): void
+    {
+        $this->errorMessage = '';
+        $this->resetErrorBag(['password']);
     }
 
     public function rules(): array
@@ -94,12 +105,22 @@ class Login extends Component
             /** @var User $user */
             $user = Auth::user();
 
-            // Role-based redirection (PRD.md):
-            // Internal Management (Admin, Mentor, Verifikator, Pimpinan) -> admin.dashboard
+            // Role-based redirection & welcome toast notification:
+            // Internal Management (Admin, Mentor, Verifikator, Pimpinan) -> admin.dashboard with welcome toast
             // Siswa ASN (Peserta) -> landing
-            return $user->hasAdminAccess()
-                ? redirect()->intended(route('admin.dashboard'))
-                : redirect()->intended(route('landing'));
+            if ($user->hasAdminAccess()) {
+                $roleName = $user->role instanceof Role ? $user->role->value : (string) $user->role;
+
+                session()->flash('alert-show', [
+                    'type' => 'success',
+                    'title' => 'Berhasil',
+                    'message' => 'berhasil login selamat datang '.$roleName,
+                ]);
+
+                return redirect()->intended(route('admin.dashboard'));
+            }
+
+            return redirect()->intended(route('landing'));
         }
 
         $this->errorMessage = 'Email/NIP atau kata sandi yang Anda masukkan salah.';
