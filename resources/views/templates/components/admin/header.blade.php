@@ -147,13 +147,11 @@ new class extends Component {
                                     <hr class="dropdown-divider my-1">
                                 </li>
                                 <li>
-                                    <form method="POST" action="{{ route('logout') }}" class="m-0 p-0">
-                                        @csrf
-                                        <button type="submit"
-                                            class="dropdown-item text-danger px-12 py-8 hover-text-danger d-flex align-items-center gap-2 rounded border-0 bg-transparent w-100 text-start">
-                                            <i class="ri-logout-box-r-line icon text-lg"></i> Keluar
-                                        </button>
-                                    </form>
+                                    <button type="button"
+                                        class="dropdown-item text-danger px-12 py-8 hover-text-danger d-flex align-items-center gap-2 rounded border-0 bg-transparent w-100 text-start"
+                                        data-bs-toggle="modal" data-bs-target="#modalLogout">
+                                        <i class="ri-logout-box-r-line icon text-lg"></i> Keluar
+                                    </button>
                                 </li>
                             </ul>
                         </div>

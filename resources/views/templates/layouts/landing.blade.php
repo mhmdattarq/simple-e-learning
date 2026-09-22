@@ -72,6 +72,11 @@
 </head>
 
 <body class="custom-cursor">
+    @auth
+        {{-- Universal Modal & Confirmation (PRD-LW) --}}
+        <livewire:admin.modal />
+    @endauth
+
     <div class="page-wrapper">
         <livewire:landing.navbar />
 
@@ -177,6 +182,7 @@
 
     <!-- template js -->
     <script src="{{ asset('landing/assets/js/script.js') }}"></script>
+    <script src="{{ asset('mine/script.js') }}"></script>
     @livewireScripts
 </body>
 
