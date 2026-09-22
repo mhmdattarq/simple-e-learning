@@ -279,3 +279,45 @@ test('authenticated user is redirected away from register page by guest middlewa
         ->get(route('register'))
         ->assertRedirect(route('admin.dashboard'));
 });
+
+test('logout modal is present in modal component with confirmation message and action buttons', function () {
+    Livewire::test('admin.modal')
+        ->assertSee('id="modalLogout"', false)
+        ->assertSee('Konfirmasi Keluar')
+        ->assertSee('Apakah Anda yakin ingin keluar?')
+        ->assertSee('Batal')
+        ->assertSee('Ya, Keluar')
+        ->assertSee(route('logout'));
+});
+
+test('admin header renders logout button that triggers modalLogout', function () {
+    $admin = User::factory()->admin()->create();
+
+    $this->actingAs($admin);
+
+    Livewire::test('admin.header')
+        ->assertSee('data-bs-target="#modalLogout"', false)
+        ->assertSee('Keluar');
+});
+
+test('landing navbar renders logout button that triggers modalLogout for authenticated peserta', function () {
+    $peserta = User::factory()->peserta()->create();
+
+    $this->actingAs($peserta);
+
+    Livewire::test('landing.navbar')
+        ->assertSee('data-bs-target="#modalLogout"', false)
+        ->assertSee('Keluar');
+});
+
+test('authenticated user can logout via post route and session is invalidated', function () {
+    $admin = User::factory()->admin()->create();
+
+    $this->actingAs($admin);
+    $this->assertAuthenticated();
+
+    $response = $this->post(route('logout'));
+
+    $response->assertRedirect(route('login'));
+    $this->assertGuest();
+});

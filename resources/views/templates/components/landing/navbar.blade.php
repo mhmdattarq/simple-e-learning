@@ -276,15 +276,12 @@ new class extends Component {
                                                 <hr class="dropdown-divider my-1">
                                             </li>
                                             <li>
-                                                <form action="{{ route('logout') }}" method="POST" class="m-0 p-0">
-                                                    @csrf
-                                                    <input type="hidden" name="redirect" value="{{ route('landing') }}">
-                                                    <button type="submit" wire:click.prevent="logout"
-                                                        class="dropdown-item text-danger px-3 py-2 d-flex align-items-center gap-2 rounded border-0 bg-transparent w-100 text-start"
-                                                        style="font-size: 13.5px; cursor: pointer;">
-                                                        <i class="ri-logout-box-r-line" style="font-size: 16px;"></i> Keluar
-                                                    </button>
-                                                </form>
+                                                <button type="button"
+                                                    class="dropdown-item text-danger px-3 py-2 d-flex align-items-center gap-2 rounded border-0 bg-transparent w-100 text-start"
+                                                    style="font-size: 13.5px; cursor: pointer;"
+                                                    data-bs-toggle="modal" data-bs-target="#modalLogout">
+                                                    <i class="ri-logout-box-r-line" style="font-size: 16px;"></i> Keluar
+                                                </button>
                                             </li>
                                         </ul>
                                     </div>
