@@ -27,14 +27,11 @@ test('landing page can be accessed successfully and displays core sections', fun
     $response->assertDontSee('(0646) 7000-111');
 });
 
-test('admin dashboard can be accessed on /admin and /dashboard by authenticated admin', function () {
+test('admin dashboard can be accessed on admin.dashboard by authenticated admin', function () {
     $admin = User::factory()->admin()->create();
 
-    $responseAdmin = $this->actingAs($admin)->get('/admin');
-    $responseAdmin->assertStatus(200);
-
-    $responseDashboard = $this->actingAs($admin)->get('/dashboard');
-    $responseDashboard->assertRedirect('/admin');
+    $response = $this->actingAs($admin)->get(route('admin.dashboard'));
+    $response->assertStatus(200);
 
     Livewire::actingAs($admin)
         ->test(DashboardIndex::class)

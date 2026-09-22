@@ -32,7 +32,6 @@ Route::post('/logout', function () {
 // 4. Admin & Internal Management Panel (Protected by Role)
 Route::middleware(['auth', 'role:admin,mentor,verifikator,pimpinan'])->group(function () {
     Route::livewire('/admin/dashboard', DashboardIndex::class)->name('admin.dashboard');
-    Route::redirect('/dashboard', '/admin');
 
     // Modul 1: Tahap Perencanaan
     Route::prefix('perencanaan')->group(function () {
