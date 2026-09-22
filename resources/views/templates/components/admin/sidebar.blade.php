@@ -13,7 +13,7 @@ new class extends Component {
                 <i class="ri-close-line"></i>
             </button>
             <div class="brand-container">
-                <a href="{{ route('dashboard') }}" class="brand text-decoration-none">
+                <a href="{{ route('admin.dashboard') }}" class="brand text-decoration-none">
                     <div class="seal">S</div>
                     <div>
                         <strong>SIMPEL</strong>
@@ -25,14 +25,14 @@ new class extends Component {
                 <ul class="sidebar-menu" id="sidebar-menu">
                     <li class="sidebar-menu-group-title">MENU UTAMA</li>
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('dashboard') || request()->routeIs('admin.dashboard') ? 'active' : '' }}"
-                            href="{{ route('dashboard') }}" title="Beranda" wire:navigate>
+                        <a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}"
+                            href="{{ route('admin.dashboard') }}" title="Beranda" wire:navigate>
                             <i class="ri-home-2-line menu-icon"></i>
                             <span>Beranda</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('perencanaan*') || request()->routeIs('admin.dashboard') ? 'active' : '' }}"
+                        <a class="nav-link {{ request()->routeIs('perencanaan*') ? 'active' : '' }}"
                             href="{{ route('perencanaan.data') }}" title="Perencanaan" wire:navigate>
                             <i class="ri-file-list-3-line menu-icon"></i>
                             <span>Perencanaan</span>

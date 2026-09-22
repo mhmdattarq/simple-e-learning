@@ -20,7 +20,7 @@ Route::middleware('guest')->group(function () {
     Route::livewire('/register', Register::class)->name('register');
 });
 
-// 3. Logout (Authenticated - POST Aman per PRD-LW.md)
+// 3. Logout (Authenticated)
 Route::post('/logout', function () {
     Auth::logout();
     request()->session()->invalidate();
@@ -31,8 +31,8 @@ Route::post('/logout', function () {
 
 // 4. Admin & Internal Management Panel (Protected by Role)
 Route::middleware(['auth', 'role:admin,mentor,verifikator,pimpinan'])->group(function () {
-    Route::livewire('/admin', DashboardIndex::class)->name('admin.dashboard');
-    Route::livewire('/dashboard', DashboardIndex::class)->name('dashboard');
+    Route::livewire('/admin/dashboard', DashboardIndex::class)->name('admin.dashboard');
+    Route::redirect('/dashboard', '/admin');
 
     // Modul 1: Tahap Perencanaan
     Route::prefix('perencanaan')->group(function () {

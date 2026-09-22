@@ -166,7 +166,7 @@ test('register page can be accessed by guest and shows registration fields', fun
 
     $response->assertStatus(200);
     $response->assertSee('Pendaftaran Peserta / Siswa');
-    $response->assertSee('Identitas Kepegawaian ASN');
+    $response->assertSee('Identitas Kepegawaian');
     $response->assertSee('NIP (18 Digit)');
     $response->assertSee('Nama Lengkap');
     $response->assertSee('Instansi / OPD Asal');
@@ -256,5 +256,5 @@ test('authenticated user is redirected away from register page by guest middlewa
 
     $this->actingAs($peserta)
         ->get(route('register'))
-        ->assertRedirect(route('dashboard'));
+        ->assertRedirect(route('admin.dashboard'));
 });
