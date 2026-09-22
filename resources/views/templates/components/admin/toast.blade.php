@@ -36,18 +36,18 @@ new class extends Component {
     <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 9999;">
         @if ($isShow)
             <div class="toast show align-items-center text-white bg-{{ $type }} border-0 shadow-lg" role="alert"
-                style="border-radius: 12px; min-width: 300px;"
-                x-data="{ show: true }"
-                x-init="setTimeout(() => { show = false; $wire.set('isShow', false); }, 4000)"
-                x-show="show"
-                x-transition>
+                style="border-radius: 12px; min-width: 300px;" x-data="{ show: true }" x-init="setTimeout(() => {
+                    show = false;
+                    $wire.set('isShow', false);
+                }, 4000)"
+                x-show="show" x-transition>
                 <div class="d-flex align-items-center justify-content-between p-2">
                     <div class="toast-body d-flex align-items-center gap-2 py-1 px-2">
-                        <i class="ri-checkbox-circle-fill fs-5"></i>
+                        <i class="ri-checkbox-circle-fill fs-5 ms-3"></i>
                         <span class="fs-7 fw-medium">{{ $msg }}</span>
                     </div>
-                    <button type="button" class="btn-close btn-close-white me-2"
-                        wire:click="$set('isShow', false)" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white me-3" wire:click="$set('isShow', false)"
+                        aria-label="Close"></button>
                 </div>
             </div>
         @endif
