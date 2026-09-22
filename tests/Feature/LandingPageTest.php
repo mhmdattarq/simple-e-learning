@@ -34,7 +34,7 @@ test('admin dashboard can be accessed on /admin and /dashboard by authenticated 
     $responseAdmin->assertStatus(200);
 
     $responseDashboard = $this->actingAs($admin)->get('/dashboard');
-    $responseDashboard->assertStatus(200);
+    $responseDashboard->assertRedirect('/admin');
 
     Livewire::actingAs($admin)
         ->test(DashboardIndex::class)
