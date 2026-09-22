@@ -77,10 +77,10 @@
             @endif
 
             @if ($errorMessage || session()->has('error'))
-                <div
-                    class="alert alert-danger py-8 px-12 radius-8 text-xs mb-16 d-flex align-items-center gap-2 border-0 bg-danger-50 text-danger-600">
-                    <i class="ri-error-warning-fill text-base flex-shrink-0"></i>
-                    <span>{{ $errorMessage ?: session('error') }}</span>
+                <div class="alert alert-danger py-2 px-3 radius-8 text-xs mb-16 d-flex align-items-center gap-2"
+                    style="border-radius: 10px; background-color: #fef2f2 !important; border: 1px solid #fee2e2 !important; color: #b91c1c !important;">
+                    <i class="ri-error-warning-fill fs-5 text-danger flex-shrink-0"></i>
+                    <span class="fw-medium">{{ $errorMessage ?: session('error') }}</span>
                 </div>
             @endif
 
@@ -91,18 +91,22 @@
                     <label class="form-label text-xs fw-semibold text-secondary-dark mb-6" for="identifier">
                         Email atau NIP
                     </label>
+                    @php
+                        $hasIdentifierValidationError = ($errors->has('identifier') && $errors->first('identifier') !== $errorMessage)
+                            || ($errors->has('email') && $errors->first('email') !== $errorMessage);
+                    @endphp
                     <div class="auth-input-wrapper">
                         <span class="auth-field-icon">
                             <i class="ri-mail-line"></i>
                         </span>
                         <input type="text" id="identifier" wire:model="identifier"
-                            class="form-control auth-input @if ($errors->has('identifier') || $errors->has('email')) is-invalid @endif"
+                            class="form-control auth-input @if ($hasIdentifierValidationError) is-invalid @endif"
                             placeholder="nama@email.com atau NIP" autocomplete="username">
                     </div>
-                    @if ($errors->has('identifier'))
-                        <div class="invalid-feedback d-block text-xs mt-1">{{ $errors->first('identifier') }}</div>
-                    @elseif ($errors->has('email'))
-                        <div class="invalid-feedback d-block text-xs mt-1">{{ $errors->first('email') }}</div>
+                    @if ($hasIdentifierValidationError)
+                        <div class="invalid-feedback d-block text-xs mt-1">
+                            {{ $errors->first('identifier') ?: $errors->first('email') }}
+                        </div>
                     @endif
                 </div>
 
