@@ -2,6 +2,8 @@
 
 namespace App\Livewire\Landing;
 
+use App\Models\Course;
+use Illuminate\Support\Facades\Schema;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -21,6 +23,14 @@ class LandingIndex extends Component
 
     public function render()
     {
-        return view('mods.landing.landing-index');
+        $courses = Schema::hasTable('courses')
+            ? Course::with('category')
+                ->where('status', 'published')
+                ->latest('id')
+                ->take(6)
+                ->get()
+            : collect();
+
+        return view('mods.landing.landing-index', compact('courses'));
     }
 }

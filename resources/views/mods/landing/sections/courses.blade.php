@@ -29,12 +29,65 @@
 
         {{-- Courses Grid --}}
         <div class="row g-4">
-            {{-- Course 1: Pelatihan Mandiri (Buka Terus) --}}
-            <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="150ms">
-                <div
-                    class="card h-100 border border-simpel rounded-4 bg-white overflow-hidden shadow-xs simpel-course-card">
-                    {{-- Thumbnail --}}
-                    <div class="position-relative overflow-hidden" style="height: 190px;">
+            @if (isset($courses) && $courses->isNotEmpty())
+                @foreach ($courses as $course)
+                    <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="150ms">
+                        <div class="card h-100 border border-simpel rounded-4 bg-white overflow-hidden shadow-xs simpel-course-card">
+                            <div class="position-relative overflow-hidden" style="height: 190px;">
+                                @if ($course->thumbnail)
+                                    <img src="{{ asset('storage/'.$course->thumbnail) }}" alt="{{ $course->title }}"
+                                        class="w-100 h-100 object-fit-cover">
+                                @else
+                                    <div class="w-100 h-100 d-flex align-items-center justify-content-center text-white"
+                                        style="background: linear-gradient(135deg, #071a33 0%, #0c3158 100%);">
+                                        <i class="ri-book-open-line display-4 text-gold"></i>
+                                    </div>
+                                @endif
+                                <div class="position-absolute top-0 start-0 m-3 d-flex gap-2">
+                                    <span class="badge bg-navy text-white fw-bold fs-8 px-2_5 py-1">{{ $course->category?->name ?? 'Diklat ASN' }}</span>
+                                    <span class="badge bg-gold text-navy fw-bold fs-8 px-2_5 py-1">
+                                        {{ $course->isPermanent() ? 'Buka Selamanya' : 'Batch Terjadwal' }}
+                                    </span>
+                                </div>
+                                <div class="position-absolute bottom-0 end-0 m-3">
+                                    <span class="badge bg-dark bg-opacity-75 text-white fs-8">
+                                        <i class="ri-user-line me-1 text-gold"></i>Kuota: {{ $course->quota }} ASN
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="p-4 d-flex flex-column flex-grow-1">
+                                <div class="d-flex align-items-center justify-content-between text-muted fs-8 mb-2">
+                                    <span class="badge bg-light text-navy border border-simpel font-monospace">{{ $course->code }}</span>
+                                    <span class="text-success fw-bold"><i class="ri-checkbox-circle-line me-1"></i>Pendaftaran Terbuka</span>
+                                </div>
+                                <h5 class="fw-bold text-navy mb-2 line-clamp-2">
+                                    {{ $course->title }}
+                                </h5>
+                                <p class="text-muted fs-7 mb-4 flex-grow-1 line-clamp-2">
+                                    {{ $course->description ?: 'Program pelatihan kompetensi aparatur yang diselenggarakan oleh BKPSDM Kabupaten Aceh Timur.' }}
+                                </p>
+
+                                <div class="pt-3 border-top border-simpel d-flex align-items-center justify-content-between mt-auto">
+                                    <div>
+                                        <small class="text-muted d-block fs-8">Metode Program</small>
+                                        <span class="fw-extrabold text-navy fs-7 text-uppercase">{{ $course->method }}</span>
+                                    </div>
+                                    <a href="{{ route('pelatihan.daftar', $course->id) }}" class="thm-btn py-2 px-3 fs-7"
+                                        style="background-color: var(--simpel-gold); color: var(--simpel-navy); border-radius: 10px; font-weight: 700;">
+                                        Daftar Pelatihan <i class="ri-arrow-right-line ms-1"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            @else
+                {{-- Course 1: Pelatihan Mandiri (Buka Terus) --}}
+                <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="150ms">
+                    <div class="card h-100 border border-simpel rounded-4 bg-white overflow-hidden shadow-xs simpel-course-card">
+                        {{-- Thumbnail --}}
+                        <div class="position-relative overflow-hidden" style="height: 190px;">
                         <img src="{{ asset('landing/assets/images/courses/courses-1-1.jpg') }}" alt=""
                             class="w-100 h-100 object-fit-cover">
                         <div class="position-absolute top-0 start-0 m-3 d-flex gap-2">
@@ -304,6 +357,7 @@
                     </div>
                 </div>
             </div>
+            @endif
         </div>
     </div>
 </section>

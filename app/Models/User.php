@@ -6,6 +6,8 @@ use App\Enums\Role;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -67,5 +69,23 @@ class User extends Authenticatable
     public function hasAdminAccess(): bool
     {
         return $this->role?->hasAdminAccess() ?? false;
+    }
+
+    /**
+     * Course registrations for this user.
+     */
+    public function registrations(): HasMany
+    {
+        return $this->hasMany(CourseUser::class, 'user_id');
+    }
+
+    /**
+     * Courses enrolled by this user.
+     */
+    public function enrolledCourses(): BelongsToMany
+    {
+        return $this->belongsToMany(Course::class, 'course_user')
+            ->withPivot(['id', 'registration_number', 'status', 'recommendation_letter_path', 'notes', 'enrolled_at'])
+            ->withTimestamps();
     }
 }
