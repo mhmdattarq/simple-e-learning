@@ -38,8 +38,9 @@ new class extends Component {
                             <span>Perencanaan</span>
                         </a>
                     </li>
-                    <li>
-                        <a href="javascript:void(0)" title="Pendaftaran">
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('pendaftaran*') ? 'active' : '' }}"
+                            href="{{ route('pendaftaran.data') }}" title="Pendaftaran" wire:navigate>
                             <i class="ri-user-add-line menu-icon"></i>
                             <span>Pendaftaran</span>
                         </a>

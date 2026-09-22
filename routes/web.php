@@ -1,13 +1,16 @@
 <?php
 
+use App\Http\Controllers\PendaftaranController;
 use App\Http\Controllers\PerencanaanController;
 use App\Livewire\Admin\Dashboard\DashboardIndex;
+use App\Livewire\Admin\Pendaftaran\PendaftaranData;
 use App\Livewire\Admin\Perencanaan\PerencanaanCreate;
 use App\Livewire\Admin\Perencanaan\PerencanaanData;
 use App\Livewire\Admin\Perencanaan\PerencanaanEdit;
 use App\Livewire\Auth\Login;
 use App\Livewire\Auth\Register;
 use App\Livewire\Landing\LandingIndex;
+use App\Livewire\Peserta\Pendaftaran\PendaftaranCreate;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -20,7 +23,12 @@ Route::middleware('guest')->group(function () {
     Route::livewire('/register', Register::class)->name('register');
 });
 
-// 3. Logout (Authenticated)
+// 3. Peserta / Siswa Registration to Course (Authenticated)
+Route::middleware('auth')->group(function () {
+    Route::livewire('/pelatihan/{id}/daftar', PendaftaranCreate::class)->name('pelatihan.daftar');
+});
+
+// 4. Logout (Authenticated)
 Route::post('/logout', function () {
     Auth::logout();
     request()->session()->invalidate();
@@ -29,7 +37,7 @@ Route::post('/logout', function () {
     return redirect()->to(request('redirect', route('login')));
 })->name('logout');
 
-// 4. Admin & Internal Management Panel (Protected by Role)
+// 5. Admin & Internal Management Panel (Protected by Role)
 Route::middleware(['auth', 'role:admin,mentor,verifikator,pimpinan'])->group(function () {
     Route::livewire('/admin/dashboard', DashboardIndex::class)->name('admin.dashboard');
 
@@ -40,6 +48,14 @@ Route::middleware(['auth', 'role:admin,mentor,verifikator,pimpinan'])->group(fun
             Route::livewire('/data', PerencanaanData::class)->name('data');
             Route::livewire('/create', PerencanaanCreate::class)->name('create');
             Route::livewire('/edit/{id}', PerencanaanEdit::class)->name('edit');
+        });
+    });
+
+    // Modul 2: Tahap Pendaftaran
+    Route::prefix('pendaftaran')->group(function () {
+        Route::name('pendaftaran.')->group(function () {
+            Route::get('/datatable', [PendaftaranController::class, 'dataDt'])->name('dt');
+            Route::livewire('/data', PendaftaranData::class)->name('data');
         });
     });
 });
