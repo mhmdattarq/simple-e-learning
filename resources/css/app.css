@@ -1679,4 +1679,202 @@ select::placeholder,
     }
 }
 
+/* ==========================================================================
+   Universal DataTables 2 Styling for SIMPEL BKPSDM
+   Ensures consistent style across all modules (Perencanaan, Pendaftaran, Verifikasi)
+   both on wire:navigate and browser hard reload (F5)
+   ========================================================================== */
+.dt-container {
+    font-family: 'Inter', -apple-system, sans-serif;
+}
+
+/* First Row Header */
+.dt-container table.dataTable thead tr:first-child th {
+    background-color: #f8fafc !important;
+    color: #475569 !important;
+    font-size: 11.5px !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    border-top: 1px solid #e2e8f0 !important;
+    border-bottom: 2px solid #e2e8f0 !important;
+    border-color: #e2e8f0 !important;
+    padding: 12px 12px !important;
+    vertical-align: middle !important;
+    outline: none !important;
+    outline-offset: 0 !important;
+    box-shadow: none !important;
+    transition: background-color 0.15s ease !important;
+}
+
+.dt-container table.dataTable thead>tr>th:hover,
+.dt-container table.dataTable thead>tr>th:focus,
+.dt-container table.dataTable thead>tr>th:active,
+.dt-container table.dataTable thead>tr>th.dt-orderable-asc:hover,
+.dt-container table.dataTable thead>tr>th.dt-orderable-desc:hover,
+.dt-container table.dataTable thead>tr>td.dt-orderable-asc:hover,
+.dt-container table.dataTable thead>tr>td.dt-orderable-desc:hover {
+    outline: none !important;
+    outline-offset: 0 !important;
+    box-shadow: none !important;
+}
+
+.dt-container table.dataTable thead tr:first-child th.dt-orderable-asc:hover,
+.dt-container table.dataTable thead tr:first-child th.dt-orderable-desc:hover {
+    background-color: #f1f5f9 !important;
+    color: #0f172a !important;
+    cursor: pointer !important;
+}
+
+.dt-container table.dataTable thead tr:first-child th.dt-orderable-asc,
+.dt-container table.dataTable thead tr:first-child th.dt-orderable-desc,
+.dt-container table.dataTable thead tr:first-child th.dt-ordering-asc,
+.dt-container table.dataTable thead tr:first-child th.dt-ordering-desc {
+    padding-right: 28px !important;
+    position: relative !important;
+}
+
+.dt-container table.dataTable thead tr:first-child th span.dt-column-order {
+    position: absolute !important;
+    right: 10px !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    width: 12px !important;
+}
+
+.dt-container table.dataTable thead tr:first-child th span.dt-column-order:before,
+.dt-container table.dataTable thead tr:first-child th span.dt-column-order:after {
+    color: #94a3b8 !important;
+    opacity: 0.5 !important;
+}
+
+.dt-container table.dataTable thead tr:first-child th.dt-ordering-asc span.dt-column-order:before,
+.dt-container table.dataTable thead tr:first-child th.dt-ordering-desc span.dt-column-order:after {
+    color: #0f172a !important;
+    opacity: 1 !important;
+}
+
+/* Second Row Header (Filter per Column) */
+.dt-container #header-filter th {
+    background-color: #ffffff !important;
+    padding: 8px 10px !important;
+    border-bottom: 2px solid #e2e8f0 !important;
+    cursor: default !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.dt-container #header-filter th::before,
+.dt-container #header-filter th::after,
+.dt-container #header-filter th span.dt-column-order {
+    display: none !important;
+    content: "" !important;
+    visibility: hidden !important;
+}
+
+.dt-container #header-filter input.search-col-dt {
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 6px !important;
+    font-size: 11.5px !important;
+    padding: 4px 8px !important;
+    background-color: #f8fafc !important;
+    color: #1e293b !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    outline: none !important;
+    box-shadow: none !important;
+    transition: all 0.2s ease !important;
+}
+
+.dt-container #header-filter input.search-col-dt:focus {
+    background-color: #ffffff !important;
+    border-color: #071a33 !important;
+    box-shadow: 0 0 0 2px rgba(7, 26, 51, 0.1) !important;
+    outline: none !important;
+}
+
+/* Table Body Rows & Cells */
+.dt-container table.dataTable tbody td {
+    font-size: 13px !important;
+    padding: 12px 12px !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+    color: #334155 !important;
+    vertical-align: middle !important;
+}
+
+.dt-container table.dataTable tbody tr:hover td {
+    background-color: #f8fafc !important;
+}
+
+/* Empty Table State */
+.dt-container td.dt-empty {
+    text-align: center !important;
+    padding: 24px 12px !important;
+    color: #64748b !important;
+    font-size: 12.5px !important;
+}
+
+/* Length Menu & Info */
+.dt-container .dt-length,
+.dt-container div.dt-length {
+    margin-bottom: 16px !important;
+}
+
+.dt-container .dt-length select {
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 6px !important;
+    padding: 4px 8px !important;
+    font-size: 12px !important;
+    color: #1e293b !important;
+    background-color: #fff !important;
+    margin: 0 4px !important;
+    outline: none !important;
+}
+
+.dt-container .dt-length label,
+.dt-container .dt-info {
+    font-size: 12px !important;
+    color: #64748b !important;
+}
+
+.dt-container .dt-info {
+    padding-top: 14px !important;
+}
+
+/* Paging Controls */
+.dt-container .dt-paging {
+    padding-top: 10px !important;
+}
+
+.dt-container .dt-paging .dt-paging-button {
+    border-radius: 6px !important;
+    font-size: 12px !important;
+    padding: 4px 10px !important;
+    margin: 0 2px !important;
+    border: 1px solid transparent !important;
+    background: transparent !important;
+    color: #475569 !important;
+    box-shadow: none !important;
+    outline: none !important;
+    transition: all 0.15s ease !important;
+}
+
+.dt-container .dt-paging .dt-paging-button.current,
+.dt-container .dt-paging .dt-paging-button.current:hover {
+    background: #071a33 !important;
+    color: #ffffff !important;
+    border-color: #071a33 !important;
+    font-weight: 700 !important;
+}
+
+.dt-container .dt-paging .dt-paging-button:hover:not(.current):not(.disabled) {
+    background: #e2e8f0 !important;
+    color: #071a33 !important;
+    border-color: #cbd5e1 !important;
+}
+
+.dt-container .dt-paging .dt-paging-button.disabled {
+    opacity: 0.4 !important;
+}
+
 

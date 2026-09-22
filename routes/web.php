@@ -2,11 +2,13 @@
 
 use App\Http\Controllers\PendaftaranController;
 use App\Http\Controllers\PerencanaanController;
+use App\Http\Controllers\VerifikasiController;
 use App\Livewire\Admin\Dashboard\DashboardIndex;
 use App\Livewire\Admin\Pendaftaran\PendaftaranData;
 use App\Livewire\Admin\Perencanaan\PerencanaanCreate;
 use App\Livewire\Admin\Perencanaan\PerencanaanData;
 use App\Livewire\Admin\Perencanaan\PerencanaanEdit;
+use App\Livewire\Admin\Verifikasi\VerifikasiData;
 use App\Livewire\Auth\Login;
 use App\Livewire\Auth\Register;
 use App\Livewire\Landing\LandingIndex;
@@ -56,6 +58,14 @@ Route::middleware(['auth', 'role:admin,mentor,verifikator,pimpinan'])->group(fun
         Route::name('pendaftaran.')->group(function () {
             Route::get('/datatable', [PendaftaranController::class, 'dataDt'])->name('dt');
             Route::livewire('/data', PendaftaranData::class)->name('data');
+        });
+    });
+
+    // Modul 3: Tahap Verifikasi
+    Route::prefix('verifikasi')->group(function () {
+        Route::name('verifikasi.')->group(function () {
+            Route::get('/datatable', [VerifikasiController::class, 'dataDt'])->name('dt');
+            Route::livewire('/data', VerifikasiData::class)->name('data');
         });
     });
 });
