@@ -52,8 +52,9 @@ new class extends Component {
                             <span>Verifikasi</span>
                         </a>
                     </li>
-                    <li>
-                        <a href="javascript:void(0)" title="Penjadwalan">
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('penjadwalan*') ? 'active' : '' }}"
+                            href="{{ route('penjadwalan.data') }}" title="Penjadwalan" wire:navigate>
                             <i class="ri-calendar-event-line menu-icon"></i>
                             <span>Penjadwalan</span>
                         </a>

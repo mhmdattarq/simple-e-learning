@@ -1773,23 +1773,24 @@ select::placeholder,
 }
 
 .dt-container #header-filter input.search-col-dt {
+    height: 32px !important;
+    min-height: 32px !important;
+    max-height: 32px !important;
+    line-height: 32px !important;
+    background-color: #ffffff !important;
     border: 1px solid #cbd5e1 !important;
     border-radius: 6px !important;
-    font-size: 11.5px !important;
-    padding: 4px 8px !important;
-    background-color: #f8fafc !important;
+    padding: 0 8px !important;
+    font-size: 12px !important;
     color: #1e293b !important;
     width: 100% !important;
     box-sizing: border-box !important;
-    outline: none !important;
-    box-shadow: none !important;
-    transition: all 0.2s ease !important;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease !important;
 }
 
 .dt-container #header-filter input.search-col-dt:focus {
-    background-color: #ffffff !important;
-    border-color: #071a33 !important;
-    box-shadow: 0 0 0 2px rgba(7, 26, 51, 0.1) !important;
+    border-color: #94a3b8 !important;
+    box-shadow: 0 0 0 2px rgba(148, 163, 184, 0.25) !important;
     outline: none !important;
 }
 
@@ -1798,7 +1799,6 @@ select::placeholder,
     font-size: 13px !important;
     padding: 12px 12px !important;
     border-bottom: 1px solid #f1f5f9 !important;
-    color: #334155 !important;
     vertical-align: middle !important;
 }
 
@@ -1807,11 +1807,20 @@ select::placeholder,
 }
 
 /* Empty Table State */
+.dt-container table.dataTable tbody td.dt-empty,
 .dt-container td.dt-empty {
     text-align: center !important;
-    padding: 24px 12px !important;
+    padding: 32px 12px !important;
     color: #64748b !important;
-    font-size: 12.5px !important;
+    font-size: 13px !important;
+    background-color: #ffffff !important;
+    box-shadow: none !important;
+}
+
+.dt-container table.dataTable tbody tr:hover td.dt-empty,
+.dt-container table.dataTable tbody tr.dt-empty:hover td {
+    background-color: #ffffff !important;
+    box-shadow: none !important;
 }
 
 /* Length Menu & Info */
@@ -1821,14 +1830,23 @@ select::placeholder,
 }
 
 .dt-container .dt-length select {
+    height: 32px !important;
+    min-height: 32px !important;
+    max-height: 32px !important;
+    line-height: 32px !important;
     border: 1px solid #cbd5e1 !important;
     border-radius: 6px !important;
-    padding: 4px 8px !important;
+    padding: 0 8px !important;
     font-size: 12px !important;
     color: #1e293b !important;
     background-color: #fff !important;
     margin: 0 4px !important;
     outline: none !important;
+}
+
+/* Hide Processing Banner ("Memuat data...") universally */
+div.dt-processing {
+    display: none !important;
 }
 
 .dt-container .dt-length label,

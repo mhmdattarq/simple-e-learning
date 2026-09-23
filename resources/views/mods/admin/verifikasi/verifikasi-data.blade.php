@@ -7,100 +7,7 @@
         </div>
     </div>
 
-    {{-- KPI / Stat Cards (Compact, Neat & Proportional) --}}
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-5 g-2 mb-20">
-        {{-- Total Usulan --}}
-        <div class="col">
-            <div class="card border-0 h-100 p-12" style="background: #fff; border: 1px solid #e2e8f0 !important; border-radius: 10px; box-shadow: 0 1px 2px rgba(0,0,0,0.02);">
-                <div class="d-flex align-items-center justify-content-between mb-1">
-                    <span class="text-secondary fw-semibold text-uppercase" style="font-size: 10.5px; letter-spacing: 0.3px;">Total Usulan</span>
-                    <div class="d-flex align-items-center justify-content-center"
-                        style="background-color: #f1f5f9; color: #475569; width: 24px; height: 24px; border-radius: 6px; font-size: 12px;">
-                        <i class="ri-folder-user-line"></i>
-                    </div>
-                </div>
-                <div class="d-flex align-items-baseline gap-1">
-                    <span class="fw-bold text-dark" style="font-size: 16px; line-height: 1.2;">{{ $stats['total'] ?? 0 }}</span>
-                    <small class="text-muted" style="font-size: 11px;">berkas</small>
-                </div>
-                <small class="text-muted d-block" style="font-size: 10.5px;">Seluruh usulan masuk</small>
-            </div>
-        </div>
-
-        {{-- Menunggu --}}
-        <div class="col">
-            <div class="card border-0 h-100 p-12" style="background: #fff; border: 1px solid #e2e8f0 !important; border-radius: 10px; box-shadow: 0 1px 2px rgba(0,0,0,0.02);">
-                <div class="d-flex align-items-center justify-content-between mb-1">
-                    <span class="fw-semibold text-uppercase" style="color: #d97706; font-size: 10.5px; letter-spacing: 0.3px;">Menunggu</span>
-                    <div class="d-flex align-items-center justify-content-center"
-                        style="background-color: #fef9c3; color: #ca8a04; width: 24px; height: 24px; border-radius: 6px; font-size: 12px;">
-                        <i class="ri-time-line"></i>
-                    </div>
-                </div>
-                <div class="d-flex align-items-baseline gap-1">
-                    <span class="fw-bold" style="color: #d97706; font-size: 16px; line-height: 1.2;">{{ $stats['pending'] ?? 0 }}</span>
-                    <small class="text-muted" style="font-size: 11px;">berkas</small>
-                </div>
-                <small class="text-muted d-block" style="font-size: 10.5px;">Perlu verifikasi</small>
-            </div>
-        </div>
-
-        {{-- Diverifikasi --}}
-        <div class="col">
-            <div class="card border-0 h-100 p-12" style="background: #fff; border: 1px solid #e2e8f0 !important; border-radius: 10px; box-shadow: 0 1px 2px rgba(0,0,0,0.02);">
-                <div class="d-flex align-items-center justify-content-between mb-1">
-                    <span class="fw-semibold text-uppercase" style="color: #0284c7; font-size: 10.5px; letter-spacing: 0.3px;">Diverifikasi</span>
-                    <div class="d-flex align-items-center justify-content-center"
-                        style="background-color: #e0f2fe; color: #0284c7; width: 24px; height: 24px; border-radius: 6px; font-size: 12px;">
-                        <i class="ri-checkbox-circle-line"></i>
-                    </div>
-                </div>
-                <div class="d-flex align-items-baseline gap-1">
-                    <span class="fw-bold" style="color: #0284c7; font-size: 16px; line-height: 1.2;">{{ $stats['verified'] ?? 0 }}</span>
-                    <small class="text-muted" style="font-size: 11px;">peserta</small>
-                </div>
-                <small class="text-muted d-block" style="font-size: 10.5px;">Lolos ke tahap berikutnya</small>
-            </div>
-        </div>
-
-        {{-- Perlu Perbaikan --}}
-        <div class="col">
-            <div class="card border-0 h-100 p-12" style="background: #fff; border: 1px solid #e2e8f0 !important; border-radius: 10px; box-shadow: 0 1px 2px rgba(0,0,0,0.02);">
-                <div class="d-flex align-items-center justify-content-between mb-1">
-                    <span class="fw-semibold text-uppercase" style="color: #ea580c; font-size: 10.5px; letter-spacing: 0.3px;">Perlu Perbaikan</span>
-                    <div class="d-flex align-items-center justify-content-center"
-                        style="background-color: #fff7ed; color: #ea580c; width: 24px; height: 24px; border-radius: 6px; font-size: 12px;">
-                        <i class="ri-edit-line"></i>
-                    </div>
-                </div>
-                <div class="d-flex align-items-baseline gap-1">
-                    <span class="fw-bold" style="color: #ea580c; font-size: 16px; line-height: 1.2;">{{ $stats['revision_required'] ?? 0 }}</span>
-                    <small class="text-muted" style="font-size: 11px;">berkas</small>
-                </div>
-                <small class="text-muted d-block" style="font-size: 10.5px;">Menunggu revisi</small>
-            </div>
-        </div>
-
-        {{-- Ditolak --}}
-        <div class="col">
-            <div class="card border-0 h-100 p-12" style="background: #fff; border: 1px solid #e2e8f0 !important; border-radius: 10px; box-shadow: 0 1px 2px rgba(0,0,0,0.02);">
-                <div class="d-flex align-items-center justify-content-between mb-1">
-                    <span class="fw-semibold text-uppercase" style="color: #dc2626; font-size: 10.5px; letter-spacing: 0.3px;">Ditolak</span>
-                    <div class="d-flex align-items-center justify-content-center"
-                        style="background-color: #fef2f2; color: #dc2626; width: 24px; height: 24px; border-radius: 6px; font-size: 12px;">
-                        <i class="ri-close-circle-line"></i>
-                    </div>
-                </div>
-                <div class="d-flex align-items-baseline gap-1">
-                    <span class="fw-bold" style="color: #dc2626; font-size: 16px; line-height: 1.2;">{{ $stats['rejected'] ?? 0 }}</span>
-                    <small class="text-muted" style="font-size: 11px;">berkas</small>
-                </div>
-                <small class="text-muted d-block" style="font-size: 10.5px;">Tidak memenuhi syarat</small>
-            </div>
-        </div>
-    </div>
-
-    {{-- Main Card with Table (Identical to Pendaftaran) --}}
+    {{-- Main Card with Table (Identical to Perencanaan, Pendaftaran & Penjadwalan) --}}
     <div class="card simpel-card border-0 shadow-sm radius-16">
         <div class="card-header bg-white pt-20 pb-0 px-20 border-0 d-flex align-items-center justify-content-between flex-wrap gap-2">
             <div class="d-flex align-items-center gap-2">
@@ -118,7 +25,7 @@
                             <th class="text-center" style="width: 40px;">
                                 <input class="form-check-input check-data-all" type="checkbox">
                             </th>
-                            <th class="text-center" style="width: 100px;">Aksi</th>
+                            <th class="text-center" style="width: 70px;">Aksi</th>
                             <th class="text-center" style="width: 50px;">No</th>
                             <th style="width: 150px;">No. Registrasi</th>
                             <th>Nama Peserta</th>
@@ -126,7 +33,7 @@
                             <th>Nama Pelatihan</th>
                             <th class="text-center" style="width: 110px;">Surat Tugas</th>
                             <th class="text-center" style="width: 130px;">Tgl Daftar</th>
-                            <th class="text-center" style="width: 130px;">Status</th>
+                            <th class="text-center" style="width: 110px;">Status</th>
                         </tr>
                         {{-- Thead Kedua: Search Filter Per Kolom (PRD-LW) --}}
                         <tr id="header-filter" class="bg-light">

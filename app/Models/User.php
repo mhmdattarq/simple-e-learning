@@ -88,4 +88,12 @@ class User extends Authenticatable
             ->withPivot(['id', 'registration_number', 'status', 'recommendation_letter_path', 'notes', 'enrolled_at'])
             ->withTimestamps();
     }
+
+    /**
+     * Jadwal sesi yang diampu sebagai mentor.
+     */
+    public function mentoredSchedules(): HasMany
+    {
+        return $this->hasMany(CourseSchedule::class, 'mentor_id');
+    }
 }

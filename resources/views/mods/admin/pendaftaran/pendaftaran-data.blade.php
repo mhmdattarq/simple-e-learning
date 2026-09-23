@@ -25,7 +25,7 @@
                             <th class="text-center" style="width: 40px;">
                                 <input class="form-check-input check-data-all" type="checkbox">
                             </th>
-                            <th class="text-center" style="width: 100px;">Aksi</th>
+                            <th class="text-center" style="width: 70px;">Aksi</th>
                             <th class="text-center" style="width: 50px;">No</th>
                             <th style="width: 150px;">No. Registrasi</th>
                             <th>Nama Peserta</th>
@@ -33,7 +33,7 @@
                             <th>Nama Pelatihan</th>
                             <th class="text-center" style="width: 110px;">Surat Tugas</th>
                             <th class="text-center" style="width: 130px;">Tgl Daftar</th>
-                            <th class="text-center" style="width: 130px;">Status</th>
+                            <th class="text-center" style="width: 110px;">Status</th>
                         </tr>
                         {{-- Thead Kedua: Search Filter Per Kolom (PRD-LW) --}}
                         <tr id="header-filter" class="bg-light">
