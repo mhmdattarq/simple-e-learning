@@ -58,9 +58,9 @@ new class extends Component {
                             <i class="ri-calendar-event-line menu-icon"></i>
                             <span>Penjadwalan</span>
                         </a>
-                    </li>
-                    <li>
-                        <a href="javascript:void(0)" title="Absensi Elektronik">
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('absensi*') ? 'active' : '' }}"
+                            href="{{ route('absensi.data') }}" title="Absensi Elektronik" wire:navigate>
                             <i class="ri-time-line menu-icon"></i>
                             <span>Absensi Elektronik</span>
                         </a>

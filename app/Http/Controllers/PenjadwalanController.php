@@ -21,6 +21,7 @@ class PenjadwalanController extends Controller
         $data = PenjadwalanRepo::getDt($courseId, $mentorId, $date);
 
         return DataTables::of($data)
+            ->addIndexColumn()
             ->addColumn('course_title', fn ($row) => $row->course?->title ?? '-')
             ->addColumn('course_code', fn ($row) => $row->course?->code ?? '-')
             ->addColumn('mentor_name', fn ($row) => $row->mentor?->name ?? '-')
