@@ -100,12 +100,57 @@
 
                 {{-- Toolbar & Editor Area (Quill Snow Editor) --}}
                 <div class="mb-24" wire:ignore>
+                    <div id="quillToolbar">
+                        <span class="ql-formats">
+                            <select class="ql-font"></select>
+                            <select class="ql-size"></select>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-bold"></button>
+                            <button class="ql-italic"></button>
+                            <button class="ql-underline"></button>
+                            <button class="ql-strike"></button>
+                        </span>
+                        <span class="ql-formats">
+                            <select class="ql-color"></select>
+                            <select class="ql-background"></select>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-script" value="sub"></button>
+                            <button class="ql-script" value="super"></button>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-header" value="1"></button>
+                            <button class="ql-header" value="2"></button>
+                            <button class="ql-blockquote"></button>
+                            <button class="ql-code-block"></button>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-list" value="ordered"></button>
+                            <button class="ql-list" value="bullet"></button>
+                            <button class="ql-indent" value="-1"></button>
+                            <button class="ql-indent" value="+1"></button>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-direction" value="rtl"></button>
+                            <select class="ql-align"></select>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-link"></button>
+                            <button class="ql-image"></button>
+                            <button class="ql-video"></button>
+                            <button class="ql-formula"></button>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-clean"></button>
+                        </span>
+                    </div>
                     <div id="quillEditor"></div>
                 </div>
 
                 {{-- Tombol Tambah Konten Sesuai Gambar --}}
                 @if (! $isFrozen)
-                    <button type="button" onclick="handleSaveKonten()" id="btnSubmitKonten" class="btn btn-tambah-konten w-100 shadow-sm">
+                    <button type="button" id="btnSubmitKonten" class="btn btn-tambah-konten w-100 shadow-sm">
                         {{ $lessonId ? 'Perbarui Konten' : 'Tambah Konten' }}
                     </button>
                 @else
@@ -119,53 +164,41 @@
 </div>
 
 @push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
 <script>
-    // Module-level flag: prevents double initialization regardless of which event fires first
-    if (typeof window._quillEditorInitialized === 'undefined') {
-        window._quillEditorInitialized = false;
-    }
     let quillInstance = null;
 
     function initQuillEditor() {
-        if (window._quillEditorInitialized) return;
-
         const editorContainer = document.getElementById('quillEditor');
-        if (!editorContainer) return;
+        const toolbarContainer = document.getElementById('quillToolbar');
+        if (!editorContainer || !toolbarContainer) return;
 
         if (typeof Quill === 'undefined') {
             const script = document.createElement('script');
             script.src = 'https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js';
-            script.onload = () => initQuillEditor();
+            script.onload = () => {
+                initQuillEditor();
+            };
             document.head.appendChild(script);
             return;
         }
 
-        // Set flag BEFORE instantiating to block any concurrent calls
-        window._quillEditorInitialized = true;
-
-        // Reset container so Quill gets a clean slate
-        editorContainer.innerHTML = '';
-        editorContainer.className = '';
-
-        const toolbarOptions = [
-            [{ 'font': [] }, { 'size': ['small', false, 'large', 'huge'] }],
-            ['bold', 'italic', 'underline', 'strike'],
-            [{ 'color': [] }, { 'background': [] }],
-            [{ 'script': 'sub' }, { 'script': 'super' }],
-            [{ 'header': 1 }, { 'header': 2 }, 'blockquote', 'code-block'],
-            [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'indent': '-1' }, { 'indent': '+1' }],
-            [{ 'direction': 'rtl' }, { 'align': [] }],
-            ['link', 'image', 'video', 'formula'],
-            ['clean']
-        ];
+        // Clean up previous instance if any
+        if (quillInstance) {
+            quillInstance = null;
+            editorContainer.innerHTML = '';
+        }
 
         quillInstance = new Quill('#quillEditor', {
             theme: 'snow',
             placeholder: 'Tulis Sesuatu...',
-            modules: { toolbar: toolbarOptions }
+            modules: {
+                toolbar: '#quillToolbar'
+            }
         });
 
-        // Load existing content when editing an existing lesson
+        // Load existing content if editing
         const existingContent = @js($lesson['body_text'] ?? '');
         if (existingContent && existingContent.trim() !== '') {
             try {
@@ -179,7 +212,7 @@
     function handleSaveKonten() {
         if (quillInstance) {
             const plainText = quillInstance.getText().trim();
-            if (!plainText) {
+            if (!plainText || plainText.length === 0) {
                 Livewire.dispatch('alert-show', {
                     data: {
                         type: 'warning',
@@ -189,24 +222,26 @@
                 });
                 return;
             }
-            @this.call('save', quillInstance.root.innerHTML);
+
+            const htmlContent = quillInstance.root.innerHTML;
+            @this.call('save', htmlContent);
         } else {
             @this.call('save');
         }
     }
 
-    // Reset flag and re-init when Livewire navigates to this page
     document.addEventListener('livewire:navigated', () => {
-        window._quillEditorInitialized = false;
-        quillInstance = null;
-        setTimeout(initQuillEditor, 50);
+        setTimeout(initQuillEditor, 100);
     });
 
-    // Init on first hard load
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', () => setTimeout(initQuillEditor, 50));
-    } else {
-        setTimeout(initQuillEditor, 50);
-    }
+    document.addEventListener('DOMContentLoaded', () => {
+        setTimeout(initQuillEditor, 100);
+
+        document.addEventListener('click', (e) => {
+            if (e.target && (e.target.id === 'btnSubmitKonten' || e.target.closest('#btnSubmitKonten'))) {
+                handleSaveKonten();
+            }
+        });
+    });
 </script>
 @endpush
