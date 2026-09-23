@@ -58,6 +58,14 @@ class Course extends Model
     }
 
     /**
+     * Jadwal sesi pelatihan (Tahap 4: Penjadwalan).
+     */
+    public function schedules(): HasMany
+    {
+        return $this->hasMany(CourseSchedule::class, 'course_id');
+    }
+
+    /**
      * Check if course is permanent (open anytime).
      */
     public function isPermanent(): bool

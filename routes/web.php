@@ -1,10 +1,12 @@
 <?php
 
 use App\Http\Controllers\PendaftaranController;
+use App\Http\Controllers\PenjadwalanController;
 use App\Http\Controllers\PerencanaanController;
 use App\Http\Controllers\VerifikasiController;
 use App\Livewire\Admin\Dashboard\DashboardIndex;
 use App\Livewire\Admin\Pendaftaran\PendaftaranData;
+use App\Livewire\Admin\Penjadwalan\PenjadwalanData;
 use App\Livewire\Admin\Perencanaan\PerencanaanCreate;
 use App\Livewire\Admin\Perencanaan\PerencanaanData;
 use App\Livewire\Admin\Perencanaan\PerencanaanEdit;
@@ -66,6 +68,14 @@ Route::middleware(['auth', 'role:admin,mentor,verifikator,pimpinan'])->group(fun
         Route::name('verifikasi.')->group(function () {
             Route::get('/datatable', [VerifikasiController::class, 'dataDt'])->name('dt');
             Route::livewire('/data', VerifikasiData::class)->name('data');
+        });
+    });
+
+    // Modul 4: Tahap Penjadwalan
+    Route::prefix('penjadwalan')->group(function () {
+        Route::name('penjadwalan.')->group(function () {
+            Route::get('/datatable', [PenjadwalanController::class, 'dataDt'])->name('dt');
+            Route::livewire('/data', PenjadwalanData::class)->name('data');
         });
     });
 });

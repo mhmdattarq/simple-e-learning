@@ -6,7 +6,7 @@
         }
 
         /* First Row Header: Clean Neutral Light */
-        #tableVerifikasi thead tr:first-child th {
+        #tablePenjadwalan thead tr:first-child th {
             background-color: #f8fafc !important;
             color: #475569 !important;
             font-size: 11.5px !important;
@@ -32,34 +32,34 @@
         table.dataTable thead>tr>th.dt-orderable-desc:hover,
         table.dataTable thead>tr>td.dt-orderable-asc:hover,
         table.dataTable thead>tr>td.dt-orderable-desc:hover,
-        #tableVerifikasi thead th,
-        #tableVerifikasi thead th:hover,
-        #tableVerifikasi thead th:focus,
-        #tableVerifikasi thead th:active {
+        #tablePenjadwalan thead th,
+        #tablePenjadwalan thead th:hover,
+        #tablePenjadwalan thead th:focus,
+        #tablePenjadwalan thead th:active {
             outline: none !important;
             outline-offset: 0 !important;
             box-shadow: none !important;
         }
 
         /* Subtle light hover on orderable headers */
-        #tableVerifikasi thead tr:first-child th.dt-orderable-asc:hover,
-        #tableVerifikasi thead tr:first-child th.dt-orderable-desc:hover {
+        #tablePenjadwalan thead tr:first-child th.dt-orderable-asc:hover,
+        #tablePenjadwalan thead tr:first-child th.dt-orderable-desc:hover {
             background-color: #f1f5f9 !important;
             color: #0f172a !important;
             cursor: pointer !important;
         }
 
         /* Reserve space for sort arrows on orderable columns to prevent text collision */
-        #tableVerifikasi thead tr:first-child th.dt-orderable-asc,
-        #tableVerifikasi thead tr:first-child th.dt-orderable-desc,
-        #tableVerifikasi thead tr:first-child th.dt-ordering-asc,
-        #tableVerifikasi thead tr:first-child th.dt-ordering-desc {
+        #tablePenjadwalan thead tr:first-child th.dt-orderable-asc,
+        #tablePenjadwalan thead tr:first-child th.dt-orderable-desc,
+        #tablePenjadwalan thead tr:first-child th.dt-ordering-asc,
+        #tablePenjadwalan thead tr:first-child th.dt-ordering-desc {
             padding-right: 28px !important;
             position: relative !important;
         }
 
         /* Sort Arrows in First Row: Neutral Slate */
-        #tableVerifikasi thead tr:first-child th span.dt-column-order {
+        #tablePenjadwalan thead tr:first-child th span.dt-column-order {
             position: absolute !important;
             right: 10px !important;
             top: 0 !important;
@@ -67,14 +67,14 @@
             width: 12px !important;
         }
 
-        #tableVerifikasi thead tr:first-child th span.dt-column-order:before,
-        #tableVerifikasi thead tr:first-child th span.dt-column-order:after {
+        #tablePenjadwalan thead tr:first-child th span.dt-column-order:before,
+        #tablePenjadwalan thead tr:first-child th span.dt-column-order:after {
             color: #94a3b8 !important;
             opacity: 0.5 !important;
         }
 
-        #tableVerifikasi thead tr:first-child th.dt-ordering-asc span.dt-column-order:before,
-        #tableVerifikasi thead tr:first-child th.dt-ordering-desc span.dt-column-order:after {
+        #tablePenjadwalan thead tr:first-child th.dt-ordering-asc span.dt-column-order:before,
+        #tablePenjadwalan thead tr:first-child th.dt-ordering-desc span.dt-column-order:after {
             color: #0f172a !important;
             opacity: 1 !important;
         }
@@ -120,18 +120,18 @@
         }
 
         /* Table Rows & Cells */
-        #tableVerifikasi td {
+        #tablePenjadwalan td {
             padding: 12px 12px !important;
             vertical-align: middle !important;
             font-size: 13px !important;
             border-bottom: 1px solid #f1f5f9 !important;
         }
 
-        #tableVerifikasi tbody tr:hover {
+        #tablePenjadwalan tbody tr:hover {
             background-color: #f8fafc !important;
         }
 
-        #tableVerifikasi td.dt-empty {
+        #tablePenjadwalan td.dt-empty {
             text-align: center !important;
             padding: 32px 12px !important;
             color: #64748b !important;
@@ -140,8 +140,8 @@
             box-shadow: none !important;
         }
 
-        #tableVerifikasi tbody tr:hover td.dt-empty,
-        #tableVerifikasi tbody tr.dt-empty:hover td {
+        #tablePenjadwalan tbody tr:hover td.dt-empty,
+        #tablePenjadwalan tbody tr.dt-empty:hover td {
             background-color: #ffffff !important;
             box-shadow: none !important;
         }
@@ -213,16 +213,16 @@
             min-height: 320px;
         }
 
-        #tableVerifikasi {
+        #tablePenjadwalan {
             width: 100% !important;
         }
 
-        #tableVerifikasi .dropdown {
+        #tablePenjadwalan .dropdown {
             position: relative;
             display: inline-block;
         }
 
-        #tableVerifikasi .dropdown-menu {
+        #tablePenjadwalan .dropdown-menu {
             position: absolute;
             top: 100%;
             left: 0;
@@ -233,32 +233,30 @@
 
 @push('js-stack')
     <script>
-        function initVerifikasiTable() {
-            var tableEl = document.getElementById('tableVerifikasi');
+        function initPenjadwalanTable() {
+            var tableEl = document.getElementById('tablePenjadwalan');
             if (!tableEl) return;
 
-            // 1. Hancurkan instance lama jika sudah terinisialisasi
-            if ($.fn.DataTable && $.fn.DataTable.isDataTable('#tableVerifikasi')) {
-                $('#tableVerifikasi').DataTable().destroy();
+            if ($.fn.DataTable && $.fn.DataTable.isDataTable('#tablePenjadwalan')) {
+                $('#tablePenjadwalan').DataTable().destroy();
             }
 
-            // 2. Inisialisasi DataTables Baru
             if ($.fn.DataTable) {
-                window.dtTable = $('#tableVerifikasi').DataTable({
+                window.dtTable = $('#tablePenjadwalan').DataTable({
                     processing: true,
                     serverSide: true,
                     responsive: false,
                     scrollX: false,
                     autoWidth: false,
-                    orderCellsTop: true, // Pastikan sorting hanya di row header pertama
+                    orderCellsTop: true,
                     pageLength: 25,
                     dom: 'lrtip',
                     order: [
-                        [8, 'desc'] // Default order by Tgl Daftar
+                        [5, 'asc'] // Default order by Tanggal & Waktu Sesi
                     ],
-                    ajax: '{{ route('verifikasi.dt') }}',
+                    ajax: '{{ route('penjadwalan.dt') }}',
                     columns: [
-                        // Kolom 0: Checkbox Baris
+                        // Kolom 0: Checkbox
                         {
                             data: null,
                             name: 'id',
@@ -266,8 +264,7 @@
                             searchable: false,
                             className: 'text-center',
                             render: function(data) {
-                                return '<input class="form-check-input check-data-item" type="checkbox" value="' +
-                                    data.id + '">';
+                                return '<input class="form-check-input check-data-item" type="checkbox" value="' + data.id + '">';
                             }
                         },
 
@@ -279,19 +276,23 @@
                             searchable: false,
                             className: 'text-center',
                             render: function(data, type, row) {
+                                let titleSafe = String(data.session_title || '').replace(/'/g, "\\'");
+
                                 return `
                                 <div class="dropdown">
                                     <button type="button" class="btn btn-sm btn-light border text-dark" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 4px 8px; font-size: 12px; border-radius: 6px;">
                                         <i class="ri-more-2-fill"></i>
                                     </button>
-                                    <div class="dropdown-menu dropdown-menu-end shadow-sm border-0 p-2" style="border-radius: 10px; min-width: 170px;">
+                                    <div class="dropdown-menu dropdown-menu-end shadow-sm border-0 p-2" style="border-radius: 10px; min-width: 160px;">
                                         <button type="button" class="dropdown-item d-flex align-items-center gap-2 py-2 px-3 rounded text-navy border-0 bg-transparent w-100 text-start"
-                                            wire:click="openVerifyModal(${data.id})">
-                                            <i class="ri-shield-check-line text-success"></i> Periksa Berkas
+                                            wire:click="openEditModal(${data.id})">
+                                            <i class="ri-edit-line text-primary"></i> Edit Jadwal
                                         </button>
-                                        <button type="button" class="dropdown-item d-flex align-items-center gap-2 py-2 px-3 rounded text-navy border-0 bg-transparent w-100 text-start"
-                                            wire:click="showDetail(${data.id})">
-                                            <i class="ri-eye-line text-primary"></i> Detail Berkas
+                                        <button type="button" class="dropdown-item text-danger d-flex align-items-center gap-2 py-2 px-3 rounded border-0 bg-transparent w-100 text-start"
+                                           data-bs-toggle="modal"
+                                           data-bs-target="#modalDelete"
+                                           wire:click="hookModalDelete(${data.id}, '${titleSafe}')">
+                                            <i class="ri-delete-bin-line"></i> Hapus
                                         </button>
                                     </div>
                                 </div>
@@ -299,107 +300,85 @@
                             }
                         },
 
-                        // Kolom 2: Nomor Urut Otomatis
+                        // Kolom 2: No
                         {
-                            data: null,
+                            data: 'DT_RowIndex',
+                            name: 'DT_RowIndex',
                             orderable: false,
                             searchable: false,
-                            className: 'text-center fw-medium text-muted',
-                            render: function(data, type, row, meta) {
-                                return meta.row + meta.settings._iDisplayStart + 1;
-                            }
+                            className: 'text-center text-muted fs-8'
                         },
 
-                        // Kolom 3: No. Registrasi
+                        // Kolom 3: Judul Sesi / Agenda
                         {
-                            data: 'registration_number',
-                            name: 'registration_number',
+                            data: 'session_title',
+                            name: 'session_title',
                             orderable: true,
                             searchable: true,
-                            className: 'fw-semibold text-navy',
                             render: function(data) {
-                                return `<span class="badge bg-light text-navy border border-simpel font-monospace px-2 py-1">${data}</span>`;
+                                return `<span class="fw-bold text-dark d-block" style="font-size: 13.5px;">${data}</span>`;
                             }
                         },
 
-                        // Kolom 4: Nama Peserta
-                        {
-                            data: 'user_name',
-                            name: 'user.name',
-                            orderable: false,
-                            searchable: true,
-                            render: function(data, type, row) {
-                                let email = row.user_email || (row.user ? row.user.email : '') || '';
-                                return `
-                                    <div>
-                                        <span class="fw-bold text-dark d-block">${data}</span>
-                                        <small class="text-muted fs-8">${email}</small>
-                                    </div>
-                                `;
-                            }
-                        },
-
-                        // Kolom 5: NIP & Instansi
-                        {
-                            data: 'user_nip',
-                            name: 'user.nip',
-                            orderable: false,
-                            searchable: true,
-                            render: function(data, type, row) {
-                                let opd = row.user_opd || '-';
-                                return `
-                                    <div>
-                                        <span class="fw-medium text-dark d-block">${data}</span>
-                                        <small class="text-muted fs-8">${opd}</small>
-                                    </div>
-                                `;
-                            }
-                        },
-
-                        // Kolom 6: Nama Pelatihan
+                        // Kolom 4: Pelatihan
                         {
                             data: 'course_title',
                             name: 'course.title',
-                            orderable: false,
+                            orderable: true,
                             searchable: true,
                             render: function(data, type, row) {
-                                let code = row.course_code || '';
+                                let code = row.course_code ? `<span class="badge bg-light text-secondary me-1" style="font-size: 11px;">${row.course_code}</span>` : '';
                                 return `
                                     <div>
-                                        <span class="badge bg-secondary-subtle text-secondary fs-8 mb-1">${code}</span>
-                                        <span class="fw-semibold text-dark d-block line-clamp-1">${data}</span>
+                                        ${code}
+                                        <span class="text-dark fw-medium">${data}</span>
                                     </div>
                                 `;
                             }
                         },
 
-                        // Kolom 7: Surat Tugas (PDF)
+                        // Kolom 5: Tanggal & Waktu
                         {
-                            data: 'letter_url',
-                            name: 'recommendation_letter_path',
-                            orderable: false,
-                            searchable: false,
-                            className: 'text-center',
-                            render: function(data) {
-                                if (data) {
-                                    return `<a href="${data}" target="_blank" class="btn btn-sm btn-outline-danger py-1 px-2 rounded-pill fs-8">
-                                        <i class="ri-file-pdf-line me-1"></i>PDF
-                                    </a>`;
-                                }
-                                return `<span class="text-muted fs-8">-</span>`;
+                            data: 'session_date_formatted',
+                            name: 'session_date',
+                            orderable: true,
+                            searchable: true,
+                            render: function(data, type, row) {
+                                return `
+                                    <div>
+                                        <div class="fw-semibold text-dark"><i class="ri-calendar-line text-muted me-1"></i>${data}</div>
+                                        <small class="text-muted"><i class="ri-time-line me-1"></i>${row.time_range}</small>
+                                    </div>
+                                `;
                             }
                         },
 
-                        // Kolom 8: Tanggal Daftar
+                        // Kolom 6: Mentor Pengampu
                         {
-                            data: 'enrolled_at_formatted',
-                            name: 'enrolled_at',
+                            data: 'mentor_name',
+                            name: 'mentor.name',
                             orderable: true,
-                            searchable: false,
-                            className: 'text-center fs-8 text-muted'
+                            searchable: true,
+                            render: function(data, type, row) {
+                                let nip = row.mentor_nip ? `<small class="text-muted d-block">NIP: ${row.mentor_nip}</small>` : '';
+                                return `
+                                    <div>
+                                        <span class="fw-medium text-dark">${data}</span>
+                                        ${nip}
+                                    </div>
+                                `;
+                            }
                         },
 
-                        // Kolom 9: Status
+                        // Kolom 7: Ruangan / Link
+                        {
+                            data: 'location_badge',
+                            name: 'room_or_link',
+                            orderable: false,
+                            searchable: true
+                        },
+
+                        // Kolom 8: Status
                         {
                             data: 'status_badge',
                             name: 'status',
@@ -409,13 +388,13 @@
                         }
                     ],
                     language: {
-                        emptyTable: 'Belum ada data verifikasi berkas',
-                        zeroRecords: 'Belum ada data verifikasi berkas'
+                        emptyTable: 'Belum ada data jadwal pelatihan',
+                        zeroRecords: 'Belum ada data jadwal pelatihan'
                     },
                     initComplete: function(settings) {
                         var table = settings.oInstance.api();
 
-                        // 3. Filter Kolom Input pada Thead Kedua (#header-filter)
+                        // Filter per Kolom
                         $('#header-filter input.search-col-dt').on('keyup change clear', function() {
                             var colIndex = $(this).closest('th').index();
                             if (table.column(colIndex).search() !== this.value) {
@@ -423,7 +402,7 @@
                             }
                         });
 
-                        // 4. Checkbox Pilih Semua
+                        // Checkbox Pilih Semua
                         $('.check-data-all').on('change', function() {
                             $('.check-data-item').prop('checked', this.checked);
                         });
@@ -434,11 +413,11 @@
 
         // Initialize on DOM ready and Livewire navigation
         $(document).ready(function() {
-            initVerifikasiTable();
+            initPenjadwalanTable();
         });
 
         document.addEventListener('livewire:navigated', function() {
-            initVerifikasiTable();
+            initPenjadwalanTable();
         });
 
         window.addEventListener('reloadDT', function() {

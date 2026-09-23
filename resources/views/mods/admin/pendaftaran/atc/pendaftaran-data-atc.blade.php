@@ -5,6 +5,7 @@
             font-family: 'Inter', -apple-system, sans-serif;
         }
 
+        /* First Row Header: Clean Neutral Light */
         #tablePendaftaran thead tr:first-child th {
             background-color: #f8fafc !important;
             color: #475569 !important;
@@ -23,6 +24,7 @@
             transition: background-color 0.15s ease !important;
         }
 
+        /* Remove ANY DataTables or browser default hover/focus/active outline */
         table.dataTable thead>tr>th:hover,
         table.dataTable thead>tr>th:focus,
         table.dataTable thead>tr>th:active,
@@ -39,6 +41,7 @@
             box-shadow: none !important;
         }
 
+        /* Subtle light hover on orderable headers */
         #tablePendaftaran thead tr:first-child th.dt-orderable-asc:hover,
         #tablePendaftaran thead tr:first-child th.dt-orderable-desc:hover {
             background-color: #f1f5f9 !important;
@@ -46,6 +49,7 @@
             cursor: pointer !important;
         }
 
+        /* Reserve space for sort arrows on orderable columns to prevent text collision */
         #tablePendaftaran thead tr:first-child th.dt-orderable-asc,
         #tablePendaftaran thead tr:first-child th.dt-orderable-desc,
         #tablePendaftaran thead tr:first-child th.dt-ordering-asc,
@@ -54,6 +58,7 @@
             position: relative !important;
         }
 
+        /* Sort Arrows in First Row: Neutral Slate */
         #tablePendaftaran thead tr:first-child th span.dt-column-order {
             position: absolute !important;
             right: 10px !important;
@@ -74,6 +79,7 @@
             opacity: 1 !important;
         }
 
+        /* Second Row Header (Filter): Light & Completely Disable Sort UI */
         #header-filter th {
             background-color: #ffffff !important;
             padding: 8px 10px !important;
@@ -92,44 +98,68 @@
         }
 
         #header-filter input.search-col-dt {
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
-            font-size: 11.5px;
-            padding: 4px 8px;
-            background-color: #f8fafc;
-            transition: all 0.2s;
-            outline: none !important;
-            box-shadow: none !important;
+            height: 32px !important;
+            min-height: 32px !important;
+            max-height: 32px !important;
+            line-height: 32px !important;
+            background-color: #ffffff !important;
+            border: 1px solid #cbd5e1 !important;
+            border-radius: 6px !important;
+            padding: 0 8px !important;
+            font-size: 12px !important;
+            color: #1e293b !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+            transition: border-color 0.15s ease, box-shadow 0.15s ease !important;
         }
 
         #header-filter input.search-col-dt:focus {
-            background-color: #ffffff;
-            border-color: var(--simpel-navy, #071a33);
-            box-shadow: 0 0 0 2px rgba(7, 26, 51, 0.1) !important;
+            border-color: #94a3b8 !important;
+            box-shadow: 0 0 0 2px rgba(148, 163, 184, 0.25) !important;
             outline: none !important;
         }
 
-        #tablePendaftaran tbody td {
-            font-size: 13px !important;
+        /* Table Rows & Cells */
+        #tablePendaftaran td {
             padding: 12px 12px !important;
-            border-bottom: 1px solid #f1f5f9;
-            color: #334155;
-            vertical-align: middle;
+            vertical-align: middle !important;
+            font-size: 13px !important;
+            border-bottom: 1px solid #f1f5f9 !important;
         }
 
-        #tablePendaftaran tbody tr:hover td {
+        #tablePendaftaran tbody tr:hover {
             background-color: #f8fafc !important;
         }
 
+        #tablePendaftaran td.dt-empty {
+            text-align: center !important;
+            padding: 32px 12px !important;
+            color: #64748b !important;
+            font-size: 13px !important;
+            background-color: #ffffff !important;
+            box-shadow: none !important;
+        }
+
+        #tablePendaftaran tbody tr:hover td.dt-empty,
+        #tablePendaftaran tbody tr.dt-empty:hover td {
+            background-color: #ffffff !important;
+            box-shadow: none !important;
+        }
+
+        /* Length Menu & Info */
         .dt-container .dt-length,
         .dt-container div.dt-length {
             margin-bottom: 16px !important;
         }
 
         .dt-container .dt-length select {
+            height: 32px !important;
+            min-height: 32px !important;
+            max-height: 32px !important;
+            line-height: 32px !important;
             border: 1px solid #cbd5e1 !important;
             border-radius: 6px !important;
-            padding: 4px 8px !important;
+            padding: 0 8px !important;
             font-size: 12px !important;
             color: #1e293b !important;
             background-color: #fff !important;
@@ -147,6 +177,7 @@
             padding-top: 14px !important;
         }
 
+        /* Paging Buttons */
         .dt-container .dt-paging {
             padding-top: 10px !important;
         }
@@ -157,10 +188,6 @@
             padding: 4px 10px !important;
             margin: 0 2px !important;
             border: 1px solid transparent !important;
-            background: transparent !important;
-            color: #475569 !important;
-            box-shadow: none !important;
-            outline: none !important;
             transition: all 0.15s ease !important;
         }
 
@@ -180,6 +207,19 @@
 
         .dt-container .dt-paging .dt-paging-button.disabled {
             opacity: 0.4 !important;
+        }
+
+        .table-responsive {
+            min-height: 320px;
+        }
+
+        #tablePendaftaran {
+            width: 100% !important;
+        }
+
+        #tablePendaftaran .dropdown {
+            position: relative;
+            display: inline-block;
         }
 
         #tablePendaftaran .dropdown-menu {
@@ -370,17 +410,8 @@
                         }
                     ],
                     language: {
-                        processing: '<div class="d-flex align-items-center justify-content-center gap-2 text-primary my-3"><div class="spinner-border spinner-border-sm"></div> Memuat data pendaftaran...</div>',
                         emptyTable: 'Belum ada data pendaftaran diklat',
-                        info: 'Menampilkan _START_ sampai _END_ dari _TOTAL_ pendaftar',
-                        infoEmpty: 'Menampilkan 0 pendaftar',
-                        infoFiltered: '(disaring dari _MAX_ total pendaftar)',
-                        paginate: {
-                            first: '<i class="ri-arrow-left-double-line"></i>',
-                            previous: '<i class="ri-arrow-left-s-line"></i>',
-                            next: '<i class="ri-arrow-right-s-line"></i>',
-                            last: '<i class="ri-arrow-right-double-line"></i>'
-                        }
+                        zeroRecords: 'Belum ada data pendaftaran diklat'
                     }
                 });
 

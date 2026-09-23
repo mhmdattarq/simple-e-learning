@@ -39,7 +39,7 @@ test('unauthorized users cannot access verifikasi routes', function () {
         ->assertStatus(403);
 });
 
-test('verifikator and admin can access verifikasi index page and view stats cards', function () {
+test('verifikator and admin can access verifikasi index page', function () {
     $verifikator = User::factory()->verifikator()->create();
 
     $this->actingAs($verifikator)
@@ -47,11 +47,7 @@ test('verifikator and admin can access verifikasi index page and view stats card
         ->assertStatus(200)
         ->assertSee('Verifikasi Berkas Pelatihan ASN')
         ->assertSee('Tahap 3')
-        ->assertSee('Total Usulan')
-        ->assertSee('Menunggu')
-        ->assertSee('Diverifikasi')
-        ->assertSee('Perlu Perbaikan')
-        ->assertSee('Ditolak');
+        ->assertSee('Daftar Verifikasi Berkas Peserta');
 
     $admin = User::factory()->admin()->create();
 

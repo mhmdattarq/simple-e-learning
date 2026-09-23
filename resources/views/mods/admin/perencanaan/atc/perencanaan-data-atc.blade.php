@@ -98,10 +98,14 @@
         }
 
         #header-filter input.search-col-dt {
+            height: 32px !important;
+            min-height: 32px !important;
+            max-height: 32px !important;
+            line-height: 32px !important;
             background-color: #ffffff !important;
             border: 1px solid #cbd5e1 !important;
             border-radius: 6px !important;
-            padding: 5px 8px !important;
+            padding: 0 8px !important;
             font-size: 12px !important;
             color: #1e293b !important;
             width: 100% !important;
@@ -127,6 +131,21 @@
             background-color: #f8fafc !important;
         }
 
+        #tablePerencanaan td.dt-empty {
+            text-align: center !important;
+            padding: 32px 12px !important;
+            color: #64748b !important;
+            font-size: 13px !important;
+            background-color: #ffffff !important;
+            box-shadow: none !important;
+        }
+
+        #tablePerencanaan tbody tr:hover td.dt-empty,
+        #tablePerencanaan tbody tr.dt-empty:hover td {
+            background-color: #ffffff !important;
+            box-shadow: none !important;
+        }
+
         /* Length Menu & Info */
         .dt-container .dt-length,
         .dt-container div.dt-length {
@@ -134,9 +153,13 @@
         }
 
         .dt-container .dt-length select {
+            height: 32px !important;
+            min-height: 32px !important;
+            max-height: 32px !important;
+            line-height: 32px !important;
             border: 1px solid #cbd5e1 !important;
             border-radius: 6px !important;
-            padding: 5px 8px !important;
+            padding: 0 8px !important;
             font-size: 12px !important;
             color: #1e293b !important;
             background-color: #fff !important;
@@ -391,6 +414,10 @@
                             }
                         }
                     ],
+                    language: {
+                        emptyTable: 'Belum ada data perencanaan diklat',
+                        zeroRecords: 'Belum ada data perencanaan diklat'
+                    },
                     initComplete: function(settings) {
                         var table = settings.oInstance.api();
 
