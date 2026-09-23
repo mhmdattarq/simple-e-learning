@@ -6,7 +6,9 @@ use App\Http\Controllers\PerencanaanController;
 use App\Http\Controllers\VerifikasiController;
 use App\Livewire\Admin\Dashboard\DashboardIndex;
 use App\Livewire\Admin\Pendaftaran\PendaftaranData;
+use App\Livewire\Admin\Penjadwalan\PenjadwalanCreate;
 use App\Livewire\Admin\Penjadwalan\PenjadwalanData;
+use App\Livewire\Admin\Penjadwalan\PenjadwalanEdit;
 use App\Livewire\Admin\Perencanaan\PerencanaanCreate;
 use App\Livewire\Admin\Perencanaan\PerencanaanData;
 use App\Livewire\Admin\Perencanaan\PerencanaanEdit;
@@ -76,6 +78,8 @@ Route::middleware(['auth', 'role:admin,mentor,verifikator,pimpinan'])->group(fun
         Route::name('penjadwalan.')->group(function () {
             Route::get('/datatable', [PenjadwalanController::class, 'dataDt'])->name('dt');
             Route::livewire('/data', PenjadwalanData::class)->name('data');
+            Route::livewire('/create', PenjadwalanCreate::class)->name('create');
+            Route::livewire('/edit/{id}', PenjadwalanEdit::class)->name('edit');
         });
     });
 });
