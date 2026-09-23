@@ -14,9 +14,15 @@
                 <i class="ri-user-add-fill text-simple fs-5"></i>
                 <h6 class="fw-bold text-dark mb-0 fs-6">Daftar Pendaftaran Peserta (Rekapitulasi ASN)</h6>
             </div>
+            <div class="d-flex align-items-center gap-2">
+                <a href="{{ route('pendaftaran.export') }}" target="_blank" class="btn btn-sm btn-outline-success d-inline-flex align-items-center gap-1 shadow-none" title="Unduh Rekap Berkas Pendaftaran ASN">
+                    <i class="ri-file-excel-2-line fs-6"></i>
+                    <span>Unduh Rekap Berkas</span>
+                </a>
+            </div>
         </div>
 
-        {{-- Container Table Wajib wire:ignore (PRD-LW) --}}
+        {{-- Kontainer tabel dengan wire:ignore agar render DOM DataTables tidak terganggu siklus Livewire --}}
         <div class="card-body p-20" wire:ignore>
             <div class="table-responsive">
                 <table id="tablePendaftaran" class="table table-hover align-middle mb-0">
@@ -35,7 +41,7 @@
                             <th class="text-center" style="width: 130px;">Tgl Daftar</th>
                             <th class="text-center" style="width: 110px;">Status</th>
                         </tr>
-                        {{-- Thead Kedua: Search Filter Per Kolom (PRD-LW) --}}
+                        {{-- Thead Kedua: Filter pencarian spesifik per kolom tabel --}}
                         <tr id="header-filter" class="bg-light">
                             <th></th>
                             <th></th>

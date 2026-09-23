@@ -65,7 +65,7 @@ class PerencanaanCreate extends Component
             'form.target_audience' => 'nullable|string|max:255',
             'form.budget_source' => 'nullable|string|max:255',
             'form.description' => 'nullable|string',
-            'form.status' => 'required|in:draft,published,archived',
+            'form.status' => 'required|in:draft,submitted,published,archived',
             'thumbnailFile' => 'nullable|image|max:2048', // 2MB max
             'torFile' => 'nullable|mimes:pdf|max:10240', // 10MB max
         ];

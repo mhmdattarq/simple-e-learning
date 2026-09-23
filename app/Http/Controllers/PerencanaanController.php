@@ -9,7 +9,7 @@ class PerencanaanController extends Controller
 {
     /**
      * Serve JSON for Yajra DataTables server-side.
-     * Ultra-Thin Controller pattern per PRD-LW.
+     * Ultra-Thin Controller pattern untuk penyediaan data Yajra DataTables perencanaan pelatihan.
      */
     public function dataDt()
     {

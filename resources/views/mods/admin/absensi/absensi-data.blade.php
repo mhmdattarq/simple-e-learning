@@ -49,7 +49,7 @@
                 </div>
                 <div>
                     <h6 class="text-muted fs-8 mb-1">Masa Berlaku Standar Token</h6>
-                    <h4 class="fw-bold text-dark mb-0">15 <span class="fs-8 fw-normal text-muted">Menit per Sesi (PRD)</span></h4>
+                    <h4 class="fw-bold text-dark mb-0">15 <span class="fs-8 fw-normal text-muted">Menit per Sesi</span></h4>
                 </div>
             </div>
         </div>
@@ -69,7 +69,7 @@
             </div>
         </div>
 
-        {{-- Container Table Wajib wire:ignore (PRD-LW) --}}
+        {{-- Kontainer tabel dengan wire:ignore agar render DOM DataTables tidak terganggu siklus Livewire --}}
         <div class="card-body p-20" wire:ignore>
             {{-- Filter & Search Header Bar --}}
             <div class="row g-2 mb-3 align-items-end">
@@ -182,7 +182,7 @@
                                 <input type="number" class="form-control @error('tokenValidityMinutes') is-invalid @enderror" wire:model="tokenValidityMinutes" min="5" max="180">
                                 <span class="input-group-text fs-8 text-muted">Menit</span>
                             </div>
-                            <small class="text-muted fs-8">Standar PRD: 15 menit. Anda dapat mengatur 5 hingga 180 menit.</small>
+                            <small class="text-muted fs-8">Durasi standar: 15 menit. Anda dapat mengatur rentang 5 hingga 180 menit.</small>
                             @error('tokenValidityMinutes')
                                 <div class="text-danger fs-8 mt-1">{{ $message }}</div>
                             @enderror
@@ -371,7 +371,7 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label fw-semibold text-dark fs-8">Alasan Pengubahan Status (Wajib Audit PRD) <span class="text-danger">*</span></label>
+                            <label class="form-label fw-semibold text-dark fs-8">Alasan Pengubahan Status (Wajib untuk Rekam Audit) <span class="text-danger">*</span></label>
                             <textarea class="form-control @error('correctionReason') is-invalid @enderror" wire:model="correctionReason" rows="3" placeholder="Contoh: Peserta hadir namun kendala jaringan saat input token; telah dikonfirmasi di kelas."></textarea>
                             @error('correctionReason')
                                 <div class="text-danger fs-8 mt-1">{{ $message }}</div>

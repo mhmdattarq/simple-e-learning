@@ -14,7 +14,7 @@ class AbsensiRepo
 {
     /**
      * Query builder for Yajra DataTables server-side rendering.
-     * Note: Returns Builder instance without ->get() per PRD-LW.
+     * Note: Mengembalikan instance query Builder untuk pagination server-side Yajra DataTables.
      */
     public static function getDt(?int $courseId = null, ?string $date = null, ?string $tokenStatus = null, ?int $mentorId = null): Builder
     {
@@ -65,7 +65,7 @@ class AbsensiRepo
 
     /**
      * Generate / Buka Sesi Token Absensi Elektronik.
-     * Default masa berlaku: 15 menit per PRD.md.
+     * Default masa berlaku token: 15 menit per sesi diklat.
      */
     public static function openAttendanceSession(CourseSchedule $schedule, int $validityMinutes = 15): string
     {
@@ -279,7 +279,7 @@ class AbsensiRepo
 
     /**
      * Koreksi Manual Status Kehadiran (Admin/Mentor).
-     * Wajib menyertakan correction_reason per PRD.md.
+     * Wajib menyertakan correction_reason untuk rekam jejak audit perubahan presensi.
      */
     public static function applyManualCorrection(
         int $scheduleId,

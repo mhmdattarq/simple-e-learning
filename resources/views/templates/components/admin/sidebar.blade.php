@@ -65,8 +65,9 @@ new class extends Component {
                             <span>Absensi Elektronik</span>
                         </a>
                     </li>
-                    <li>
-                        <a href="javascript:void(0)" title="Ruang Materi">
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('materi*') ? 'active' : '' }}"
+                            href="{{ route('materi.data') }}" title="Ruang Materi" wire:navigate>
                             <i class="ri-book-read-line menu-icon"></i>
                             <span>Ruang Materi</span>
                         </a>

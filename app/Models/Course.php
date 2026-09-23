@@ -80,4 +80,16 @@ class Course extends Model
     {
         return $this->type === 'batch';
     }
+
+    /**
+     * Check if curriculum is frozen (Batch rule: locked once active/started).
+     */
+    public function isCurriculumFrozen(): bool
+    {
+        if ($this->isBatch() && $this->start_date) {
+            return now()->startOfDay()->gte($this->start_date->startOfDay());
+        }
+
+        return false;
+    }
 }

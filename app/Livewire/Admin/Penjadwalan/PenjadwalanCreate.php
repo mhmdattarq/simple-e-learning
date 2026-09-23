@@ -93,7 +93,7 @@ class PenjadwalanCreate extends Component
         $this->conflictError = null;
         $this->validate();
 
-        // Anti-bentrok conflict validation per PRD.md
+        // Validasi pencegahan konflik jadwal mentor dan ruangan (anti-bentrok)
         $conflict = PenjadwalanRepo::checkConflict($this->form);
         if ($conflict) {
             $this->conflictError = $conflict;

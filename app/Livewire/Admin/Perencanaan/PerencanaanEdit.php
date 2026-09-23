@@ -61,7 +61,7 @@ class PerencanaanEdit extends Component
             'form.target_audience' => 'nullable|string|max:255',
             'form.budget_source' => 'nullable|string|max:255',
             'form.description' => 'nullable|string',
-            'form.status' => 'required|in:draft,published,archived',
+            'form.status' => 'required|in:draft,submitted,published,archived',
             'thumbnailFile' => 'nullable|image|max:2048',
             'torFile' => 'nullable|mimes:pdf|max:10240',
         ];
@@ -153,6 +153,12 @@ class PerencanaanEdit extends Component
             'title' => 'Gagal',
             'message' => 'Terjadi kesalahan sistem saat memperbarui data pelatihan.',
         ]);
+    }
+
+    public function submitToLeader()
+    {
+        $this->form['status'] = 'submitted';
+        $this->formSubmit();
     }
 
     public function render()

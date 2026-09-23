@@ -43,6 +43,26 @@ class PerencanaanData extends Component
         }
     }
 
+    public function submitToLeader($id)
+    {
+        $process = PerencanaanRepo::submitToLeader($id);
+
+        if ($process) {
+            $this->dispatch('alert-show', data: [
+                'type' => 'success',
+                'title' => 'Berhasil',
+                'message' => 'Program pelatihan berhasil diajukan ke Pimpinan untuk persetujuan.',
+            ]);
+            $this->dispatch('reloadDT', data: 'dtTable');
+        } else {
+            $this->dispatch('alert-show', data: [
+                'type' => 'danger',
+                'title' => 'Gagal',
+                'message' => 'Terjadi kesalahan sistem saat mengajukan program pelatihan.',
+            ]);
+        }
+    }
+
     public function render()
     {
         return view('mods.admin.perencanaan.perencanaan-data');

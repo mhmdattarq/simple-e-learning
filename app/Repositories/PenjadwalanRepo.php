@@ -14,7 +14,7 @@ class PenjadwalanRepo
 {
     /**
      * Query builder for Yajra DataTables server-side rendering.
-     * Note: Returns Builder instance without ->get() per PRD-LW.
+     * Note: Mengembalikan instance query Builder untuk pagination server-side Yajra DataTables.
      */
     public static function getDt(?int $courseId = null, ?int $mentorId = null, ?string $date = null): Builder
     {
@@ -46,7 +46,7 @@ class PenjadwalanRepo
     }
 
     /**
-     * Check for scheduling conflicts (anti-bentrok per PRD.md).
+     * Validasi anti-bentrok jadwal mentor dan ruangan/lokasi sesi pelatihan.
      * Validates mentor availability and physical room collision.
      *
      * @return string|null Error message if conflict found, null if clean.

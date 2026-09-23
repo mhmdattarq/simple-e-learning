@@ -426,8 +426,8 @@
                 </div>
 
                 {{-- Action Buttons (Menyatu tanpa garis pemisah) --}}
-                <div class="d-flex align-items-center">
-                    <button type="submit" class="btn btn-simpel-gold align-items-center w-100"
+                <div class="d-flex align-items-center gap-2">
+                    <button type="submit" class="btn btn-simpel-gold align-items-center flex-grow-1"
                         wire:loading.attr="disabled">
                         <span wire:loading.remove>
                             <i class="ri-save-line"></i> Perbarui Pelatihan
@@ -436,6 +436,13 @@
                             <span class="spinner-border spinner-border-sm"></span> Memperbarui...
                         </span>
                     </button>
+                    @if (($form['status'] ?? '') === 'draft')
+                        <button type="button" class="btn btn-outline-primary d-inline-flex align-items-center gap-1"
+                            wire:click="submitToLeader" wire:loading.attr="disabled"
+                            title="Simpan dan ajukan program pelatihan ke Pimpinan">
+                            <i class="ri-send-plane-line"></i> Ajukan ke Pimpinan
+                        </button>
+                    @endif
                 </div>
             </div>
         </div>

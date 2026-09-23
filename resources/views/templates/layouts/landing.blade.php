@@ -73,7 +73,7 @@
 
 <body class="custom-cursor">
     @auth
-        {{-- Universal Modal & Confirmation (PRD-LW) --}}
+        {{-- Modal Universal & Konfirmasi Aksi --}}
         <livewire:admin.modal />
     @endauth
 

@@ -54,7 +54,7 @@ class AbsensiData extends Component
 
     /**
      * Buka Modal Pengaturan / Generate Token Sesi.
-     * Khusus Mentor Pengampu Sesi per PRD.md.
+     * Otorisasi khusus mentor pengampu sesi diklat.
      */
     public function hookModalToken(int $scheduleId): void
     {
@@ -85,7 +85,7 @@ class AbsensiData extends Component
 
     /**
      * Submit Buka / Regenerate Token Sesi.
-     * Khusus Mentor Pengampu Sesi per PRD.md.
+     * Otorisasi khusus mentor pengampu sesi diklat.
      */
     public function submitOpenToken(): void
     {
@@ -122,7 +122,7 @@ class AbsensiData extends Component
 
     /**
      * Tutup Sesi Token Absensi.
-     * Khusus Mentor Pengampu Sesi per PRD.md.
+     * Otorisasi khusus mentor pengampu sesi diklat.
      */
     public function closeToken(int $scheduleId): void
     {

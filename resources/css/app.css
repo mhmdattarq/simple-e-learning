@@ -1895,4 +1895,168 @@ div.dt-processing {
     opacity: 0.4 !important;
 }
 
+/* ==========================================================================
+   Quill WYSIWYG Editor Overrides & Tailwind Preflight Protection
+   ========================================================================== */
+.ql-editor {
+    font-size: 15px;
+    line-height: 1.6;
+    color: #1e293b;
+    min-height: 280px;
+}
+
+/* Enforce Underline, Italic, Bold, Strikethrough against Tailwind reset */
+.ql-editor u {
+    text-decoration: underline !important;
+}
+
+.ql-editor em,
+.ql-editor i {
+    font-style: italic !important;
+}
+
+.ql-editor strong,
+.ql-editor b {
+    font-weight: 700 !important;
+}
+
+.ql-editor s,
+.ql-editor strike,
+.ql-editor del {
+    text-decoration: line-through !important;
+}
+
+/* Enforce Font Sizes */
+.ql-editor .ql-size-small {
+    font-size: 0.75em !important;
+}
+
+.ql-editor .ql-size-large {
+    font-size: 1.5em !important;
+    line-height: 1.3 !important;
+}
+
+.ql-editor .ql-size-huge {
+    font-size: 2.25em !important;
+    line-height: 1.2 !important;
+}
+
+/* Enforce Font Families */
+.ql-editor .ql-font-serif {
+    font-family: Georgia, Cambria, 'Times New Roman', Times, serif !important;
+}
+
+.ql-editor .ql-font-monospace {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace !important;
+}
+
+/* Enforce Headings */
+.ql-editor h1 {
+    font-size: 2em !important;
+    font-weight: 700 !important;
+    margin-top: 0.67em !important;
+    margin-bottom: 0.4em !important;
+    color: #0f172a !important;
+}
+
+.ql-editor h2 {
+    font-size: 1.5em !important;
+    font-weight: 600 !important;
+    margin-top: 0.83em !important;
+    margin-bottom: 0.4em !important;
+    color: #0f172a !important;
+}
+
+.ql-editor h3 {
+    font-size: 1.17em !important;
+    font-weight: 600 !important;
+    margin-top: 1em !important;
+    margin-bottom: 0.4em !important;
+    color: #0f172a !important;
+}
+
+/* Enforce Blockquotes */
+.ql-editor blockquote {
+    border-left: 4px solid #cbd5e1 !important;
+    margin-bottom: 8px !important;
+    margin-top: 8px !important;
+    padding-left: 16px !important;
+    font-style: italic !important;
+    color: #64748b !important;
+}
+
+/* Enforce Code Blocks */
+.ql-editor pre.ql-syntax {
+    background-color: #0f172a !important;
+    color: #f8fafc !important;
+    padding: 12px 16px !important;
+    border-radius: 8px !important;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+    overflow-x: auto !important;
+    margin: 8px 0 !important;
+}
+
+/* Enforce Lists */
+.ql-editor ol {
+    padding-left: 1.5em !important;
+    list-style-type: decimal !important;
+}
+
+.ql-editor ul {
+    padding-left: 1.5em !important;
+    list-style-type: disc !important;
+}
+
+/* Subscript & Superscript */
+.ql-editor sub {
+    vertical-align: sub !important;
+    font-size: smaller !important;
+}
+
+.ql-editor sup {
+    vertical-align: super !important;
+    font-size: smaller !important;
+}
+
+/* Toolbar styling matching user screenshot */
+.form-konten-card {
+    background: #ffffff;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    padding: 24px;
+}
+
+.ql-toolbar.ql-snow {
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    border-color: #e2e8f0 !important;
+    background: #ffffff;
+    padding: 10px 12px !important;
+}
+
+.ql-container.ql-snow {
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+    border-color: #e2e8f0 !important;
+    min-height: 280px;
+}
+
+.btn-tambah-konten {
+    background-color: #6366f1 !important;
+    border-color: #6366f1 !important;
+    color: #ffffff !important;
+    padding: 12px !important;
+    font-size: 15px !important;
+    font-weight: 600 !important;
+    border-radius: 8px !important;
+    transition: all 0.2s ease !important;
+}
+
+.btn-tambah-konten:hover {
+    background-color: #4f46e5 !important;
+    border-color: #4f46e5 !important;
+    color: #ffffff !important;
+}
+
+
 

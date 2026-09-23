@@ -15,7 +15,7 @@ class PendaftaranRepo
 {
     /**
      * Query builder for Yajra DataTables server-side rendering.
-     * Note: Returns Builder instance without ->get() per PRD-LW.
+     * Note: Mengembalikan instance query Builder untuk pagination server-side Yajra DataTables.
      */
     public static function getDt(?int $courseId = null): Builder
     {
