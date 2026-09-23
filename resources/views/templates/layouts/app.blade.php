@@ -27,9 +27,7 @@
     <!-- Slick Slider css -->
     <link rel="stylesheet" href="{{ asset('admin/assets/css/lib/slick.css') }}">
     <!-- main css -->
-    <!-- Quill WYSIWYG Editor & KaTeX css -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css">
+    <link rel="stylesheet" href="{{ asset('admin/assets/css/style.css') }}">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
@@ -78,10 +76,6 @@
     <script src="{{ asset('admin/assets/js/app.js') }}"></script>
     <!-- Skrip helper utilitas global aplikasi -->
     <script src="{{ asset('mine/script.js') }}"></script>
-
-    <!-- Quill WYSIWYG Editor & KaTeX js -->
-    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
 
     @livewireScripts
     @stack('js-stack')
