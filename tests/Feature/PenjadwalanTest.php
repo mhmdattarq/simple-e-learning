@@ -1,6 +1,8 @@
 <?php
 
+use App\Livewire\Admin\Penjadwalan\PenjadwalanCreate;
 use App\Livewire\Admin\Penjadwalan\PenjadwalanData;
+use App\Livewire\Admin\Penjadwalan\PenjadwalanEdit;
 use App\Models\Category;
 use App\Models\Course;
 use App\Models\CourseSchedule;
@@ -35,20 +37,31 @@ test('unauthorized users cannot access penjadwalan routes', function () {
     // Guest
     $this->get(route('penjadwalan.data'))
         ->assertRedirect(route('login'));
+    $this->get(route('penjadwalan.create'))
+        ->assertRedirect(route('login'));
 
     // Peserta
     $peserta = User::factory()->peserta()->create();
     $this->actingAs($peserta)
         ->get(route('penjadwalan.data'))
         ->assertStatus(403);
+    $this->actingAs($peserta)
+        ->get(route('penjadwalan.create'))
+        ->assertStatus(403);
 });
 
-test('admin and mentor can access penjadwalan index page', function () {
+test('admin and mentor can access penjadwalan pages', function () {
     $this->actingAs($this->admin)
         ->get(route('penjadwalan.data'))
         ->assertStatus(200)
         ->assertSee('Tahap 4: Penjadwalan Sesi Pelatihan')
         ->assertSee('Tambah Jadwal Sesi');
+
+    $this->actingAs($this->admin)
+        ->get(route('penjadwalan.create'))
+        ->assertStatus(200)
+        ->assertSee('Tambah Jadwal Sesi Baru')
+        ->assertSee('Formulir Jadwal Sesi Pelatihan');
 
     $this->actingAs($this->mentor)
         ->get(route('penjadwalan.data'))
@@ -96,12 +109,10 @@ test('penjadwalan datatable endpoint returns valid yajra json response', functio
         ]);
 });
 
-test('admin can create new schedule session via Livewire component', function () {
+test('admin can create new schedule session via PenjadwalanCreate page', function () {
     $this->actingAs($this->admin);
 
-    Livewire::test(PenjadwalanData::class)
-        ->call('openCreateModal')
-        ->assertDispatched('openModal', id: 'modalScheduleForm')
+    Livewire::test(PenjadwalanCreate::class)
         ->set('form.course_id', $this->course->id)
         ->set('form.mentor_id', $this->mentor->id)
         ->set('form.session_title', 'Studi Kasus Transformasi Digital Layanan Kepegawaian')
@@ -110,11 +121,9 @@ test('admin can create new schedule session via Livewire component', function ()
         ->set('form.end_time', '11:00')
         ->set('form.room_or_link', 'Ruang Rapat Utama BKPSDM')
         ->set('form.status', 'scheduled')
-        ->call('save')
+        ->call('formSubmit')
         ->assertHasNoErrors()
-        ->assertDispatched('closeModal', id: 'modalScheduleForm')
-        ->assertDispatched('alert-show')
-        ->assertDispatched('reloadDT');
+        ->assertRedirect(route('penjadwalan.data'));
 
     $this->assertDatabaseHas('course_schedules', [
         'course_id' => $this->course->id,
@@ -143,7 +152,7 @@ test('schedule creation rejects clashing mentor schedule (anti-bentrok)', functi
     ]);
 
     // Attempting to schedule same mentor overlapping: 10:00 - 12:00 on same date
-    Livewire::test(PenjadwalanData::class)
+    Livewire::test(PenjadwalanCreate::class)
         ->set('form.course_id', $this->course->id)
         ->set('form.mentor_id', $this->mentor->id)
         ->set('form.session_title', 'Sesi Praktik Bertabrakan')
@@ -151,7 +160,7 @@ test('schedule creation rejects clashing mentor schedule (anti-bentrok)', functi
         ->set('form.start_time', '10:00')
         ->set('form.end_time', '12:00')
         ->set('form.room_or_link', 'Ruang Lab B')
-        ->call('save')
+        ->call('formSubmit')
         ->assertHasErrors(['form.start_time']);
 
     $this->assertDatabaseMissing('course_schedules', [
@@ -178,7 +187,7 @@ test('schedule creation rejects clashing physical room schedule (anti-bentrok)',
     ]);
 
     // Another mentor attempting to book same physical room: 09:00 - 11:30 on same date
-    Livewire::test(PenjadwalanData::class)
+    Livewire::test(PenjadwalanCreate::class)
         ->set('form.course_id', $this->course->id)
         ->set('form.mentor_id', $mentorLain->id)
         ->set('form.session_title', 'Sesi Lain di Ruang Sama')
@@ -186,7 +195,7 @@ test('schedule creation rejects clashing physical room schedule (anti-bentrok)',
         ->set('form.start_time', '09:00')
         ->set('form.end_time', '11:30')
         ->set('form.room_or_link', 'Aula BKPSDM')
-        ->call('save')
+        ->call('formSubmit')
         ->assertHasErrors(['form.start_time']);
 
     $this->assertDatabaseMissing('course_schedules', [
@@ -194,7 +203,7 @@ test('schedule creation rejects clashing physical room schedule (anti-bentrok)',
     ]);
 });
 
-test('admin can update existing schedule session', function () {
+test('admin can access edit page and update existing schedule session via PenjadwalanEdit', function () {
     $this->actingAs($this->admin);
 
     $schedule = CourseSchedule::create([
@@ -209,15 +218,18 @@ test('admin can update existing schedule session', function () {
         'created_by' => $this->admin->id,
     ]);
 
-    Livewire::test(PenjadwalanData::class)
-        ->call('openEditModal', $schedule->id)
-        ->assertSet('editId', $schedule->id)
+    $this->get(route('penjadwalan.edit', $schedule->id))
+        ->assertStatus(200)
+        ->assertSee('Edit Jadwal Sesi Pelatihan')
+        ->assertSee('Formulir Edit Jadwal Sesi');
+
+    Livewire::test(PenjadwalanEdit::class, ['id' => $schedule->id])
         ->assertSet('form.session_title', 'Judul Awal')
         ->set('form.session_title', 'Judul Sesi Terkoreksi')
         ->set('form.room_or_link', 'https://zoom.us/j/999888777')
-        ->call('save')
+        ->call('formSubmit')
         ->assertHasNoErrors()
-        ->assertDispatched('closeModal', id: 'modalScheduleForm');
+        ->assertRedirect(route('penjadwalan.data'));
 
     $this->assertDatabaseHas('course_schedules', [
         'id' => $schedule->id,
@@ -226,7 +238,7 @@ test('admin can update existing schedule session', function () {
     ]);
 });
 
-test('admin can delete schedule session', function () {
+test('admin can delete schedule session via universal delete hook', function () {
     $this->actingAs($this->admin);
 
     $schedule = CourseSchedule::create([

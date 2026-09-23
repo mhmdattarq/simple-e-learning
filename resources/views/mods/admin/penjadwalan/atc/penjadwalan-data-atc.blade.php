@@ -276,6 +276,8 @@
                             searchable: false,
                             className: 'text-center',
                             render: function(data, type, row) {
+                                let url = "{{ route('penjadwalan.edit', ':id') }}";
+                                let editUrl = url.replace(':id', row.id);
                                 let titleSafe = String(data.session_title || '').replace(/'/g, "\\'");
 
                                 return `
@@ -284,10 +286,9 @@
                                         <i class="ri-more-2-fill"></i>
                                     </button>
                                     <div class="dropdown-menu dropdown-menu-end shadow-sm border-0 p-2" style="border-radius: 10px; min-width: 160px;">
-                                        <button type="button" class="dropdown-item d-flex align-items-center gap-2 py-2 px-3 rounded text-navy border-0 bg-transparent w-100 text-start"
-                                            wire:click="openEditModal(${data.id})">
-                                            <i class="ri-edit-line text-primary"></i> Edit Jadwal
-                                        </button>
+                                        <a class="dropdown-item d-flex align-items-center gap-2 py-2 px-3 rounded text-warning" href="${editUrl}" wire:navigate>
+                                            <i class="ri-edit-line"></i> Edit Jadwal
+                                        </a>
                                         <button type="button" class="dropdown-item text-danger d-flex align-items-center gap-2 py-2 px-3 rounded border-0 bg-transparent w-100 text-start"
                                            data-bs-toggle="modal"
                                            data-bs-target="#modalDelete"
