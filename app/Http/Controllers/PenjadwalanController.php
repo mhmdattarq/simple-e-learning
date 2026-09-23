@@ -10,7 +10,7 @@ class PenjadwalanController extends Controller
 {
     /**
      * Serve JSON for Yajra DataTables server-side.
-     * Ultra-Thin Controller pattern per PRD-LW.
+     * Ultra-Thin Controller pattern untuk penyediaan data Yajra DataTables penjadwalan diklat.
      */
     public function dataDt(Request $request)
     {

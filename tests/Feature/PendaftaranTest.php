@@ -260,3 +260,52 @@ test('admin can view detail modal and delete pendaftaran record', function () {
     $this->assertDatabaseMissing('course_user', ['id' => $reg->id]);
     Storage::disk('public')->assertMissing($path);
 });
+
+test('admin can export registration recap data to csv', function () {
+    $admin = User::factory()->admin()->create();
+    $peserta = User::factory()->peserta()->create([
+        'name' => 'Dr. Cut Nyak Dien, M.Si',
+        'nip' => '198505022010012003',
+        'opd_agency' => 'Bappeda Aceh',
+    ]);
+
+    $category = Category::first();
+    $course = Course::create([
+        'code' => 'PLT-2026-EXP',
+        'title' => 'Pelatihan Perencanaan Anggaran',
+        'category_id' => $category->id,
+        'type' => 'permanent',
+        'method' => 'daring',
+        'quota' => 25,
+        'status' => 'published',
+    ]);
+
+    CourseUser::create([
+        'user_id' => $peserta->id,
+        'course_id' => $course->id,
+        'registration_number' => 'REG-202609-0888',
+        'status' => RegistrationStatus::Pending,
+        'enrolled_at' => now(),
+    ]);
+
+    // Guest cannot export
+    $this->get(route('pendaftaran.export'))->assertRedirect(route('login'));
+
+    // Peserta cannot export
+    $this->actingAs($peserta)->get(route('pendaftaran.export'))->assertStatus(403);
+
+    // Admin can export
+    $response = $this->actingAs($admin)->get(route('pendaftaran.export'));
+
+    $response->assertOk();
+    $response->assertHeader('content-type', 'text/csv; charset=UTF-8');
+    expect($response->headers->get('content-disposition'))->toContain('attachment; filename=rekap-pendaftaran-diklat-');
+
+    $content = $response->streamedContent();
+    expect($content)->toContain('Nama Lengkap ASN');
+    expect($content)->toContain('Instansi / OPD');
+    expect($content)->toContain('REG-202609-0888');
+    expect($content)->toContain('Dr. Cut Nyak Dien, M.Si');
+    expect($content)->toContain('Bappeda Aceh');
+    expect($content)->toContain('PLT-2026-EXP');
+});

@@ -90,7 +90,7 @@ class Login extends Component
             return;
         }
 
-        // SMART DUAL-IDENTIFIER LOGIC (PRD-LW)
+        // Autentikasi fleksibel via Email atau NIP ASN
         // Jika angka saja -> NIP (18 digit ASN), selain itu -> Email
         $field = is_numeric($resolvedIdentifier) ? 'nip' : 'email';
 
@@ -129,7 +129,7 @@ class Login extends Component
     }
 
     /**
-     * Alias for authenticate() to match PRD-LW standard.
+     * Alias method authenticate() untuk kompatibilitas pemanggilan form login.
      */
     public function login()
     {

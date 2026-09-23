@@ -7,6 +7,9 @@ use App\Http\Controllers\PerencanaanController;
 use App\Http\Controllers\VerifikasiController;
 use App\Livewire\Admin\Absensi\AbsensiData;
 use App\Livewire\Admin\Dashboard\DashboardIndex;
+use App\Livewire\Admin\Materi\MateriData;
+use App\Livewire\Admin\Materi\MateriDetail;
+use App\Livewire\Admin\Materi\MateriEditor;
 use App\Livewire\Admin\Pendaftaran\PendaftaranData;
 use App\Livewire\Admin\Penjadwalan\PenjadwalanCreate;
 use App\Livewire\Admin\Penjadwalan\PenjadwalanData;
@@ -63,6 +66,7 @@ Route::middleware(['auth', 'role:admin,mentor,verifikator,pimpinan'])->group(fun
     Route::prefix('pendaftaran')->group(function () {
         Route::name('pendaftaran.')->group(function () {
             Route::get('/datatable', [PendaftaranController::class, 'dataDt'])->name('dt');
+            Route::get('/export-rekap', [PendaftaranController::class, 'exportRekap'])->name('export');
             Route::livewire('/data', PendaftaranData::class)->name('data');
         });
     });
@@ -90,6 +94,15 @@ Route::middleware(['auth', 'role:admin,mentor,verifikator,pimpinan'])->group(fun
         Route::name('absensi.')->group(function () {
             Route::get('/datatable', [AbsensiController::class, 'dataDt'])->name('dt');
             Route::livewire('/data', AbsensiData::class)->name('data');
+        });
+    });
+
+    // Modul 6: Tahap Ruang Materi (Kurikulum & Silabus)
+    Route::prefix('materi')->group(function () {
+        Route::name('materi.')->group(function () {
+            Route::livewire('/data', MateriData::class)->name('data');
+            Route::livewire('/detail/{id}', MateriDetail::class)->name('detail');
+            Route::livewire('/detail/{course_id}/editor/{lesson_id?}', MateriEditor::class)->name('editor');
         });
     });
 });

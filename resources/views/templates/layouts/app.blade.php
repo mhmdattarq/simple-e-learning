@@ -27,7 +27,9 @@
     <!-- Slick Slider css -->
     <link rel="stylesheet" href="{{ asset('admin/assets/css/lib/slick.css') }}">
     <!-- main css -->
-    <link rel="stylesheet" href="{{ asset('admin/assets/css/style.css') }}">
+    <!-- Quill WYSIWYG Editor & KaTeX css -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
@@ -36,7 +38,7 @@
 </head>
 
 <body>
-    {{-- Universal Modal & Toast (PRD-LW) --}}
+    {{-- Modal Universal & Notifikasi Toast --}}
     <livewire:admin.modal />
     <livewire:admin.toast />
 
@@ -74,8 +76,12 @@
     <script src="{{ asset('admin/assets/js/lib/slick.min.js') }}"></script>
     <!-- main js -->
     <script src="{{ asset('admin/assets/js/app.js') }}"></script>
-    <!-- global helper js (PRD-LW) -->
+    <!-- Skrip helper utilitas global aplikasi -->
     <script src="{{ asset('mine/script.js') }}"></script>
+
+    <!-- Quill WYSIWYG Editor & KaTeX js -->
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
 
     @livewireScripts
     @stack('js-stack')

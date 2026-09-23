@@ -16,7 +16,7 @@
             </div>
         </div>
 
-        {{-- Container Table Wajib wire:ignore (PRD-LW) --}}
+        {{-- Kontainer tabel dengan wire:ignore agar render DOM DataTables tidak terganggu siklus Livewire --}}
         <div class="card-body p-20" wire:ignore>
             <div class="table-responsive">
                 <table id="tableVerifikasi" class="table table-hover align-middle mb-0">
@@ -35,7 +35,7 @@
                             <th class="text-center" style="width: 130px;">Tgl Daftar</th>
                             <th class="text-center" style="width: 110px;">Status</th>
                         </tr>
-                        {{-- Thead Kedua: Search Filter Per Kolom (PRD-LW) --}}
+                        {{-- Thead Kedua: Filter pencarian spesifik per kolom tabel --}}
                         <tr id="header-filter" class="bg-light">
                             <th></th>
                             <th></th>
@@ -65,7 +65,7 @@
         </div>
     </div>
 
-    {{-- MODAL AKSI VERIFIKASI (PRD.md: Status, Notes, Verified By/At) --}}
+    {{-- Modal Aksi Verifikasi Berkas (Persetujuan/Penolakan pendaftaran dan catatan verifikator) --}}
     <div class="modal fade" id="modalVerifikasiAction" tabindex="-1" role="dialog" aria-hidden="true" wire:ignore.self>
         <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 620px;">
             <div class="modal-content border-0 shadow-lg position-relative" style="border-radius: 20px; overflow: hidden; background-color: #ffffff;">
@@ -172,7 +172,7 @@
                                 @enderror
                             </div>
 
-                            {{-- Catatan Verifikasi / Alasan Penolakan (PRD.md: Kondisional wajib jika bukan verified) --}}
+                            {{-- Catatan Verifikasi / Alasan Penolakan (Wajib diisi jika pendaftaran ditolak atau revisi) --}}
                             <div class="mb-24">
                                 <label for="verification_notes" class="form-label fw-bold text-dark mb-1" style="font-size: 13.5px;">
                                     Catatan Verifikasi

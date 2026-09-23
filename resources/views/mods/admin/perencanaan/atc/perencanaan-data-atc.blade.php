@@ -282,13 +282,24 @@
                                 let url = "{{ route('perencanaan.edit', ':id') }}";
                                 let editUrl = url.replace(':id', row.id);
                                 let identity = String(data.title || data.code || '').replace(/'/g, "\\'");
+                                let submitBtn = '';
+
+                                if (row.status === 'draft') {
+                                    submitBtn = `
+                                        <button type="button" class="dropdown-item text-primary d-flex align-items-center gap-2 py-2 px-3 rounded border-0 bg-transparent w-100 text-start"
+                                            wire:click="submitToLeader(${data.id})">
+                                            <i class="ri-send-plane-line"></i> Ajukan ke Pimpinan
+                                        </button>
+                                    `;
+                                }
 
                                 return `
                                 <div class="dropdown">
                                     <button type="button" class="btn btn-sm btn-light border text-dark" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 4px 8px; font-size: 12px; border-radius: 6px;">
                                         <i class="ri-more-2-fill"></i>
                                     </button>
-                                    <div class="dropdown-menu dropdown-menu-end shadow-sm border-0 p-2" style="border-radius: 10px; min-width: 150px;">
+                                    <div class="dropdown-menu dropdown-menu-end shadow-sm border-0 p-2" style="border-radius: 10px; min-width: 175px;">
+                                        ${submitBtn}
                                         <a class="dropdown-item d-flex align-items-center gap-2 py-2 px-3 rounded text-warning" href="${editUrl}" wire:navigate>
                                             <i class="ri-edit-line"></i> Edit Pelatihan
                                         </a>
@@ -407,6 +418,8 @@
                             render: function(data) {
                                 if (data === 'published') {
                                     return '<span class="badge bg-success text-white px-2 py-1"><i class="ri-checkbox-circle-line me-1"></i>Published</span>';
+                                } else if (data === 'submitted') {
+                                    return '<span class="badge bg-info text-white px-2 py-1"><i class="ri-send-plane-line me-1"></i>Diajukan ke Pimpinan</span>';
                                 } else if (data === 'archived') {
                                     return '<span class="badge bg-secondary text-white px-2 py-1"><i class="ri-archive-line me-1"></i>Archived</span>';
                                 }

@@ -69,7 +69,7 @@
 * **Testing:** Pest PHP Test Framework
 * **Code Formatter:** Laravel Pint
 
-### Prinsip Arsitektur Atta Stack (`PRD-LW.md`):
+### Prinsip Arsitektur Atta Stack:
 * **Strict Separation of Concerns (SoC):**
   * `app/Models/`: Definisi skema tabel, casting, dan relasi Eloquent murni.
   * `app/Repositories/`: **Satu-satunya tempat** logika query database, transaksi (`DB::transaction`), manipulasi data, dan logging.

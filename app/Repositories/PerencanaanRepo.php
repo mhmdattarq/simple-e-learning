@@ -11,7 +11,7 @@ class PerencanaanRepo
 {
     /**
      * Query builder for Yajra DataTables server-side rendering.
-     * Note: Returns Builder instance without ->get() per PRD-LW.
+     * Note: Mengembalikan instance query Builder untuk pagination server-side Yajra DataTables.
      */
     public static function getDt(): Builder
     {
@@ -125,5 +125,25 @@ class PerencanaanRepo
         $nextNumber = str_pad((string) ($lastNumber + 1), 3, '0', STR_PAD_LEFT);
 
         return "{$prefix}{$nextNumber}";
+    }
+
+    /**
+     * Submit draft course to leadership (Ajukan ke Pimpinan).
+     */
+    public static function submitToLeader(int|string $id): bool
+    {
+        try {
+            $course = self::getById($id);
+            $course->update(['status' => 'submitted']);
+
+            return true;
+        } catch (\Exception $e) {
+            Log::error('Ajukan perencanaan diklat ke pimpinan gagal', [
+                'id' => $id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return false;
+        }
     }
 }

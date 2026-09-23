@@ -12,7 +12,7 @@ use Livewire\Component;
 class Register extends Component
 {
     /**
-     * Centralized form state per PRD-LW.
+     * State form registrasi peserta ASN.
      *
      * @var array<string, string>
      */

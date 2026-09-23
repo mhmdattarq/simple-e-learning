@@ -24,7 +24,7 @@
             </div>
         </div>
 
-        {{-- Container Table Wajib wire:ignore (PRD-LW) --}}
+        {{-- Kontainer tabel dengan wire:ignore agar render DOM DataTables tidak terganggu siklus Livewire --}}
         <div class="card-body p-20" wire:ignore>
             <div class="table-responsive">
                 <table id="tablePerencanaan" class="table table-hover align-middle mb-0">
@@ -42,7 +42,7 @@
                             <th class="text-center" style="width: 110px;">Kuota</th>
                             <th class="text-center" style="width: 110px;">Status</th>
                         </tr>
-                        {{-- Thead Kedua: Search Filter Per Kolom (PRD-LW) --}}
+                        {{-- Thead Kedua: Filter pencarian spesifik per kolom tabel --}}
                         <tr id="header-filter" class="bg-light">
                             <th></th>
                             <th></th>

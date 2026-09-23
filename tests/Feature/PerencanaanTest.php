@@ -223,3 +223,47 @@ test('header user profile dropdown and logout form render on beranda, data, crea
         $response->assertSee(route('logout'));
     }
 });
+
+test('admin can submit a draft course to leader', function () {
+    $admin = User::factory()->admin()->create();
+    $category = Category::first();
+
+    $course = Course::create([
+        'code' => 'PLT-2026-SUBMIT',
+        'title' => 'Pelatihan Transformasi Digital ASN',
+        'category_id' => $category->id,
+        'type' => 'permanent',
+        'method' => 'daring',
+        'quota' => 30,
+        'status' => 'draft',
+        'created_by' => $admin->id,
+    ]);
+
+    Livewire::actingAs($admin)
+        ->test(PerencanaanData::class)
+        ->call('submitToLeader', $course->id)
+        ->assertDispatched('alert-show')
+        ->assertDispatched('reloadDT', data: 'dtTable');
+
+    expect($course->fresh()->status)->toBe('submitted');
+
+    // Also test via PerencanaanEdit submitToLeader
+    $course2 = Course::create([
+        'code' => 'PLT-2026-SUBMIT-2',
+        'title' => 'Pelatihan AI untuk ASN',
+        'category_id' => $category->id,
+        'type' => 'permanent',
+        'method' => 'daring',
+        'quota' => 20,
+        'status' => 'draft',
+        'created_by' => $admin->id,
+    ]);
+
+    Livewire::actingAs($admin)
+        ->test(PerencanaanEdit::class, ['id' => $course2->id])
+        ->call('submitToLeader')
+        ->assertHasNoErrors()
+        ->assertRedirect(route('perencanaan.data'));
+
+    expect($course2->fresh()->status)->toBe('submitted');
+});

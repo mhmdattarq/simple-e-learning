@@ -12,7 +12,7 @@ class VerifikasiRepo
 {
     /**
      * Query builder for Yajra DataTables server-side rendering.
-     * Note: Returns Builder instance without ->get() per PRD-LW.
+     * Note: Mengembalikan instance query Builder untuk pagination server-side Yajra DataTables.
      */
     public static function getDt(?string $status = null, ?int $courseId = null): Builder
     {
@@ -41,7 +41,7 @@ class VerifikasiRepo
 
     /**
      * Process verification decision (Diverifikasi, Perlu Perbaikan, Ditolak).
-     * Atomic transaction with audit trail logging per PRD.md.
+     * Transaksi atomik verifikasi status peserta disertai pencatatan audit trail verifikator.
      */
     public static function verify(int|string $id, string|RegistrationStatus $status, ?string $notes, int $verifierId): CourseUser
     {
