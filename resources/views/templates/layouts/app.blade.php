@@ -50,7 +50,7 @@
         </div>
 
         {{-- main contenct  --}}
-        <div class="dashboard-main-body" style="position: relative; z-index: 1;">
+        <div class="dashboard-main-body">
             {{ $slot }}
         </div>
     </main>

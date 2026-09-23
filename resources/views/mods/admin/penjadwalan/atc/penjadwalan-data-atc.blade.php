@@ -301,13 +301,15 @@
                             }
                         },
 
-                        // Kolom 2: No
+                        // Kolom 2: Nomor Urut Otomatis
                         {
-                            data: 'DT_RowIndex',
-                            name: 'DT_RowIndex',
+                            data: null,
                             orderable: false,
                             searchable: false,
-                            className: 'text-center text-muted fs-8'
+                            className: 'text-center fw-medium text-muted',
+                            render: function(data, type, row, meta) {
+                                return meta.row + meta.settings._iDisplayStart + 1;
+                            }
                         },
 
                         // Kolom 3: Judul Sesi / Agenda

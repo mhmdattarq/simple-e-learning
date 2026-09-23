@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class CourseSchedule extends Model
 {
@@ -22,12 +23,19 @@ class CourseSchedule extends Model
         'room_or_link',
         'status',
         'created_by',
+        'attendance_token',
+        'token_validity_minutes',
+        'token_expires_at',
+        'is_attendance_open',
     ];
 
     protected function casts(): array
     {
         return [
             'session_date' => 'date:Y-m-d',
+            'token_expires_at' => 'datetime',
+            'is_attendance_open' => 'boolean',
+            'token_validity_minutes' => 'integer',
         ];
     }
 
@@ -53,6 +61,25 @@ class CourseSchedule extends Model
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    /**
+     * Data presensi peserta pada sesi ini.
+     */
+    public function attendances(): HasMany
+    {
+        return $this->hasMany(Attendance::class, 'schedule_id');
+    }
+
+    /**
+     * Cek apakah token absensi sedang aktif dibuka dan belum kedaluwarsa.
+     */
+    public function isAttendanceActive(): bool
+    {
+        return $this->is_attendance_open
+            && ! empty($this->attendance_token)
+            && $this->token_expires_at
+            && $this->token_expires_at->isFuture();
     }
 
     /**

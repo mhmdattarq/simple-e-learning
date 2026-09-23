@@ -1,9 +1,11 @@
 <?php
 
+use App\Http\Controllers\AbsensiController;
 use App\Http\Controllers\PendaftaranController;
 use App\Http\Controllers\PenjadwalanController;
 use App\Http\Controllers\PerencanaanController;
 use App\Http\Controllers\VerifikasiController;
+use App\Livewire\Admin\Absensi\AbsensiData;
 use App\Livewire\Admin\Dashboard\DashboardIndex;
 use App\Livewire\Admin\Pendaftaran\PendaftaranData;
 use App\Livewire\Admin\Penjadwalan\PenjadwalanCreate;
@@ -80,6 +82,14 @@ Route::middleware(['auth', 'role:admin,mentor,verifikator,pimpinan'])->group(fun
             Route::livewire('/data', PenjadwalanData::class)->name('data');
             Route::livewire('/create', PenjadwalanCreate::class)->name('create');
             Route::livewire('/edit/{id}', PenjadwalanEdit::class)->name('edit');
+        });
+    });
+
+    // Modul 5: Tahap Absensi Elektronik
+    Route::prefix('absensi')->group(function () {
+        Route::name('absensi.')->group(function () {
+            Route::get('/datatable', [AbsensiController::class, 'dataDt'])->name('dt');
+            Route::livewire('/data', AbsensiData::class)->name('data');
         });
     });
 });

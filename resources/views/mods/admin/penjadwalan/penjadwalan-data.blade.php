@@ -3,7 +3,8 @@
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
         <div>
             <h5 class="fw-bold text-dark mb-1">Tahap 4: Penjadwalan Sesi Pelatihan</h5>
-            <p class="text-muted mb-0">Manajemen jadwal kelas, penetapan ruangan fisik/tautan daring Zoom, tanggal pelaksanaan, dan mentor pengampu.</p>
+            <p class="text-muted mb-0">Manajemen jadwal kelas, penetapan ruangan fisik/tautan daring Zoom, tanggal
+                pelaksanaan, dan mentor pengampu.</p>
         </div>
         <div class="d-flex align-items-center gap-2">
             <a href="{{ route('penjadwalan.create') }}" class="btn btn-simple-gold" wire:navigate>
@@ -15,7 +16,8 @@
 
     {{-- Main Card with Table (Identical Structure to Perencanaan & Pendaftaran) --}}
     <div class="card simpel-card border-0 shadow-sm radius-16">
-        <div class="card-header bg-white pt-20 pb-0 px-20 border-0 d-flex align-items-center justify-content-between flex-wrap gap-2">
+        <div
+            class="card-header bg-white pt-20 pb-0 px-20 border-0 d-flex align-items-center justify-content-between flex-wrap gap-2">
             <div class="d-flex align-items-center gap-2">
                 <i class="ri-calendar-event-fill text-simple fs-5"></i>
                 <h6 class="fw-bold text-dark mb-0 fs-6">Daftar Jadwal Sesi Pelatihan (Agenda Diklat)</h6>
@@ -46,22 +48,28 @@
                             <th></th>
                             <th></th>
                             <th>
-                                <input type="text" class="form-control form-control-sm search-col-dt" placeholder="Cari judul sesi...">
+                                <input type="text" class="form-control form-control-sm search-col-dt"
+                                    placeholder="Cari judul sesi...">
                             </th>
                             <th>
-                                <input type="text" class="form-control form-control-sm search-col-dt" placeholder="Cari pelatihan...">
+                                <input type="text" class="form-control form-control-sm search-col-dt"
+                                    placeholder="Cari pelatihan...">
                             </th>
                             <th>
-                                <input type="text" class="form-control form-control-sm search-col-dt" placeholder="Cari tanggal...">
+                                <input type="text" class="form-control form-control-sm search-col-dt"
+                                    placeholder="Cari tanggal...">
                             </th>
                             <th>
-                                <input type="text" class="form-control form-control-sm search-col-dt" placeholder="Cari mentor...">
+                                <input type="text" class="form-control form-control-sm search-col-dt"
+                                    placeholder="Cari mentor...">
                             </th>
                             <th>
-                                <input type="text" class="form-control form-control-sm search-col-dt" placeholder="Cari lokasi...">
+                                <input type="text" class="form-control form-control-sm search-col-dt"
+                                    placeholder="Cari lokasi...">
                             </th>
                             <th>
-                                <input type="text" class="form-control form-control-sm search-col-dt" placeholder="Cari status...">
+                                <input type="text" class="form-control form-control-sm search-col-dt"
+                                    placeholder="Cari status...">
                             </th>
                         </tr>
                     </thead>

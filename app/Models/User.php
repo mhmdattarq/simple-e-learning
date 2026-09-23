@@ -96,4 +96,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(CourseSchedule::class, 'mentor_id');
     }
+
+    /**
+     * Data riwayat presensi yang diikuti oleh user.
+     */
+    public function attendances(): HasMany
+    {
+        return $this->hasMany(Attendance::class, 'user_id');
+    }
 }
