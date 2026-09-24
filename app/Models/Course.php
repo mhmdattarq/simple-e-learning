@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class Course extends Model
 {
@@ -63,6 +64,22 @@ class Course extends Model
     public function schedules(): HasMany
     {
         return $this->hasMany(CourseSchedule::class, 'course_id');
+    }
+
+    /**
+     * Struktur bab silabus kurikulum (Tahap 6: Ruang Belajar).
+     */
+    public function chapters(): HasMany
+    {
+        return $this->hasMany(Chapter::class, 'course_id')->orderBy('order', 'asc');
+    }
+
+    /**
+     * Seluruh unit materi di dalam kursus melalui bab.
+     */
+    public function lessons(): HasManyThrough
+    {
+        return $this->hasManyThrough(Lesson::class, Chapter::class);
     }
 
     /**

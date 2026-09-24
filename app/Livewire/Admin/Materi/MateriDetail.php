@@ -3,14 +3,12 @@
 namespace App\Livewire\Admin\Materi;
 
 use App\Models\Course;
+use App\Repositories\MateriRepo;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
-use Livewire\WithFileUploads;
 
 class MateriDetail extends Component
 {
-    use WithFileUploads;
-
     public int $courseId;
 
     public ?Course $course = null;
@@ -21,7 +19,7 @@ class MateriDetail extends Component
 
     public bool $isMentor = false;
 
-    // Interactive curriculum state for UI preview & workflow
+    // Interactive curriculum state for UI
     public array $chapters = [];
 
     // Chapter Modal State
@@ -32,23 +30,6 @@ class MateriDetail extends Component
         'title' => '',
         'order' => 1,
     ];
-
-    // Lesson Modal State
-    public bool $showLessonModal = false;
-
-    public array $lessonForm = [
-        'id' => null,
-        'chapter_id' => null,
-        'title' => '',
-        'order' => 1,
-        'content_type' => 'article', // 'article' | 'video' | 'document'
-        'video_url' => '',
-        'body_text' => '',
-        'version' => 'Versi 1.0',
-        'version_notes' => '',
-    ];
-
-    public $attachmentFile = null;
 
     // Preview Modal State
     public bool $showPreviewModal = false;
@@ -67,83 +48,42 @@ class MateriDetail extends Component
         // Check Batch Freeze rule ala Dicoding
         $this->isFrozen = $this->course->isCurriculumFrozen();
 
-        // Initialize structured sample syllabus ala Dicoding so user immediately sees UI
-        $this->initSampleCurriculum();
+        // Load kurikulum nyata dari database
+        $this->loadCurriculum();
     }
 
-    private function initSampleCurriculum(): void
+    /**
+     * Memuat struktur bab dan materi dari database melalui MateriRepo.
+     */
+    public function loadCurriculum(): void
     {
-        $this->chapters = [
-            [
-                'id' => 1,
-                'title' => 'Bab 1: Dasar Regulasi & Pengantar Kurikulum ASN',
-                'order' => 1,
-                'lessons' => [
-                    [
-                        'id' => 101,
-                        'chapter_id' => 1,
-                        'title' => 'Video Orientasi & Visi Misi Pelatihan BerAKHLAK',
-                        'order' => 1,
-                        'content_type' => 'video',
-                        'video_url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-                        'body_text' => '{"time":1774396800000,"blocks":[{"type":"paragraph","data":{"text":"Selamat datang di orientasi materi pelatihan ASN BerAKHLAK. Simak paparan video berikut dengan seksama."}}]}',
-                        'attachment_path' => null,
-                        'version' => 'Versi 1.0',
-                        'version_notes' => 'Rilis materi orientasi awal',
-                        'updated_at' => now()->format('d M Y, H:i'),
-                    ],
-                    [
-                        'id' => 102,
-                        'chapter_id' => 1,
-                        'title' => 'Naskah Bacaan: Kerangka Nilai Dasar ASN BerAKHLAK',
-                        'order' => 2,
-                        'content_type' => 'article',
-                        'video_url' => null,
-                        'body_text' => '{"time":1774396800000,"blocks":[{"type":"header","data":{"text":"Core Values ASN: BerAKHLAK","level":3}},{"type":"paragraph","data":{"text":"BerAKHLAK merupakan akronim dari Berorientasi Pelayanan, Akuntabel, Kompeten, Harmonis, Loyal, Adaptif, dan Kolaboratif. Nilai-nilai ini menjadi pondasi dasar setiap ASN di lingkungan Pemerintah Kabupaten Aceh Timur."}},{"type":"paragraph","data":{"text":"Setiap peserta wajib menginternalisasi nilai-nilai ini dalam pelaksanaan tugas sehari-hari."}}]}',
-                        'attachment_path' => null,
-                        'version' => 'Versi 1.1',
-                        'version_notes' => 'Pembaruan redaksi regulasi SE MenPAN-RB 2026',
-                        'updated_at' => now()->subDays(1)->format('d M Y, H:i'),
-                    ],
-                    [
-                        'id' => 103,
-                        'chapter_id' => 1,
-                        'title' => 'Slide Modul Tayang Paparan Widyaiswara (PDF)',
-                        'order' => 3,
-                        'content_type' => 'document',
-                        'video_url' => null,
-                        'body_text' => '{"time":1774396800000,"blocks":[{"type":"paragraph","data":{"text":"Unduh dan pelajari slide materi paparan berikut sebagai bahan diskusi sesi tatap muka."}}]}',
-                        'attachment_path' => 'slide_modul_bab_1.pdf',
-                        'version' => 'Versi 1.0',
-                        'version_notes' => 'Slide tayang modul resmi',
-                        'updated_at' => now()->subDays(2)->format('d M Y, H:i'),
-                    ],
-                ],
-            ],
-            [
-                'id' => 2,
-                'title' => 'Bab 2: Pendalaman Kompetensi Teknis & Studi Kasus',
-                'order' => 2,
-                'lessons' => [
-                    [
-                        'id' => 201,
-                        'chapter_id' => 2,
-                        'title' => 'Bedah Kasus: Efektivitas Layanan Publik Terpadu',
-                        'order' => 1,
-                        'content_type' => 'article',
-                        'video_url' => null,
-                        'body_text' => '{"time":1774396800000,"blocks":[{"type":"paragraph","data":{"text":"Pelajari studi kasus implementasi pelayanan publik terpadu pada dinas teknis di Aceh Timur."}}]}',
-                        'attachment_path' => null,
-                        'version' => 'Versi 1.0',
-                        'version_notes' => 'Naskah studi kasus',
-                        'updated_at' => now()->subDays(3)->format('d M Y, H:i'),
-                    ],
-                ],
-            ],
-        ];
+        $curriculum = MateriRepo::getCurriculumByCourse($this->courseId);
+
+        $this->chapters = $curriculum->map(function ($chapter) {
+            return [
+                'id' => $chapter->id,
+                'title' => $chapter->title,
+                'order' => $chapter->order,
+                'lessons' => $chapter->lessons->map(function ($lesson) {
+                    return [
+                        'id' => $lesson->id,
+                        'chapter_id' => $lesson->chapter_id,
+                        'title' => $lesson->title,
+                        'order' => $lesson->order,
+                        'content_type' => $lesson->content_type,
+                        'video_url' => $lesson->video_url,
+                        'body_text' => $lesson->body_text,
+                        'attachment_path' => $lesson->attachment_path,
+                        'version' => $lesson->version,
+                        'version_notes' => $lesson->version_notes,
+                        'updated_at' => $lesson->updated_at ? $lesson->updated_at->format('d M Y, H:i') : '-',
+                    ];
+                })->toArray(),
+            ];
+        })->toArray();
     }
 
-    // --- CHAPTER ACTIONS ---
+    // --- CHAPTER CRUD ACTIONS ---
     public function openCreateChapter(): void
     {
         if ($this->isFrozen) {
@@ -198,36 +138,44 @@ class MateriDetail extends Component
         $this->validate([
             'chapterForm.title' => 'required|string|max:255',
             'chapterForm.order' => 'required|integer|min:1',
+        ], [
+            'chapterForm.title.required' => 'Judul bab silabus kurikulum wajib diisi.',
+            'chapterForm.order.required' => 'Nomor urut bab wajib ditentukan.',
         ]);
 
         if ($this->chapterForm['id']) {
-            // Update existing
-            foreach ($this->chapters as &$chap) {
-                if ($chap['id'] === $this->chapterForm['id']) {
-                    $chap['title'] = $this->chapterForm['title'];
-                    $chap['order'] = (int) $this->chapterForm['order'];
-                    break;
-                }
-            }
+            // Update via Repository
+            $success = MateriRepo::updateChapter($this->chapterForm['id'], [
+                'title' => $this->chapterForm['title'],
+                'order' => $this->chapterForm['order'],
+            ]);
             $msg = 'Bab kurikulum berhasil diperbarui.';
         } else {
-            // Create new
-            $newId = time();
-            $this->chapters[] = [
-                'id' => $newId,
+            // Create via Repository
+            $created = MateriRepo::createChapter([
+                'course_id' => $this->courseId,
                 'title' => $this->chapterForm['title'],
-                'order' => (int) $this->chapterForm['order'],
-                'lessons' => [],
-            ];
+                'order' => $this->chapterForm['order'],
+            ]);
+            $success = (bool) $created;
             $msg = 'Bab baru berhasil ditambahkan ke kurikulum.';
         }
 
-        $this->showChapterModal = false;
-        $this->dispatch('alert-show', data: [
-            'type' => 'success',
-            'title' => 'Berhasil',
-            'message' => $msg,
-        ]);
+        if ($success) {
+            $this->loadCurriculum();
+            $this->showChapterModal = false;
+            $this->dispatch('alert-show', data: [
+                'type' => 'success',
+                'title' => 'Berhasil',
+                'message' => $msg,
+            ]);
+        } else {
+            $this->dispatch('alert-show', data: [
+                'type' => 'danger',
+                'title' => 'Gagal',
+                'message' => 'Terjadi kesalahan sistem saat menyimpan bab kurikulum.',
+            ]);
+        }
     }
 
     public function deleteChapter(int $chapterId): void
@@ -242,161 +190,25 @@ class MateriDetail extends Component
             return;
         }
 
-        $this->chapters = array_values(array_filter($this->chapters, fn ($c) => $c['id'] !== $chapterId));
+        $success = MateriRepo::deleteChapter($chapterId);
 
-        $this->dispatch('alert-show', data: [
-            'type' => 'success',
-            'title' => 'Berhasil',
-            'message' => 'Bab kurikulum berhasil dihapus.',
-        ]);
-    }
-
-    // --- LESSON ACTIONS ---
-    public function openCreateLesson(int $chapterId): void
-    {
-        if ($this->isFrozen) {
+        if ($success) {
+            $this->loadCurriculum();
             $this->dispatch('alert-show', data: [
-                'type' => 'warning',
-                'title' => 'Kurikulum Terkunci',
-                'message' => 'Materi tidak dapat ditambah karena pelatihan tipe Batch sedang aktif berjalan.',
+                'type' => 'success',
+                'title' => 'Berhasil',
+                'message' => 'Bab kurikulum dan seluruh materinya berhasil dihapus.',
             ]);
-
-            return;
-        }
-
-        // Count lessons in this chapter to auto-calculate order
-        $order = 1;
-        foreach ($this->chapters as $chap) {
-            if ($chap['id'] === $chapterId) {
-                $order = count($chap['lessons']) + 1;
-                break;
-            }
-        }
-
-        $this->lessonForm = [
-            'id' => null,
-            'chapter_id' => $chapterId,
-            'title' => '',
-            'order' => $order,
-            'content_type' => 'article',
-            'video_url' => '',
-            'body_text' => '',
-            'version' => 'Versi 1.0',
-            'version_notes' => 'Rilis materi awal',
-        ];
-
-        $this->attachmentFile = null;
-        $this->showLessonModal = true;
-
-        // Dispatch browser event to initialize Editor.js
-        $this->dispatch('init-editorjs', content: '');
-    }
-
-    public function openEditLesson(int $lessonId): void
-    {
-        if ($this->isFrozen) {
-            $this->dispatch('alert-show', data: [
-                'type' => 'warning',
-                'title' => 'Kurikulum Terkunci',
-                'message' => 'Materi tidak dapat diedit karena pelatihan tipe Batch sedang aktif berjalan.',
-            ]);
-
-            return;
-        }
-
-        foreach ($this->chapters as $chap) {
-            foreach ($chap['lessons'] as $les) {
-                if ($les['id'] === $lessonId) {
-                    $this->lessonForm = [
-                        'id' => $les['id'],
-                        'chapter_id' => $les['chapter_id'],
-                        'title' => $les['title'],
-                        'order' => $les['order'],
-                        'content_type' => $les['content_type'],
-                        'video_url' => $les['video_url'] ?? '',
-                        'body_text' => $les['body_text'] ?? '',
-                        'version' => $les['version'],
-                        'version_notes' => $les['version_notes'] ?? '',
-                    ];
-                    $this->attachmentFile = null;
-                    $this->showLessonModal = true;
-
-                    // Dispatch browser event to initialize Editor.js with saved content
-                    $this->dispatch('init-editorjs', content: $les['body_text'] ?? '');
-
-                    return;
-                }
-            }
-        }
-    }
-
-    public function saveLesson(): void
-    {
-        if ($this->isFrozen) {
-            return;
-        }
-
-        $this->validate([
-            'lessonForm.title' => 'required|string|max:255',
-            'lessonForm.order' => 'required|integer|min:1',
-            'lessonForm.content_type' => 'required|in:article,video,document',
-            'lessonForm.version' => 'required|string|max:50',
-        ]);
-
-        $chapId = $this->lessonForm['chapter_id'];
-
-        if ($this->lessonForm['id']) {
-            // Update
-            foreach ($this->chapters as &$chap) {
-                if ($chap['id'] === $chapId) {
-                    foreach ($chap['lessons'] as &$les) {
-                        if ($les['id'] === $this->lessonForm['id']) {
-                            $les['title'] = $this->lessonForm['title'];
-                            $les['order'] = (int) $this->lessonForm['order'];
-                            $les['content_type'] = $this->lessonForm['content_type'];
-                            $les['video_url'] = $this->lessonForm['video_url'];
-                            $les['body_text'] = $this->lessonForm['body_text'];
-                            $les['version'] = $this->lessonForm['version'];
-                            $les['version_notes'] = $this->lessonForm['version_notes'];
-                            $les['updated_at'] = now()->format('d M Y, H:i');
-                            break;
-                        }
-                    }
-                }
-            }
-            $msg = 'Materi pembelajaran berhasil diperbarui.';
         } else {
-            // Create
-            $newLessonId = time();
-            foreach ($this->chapters as &$chap) {
-                if ($chap['id'] === $chapId) {
-                    $chap['lessons'][] = [
-                        'id' => $newLessonId,
-                        'chapter_id' => $chapId,
-                        'title' => $this->lessonForm['title'],
-                        'order' => (int) $this->lessonForm['order'],
-                        'content_type' => $this->lessonForm['content_type'],
-                        'video_url' => $this->lessonForm['video_url'],
-                        'body_text' => $this->lessonForm['body_text'],
-                        'attachment_path' => $this->attachmentFile ? $this->attachmentFile->getClientOriginalName() : null,
-                        'version' => $this->lessonForm['version'],
-                        'version_notes' => $this->lessonForm['version_notes'],
-                        'updated_at' => now()->format('d M Y, H:i'),
-                    ];
-                    break;
-                }
-            }
-            $msg = 'Materi baru berhasil ditambahkan ke kurikulum.';
+            $this->dispatch('alert-show', data: [
+                'type' => 'danger',
+                'title' => 'Gagal',
+                'message' => 'Terjadi kesalahan sistem saat menghapus bab kurikulum.',
+            ]);
         }
-
-        $this->showLessonModal = false;
-        $this->dispatch('alert-show', data: [
-            'type' => 'success',
-            'title' => 'Berhasil',
-            'message' => $msg,
-        ]);
     }
 
+    // --- LESSON CRUD ACTIONS ---
     public function deleteLesson(int $chapterId, int $lessonId): void
     {
         if ($this->isFrozen) {
@@ -409,32 +221,50 @@ class MateriDetail extends Component
             return;
         }
 
-        foreach ($this->chapters as &$chap) {
-            if ($chap['id'] === $chapterId) {
-                $chap['lessons'] = array_values(array_filter($chap['lessons'], fn ($l) => $l['id'] !== $lessonId));
-                break;
-            }
-        }
+        $success = MateriRepo::deleteLesson($lessonId);
 
-        $this->dispatch('alert-show', data: [
-            'type' => 'success',
-            'title' => 'Berhasil',
-            'message' => 'Materi berhasil dihapus dari kurikulum.',
-        ]);
+        if ($success) {
+            $this->loadCurriculum();
+            $this->dispatch('alert-show', data: [
+                'type' => 'success',
+                'title' => 'Berhasil',
+                'message' => 'Materi pembelajaran berhasil dihapus dari kurikulum.',
+            ]);
+        } else {
+            $this->dispatch('alert-show', data: [
+                'type' => 'danger',
+                'title' => 'Gagal',
+                'message' => 'Terjadi kesalahan sistem saat menghapus materi pembelajaran.',
+            ]);
+        }
     }
 
     public function previewLesson(int $lessonId): void
     {
-        foreach ($this->chapters as $chap) {
-            foreach ($chap['lessons'] as $les) {
-                if ($les['id'] === $lessonId) {
-                    $this->previewLesson = $les;
-                    $this->showPreviewModal = true;
+        $lesson = MateriRepo::getLessonById($lessonId);
 
-                    return;
-                }
-            }
+        if ($lesson) {
+            $this->previewLesson = [
+                'id' => $lesson->id,
+                'chapter_id' => $lesson->chapter_id,
+                'title' => $lesson->title,
+                'order' => $lesson->order,
+                'content_type' => $lesson->content_type,
+                'video_url' => $lesson->video_url,
+                'body_text' => $lesson->body_text,
+                'attachment_path' => $lesson->attachment_path,
+                'version' => $lesson->version,
+                'version_notes' => $lesson->version_notes,
+                'updated_at' => $lesson->updated_at ? $lesson->updated_at->format('d M Y, H:i') : '-',
+            ];
+            $this->showPreviewModal = true;
         }
+    }
+
+    public function closePreview(): void
+    {
+        $this->showPreviewModal = false;
+        $this->previewLesson = null;
     }
 
     public function render()
