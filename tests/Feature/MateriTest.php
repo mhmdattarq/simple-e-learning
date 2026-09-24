@@ -10,6 +10,8 @@ use App\Models\Lesson;
 use App\Models\User;
 use Database\Seeders\CategorySeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
@@ -221,4 +223,23 @@ test('frozen batch course denies adding new chapter or saving in editor', functi
         ->test(MateriEditor::class, ['course_id' => $this->frozenBatchCourse->id])
         ->call('save')
         ->assertDispatched('alert-show');
+});
+
+test('admin can upload media and document attachments via upload-media endpoint', function () {
+    Storage::fake('public');
+
+    $file = UploadedFile::fake()->create('slide_modul_lanjutan.pdf', 1024, 'application/pdf');
+
+    $response = $this->actingAs($this->admin)->post(route('materi.upload-media'), [
+        'file' => $file,
+    ]);
+
+    $response->assertOk();
+    $response->assertJson([
+        'success' => true,
+        'filename' => 'slide_modul_lanjutan.pdf',
+        'extension' => 'pdf',
+    ]);
+
+    Storage::disk('public')->assertExists($response->json('path'));
 });

@@ -1,4 +1,45 @@
 <div>
+    @push('css')
+        <style>
+            /* Rich Text Preview Styling */
+            .ql-editor-preview .ql-font-serif { font-family: Georgia, Times New Roman, serif !important; }
+            .ql-editor-preview .ql-font-monospace { font-family: Monaco, Consolas, "Courier New", monospace !important; }
+            .ql-editor-preview .ql-font-sans-serif { font-family: 'Inter', sans-serif !important; }
+
+            .ql-editor-preview .ql-size-small { font-size: 12px !important; }
+            .ql-editor-preview .ql-size-large { font-size: 20px !important; line-height: 1.4 !important; }
+            .ql-editor-preview .ql-size-huge { font-size: 28px !important; line-height: 1.3 !important; }
+
+            .ql-editor-preview .ql-align-center { text-align: center; }
+            .ql-editor-preview .ql-align-right { text-align: right; }
+            .ql-editor-preview .ql-align-justify { text-align: justify; }
+
+            .ql-editor-preview .ql-indent-1 { padding-left: 2.5rem; }
+            .ql-editor-preview .ql-indent-2 { padding-left: 5rem; }
+            .ql-editor-preview .ql-indent-3 { padding-left: 7.5rem; }
+            .ql-editor-preview .ql-indent-4 { padding-left: 10rem; }
+            .ql-editor-preview .ql-indent-5 { padding-left: 12.5rem; }
+
+            .ql-editor-preview iframe.ql-video {
+                width: 100%;
+                max-width: 720px;
+                height: 380px;
+                border-radius: 8px;
+                display: block;
+                margin: 16px auto;
+            }
+
+            .ql-editor-preview .materi-doc-card {
+                background: #f8fafc;
+                border: 1px solid #e2e8f0;
+                border-left: 5px solid #f3bc42 !important;
+                border-radius: 12px;
+                padding: 14px 18px;
+                margin: 16px 0;
+            }
+        </style>
+    @endpush
+
     {{-- Header & Breadcrumb --}}
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-20">
         <div>
@@ -125,7 +166,8 @@
                                                 <i class="ri-delete-bin-line"></i>
                                             </button>
                                         @else
-                                            <span class="badge bg-light text-muted border px-2 py-1 fs-9">Terkunci</span>
+                                            <span
+                                                class="badge bg-light text-muted border px-2 py-1 fs-9">Terkunci</span>
                                         @endif
                                     </div>
                                 </div>
@@ -140,17 +182,20 @@
                                                     {{-- Content Type Icon --}}
                                                     @if ($les['content_type'] === 'video')
                                                         <div class="flex-shrink-0 bg-danger-subtle text-danger radius-8 p-2 d-flex align-items-center justify-content-center"
-                                                            style="width: 38px; height: 38px;" title="Video Pembelajaran">
+                                                            style="width: 38px; height: 38px;"
+                                                            title="Video Pembelajaran">
                                                             <i class="ri-video-line fs-5"></i>
                                                         </div>
                                                     @elseif ($les['content_type'] === 'article')
                                                         <div class="flex-shrink-0 bg-primary-subtle text-primary radius-8 p-2 d-flex align-items-center justify-content-center"
-                                                            style="width: 38px; height: 38px;" title="Artikel Naskah Editor.js">
+                                                            style="width: 38px; height: 38px;"
+                                                            title="Artikel Naskah Editor.js">
                                                             <i class="ri-article-line fs-5"></i>
                                                         </div>
                                                     @else
                                                         <div class="flex-shrink-0 bg-warning-subtle text-warning radius-8 p-2 d-flex align-items-center justify-content-center"
-                                                            style="width: 38px; height: 38px;" title="Slide Modul PDF/PPT">
+                                                            style="width: 38px; height: 38px;"
+                                                            title="Slide Modul PDF/PPT">
                                                             <i class="ri-file-ppt-line fs-5"></i>
                                                         </div>
                                                     @endif
@@ -172,7 +217,8 @@
                                                                 </span>
                                                             @endif
                                                         </div>
-                                                        <h6 class="fw-semibold text-dark mb-0 fs-7">{{ $les['title'] }}</h6>
+                                                        <h6 class="fw-semibold text-dark mb-0 fs-7">{{ $les['title'] }}
+                                                        </h6>
                                                         <small class="text-muted fs-9">
                                                             Diperbarui: {{ $les['updated_at'] }}
                                                             @if (!empty($les['version_notes']))
@@ -184,7 +230,8 @@
 
                                                 {{-- Lesson Actions --}}
                                                 <div class="d-flex align-items-center gap-1">
-                                                    <button type="button" wire:click="previewLesson({{ $les['id'] }})"
+                                                    <button type="button"
+                                                        wire:click="previewLesson({{ $les['id'] }})"
                                                         class="btn btn-sm btn-outline-info radius-6 px-2 py-1 fs-8 shadow-none"
                                                         title="Pratinjau Materi Sisi Peserta">
                                                         <i class="ri-eye-line me-1"></i> Preview
@@ -192,7 +239,8 @@
                                                     @if (!$isFrozen)
                                                         <a href="{{ route('materi.editor', ['course_id' => $course->id, 'lesson_id' => $les['id']]) }}"
                                                             class="btn btn-sm btn-outline-secondary radius-6 px-2 py-1 fs-8 shadow-none"
-                                                            wire:navigate title="Edit Materi dengan Form Editor (Editor.js)">
+                                                            wire:navigate
+                                                            title="Edit Materi dengan Form Editor (Editor.js)">
                                                             <i class="ri-pencil-line"></i>
                                                         </a>
                                                         <button type="button"
@@ -218,7 +266,8 @@
                             <div class="p-40 text-center my-auto">
                                 <i class="ri-book-2-line text-muted display-4 mb-2"></i>
                                 <h6 class="fw-bold text-dark mb-1">Kurikulum Belum Memiliki Bab</h6>
-                                <p class="text-muted fs-8 mb-3">Mulai buat struktur kurikulum pelatihan dengan menambahkan Bab
+                                <p class="text-muted fs-8 mb-3">Mulai buat struktur kurikulum pelatihan dengan
+                                    menambahkan Bab
                                     pertama.</p>
                                 @if (!$isFrozen)
                                     <div>
