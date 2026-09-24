@@ -2,10 +2,14 @@
 
 namespace App\Livewire\Admin\Materi;
 
+use App\Models\Chapter;
 use App\Models\Course;
+use App\Models\Lesson;
 use App\Repositories\MateriRepo;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\On;
+use Livewire\Attributes\Url;
 use Livewire\Component;
 
 class MateriDetail extends Component
@@ -37,6 +41,28 @@ class MateriDetail extends Component
 
     public ?array $previewLesson = null;
 
+    // Inline Editor State (Swap view within component ala DataTables serverside)
+    #[Url(as: 'view')]
+    public string $viewMode = 'silabus';
+
+    #[Url(as: 'chapter_id')]
+    public ?int $editorChapterId = null;
+
+    #[Url(as: 'lesson_id')]
+    public ?int $editorLessonId = null;
+
+    public ?Chapter $activeEditorChapter = null;
+
+    public array $lessonForm = [
+        'id' => null,
+        'chapter_id' => null,
+        'title' => '',
+        'order' => 1,
+        'content_type' => 'article',
+        'body_text' => '',
+        'version' => 'Versi 1.0',
+    ];
+
     public function mount(int $id): void
     {
         $this->courseId = $id;
@@ -51,6 +77,22 @@ class MateriDetail extends Component
 
         // Load kurikulum nyata dari database
         $this->loadCurriculum();
+
+        // Handle direct view=editor parameter on mount
+        if ($this->viewMode === 'editor') {
+            if ($this->editorLessonId) {
+                $this->openEditLesson($this->editorLessonId);
+            } elseif ($this->editorChapterId) {
+                $this->openCreateLesson($this->editorChapterId);
+            } else {
+                $firstChapter = Chapter::where('course_id', $this->courseId)->orderBy('order', 'asc')->first();
+                if ($firstChapter) {
+                    $this->openCreateLesson($firstChapter->id);
+                } else {
+                    $this->viewMode = 'silabus';
+                }
+            }
+        }
     }
 
     /**
@@ -358,6 +400,205 @@ class MateriDetail extends Component
     {
         $this->showPreviewModal = false;
         $this->previewLesson = null;
+    }
+
+    // --- INLINE LESSON EDITOR ACTIONS (DATA-TABLES SERVER-SIDE STYLE SWAP) ---
+    public function updated($propertyName): void
+    {
+        if (str_starts_with($propertyName, 'lessonForm.')) {
+            $this->resetErrorBag($propertyName);
+            $this->validateOnly($propertyName, [
+                'lessonForm.title' => 'required|string|min:3|max:255',
+            ], [
+                'lessonForm.title.required' => 'Judul materi pembelajaran wajib diisi.',
+                'lessonForm.title.min' => 'Judul materi pembelajaran minimal 3 karakter.',
+                'lessonForm.title.max' => 'Judul materi pembelajaran maksimal 255 karakter.',
+            ]);
+        }
+    }
+
+    public function openCreateLesson(int $chapterId): void
+    {
+        $this->resetErrorBag();
+        $this->resetValidation();
+
+        if ($this->isFrozen) {
+            $this->dispatch('alert-show', data: [
+                'type' => 'warning',
+                'title' => 'Kurikulum Terkunci',
+                'message' => 'Struktur bab tidak dapat ditambahkan materi karena pelatihan tipe Batch sedang aktif berjalan.',
+            ]);
+
+            return;
+        }
+
+        $chapter = Chapter::where('course_id', $this->courseId)->find($chapterId);
+        if (! $chapter) {
+            $chapter = Chapter::where('course_id', $this->courseId)->orderBy('order', 'asc')->first();
+        }
+
+        if (! $chapter) {
+            $chapter = MateriRepo::createChapter([
+                'course_id' => $this->courseId,
+                'title' => 'Bab 1: Pendahuluan & Materi Umum',
+                'order' => 1,
+            ]);
+        }
+
+        $this->activeEditorChapter = $chapter;
+        $this->editorChapterId = $chapter->id;
+        $this->editorLessonId = null;
+
+        $maxOrder = Lesson::where('chapter_id', $chapter->id)->max('order');
+        $nextOrder = $maxOrder ? $maxOrder + 1 : 1;
+
+        $this->lessonForm = [
+            'id' => null,
+            'chapter_id' => $chapter->id,
+            'title' => '',
+            'order' => $nextOrder,
+            'content_type' => 'article',
+            'body_text' => '',
+            'version' => 'Versi 1.0',
+        ];
+
+        $this->viewMode = 'editor';
+        $this->dispatch('init-editor');
+    }
+
+    public function openEditLesson(int $lessonId): void
+    {
+        $this->resetErrorBag();
+        $this->resetValidation();
+
+        if ($this->isFrozen) {
+            $this->dispatch('alert-show', data: [
+                'type' => 'warning',
+                'title' => 'Kurikulum Terkunci',
+                'message' => 'Materi tidak dapat diedit karena pelatihan tipe Batch sedang aktif berjalan.',
+            ]);
+
+            return;
+        }
+
+        $lessonModel = MateriRepo::getLessonById($lessonId);
+        if (! $lessonModel) {
+            $this->dispatch('alert-show', data: [
+                'type' => 'danger',
+                'title' => 'Tidak Ditemukan',
+                'message' => 'Data materi pembelajaran tidak ditemukan.',
+            ]);
+
+            return;
+        }
+
+        $this->activeEditorChapter = $lessonModel->chapter;
+        $this->editorChapterId = $lessonModel->chapter_id;
+        $this->editorLessonId = $lessonModel->id;
+
+        $this->lessonForm = [
+            'id' => $lessonModel->id,
+            'chapter_id' => $lessonModel->chapter_id,
+            'title' => $lessonModel->title,
+            'order' => $lessonModel->order,
+            'content_type' => 'article',
+            'body_text' => $lessonModel->body_text ?? '',
+            'version' => $lessonModel->version ?? 'Versi 1.0',
+        ];
+
+        $this->viewMode = 'editor';
+        $this->dispatch('init-editor');
+    }
+
+    public function closeEditor(): void
+    {
+        $this->resetErrorBag();
+        $this->resetValidation();
+        $this->viewMode = 'silabus';
+        $this->editorLessonId = null;
+        $this->editorChapterId = null;
+        $this->activeEditorChapter = null;
+        $this->lessonForm = [
+            'id' => null,
+            'chapter_id' => null,
+            'title' => '',
+            'order' => 1,
+            'content_type' => 'article',
+            'body_text' => '',
+            'version' => 'Versi 1.0',
+        ];
+    }
+
+    public function saveLesson(?string $bodyText = null): void
+    {
+        if ($this->isFrozen) {
+            $this->dispatch('alert-show', data: [
+                'type' => 'warning',
+                'title' => 'Kurikulum Terkunci',
+                'message' => 'Pelatihan tipe Batch sedang aktif berjalan, materi tidak dapat disimpan atau diubah.',
+            ]);
+
+            return;
+        }
+
+        if ($bodyText !== null) {
+            $this->lessonForm['body_text'] = $bodyText;
+        }
+
+        try {
+            $this->validate([
+                'lessonForm.title' => 'required|string|min:3|max:255',
+                'lessonForm.chapter_id' => 'required|exists:chapters,id',
+                'lessonForm.body_text' => 'required|string',
+            ], [
+                'lessonForm.title.required' => 'Judul materi pembelajaran wajib diisi.',
+                'lessonForm.title.min' => 'Judul materi pembelajaran minimal 3 karakter.',
+                'lessonForm.title.max' => 'Judul materi pembelajaran maksimal 255 karakter.',
+                'lessonForm.body_text.required' => 'Naskah konten materi pembelajaran belum diisi pada editor.',
+            ]);
+        } catch (ValidationException $e) {
+            $firstError = $e->validator->errors()->first('lessonForm.title') ?: $e->validator->errors()->first();
+            $this->dispatch('alert-show', data: [
+                'type' => 'danger',
+                'message' => $firstError,
+            ]);
+
+            throw $e;
+        }
+
+        $payload = [
+            'chapter_id' => (int) $this->lessonForm['chapter_id'],
+            'title' => trim($this->lessonForm['title']),
+            'order' => (int) ($this->lessonForm['order'] ?? 1),
+            'content_type' => 'article',
+            'body_text' => $this->lessonForm['body_text'],
+            'version' => $this->lessonForm['version'] ?? 'Versi 1.0',
+        ];
+
+        if ($this->editorLessonId) {
+            $success = MateriRepo::updateLesson($this->editorLessonId, $payload);
+            $msg = 'Materi pembelajaran berhasil diperbarui.';
+        } else {
+            $created = MateriRepo::createLesson($payload);
+            $success = (bool) $created;
+            $msg = 'Materi pembelajaran baru berhasil disimpan ke kurikulum.';
+        }
+
+        if ($success) {
+            $this->loadCurriculum();
+            $this->closeEditor();
+            $this->dispatch('alert-show', data: [
+                'type' => 'success',
+                'title' => 'Berhasil',
+                'message' => $msg,
+            ]);
+        } else {
+            $this->dispatch('alert-show', data: [
+                'type' => 'danger',
+                'title' => 'Gagal',
+                'message' => 'Terjadi kesalahan sistem saat menyimpan materi pembelajaran.',
+            ]);
+        }
     }
 
     public function render()

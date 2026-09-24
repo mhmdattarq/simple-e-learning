@@ -80,7 +80,7 @@
         </style>
     @endpush
 
-    {{-- Header & Breadcrumb --}}
+    {{-- Header & Breadcrumb (Unified Frame ala DataTables Server-Side) --}}
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-20">
         <div>
             <div class="d-flex align-items-center gap-2 mb-1">
@@ -102,23 +102,33 @@
         </div>
 
         <div class="d-flex align-items-center gap-2">
-            @if ($isFrozen)
-                <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-3 py-2 radius-8 fs-8">
-                    <i class="ri-lock-2-line me-1"></i> Curriculum Frozen (Terkunci)
-                </span>
-            @else
-                <a href="{{ route('materi.data') }}" class="btn btn-sm btn-danger d-flex align-items-center radius-8"
-                    wire:navigate>
-                    <i class="ri-arrow-left-line"></i> Kembali
-                </a>
-                <button type="button" wire:click="openCreateChapter"
-                    class="btn btn-sm btn-simple-gold d-inline-flex align-items-center gap-1 radius-8 px-3 shadow-none">
-                    <i class="ri-add-line fs-6"></i>
-                    <span>Tambah Bab Baru</span>
+            @if ($viewMode === 'editor')
+                <button type="button" wire:click="closeEditor" class="btn btn-sm btn-danger d-flex align-items-center gap-1 radius-8 px-3">
+                    <i class="ri-arrow-left-line"></i> Kembali ke Silabus
                 </button>
+            @else
+                @if ($isFrozen)
+                    <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-3 py-2 radius-8 fs-8">
+                        <i class="ri-lock-2-line me-1"></i> Curriculum Frozen (Terkunci)
+                    </span>
+                @else
+                    <a href="{{ route('materi.data') }}" class="btn btn-sm btn-danger d-flex align-items-center radius-8"
+                        wire:navigate>
+                        <i class="ri-arrow-left-line"></i> Kembali
+                    </a>
+                    <button type="button" wire:click="openCreateChapter"
+                        class="btn btn-sm btn-simple-gold d-inline-flex align-items-center gap-1 radius-8 px-3 shadow-none">
+                        <i class="ri-add-line fs-6"></i>
+                        <span>Tambah Bab Baru</span>
+                    </button>
+                @endif
             @endif
         </div>
     </div>
+
+    @if ($viewMode === 'editor')
+        @include('mods.admin.materi.materi-editor')
+    @else
 
     {{-- Banner Aturan / Curriculum Status --}}
     @if ($isFrozen)
@@ -189,11 +199,11 @@
 
                                     <div class="d-flex align-items-center gap-1">
                                         @if (!$isFrozen)
-                                            <a href="{{ route('materi.editor', ['course_id' => $course->id, 'chapter_id' => $chap['id']]) }}"
+                                            <button type="button" wire:click="openCreateLesson({{ $chap['id'] }})"
                                                 class="btn btn-xs btn-outline-success radius-6 px-2 py-1 fs-8 shadow-none"
-                                                wire:navigate title="Tulis Materi Baru">
+                                                title="Tulis Materi Baru">
                                                 <i class="ri-add-line"></i>
-                                            </a>
+                                            </button>
                                             <button type="button" wire:click="openEditChapter({{ $chap['id'] }})"
                                                 class="btn btn-xs btn-outline-warning radius-6 px-2 py-1 fs-8 shadow-none"
                                                 title="Edit Judul/Urutan Bab">
@@ -277,12 +287,12 @@
                                                         <i class="ri-eye-line"></i>
                                                     </button>
                                                     @if (!$isFrozen)
-                                                        <a href="{{ route('materi.editor', ['course_id' => $course->id, 'lesson_id' => $les['id']]) }}"
+                                                        <button type="button"
+                                                            wire:click="openEditLesson({{ $les['id'] }})"
                                                             class="btn btn-sm btn-outline-warning radius-6 px-2 py-1 fs-8 shadow-none"
-                                                            wire:navigate
-                                                            title="Edit Materi dengan Form Editor (Editor.js)">
+                                                            title="Edit Materi dengan Form Editor">
                                                             <i class="ri-pencil-line"></i>
-                                                        </a>
+                                                        </button>
                                                         <button type="button"
                                                             wire:click="hookModalDeleteLesson({{ $les['id'] }}, '{{ addslashes($les['title']) }}')"
                                                             class="btn btn-sm btn-outline-danger radius-6 px-2 py-1 fs-8 shadow-none"
@@ -452,4 +462,7 @@
             </div>
         </div>
     @endif
+    @endif
 </div>
+
+@include('mods.admin.materi.atc.materi-editor-atc')

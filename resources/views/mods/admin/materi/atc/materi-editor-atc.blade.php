@@ -674,8 +674,34 @@
             }
 
             // Panggil save ke Livewire agar validasi server berjalan, mengisi error bag dan mewarnai is-invalid pada field input
-            @this.call('save', htmlContent);
+            const btn = document.getElementById('btnSubmitKonten');
+            const lwContainer = btn ? btn.closest('[wire\\:id]') : null;
+            const wireId = lwContainer ? lwContainer.getAttribute('wire:id') : null;
+            const component = wireId ? Livewire.find(wireId) : null;
+
+            if (component) {
+                if (typeof component.saveLesson === 'function') {
+                    component.saveLesson(htmlContent);
+                } else if (typeof component.save === 'function') {
+                    component.save(htmlContent);
+                } else {
+                    try {
+                        component.call('saveLesson', htmlContent);
+                    } catch (e) {
+                        component.call('save', htmlContent);
+                    }
+                }
+            } else if (typeof @this !== 'undefined') {
+                try {
+                    @this.call('saveLesson', htmlContent);
+                } catch (e) {
+                    @this.call('save', htmlContent);
+                }
+            }
         }
+
+        window.initQuillEditor = initQuillEditor;
+        window.handleSaveKonten = handleSaveKonten;
 
         document.addEventListener('livewire:navigated', () => {
             setTimeout(initQuillEditor, 100);
@@ -683,29 +709,25 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             setTimeout(initQuillEditor, 100);
+        });
 
-            document.addEventListener('click', (e) => {
-                if (e.target && (e.target.id === 'btnSubmitKonten' || e.target.closest('#btnSubmitKonten'))) {
-                    handleSaveKonten();
-                }
-            });
+        window.addEventListener('init-editor', () => {
+            setTimeout(initQuillEditor, 100);
+        });
 
-            const fileInput = document.getElementById('quillFileInput');
-            if (fileInput) {
-                fileInput.addEventListener('change', function() {
-                    if (this.files && this.files[0]) {
-                        handleFileUpload(this.files[0]);
-                    }
-                });
+        // Event delegation untuk tombol simpan konten dan upload berkas
+        document.addEventListener('click', (e) => {
+            if (e.target && (e.target.id === 'btnSubmitKonten' || e.target.closest('#btnSubmitKonten'))) {
+                handleSaveKonten();
             }
+        });
 
-            const imgInput = document.getElementById('quillImageInput');
-            if (imgInput) {
-                imgInput.addEventListener('change', function() {
-                    if (this.files && this.files[0]) {
-                        handleImageUpload(this.files[0]);
-                    }
-                });
+        document.addEventListener('change', (e) => {
+            if (e.target && e.target.id === 'quillFileInput' && e.target.files && e.target.files[0]) {
+                handleFileUpload(e.target.files[0]);
+            }
+            if (e.target && e.target.id === 'quillImageInput' && e.target.files && e.target.files[0]) {
+                handleImageUpload(e.target.files[0]);
             }
         });
     </script>
