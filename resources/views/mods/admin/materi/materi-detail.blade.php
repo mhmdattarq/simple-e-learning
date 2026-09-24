@@ -2,23 +2,63 @@
     @push('css')
         <style>
             /* Rich Text Preview Styling */
-            .ql-editor-preview .ql-font-serif { font-family: Georgia, Times New Roman, serif !important; }
-            .ql-editor-preview .ql-font-monospace { font-family: Monaco, Consolas, "Courier New", monospace !important; }
-            .ql-editor-preview .ql-font-sans-serif { font-family: 'Inter', sans-serif !important; }
+            .ql-editor-preview .ql-font-serif {
+                font-family: Georgia, Times New Roman, serif !important;
+            }
 
-            .ql-editor-preview .ql-size-small { font-size: 12px !important; }
-            .ql-editor-preview .ql-size-large { font-size: 20px !important; line-height: 1.4 !important; }
-            .ql-editor-preview .ql-size-huge { font-size: 28px !important; line-height: 1.3 !important; }
+            .ql-editor-preview .ql-font-monospace {
+                font-family: Monaco, Consolas, "Courier New", monospace !important;
+            }
 
-            .ql-editor-preview .ql-align-center { text-align: center; }
-            .ql-editor-preview .ql-align-right { text-align: right; }
-            .ql-editor-preview .ql-align-justify { text-align: justify; }
+            .ql-editor-preview .ql-font-sans-serif {
+                font-family: 'Inter', sans-serif !important;
+            }
 
-            .ql-editor-preview .ql-indent-1 { padding-left: 2.5rem; }
-            .ql-editor-preview .ql-indent-2 { padding-left: 5rem; }
-            .ql-editor-preview .ql-indent-3 { padding-left: 7.5rem; }
-            .ql-editor-preview .ql-indent-4 { padding-left: 10rem; }
-            .ql-editor-preview .ql-indent-5 { padding-left: 12.5rem; }
+            .ql-editor-preview .ql-size-small {
+                font-size: 12px !important;
+            }
+
+            .ql-editor-preview .ql-size-large {
+                font-size: 20px !important;
+                line-height: 1.4 !important;
+            }
+
+            .ql-editor-preview .ql-size-huge {
+                font-size: 28px !important;
+                line-height: 1.3 !important;
+            }
+
+            .ql-editor-preview .ql-align-center {
+                text-align: center;
+            }
+
+            .ql-editor-preview .ql-align-right {
+                text-align: right;
+            }
+
+            .ql-editor-preview .ql-align-justify {
+                text-align: justify;
+            }
+
+            .ql-editor-preview .ql-indent-1 {
+                padding-left: 2.5rem;
+            }
+
+            .ql-editor-preview .ql-indent-2 {
+                padding-left: 5rem;
+            }
+
+            .ql-editor-preview .ql-indent-3 {
+                padding-left: 7.5rem;
+            }
+
+            .ql-editor-preview .ql-indent-4 {
+                padding-left: 10rem;
+            }
+
+            .ql-editor-preview .ql-indent-5 {
+                padding-left: 12.5rem;
+            }
 
             .ql-editor-preview iframe.ql-video {
                 width: 100%;
@@ -80,7 +120,7 @@
         </div>
     </div>
 
-    {{-- Banner Aturan Dicoding / Curriculum Status --}}
+    {{-- Banner Aturan / Curriculum Status --}}
     @if ($isFrozen)
         <div
             class="alert alert-warning border border-warning-subtle shadow-sm radius-12 d-flex align-items-center gap-3 p-3 mb-24">
@@ -159,8 +199,8 @@
                                                 title="Edit Judul/Urutan Bab">
                                                 <i class="ri-pencil-line"></i>
                                             </button>
-                                            <button type="button" wire:click="deleteChapter({{ $chap['id'] }})"
-                                                wire:confirm="Apakah Anda yakin ingin menghapus bab ini beserta seluruh materinya?"
+                                            <button type="button"
+                                                wire:click="hookModalDeleteChapter({{ $chap['id'] }}, '{{ addslashes($chap['title']) }}')"
                                                 class="btn btn-xs btn-outline-danger radius-6 px-2 py-1 fs-8 shadow-none"
                                                 title="Hapus Bab">
                                                 <i class="ri-delete-bin-line"></i>
@@ -213,7 +253,7 @@
                                                             @if ($les['content_type'] === 'article')
                                                                 <span
                                                                     class="badge bg-primary-subtle text-primary px-2 py-0 fs-9">
-                                                                    <i class="ri-edit-line me-1"></i>Editor.js
+                                                                    <i class="ri-edit-line me-1"></i>article
                                                                 </span>
                                                             @endif
                                                         </div>
@@ -234,18 +274,17 @@
                                                         wire:click="previewLesson({{ $les['id'] }})"
                                                         class="btn btn-sm btn-outline-info radius-6 px-2 py-1 fs-8 shadow-none"
                                                         title="Pratinjau Materi Sisi Peserta">
-                                                        <i class="ri-eye-line me-1"></i> Preview
+                                                        <i class="ri-eye-line"></i>
                                                     </button>
                                                     @if (!$isFrozen)
                                                         <a href="{{ route('materi.editor', ['course_id' => $course->id, 'lesson_id' => $les['id']]) }}"
-                                                            class="btn btn-sm btn-outline-secondary radius-6 px-2 py-1 fs-8 shadow-none"
+                                                            class="btn btn-sm btn-outline-warning radius-6 px-2 py-1 fs-8 shadow-none"
                                                             wire:navigate
                                                             title="Edit Materi dengan Form Editor (Editor.js)">
                                                             <i class="ri-pencil-line"></i>
                                                         </a>
                                                         <button type="button"
-                                                            wire:click="deleteLesson({{ $chap['id'] }}, {{ $les['id'] }})"
-                                                            wire:confirm="Hapus materi pembelajaran ini?"
+                                                            wire:click="hookModalDeleteLesson({{ $les['id'] }}, '{{ addslashes($les['title']) }}')"
                                                             class="btn btn-sm btn-outline-danger radius-6 px-2 py-1 fs-8 shadow-none"
                                                             title="Hapus Materi">
                                                             <i class="ri-delete-bin-line"></i>
@@ -333,57 +372,6 @@
             </div>
         </div>
     </div>
-
-    {{-- MODAL TAMBAH / EDIT BAB --}}
-    @if ($showChapterModal)
-        <div class="modal fade show d-block" tabindex="-1" style="background: rgba(0,0,0,0.5);"
-            wire:keydown.escape="$set('showChapterModal', false)">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content radius-16 border-0 shadow">
-                    <div class="modal-header border-bottom p-20">
-                        <h6 class="modal-title fw-bold text-dark fs-6">
-                            {{ $chapterForm['id'] ? 'Edit Bab Kurikulum' : 'Tambah Bab Baru' }}
-                        </h6>
-                        <button type="button" class="btn-close shadow-none"
-                            wire:click="$set('showChapterModal', false)"></button>
-                    </div>
-                    <form wire:submit.prevent="saveChapter">
-                        <div class="modal-body p-20">
-                            <div class="mb-3">
-                                <label class="form-label fw-semibold text-dark fs-8">Nomor Urut Bab <span
-                                        class="text-danger">*</span></label>
-                                <input type="number" min="1" wire:model="chapterForm.order"
-                                    class="form-control form-control-sm radius-8" placeholder="Contoh: 1">
-                                @error('chapterForm.order')
-                                    <small class="text-danger fs-9">{{ $message }}</small>
-                                @enderror
-                            </div>
-                            <div class="mb-0">
-                                <label class="form-label fw-semibold text-dark fs-8">Judul Bab Pembelajaran <span
-                                        class="text-danger">*</span></label>
-                                <input type="text" wire:model="chapterForm.title"
-                                    class="form-control form-control-sm radius-8"
-                                    placeholder="Contoh: Bab 1: Dasar Regulasi & Pengantar">
-                                @error('chapterForm.title')
-                                    <small class="text-danger fs-9">{{ $message }}</small>
-                                @enderror
-                            </div>
-                        </div>
-                        <div class="modal-footer border-top p-16">
-                            <button type="button" class="btn btn-sm btn-danger border radius-8"
-                                wire:click="$set('showChapterModal', false)">Batal</button>
-                            <button type="submit" class="btn btn-sm btn-simple-gold radius-8 px-3">
-                                <i class="ri-check-line me-1"></i> Simpan Bab
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    @endif
-
-
-
     {{-- MODAL PREVIEW MATERI SISI PESERTA --}}
     @if ($showPreviewModal && $previewLesson)
         <div class="modal fade show d-block" tabindex="-1" style="background: rgba(0,0,0,0.6);"

@@ -243,3 +243,45 @@ test('admin can upload media and document attachments via upload-media endpoint'
 
     Storage::disk('public')->assertExists($response->json('path'));
 });
+
+test('chapter and lesson deletion via reusable modal hooks', function () {
+    $chapter = Chapter::create([
+        'course_id' => $this->permanentCourse->id,
+        'title' => 'Bab Uji Hapus',
+        'order' => 1,
+    ]);
+
+    $lesson = Lesson::create([
+        'chapter_id' => $chapter->id,
+        'title' => 'Materi Uji Hapus',
+        'order' => 1,
+        'content_type' => 'article',
+        'version' => 'Versi 1.0',
+    ]);
+
+    $component = Livewire::actingAs($this->admin)
+        ->test(MateriDetail::class, ['id' => $this->permanentCourse->id]);
+
+    // Test hook modal delete chapter
+    $component->call('hookModalDeleteChapter', $chapter->id, $chapter->title)
+        ->assertDispatched('modal-delete-setDeleteId')
+        ->assertDispatched('showModal');
+
+    // Test hook modal delete lesson
+    $component->call('hookModalDeleteLesson', $lesson->id, $lesson->title)
+        ->assertDispatched('modal-delete-setDeleteId')
+        ->assertDispatched('showModal');
+
+    // Execute delete via listener
+    $component->dispatch('MateriDetail-deleteLesson', ['id' => $lesson->id])
+        ->assertDispatched('closeModal')
+        ->assertDispatched('alert-show');
+
+    $this->assertDatabaseMissing('lessons', ['id' => $lesson->id]);
+
+    $component->dispatch('MateriDetail-deleteChapter', ['id' => $chapter->id])
+        ->assertDispatched('closeModal')
+        ->assertDispatched('alert-show');
+
+    $this->assertDatabaseMissing('chapters', ['id' => $chapter->id]);
+});
