@@ -53,3 +53,34 @@ new class extends Component {
         @endif
     </div>
 </div>
+
+<script>
+    (function() {
+        function registerLivewireErrorInterceptor() {
+            if (typeof Livewire !== 'undefined' && Livewire.hook) {
+                if (window._livewire413HookRegistered) return;
+                window._livewire413HookRegistered = true;
+
+                Livewire.hook('request', ({ fail }) => {
+                    fail(({ status, preventDefault }) => {
+                        if (status === 413) {
+                            preventDefault();
+                            Livewire.dispatch('alert-show', {
+                                data: {
+                                    type: 'danger',
+                                    message: 'Ukuran berkas atau data melebihi batas maksimal server (413 Request Entity Too Large).'
+                                }
+                            });
+                        }
+                    });
+                });
+            }
+        }
+
+        if (typeof Livewire !== 'undefined') {
+            registerLivewireErrorInterceptor();
+        } else {
+            document.addEventListener('livewire:init', registerLivewireErrorInterceptor);
+        }
+    })();
+</script>

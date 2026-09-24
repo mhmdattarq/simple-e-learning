@@ -6,6 +6,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class MateriController extends Controller
 {
@@ -14,9 +15,25 @@ class MateriController extends Controller
      */
     public function uploadMedia(Request $request): JsonResponse
     {
-        $request->validate([
-            'file' => 'required|file|max:25600', // Maksimal 25MB
+        $file = $request->file('file');
+        $isImage = $file && str_starts_with($file->getMimeType() ?? '', 'image/');
+        $maxKb = $isImage ? 2048 : 10240; // Gambar: 2MB, Dokumen: 10MB
+        $maxLabel = $isImage ? '2 MB' : '10 MB';
+
+        $validator = Validator::make($request->all(), [
+            'file' => 'required|file|max:'.$maxKb,
+        ], [
+            'file.required' => 'Berkas lampiran materi wajib dipilih.',
+            'file.file' => 'Berkas yang diunggah tidak valid.',
+            'file.max' => 'Ukuran '.($isImage ? 'gambar' : 'dokumen').' melebihi batas maksimal (Maksimal '.$maxLabel.').',
         ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => $validator->errors()->first('file'),
+            ], 422);
+        }
 
         try {
             $file = $request->file('file');

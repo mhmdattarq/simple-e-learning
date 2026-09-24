@@ -141,8 +141,8 @@ test('admin can open dedicated form editor and save lesson to database', functio
 
     $response = $this->actingAs($this->admin)->get(route('materi.editor', $this->permanentCourse->id));
     $response->assertOk();
-    $response->assertSee('Form Konten');
-    $response->assertSee('Tambah Konten');
+    $response->assertSee('Tambah Materi Baru');
+    $response->assertSee('Tambah Materi');
 
     Livewire::actingAs($this->admin)
         ->test(MateriEditor::class, ['course_id' => $this->permanentCourse->id])
@@ -242,6 +242,64 @@ test('admin can upload media and document attachments via upload-media endpoint'
     ]);
 
     Storage::disk('public')->assertExists($response->json('path'));
+});
+
+test('upload-media rejects oversized image and document with 422 status', function () {
+    Storage::fake('public');
+
+    // 3 MB image (> 2 MB)
+    $oversizedImage = UploadedFile::fake()->create('large_banner.png', 3072, 'image/png');
+    $resImage = $this->actingAs($this->admin)->postJson(route('materi.upload-media'), [
+        'file' => $oversizedImage,
+    ]);
+    $resImage->assertStatus(422)
+        ->assertJson([
+            'success' => false,
+            'message' => 'Ukuran gambar melebihi batas maksimal (Maksimal 2 MB).',
+        ]);
+
+    // 12 MB document (> 10 MB)
+    $oversizedDoc = UploadedFile::fake()->create('huge_slide.pdf', 12288, 'application/pdf');
+    $resDoc = $this->actingAs($this->admin)->postJson(route('materi.upload-media'), [
+        'file' => $oversizedDoc,
+    ]);
+    $resDoc->assertStatus(422)
+        ->assertJson([
+            'success' => false,
+            'message' => 'Ukuran dokumen melebihi batas maksimal (Maksimal 10 MB).',
+        ]);
+});
+
+test('materi editor validates title with min 3 chars and dispatches toast alert-show', function () {
+    $chapter = Chapter::create([
+        'course_id' => $this->permanentCourse->id,
+        'title' => 'Bab 1: Fondasi',
+        'order' => 1,
+    ]);
+
+    // Validation error when title is empty
+    Livewire::actingAs($this->admin)
+        ->test(MateriEditor::class, [
+            'course_id' => $this->permanentCourse->id,
+            'chapter_id' => $chapter->id,
+        ])
+        ->set('lesson.title', '')
+        ->set('lesson.body_text', '<p>Konten materi</p>')
+        ->call('save')
+        ->assertHasErrors(['lesson.title' => 'required'])
+        ->assertDispatched('alert-show');
+
+    // Validation error when title is too short (< 3 chars)
+    Livewire::actingAs($this->admin)
+        ->test(MateriEditor::class, [
+            'course_id' => $this->permanentCourse->id,
+            'chapter_id' => $chapter->id,
+        ])
+        ->set('lesson.title', 'ab')
+        ->set('lesson.body_text', '<p>Konten materi</p>')
+        ->call('save')
+        ->assertHasErrors(['lesson.title' => 'min'])
+        ->assertDispatched('alert-show');
 });
 
 test('chapter and lesson deletion via reusable modal hooks', function () {
