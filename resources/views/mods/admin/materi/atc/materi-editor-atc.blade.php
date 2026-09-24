@@ -9,22 +9,43 @@
             padding: 24px;
         }
 
+        /* --- TOOLBAR & CONTAINER UNIFIED BORDER & STYLING --- */
         .ql-toolbar.ql-snow {
-            border-top-left-radius: 8px;
-            border-top-right-radius: 8px;
-            border-color: #e2e8f0;
-            background: #ffffff;
-            padding: 10px 12px;
+            border: 1px solid #e2e8f0 !important;
+            border-bottom: 1px solid #edf2f7 !important;
+            border-top-left-radius: 8px !important;
+            border-top-right-radius: 8px !important;
+            background: #ffffff !important;
+            padding: 10px 12px !important;
+            transition: border-color 0.2s ease;
         }
 
         .ql-container.ql-snow {
-            border-bottom-left-radius: 8px;
-            border-bottom-right-radius: 8px;
-            border-color: #e2e8f0;
-            min-height: 350px;
-            font-family: inherit;
-            font-size: 15px;
-            color: #2d3748;
+            border: 1px solid #e2e8f0 !important;
+            border-top: none !important;
+            border-bottom-left-radius: 8px !important;
+            border-bottom-right-radius: 8px !important;
+            min-height: 380px !important;
+            font-family: inherit !important;
+            font-size: 15px !important;
+            color: #2d3748 !important;
+            background: #ffffff !important;
+            transition: border-color 0.2s ease;
+        }
+
+        /* Hilangkan garis biru fokus bawaan browser (Firefox / Chrome outline) */
+        #quillEditor,
+        #quillEditor:focus,
+        #quillEditor:focus-visible,
+        .ql-container,
+        .ql-container:focus,
+        .ql-container:focus-visible,
+        .ql-editor,
+        .ql-editor:focus,
+        .ql-editor:focus-visible,
+        .ql-snow .ql-editor:focus {
+            outline: none !important;
+            box-shadow: none !important;
         }
 
         .ql-editor.ql-blank::before {
@@ -107,6 +128,37 @@
         .ql-editor p.ql-indent-4, .ql-editor h1.ql-indent-4, .ql-editor h2.ql-indent-4, .ql-editor blockquote.ql-indent-4 { padding-left: 10rem !important; }
         .ql-editor p.ql-indent-5, .ql-editor h1.ql-indent-5, .ql-editor h2.ql-indent-5, .ql-editor blockquote.ql-indent-5 { padding-left: 12.5rem !important; }
 
+        /* --- RESPONSIVE & ELEGANT IMAGE STYLING --- */
+        .ql-editor img {
+            max-width: 100% !important;
+            max-height: 440px !important;
+            width: auto !important;
+            height: auto !important;
+            object-fit: contain !important;
+            border-radius: 8px !important;
+            display: block !important;
+            margin: 16px auto !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+        }
+
+        .ql-editor .ql-align-center img {
+            margin-left: auto !important;
+            margin-right: auto !important;
+            display: block !important;
+        }
+
+        .ql-editor .ql-align-right img {
+            margin-left: auto !important;
+            margin-right: 0 !important;
+            display: block !important;
+        }
+
+        .ql-editor .ql-align-left img {
+            margin-left: 0 !important;
+            margin-right: auto !important;
+            display: block !important;
+        }
+
         /* --- VIDEO EMBED --- */
         .ql-editor iframe.ql-video {
             width: 100% !important;
@@ -142,8 +194,101 @@
             display: flex !important;
             align-items: center !important;
             justify-content: space-between !important;
-            flex-wrap: wrap !important;
-            gap: 12px !important;
+            gap: 16px !important;
+            white-space: normal !important;
+            user-select: none !important;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+        }
+
+        .materi-doc-card * {
+            white-space: normal !important;
+            text-decoration: none !important;
+        }
+
+        .materi-doc-left {
+            display: flex !important;
+            align-items: center !important;
+            gap: 14px !important;
+            min-width: 0 !important;
+            flex: 1 1 auto !important;
+        }
+
+        .materi-doc-icon {
+            width: 44px !important;
+            height: 44px !important;
+            min-width: 44px !important;
+            background: #ffffff !important;
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 10px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+            flex-shrink: 0 !important;
+        }
+
+        .materi-doc-info {
+            min-width: 0 !important;
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 2px !important;
+        }
+
+        .materi-doc-title {
+            font-size: 14px !important;
+            font-weight: 600 !important;
+            color: #1e293b !important;
+            line-height: 1.3 !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            white-space: nowrap !important;
+            margin: 0 !important;
+        }
+
+        .materi-doc-meta {
+            font-size: 12px !important;
+            color: #64748b !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 5px !important;
+            margin: 0 !important;
+            line-height: 1.2 !important;
+        }
+
+        .materi-doc-meta svg {
+            flex-shrink: 0 !important;
+        }
+
+        /* Button Unduh Berkas - Compact & Clean */
+        .materi-doc-btn {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 6px !important;
+            padding: 8px 16px !important;
+            font-size: 13px !important;
+            font-weight: 600 !important;
+            color: #0284c7 !important;
+            background-color: #f0f9ff !important;
+            border: 1px solid #bae6fd !important;
+            border-radius: 8px !important;
+            text-decoration: none !important;
+            white-space: nowrap !important;
+            flex-shrink: 0 !important;
+            transition: all 0.2s ease !important;
+            line-height: 1.2 !important;
+            cursor: pointer !important;
+        }
+
+        .materi-doc-btn:hover {
+            background-color: #0284c7 !important;
+            color: #ffffff !important;
+            border-color: #0284c7 !important;
+            text-decoration: none !important;
+        }
+
+        .materi-doc-btn svg {
+            flex-shrink: 0 !important;
         }
     </style>
 @endpush
@@ -154,14 +299,52 @@
     <script>
         let quillInstance = null;
 
+        // Vektor SVG Bawaan untuk Kartu Dokumen
+        function getDocumentSvgs(ext) {
+            const e = (ext || '').toLowerCase();
+            let iconSvg = '';
+
+            if (e === 'pdf') {
+                iconSvg = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M7 18H17V16H7V18Z" fill="#ef4444"/><path d="M17 14H7V12H17V14Z" fill="#ef4444"/><path d="M7 10H11V8H7V10Z" fill="#ef4444"/><path fill-rule="evenodd" clip-rule="evenodd" d="M6 2C4.34315 2 3 3.34315 3 5V19C3 20.6569 4.34315 22 6 22H18C19.6569 22 21 20.6569 21 19V9C21 8.46957 20.7893 7.96086 20.4142 7.58579L15.4142 2.58579C15.0391 2.21071 14.5304 2 14 2H6ZM5 5C5 4.44772 5.44772 4 6 4H13V9H18V19C18 19.5523 17.5523 20 17 20H7C6.44772 20 6 19.5523 6 19V5ZM15 4.41421L18.5858 8H15V4.41421Z" fill="#ef4444"/></svg>';
+            } else if (['ppt', 'pptx'].includes(e)) {
+                iconSvg = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M6 2C4.34315 2 3 3.34315 3 5V19C3 20.6569 4.34315 22 6 22H18C19.6569 22 21 20.6569 21 19V9C21 8.46957 20.7893 7.96086 20.4142 7.58579L15.4142 2.58579C15.0391 2.21071 14.5304 2 14 2H6ZM5 5C5 4.44772 5.44772 4 6 4H13V9H18V19C18 19.5523 17.5523 20 17 20H7C6.44772 20 6 19.5523 6 19V5ZM15 4.41421L18.5858 8H15V4.41421Z" fill="#f59e0b"/><path d="M8 12H13C14.1046 12 15 12.8954 15 14C15 15.1046 14.1046 16 13 16H10V18H8V12ZM10 14H13C13.5523 14 14 13.5523 14 13C14 12.4477 13.5523 12 13 12H10V14Z" fill="#f59e0b"/></svg>';
+            } else if (['doc', 'docx'].includes(e)) {
+                iconSvg = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M6 2C4.34315 2 3 3.34315 3 5V19C3 20.6569 4.34315 22 6 22H18C19.6569 22 21 20.6569 21 19V9C21 8.46957 20.7893 7.96086 20.4142 7.58579L15.4142 2.58579C15.0391 2.21071 14.5304 2 14 2H6ZM5 5C5 4.44772 5.44772 4 6 4H13V9H18V19C18 19.5523 17.5523 20 17 20H7C6.44772 20 6 19.5523 6 19V5ZM15 4.41421L18.5858 8H15V4.41421Z" fill="#2563eb"/><path d="M8 12L9.5 17H11L12 14L13 17H14.5L16 12H14.5L13.5 15.5L12.5 12.5H11.5L10.5 15.5L9.5 12H8Z" fill="#2563eb"/></svg>';
+            } else if (['xls', 'xlsx'].includes(e)) {
+                iconSvg = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M6 2C4.34315 2 3 3.34315 3 5V19C3 20.6569 4.34315 22 6 22H18C19.6569 22 21 20.6569 21 19V9C21 8.46957 20.7893 7.96086 20.4142 7.58579L15.4142 2.58579C15.0391 2.21071 14.5304 2 14 2H6ZM5 5C5 4.44772 5.44772 4 6 4H13V9H18V19C18 19.5523 17.5523 20 17 20H7C6.44772 20 6 19.5523 6 19V5ZM15 4.41421L18.5858 8H15V4.41421Z" fill="#16a34a"/><path d="M8 12L10.5 15L8 18H10L11.5 16.2L13 18H15L12.5 15L15 12H13L11.5 13.8L10 12H8Z" fill="#16a34a"/></svg>';
+            } else {
+                iconSvg = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M6 2C4.34315 2 3 3.34315 3 5V19C3 20.6569 4.34315 22 6 22H18C19.6569 22 21 20.6569 21 19V9C21 8.46957 20.7893 7.96086 20.4142 7.58579L15.4142 2.58579C15.0391 2.21071 14.5304 2 14 2H6ZM5 5C5 4.44772 5.44772 4 6 4H13V9H18V19C18 19.5523 17.5523 20 17 20H7C6.44772 20 6 19.5523 6 19V5ZM15 4.41421L18.5858 8H15V4.41421Z" fill="#64748b"/></svg>';
+            }
+
+            const clipSvg = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>';
+            const downloadSvg = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>';
+
+            return { iconSvg, clipSvg, downloadSvg };
+        }
+
+        function createCardHtml(data) {
+            const ext = (data.extension || '').toLowerCase();
+            const svgs = getDocumentSvgs(ext);
+            const filename = data.filename || 'Dokumen Pelatihan';
+            const size = data.size || '';
+            const url = data.url || '#';
+
+            return '<div class="materi-doc-left">' +
+                '<div class="materi-doc-icon">' + svgs.iconSvg + '</div>' +
+                '<div class="materi-doc-info">' +
+                    '<div class="materi-doc-title">' + filename + '</div>' +
+                    '<div class="materi-doc-meta">' + svgs.clipSvg + '<span>Dokumen / Slide Tayang Resmi · ' + size + '</span></div>' +
+                '</div>' +
+            '</div>' +
+            '<a href="' + url + '" target="_blank" download class="materi-doc-btn">' + svgs.downloadSvg + '<span>Unduh Berkas</span></a>';
+        }
+
         function registerQuillCustomBlotsAndIcons() {
             if (typeof Quill === 'undefined') return;
 
             // Icon attachment SVG standar dengan ukuran dan stroke persis bawaan Quill
             const icons = Quill.import('ui/icons');
-            icons['attachment'] = `<svg viewBox="0 0 18 18">
-                <path class="ql-stroke" d="M13.7,6.8L7.6,12.9c-1.3,1.3-3.4,1.3-4.7,0s-1.3-3.4,0-4.7l6.6-6.6c0.9-0.9,2.3-0.9,3.2,0s0.9,2.3,0,3.2L6.1,11.4 c-0.4,0.4-1.2,0.4-1.6,0c-0.4-0.4-0.4-1.2,0-1.6l5.7-5.7"></path>
-            </svg>`;
+            icons['attachment'] = '<svg viewBox="0 0 18 18"><path class="ql-stroke" d="M13.7,6.8L7.6,12.9c-1.3,1.3-3.4,1.3-4.7,0s-1.3-3.4,0-4.7l6.6-6.6c0.9-0.9,2.3-0.9,3.2,0s0.9,2.3,0,3.2L6.1,11.4 c-0.4,0.4-1.2,0.4-1.6,0c-0.4-0.4-0.4-1.2,0-1.6l5.7-5.7"></path></svg>';
 
             // Custom Parchment Blot untuk Document Attachment Card
             try {
@@ -171,42 +354,15 @@
                         static create(value) {
                             let node = super.create();
                             node.setAttribute('contenteditable', 'false');
-                            node.className = 'materi-doc-card border rounded-12 p-3 my-3 bg-light shadow-xs d-flex align-items-center justify-content-between flex-wrap gap-2';
-                            node.style.borderLeft = '5px solid #f3bc42';
-
-                            let iconClass = 'ri-file-text-line text-secondary';
-                            const ext = (value.extension || '').toLowerCase();
-                            if (ext === 'pdf') {
-                                iconClass = 'ri-file-pdf-line text-danger';
-                            } else if (['ppt', 'pptx'].includes(ext)) {
-                                iconClass = 'ri-file-ppt-line text-warning';
-                            } else if (['doc', 'docx'].includes(ext)) {
-                                iconClass = 'ri-file-word-line text-primary';
-                            } else if (['xls', 'xlsx'].includes(ext)) {
-                                iconClass = 'ri-file-excel-line text-success';
-                            }
-
-                            node.innerHTML = `
-                                <div class="d-flex align-items-center gap-3">
-                                    <div class="p-2 rounded-8 bg-white border d-flex align-items-center justify-content-center" style="width: 44px; height: 44px;">
-                                        <i class="${iconClass} fs-3"></i>
-                                    </div>
-                                    <div>
-                                        <strong class="text-dark d-block fs-7">${value.filename || 'Dokumen Pelatihan'}</strong>
-                                        <small class="text-muted fs-8"><i class="ri-attachment-line me-1"></i>Dokumen / Slide Tayang Resmi · ${value.size || ''}</small>
-                                    </div>
-                                </div>
-                                <a href="${value.url}" target="_blank" download class="btn btn-sm btn-outline-primary radius-8 px-3">
-                                    <i class="ri-download-line me-1"></i> Unduh Berkas
-                                </a>
-                            `;
+                            node.className = 'materi-doc-card';
+                            node.innerHTML = createCardHtml(value);
                             return node;
                         }
 
                         static value(node) {
                             return {
                                 url: node.querySelector('a')?.getAttribute('href') || '',
-                                filename: node.querySelector('strong')?.innerText || '',
+                                filename: node.querySelector('.materi-doc-title')?.innerText || '',
                                 size: '',
                                 extension: ''
                             };
@@ -348,17 +504,6 @@
 
                 if (data.success && quillInstance) {
                     const ext = (data.extension || '').toLowerCase();
-                    let iconClass = 'ri-file-text-line text-secondary';
-                    if (ext === 'pdf') {
-                        iconClass = 'ri-file-pdf-line text-danger';
-                    } else if (['ppt', 'pptx'].includes(ext)) {
-                        iconClass = 'ri-file-ppt-line text-warning';
-                    } else if (['doc', 'docx'].includes(ext)) {
-                        iconClass = 'ri-file-word-line text-primary';
-                    } else if (['xls', 'xlsx'].includes(ext)) {
-                        iconClass = 'ri-file-excel-line text-success';
-                    }
-
                     const range = quillInstance.getSelection(true) || { index: quillInstance.getLength() };
 
                     try {
@@ -366,27 +511,12 @@
                             url: data.url,
                             filename: data.filename,
                             size: data.size,
-                            extension: data.extension
+                            extension: ext
                         });
                         quillInstance.setSelection(range.index + 1);
                     } catch (err) {
-                        const cardHtml = `
-                        <div class="materi-doc-card border rounded-12 p-3 my-3 bg-light shadow-xs d-flex align-items-center justify-content-between flex-wrap gap-2" contenteditable="false" style="border-left: 5px solid #f3bc42 !important;">
-                            <div class="d-flex align-items-center gap-3">
-                                <div class="p-2 rounded-8 bg-white border d-flex align-items-center justify-content-center" style="width: 44px; height: 44px;">
-                                    <i class="${iconClass} fs-3"></i>
-                                </div>
-                                <div>
-                                    <strong class="text-dark d-block fs-7">${data.filename}</strong>
-                                    <small class="text-muted fs-8"><i class="ri-attachment-line me-1"></i>Dokumen / Slide Tayang Resmi · ${data.size}</small>
-                                </div>
-                            </div>
-                            <a href="${data.url}" target="_blank" download class="btn btn-sm btn-outline-primary radius-8 px-3">
-                                <i class="ri-download-line me-1"></i> Unduh Berkas
-                            </a>
-                        </div>
-                        <p><br></p>`;
-                        quillInstance.clipboard.dangerouslyPasteHTML(range.index, cardHtml);
+                        const fallbackCard = '<div class="materi-doc-card" contenteditable="false">' + createCardHtml(data) + '</div><p><br></p>';
+                        quillInstance.clipboard.dangerouslyPasteHTML(range.index, fallbackCard);
                     }
                 } else {
                     alert(data.message || 'Gagal mengunggah berkas dokumen.');
