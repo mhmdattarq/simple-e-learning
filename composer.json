@@ -16,6 +16,7 @@
         "yajra/laravel-datatables": "^13.0"
     },
     "require-dev": {
+        "atta/taa-staterkit-lavelwire": "dev-master",
         "fakerphp/faker": "^1.23",
         "laravel/boost": "^2.2",
         "laravel/pail": "^1.2.5",

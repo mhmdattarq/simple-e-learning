@@ -29,12 +29,12 @@ class PenjadwalanCreate extends Component
     public function resetForm(): void
     {
         $this->form = [
-            'course_id' => $this->courses->first()?->id ?? '',
-            'mentor_id' => $this->mentors->first()?->id ?? '',
+            'course_id' => '',
+            'mentor_id' => '',
             'session_title' => '',
-            'session_date' => date('Y-m-d'),
-            'start_time' => '09:00',
-            'end_time' => '11:30',
+            'session_date' => '',
+            'start_time' => '',
+            'end_time' => '',
             'room_or_link' => '',
             'status' => 'scheduled',
         ];
