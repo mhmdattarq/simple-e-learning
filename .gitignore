@@ -26,3 +26,11 @@ _ide_helper.php
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# TAA Agentic Workspace (Local Dev Only)
+/.docs/
+/agents/
+/.agents/
+/.cursorrules
+/.cursorignore
+/.github/copilot-instructions.md
