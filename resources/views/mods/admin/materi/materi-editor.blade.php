@@ -21,19 +21,23 @@
     <div class="row justify-content-center">
         <div class="col-12">
             <div class="card form-konten-card shadow-sm border-0 mb-40">
-                <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-20 pb-16 border-bottom">
+                <div
+                    class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-20 pb-16 border-bottom">
                     <div>
                         <h5 class="fw-bold text-dark mb-1">Form Konten</h5>
-                        <p class="text-muted fs-8 mb-0">Tulis materi lengkap dengan teks terformat, video YouTube tersemat, gambar, serta lampiran slide/dokumen resmi.</p>
+                        <p class="text-muted fs-8 mb-0">Tulis materi lengkap dengan teks terformat, video YouTube
+                            tersemat, gambar, serta lampiran slide/dokumen resmi.</p>
                     </div>
                     <div class="d-flex align-items-center gap-2 flex-wrap">
-                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-2 radius-8 fs-8">
+                        <span
+                            class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-2 radius-8 fs-8">
                             <i class="ri-folder-2-line me-1"></i> {{ $chapter?->title ?? 'Bab Silabus' }}
                         </span>
                         <span class="badge bg-secondary-subtle text-dark border px-3 py-2 radius-8 fs-8 font-monospace">
                             <i class="ri-hashtag me-1"></i> Materi Urutan #{{ $lesson['order'] }}
                         </span>
-                        <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 radius-8 fs-8">
+                        <span
+                            class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 radius-8 fs-8">
                             <i class="ri-shield-check-line me-1"></i> {{ $lesson['version'] }}
                         </span>
                     </div>
@@ -56,7 +60,8 @@
                 </div>
 
                 {{-- Hidden File Input untuk Attach Dokumen --}}
-                <input type="file" id="quillFileInput" style="display: none;" accept=".pdf,.ppt,.pptx,.doc,.docx,.xls,.xlsx,.zip">
+                <input type="file" id="quillFileInput" style="display: none;"
+                    accept=".pdf,.ppt,.pptx,.doc,.docx,.xls,.xlsx,.zip">
 
                 {{-- Toolbar & Editor Area (Quill Snow Editor) --}}
                 <div class="mb-24" wire:ignore>
@@ -65,8 +70,9 @@
 
                 {{-- Tombol Tambah Konten Sesuai Gambar --}}
                 @if (!$isFrozen)
-                    <button type="button" id="btnSubmitKonten" class="btn btn-simple-gold w-100 shadow-sm py-12 fw-semibold">
-                        <i class="ri-save-line me-1"></i> {{ $lessonId ? 'Perbarui Konten' : 'Tambah Konten' }}
+                    <button type="button" id="btnSubmitKonten"
+                        class="btn btn-simple-gold w-100 shadow-sm py-12 fw-semibold">
+                        <i class="ri-save-line me-1"></i> {{ $lessonId ? 'Perbarui Materi' : 'Tambah Materi' }}
                     </button>
                 @else
                     <button type="button" class="btn btn-secondary w-100 py-12 radius-8 fw-semibold" disabled>

@@ -5,6 +5,7 @@ namespace App\Livewire\Admin\Materi;
 use App\Models\Course;
 use App\Repositories\MateriRepo;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class MateriDetail extends Component
@@ -96,12 +97,21 @@ class MateriDetail extends Component
             return;
         }
 
+        $nextOrder = count($this->chapters) + 1;
         $this->chapterForm = [
             'id' => null,
             'title' => '',
-            'order' => count($this->chapters) + 1,
+            'order' => $nextOrder,
         ];
         $this->showChapterModal = true;
+
+        $this->dispatch('modal-chapter-set', [
+            'id' => null,
+            'course_id' => $this->courseId,
+            'title' => '',
+            'order' => $nextOrder,
+        ]);
+        $this->dispatch('showModal', id: 'modalChapter');
     }
 
     public function openEditChapter(int $chapterId): void
@@ -124,15 +134,32 @@ class MateriDetail extends Component
                     'order' => $chap['order'],
                 ];
                 $this->showChapterModal = true;
+
+                $this->dispatch('modal-chapter-set', [
+                    'id' => $chap['id'],
+                    'course_id' => $this->courseId,
+                    'title' => $chap['title'],
+                    'order' => $chap['order'],
+                ]);
+                $this->dispatch('showModal', id: 'modalChapter');
                 break;
             }
         }
     }
 
-    public function saveChapter(): void
+    #[On('MateriDetail-saveChapter')]
+    public function saveChapter(?array $form = null): void
     {
         if ($this->isFrozen) {
             return;
+        }
+
+        if ($form) {
+            $this->chapterForm = [
+                'id' => $form['id'] ?? null,
+                'title' => $form['title'] ?? '',
+                'order' => $form['order'] ?? 1,
+            ];
         }
 
         $this->validate([
@@ -143,7 +170,7 @@ class MateriDetail extends Component
             'chapterForm.order.required' => 'Nomor urut bab wajib ditentukan.',
         ]);
 
-        if ($this->chapterForm['id']) {
+        if (! empty($this->chapterForm['id'])) {
             // Update via Repository
             $success = MateriRepo::updateChapter($this->chapterForm['id'], [
                 'title' => $this->chapterForm['title'],
@@ -164,6 +191,7 @@ class MateriDetail extends Component
         if ($success) {
             $this->loadCurriculum();
             $this->showChapterModal = false;
+            $this->dispatch('closeModal', id: 'modalChapter');
             $this->dispatch('alert-show', data: [
                 'type' => 'success',
                 'title' => 'Berhasil',
@@ -178,7 +206,7 @@ class MateriDetail extends Component
         }
     }
 
-    public function deleteChapter(int $chapterId): void
+    public function hookModalDeleteChapter(int $id, string $title): void
     {
         if ($this->isFrozen) {
             $this->dispatch('alert-show', data: [
@@ -190,10 +218,40 @@ class MateriDetail extends Component
             return;
         }
 
-        $success = MateriRepo::deleteChapter($chapterId);
+        $dtHook = [
+            'id' => $id,
+            'title' => 'Konfirmasi Hapus Bab',
+            'msg' => 'Apakah Anda yakin ingin menghapus bab "'.$title.'" beserta seluruh materinya? Tindakan ini tidak dapat dibatalkan.',
+            'dispatch' => 'MateriDetail-deleteChapter',
+        ];
+
+        $this->dispatch('modal-delete-setDeleteId', $dtHook);
+        $this->dispatch('showModal', id: 'modalDelete');
+    }
+
+    #[On('MateriDetail-deleteChapter')]
+    public function deleteChapter($data): void
+    {
+        if ($this->isFrozen) {
+            $this->dispatch('alert-show', data: [
+                'type' => 'warning',
+                'title' => 'Kurikulum Terkunci',
+                'message' => 'Struktur bab tidak dapat dihapus karena pelatihan tipe Batch sedang aktif berjalan.',
+            ]);
+
+            return;
+        }
+
+        $chapterId = is_array($data) ? ($data['id'] ?? null) : $data;
+        if (! $chapterId) {
+            return;
+        }
+
+        $success = MateriRepo::deleteChapter((int) $chapterId);
 
         if ($success) {
             $this->loadCurriculum();
+            $this->dispatch('closeModal', id: 'modalDelete');
             $this->dispatch('alert-show', data: [
                 'type' => 'success',
                 'title' => 'Berhasil',
@@ -209,7 +267,7 @@ class MateriDetail extends Component
     }
 
     // --- LESSON CRUD ACTIONS ---
-    public function deleteLesson(int $chapterId, int $lessonId): void
+    public function hookModalDeleteLesson(int $id, string $title): void
     {
         if ($this->isFrozen) {
             $this->dispatch('alert-show', data: [
@@ -221,10 +279,45 @@ class MateriDetail extends Component
             return;
         }
 
-        $success = MateriRepo::deleteLesson($lessonId);
+        $dtHook = [
+            'id' => $id,
+            'title' => 'Konfirmasi Hapus Materi',
+            'msg' => 'Apakah Anda yakin ingin menghapus materi "'.$title.'"? Tindakan ini tidak dapat dibatalkan.',
+            'dispatch' => 'MateriDetail-deleteLesson',
+        ];
+
+        $this->dispatch('modal-delete-setDeleteId', $dtHook);
+        $this->dispatch('showModal', id: 'modalDelete');
+    }
+
+    #[On('MateriDetail-deleteLesson')]
+    public function deleteLesson($chapterIdOrData, ?int $lessonId = null): void
+    {
+        if ($this->isFrozen) {
+            $this->dispatch('alert-show', data: [
+                'type' => 'warning',
+                'title' => 'Kurikulum Terkunci',
+                'message' => 'Materi tidak dapat dihapus karena pelatihan tipe Batch sedang aktif berjalan.',
+            ]);
+
+            return;
+        }
+
+        if (is_array($chapterIdOrData)) {
+            $id = $chapterIdOrData['id'] ?? null;
+        } else {
+            $id = $lessonId ?? $chapterIdOrData;
+        }
+
+        if (! $id) {
+            return;
+        }
+
+        $success = MateriRepo::deleteLesson((int) $id);
 
         if ($success) {
             $this->loadCurriculum();
+            $this->dispatch('closeModal', id: 'modalDelete');
             $this->dispatch('alert-show', data: [
                 'type' => 'success',
                 'title' => 'Berhasil',
