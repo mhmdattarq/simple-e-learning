@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AbsensiController;
+use App\Http\Controllers\MateriController;
 use App\Http\Controllers\PendaftaranController;
 use App\Http\Controllers\PenjadwalanController;
 use App\Http\Controllers\PerencanaanController;
@@ -100,6 +101,7 @@ Route::middleware(['auth', 'role:admin,mentor,verifikator,pimpinan'])->group(fun
     // Modul 6: Tahap Ruang Materi (Kurikulum & Silabus)
     Route::prefix('materi')->group(function () {
         Route::name('materi.')->group(function () {
+            Route::post('/upload-media', [MateriController::class, 'uploadMedia'])->name('upload-media');
             Route::livewire('/data', MateriData::class)->name('data');
             Route::livewire('/detail/{id}', MateriDetail::class)->name('detail');
             Route::livewire('/detail/{course_id}/editor/{lesson_id?}', MateriEditor::class)->name('editor');
