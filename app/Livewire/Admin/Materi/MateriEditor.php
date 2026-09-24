@@ -7,12 +7,15 @@ use App\Models\Course;
 use App\Models\Lesson;
 use App\Repositories\MateriRepo;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
+use Livewire\Attributes\Url;
 use Livewire\Component;
 
 class MateriEditor extends Component
 {
     public int $courseId;
 
+    #[Url(as: 'chapter_id')]
     public ?int $chapterId = null;
 
     public ?int $lessonId = null;
@@ -36,11 +39,11 @@ class MateriEditor extends Component
         'version' => 'Versi 1.0',
     ];
 
-    public function mount(int $course_id, ?int $lesson_id = null): void
+    public function mount(int $course_id, ?int $lesson_id = null, ?int $chapter_id = null): void
     {
         $this->courseId = $course_id;
-        $this->lessonId = $lesson_id;
-        $this->chapterId = request()->query('chapter_id') ? (int) request()->query('chapter_id') : null;
+        $this->lessonId = $lesson_id ?: null;
+        $this->chapterId = $chapter_id ?: (request()->query('chapter_id') ? (int) request()->query('chapter_id') : null);
 
         $this->course = Course::with(['category', 'schedules.mentor'])->findOrFail($course_id);
 
@@ -112,6 +115,17 @@ class MateriEditor extends Component
         }
     }
 
+    public function updated($propertyName): void
+    {
+        $this->validateOnly($propertyName, [
+            'lesson.title' => 'required|string|min:3|max:255',
+        ], [
+            'lesson.title.required' => 'Judul materi pembelajaran wajib diisi.',
+            'lesson.title.min' => 'Judul materi pembelajaran minimal 3 karakter.',
+            'lesson.title.max' => 'Judul materi pembelajaran maksimal 255 karakter.',
+        ]);
+    }
+
     public function save(?string $bodyText = null): void
     {
         if ($this->isFrozen) {
@@ -128,14 +142,26 @@ class MateriEditor extends Component
             $this->lesson['body_text'] = $bodyText;
         }
 
-        $this->validate([
-            'lesson.title' => 'required|string|max:255',
-            'lesson.chapter_id' => 'required|exists:chapters,id',
-            'lesson.body_text' => 'required|string',
-        ], [
-            'lesson.title.required' => 'Judul materi pembelajaran wajib diisi.',
-            'lesson.body_text.required' => 'Naskah konten materi pembelajaran belum diisi pada editor.',
-        ]);
+        try {
+            $this->validate([
+                'lesson.title' => 'required|string|min:3|max:255',
+                'lesson.chapter_id' => 'required|exists:chapters,id',
+                'lesson.body_text' => 'required|string',
+            ], [
+                'lesson.title.required' => 'Judul materi pembelajaran wajib diisi.',
+                'lesson.title.min' => 'Judul materi pembelajaran minimal 3 karakter.',
+                'lesson.title.max' => 'Judul materi pembelajaran maksimal 255 karakter.',
+                'lesson.body_text.required' => 'Naskah konten materi pembelajaran belum diisi pada editor.',
+            ]);
+        } catch (ValidationException $e) {
+            $firstError = $e->validator->errors()->first('lesson.title') ?: $e->validator->errors()->first();
+            $this->dispatch('alert-show', data: [
+                'type' => 'danger',
+                'message' => $firstError,
+            ]);
+
+            throw $e;
+        }
 
         $payload = [
             'chapter_id' => (int) $this->lesson['chapter_id'],

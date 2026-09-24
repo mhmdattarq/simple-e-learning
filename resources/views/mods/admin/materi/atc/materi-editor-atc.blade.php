@@ -428,6 +428,10 @@
                     toolbar: {
                         container: toolbarOptions,
                         handlers: {
+                            // Handler khusus tombol image agar berkas diunggah ke storage alih-alih base64
+                            'image': function() {
+                                triggerUploadImage();
+                            },
                             // Handler khusus tombol lampirkan dokumen / slide
                             'attachment': function() {
                                 triggerAttachDocument();
@@ -459,14 +463,29 @@
                 attachBtn.setAttribute('title', 'Lampirkan Berkas Slide/Dokumen (PDF, PPTX, DOCX, XLS)');
             }
 
-            // Load existing content if editing
-            const existingContent = @js($lesson['body_text'] ?? '');
+            // Load existing content from data-content attribute
+            const b64 = editorContainer.getAttribute('data-content') || '';
+            let existingContent = '';
+            if (b64) {
+                try {
+                    existingContent = decodeURIComponent(escape(atob(b64)));
+                } catch (err) {
+                    try {
+                        existingContent = atob(b64);
+                    } catch (e2) {
+                        existingContent = '';
+                    }
+                }
+            }
+
             if (existingContent && existingContent.trim() !== '') {
                 try {
                     quillInstance.root.innerHTML = existingContent;
                 } catch (e) {
                     quillInstance.setText(existingContent);
                 }
+            } else {
+                quillInstance.setText('');
             }
         }
 
@@ -481,6 +500,18 @@
 
         function handleFileUpload(file) {
             if (!file) return;
+
+            const maxBytes = 10 * 1024 * 1024; // 10 MB
+            if (file.size > maxBytes) {
+                const currentMb = (file.size / (1024 * 1024)).toFixed(1);
+                Livewire.dispatch('alert-show', {
+                    data: {
+                        type: 'danger',
+                        message: 'Ukuran berkas dokumen melebihi batas maksimal 10 MB (' + currentMb + ' MB).'
+                    }
+                });
+                return;
+            }
 
             const banner = document.getElementById('uploadStatusBanner');
             if (banner) banner.classList.remove('d-none');
@@ -498,7 +529,12 @@
                 },
                 body: formData
             })
-            .then(res => res.json())
+            .then(res => {
+                if (res.status === 413) {
+                    throw new Error('Ukuran berkas melebihi batas maksimal server (413 Request Entity Too Large).');
+                }
+                return res.json();
+            })
             .then(data => {
                 if (banner) banner.classList.add('d-none');
 
@@ -519,39 +555,126 @@
                         quillInstance.clipboard.dangerouslyPasteHTML(range.index, fallbackCard);
                     }
                 } else {
-                    alert(data.message || 'Gagal mengunggah berkas dokumen.');
+                    Livewire.dispatch('alert-show', {
+                        data: {
+                            type: 'danger',
+                            message: data.message || 'Gagal mengunggah berkas lampiran materi.'
+                        }
+                    });
                 }
             })
             .catch(err => {
                 if (banner) banner.classList.add('d-none');
                 console.error(err);
-                alert('Terjadi kesalahan saat mengunggah berkas.');
+                Livewire.dispatch('alert-show', {
+                    data: {
+                        type: 'danger',
+                        message: err.message || 'Terjadi kesalahan saat mengunggah berkas ke server.'
+                    }
+                });
+            });
+        }
+
+        // Handler untuk Upload Gambar langsung ke Server
+        function triggerUploadImage() {
+            const imgInput = document.getElementById('quillImageInput');
+            if (imgInput) {
+                imgInput.value = '';
+                imgInput.click();
+            }
+        }
+
+        function handleImageUpload(file) {
+            if (!file) return;
+
+            // Pre-check batas ukuran gambar (Maksimal 2 MB agar server ringan dan loading cepat)
+            const maxImgBytes = 2 * 1024 * 1024;
+            if (file.size > maxImgBytes) {
+                const currentMb = (file.size / (1024 * 1024)).toFixed(1);
+                Livewire.dispatch('alert-show', {
+                    data: {
+                        type: 'danger',
+                        message: 'Ukuran berkas gambar melebihi batas maksimal 2 MB (' + currentMb + ' MB).'
+                    }
+                });
+                return;
+            }
+
+            const banner = document.getElementById('uploadStatusBanner');
+            if (banner) banner.classList.remove('d-none');
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '{{ csrf_token() }}';
+
+            fetch('{{ route('materi.upload-media') }}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json'
+                },
+                body: formData
+            })
+            .then(res => {
+                if (res.status === 413) {
+                    throw new Error('Ukuran gambar melebihi batas kapasitas server (413 Request Entity Too Large).');
+                }
+                return res.json();
+            })
+            .then(data => {
+                if (banner) banner.classList.add('d-none');
+
+                if (data.success && quillInstance) {
+                    const range = quillInstance.getSelection(true) || { index: quillInstance.getLength() };
+                    quillInstance.insertEmbed(range.index, 'image', data.url);
+                    quillInstance.setSelection(range.index + 1);
+                } else {
+                    Livewire.dispatch('alert-show', {
+                        data: {
+                            type: 'danger',
+                            message: data.message || 'Gagal mengunggah berkas gambar.'
+                        }
+                    });
+                }
+            })
+            .catch(err => {
+                if (banner) banner.classList.add('d-none');
+                console.error(err);
+                Livewire.dispatch('alert-show', {
+                    data: {
+                        type: 'danger',
+                        message: err.message || 'Terjadi kesalahan saat mengunggah gambar ke server.'
+                    }
+                });
             });
         }
 
         function handleSaveKonten() {
+            let htmlContent = '';
             if (quillInstance) {
                 const plainText = quillInstance.getText().trim();
-                const htmlContent = quillInstance.root.innerHTML;
+                const rawHtml = quillInstance.root.innerHTML;
+                const hasMedia = rawHtml.includes('<img') || rawHtml.includes('<iframe') || rawHtml.includes('materi-doc-card');
 
-                // Periksa apakah ada konten berupa teks, gambar, video, atau dokumen card
-                const hasMedia = htmlContent.includes('<img') || htmlContent.includes('<iframe') || htmlContent.includes('materi-doc-card');
+                if (plainText.length > 0 || hasMedia) {
+                    htmlContent = rawHtml;
+                }
 
-                if ((!plainText || plainText.length === 0) && !hasMedia) {
+                // Cek batas payload naskah untuk mencegah 413 Request Entity Too Large dari Nginx
+                if (htmlContent.length > 2 * 1024 * 1024) {
                     Livewire.dispatch('alert-show', {
                         data: {
-                            type: 'warning',
-                            title: 'Konten Kosong',
-                            message: 'Naskah konten materi pembelajaran belum ditulis.'
+                            type: 'danger',
+                            message: 'Ukuran naskah materi melebihi batas maksimal server. Pastikan gambar diunggah melalui tombol gambar pada toolbar.'
                         }
                     });
                     return;
                 }
-
-                @this.call('save', htmlContent);
-            } else {
-                @this.call('save');
             }
+
+            // Panggil save ke Livewire agar validasi server berjalan, mengisi error bag dan mewarnai is-invalid pada field input
+            @this.call('save', htmlContent);
         }
 
         document.addEventListener('livewire:navigated', () => {
@@ -572,6 +695,15 @@
                 fileInput.addEventListener('change', function() {
                     if (this.files && this.files[0]) {
                         handleFileUpload(this.files[0]);
+                    }
+                });
+            }
+
+            const imgInput = document.getElementById('quillImageInput');
+            if (imgInput) {
+                imgInput.addEventListener('change', function() {
+                    if (this.files && this.files[0]) {
+                        handleImageUpload(this.files[0]);
                     }
                 });
             }

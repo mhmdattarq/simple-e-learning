@@ -4,8 +4,46 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0eed3daacc20b4415fde9d40eef9773f",
+    "content-hash": "60a763b5ea2f490fd36f20b2d992aebc",
     "packages": [
+        {
+            "name": "atta/taa-staterkit-lavelwire",
+            "version": "v1.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mhmdattarq/taa-staterkit-lavelwire.git",
+                "reference": "13ab3a442929a10864c2de62343a74caf8f0caf6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mhmdattarq/taa-staterkit-lavelwire/zipball/13ab3a442929a10864c2de62343a74caf8f0caf6",
+                "reference": "13ab3a442929a10864c2de62343a74caf8f0caf6",
+                "shasum": ""
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "TaaStarter\\TaaStarterServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "TaaStarter\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Agentic workspace starter kit for Laravel Livewire",
+            "support": {
+                "issues": "https://github.com/mhmdattarq/taa-staterkit-lavelwire/issues",
+                "source": "https://github.com/mhmdattarq/taa-staterkit-lavelwire/tree/v1.2.0"
+            },
+            "time": "2026-09-24T17:12:23+00:00"
+        },
         {
             "name": "brick/math",
             "version": "0.19.1",
@@ -7200,45 +7238,6 @@
     ],
     "packages-dev": [
         {
-            "name": "atta/taa-staterkit-lavelwire",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/mhmdattarq/taa-staterkit-lavelwire.git",
-                "reference": "10abcf3662ab75333b2baed0385fbef6a98675dd"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/mhmdattarq/taa-staterkit-lavelwire/zipball/10abcf3662ab75333b2baed0385fbef6a98675dd",
-                "reference": "10abcf3662ab75333b2baed0385fbef6a98675dd",
-                "shasum": ""
-            },
-            "default-branch": true,
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "TaaStarter\\TaaStarterServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "TaaStarter\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "Agentic workspace starter kit for Laravel Livewire",
-            "support": {
-                "issues": "https://github.com/mhmdattarq/taa-staterkit-lavelwire/issues",
-                "source": "https://github.com/mhmdattarq/taa-staterkit-lavelwire/tree/master"
-            },
-            "time": "2026-09-24T01:15:42+00:00"
-        },
-        {
             "name": "brianium/paratest",
             "version": "v7.24.1",
             "source": {
@@ -11210,9 +11209,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "atta/taa-staterkit-lavelwire": 20
-    },
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
