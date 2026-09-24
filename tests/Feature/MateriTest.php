@@ -2,7 +2,6 @@
 
 use App\Livewire\Admin\Materi\MateriData;
 use App\Livewire\Admin\Materi\MateriDetail;
-use App\Livewire\Admin\Materi\MateriEditor;
 use App\Models\Category;
 use App\Models\Chapter;
 use App\Models\Course;
@@ -132,37 +131,12 @@ test('admin can add, edit, and delete chapter on open curriculum course', functi
     ]);
 });
 
-test('admin can open dedicated form editor and save lesson to database', function () {
-    $chapter = Chapter::create([
-        'course_id' => $this->permanentCourse->id,
-        'title' => 'Bab 1: Fondasi BerAKHLAK',
-        'order' => 1,
-    ]);
-
+test('materi.editor route redirects to materi.detail with editor view query parameter', function () {
     $response = $this->actingAs($this->admin)->get(route('materi.editor', $this->permanentCourse->id));
-    $response->assertOk();
-    $response->assertSee('Tambah Materi Baru');
-    $response->assertSee('Tambah Materi');
-
-    Livewire::actingAs($this->admin)
-        ->test(MateriEditor::class, ['course_id' => $this->permanentCourse->id])
-        ->set('lesson.chapter_id', $chapter->id)
-        ->set('lesson.title', 'Modul Utama: Kebijakan Transformasi Birokrasi ASN')
-        ->set('lesson.order', 1)
-        ->set('lesson.content_type', 'article')
-        ->set('lesson.version', 'Versi 1.0')
-        ->set('lesson.body_text', '<p>Teks materi pembelajaran ASN</p>')
-        ->call('save')
-        ->assertSessionHas('alert-show')
-        ->assertRedirect(route('materi.detail', $this->permanentCourse->id));
-
-    $this->assertDatabaseHas('lessons', [
-        'chapter_id' => $chapter->id,
-        'title' => 'Modul Utama: Kebijakan Transformasi Birokrasi ASN',
-        'order' => 1,
-        'content_type' => 'article',
-        'version' => 'Versi 1.0',
-    ]);
+    $response->assertRedirect(route('materi.detail', [
+        'id' => $this->permanentCourse->id,
+        'view' => 'editor',
+    ]));
 });
 
 test('admin can edit and delete lesson in database', function () {
@@ -181,19 +155,16 @@ test('admin can edit and delete lesson in database', function () {
         'version' => 'Versi 1.0',
     ]);
 
-    // Edit Lesson via MateriEditor
+    // Edit Lesson via MateriDetail
     Livewire::actingAs($this->admin)
-        ->test(MateriEditor::class, [
-            'course_id' => $this->permanentCourse->id,
-            'lesson_id' => $lesson->id,
-        ])
-        ->assertSet('lesson.title', 'Materi Awal')
-        ->set('lesson.title', 'Materi Hasil Pembaruan')
-        ->set('lesson.version', 'Versi 1.1')
-        ->set('lesson.body_text', '<p>Konten baru diperbarui</p>')
-        ->call('save')
-        ->assertSessionHas('alert-show')
-        ->assertRedirect(route('materi.detail', $this->permanentCourse->id));
+        ->test(MateriDetail::class, ['id' => $this->permanentCourse->id])
+        ->call('openEditLesson', $lesson->id)
+        ->assertSet('lessonForm.title', 'Materi Awal')
+        ->set('lessonForm.title', 'Materi Hasil Pembaruan')
+        ->set('lessonForm.version', 'Versi 1.1')
+        ->set('lessonForm.body_text', '<p>Konten baru diperbarui</p>')
+        ->call('saveLesson')
+        ->assertDispatched('alert-show');
 
     $this->assertDatabaseHas('lessons', [
         'id' => $lesson->id,
@@ -220,8 +191,10 @@ test('frozen batch course denies adding new chapter or saving in editor', functi
         ->assertSet('showChapterModal', false);
 
     Livewire::actingAs($this->admin)
-        ->test(MateriEditor::class, ['course_id' => $this->frozenBatchCourse->id])
-        ->call('save')
+        ->test(MateriDetail::class, ['id' => $this->frozenBatchCourse->id])
+        ->call('openCreateLesson', 1)
+        ->assertDispatched('alert-show')
+        ->call('saveLesson')
         ->assertDispatched('alert-show');
 });
 
@@ -279,26 +252,22 @@ test('materi editor validates title with min 3 chars and dispatches toast alert-
 
     // Validation error when title is empty
     Livewire::actingAs($this->admin)
-        ->test(MateriEditor::class, [
-            'course_id' => $this->permanentCourse->id,
-            'chapter_id' => $chapter->id,
-        ])
-        ->set('lesson.title', '')
-        ->set('lesson.body_text', '<p>Konten materi</p>')
-        ->call('save')
-        ->assertHasErrors(['lesson.title' => 'required'])
+        ->test(MateriDetail::class, ['id' => $this->permanentCourse->id])
+        ->call('openCreateLesson', $chapter->id)
+        ->set('lessonForm.title', '')
+        ->set('lessonForm.body_text', '<p>Konten materi</p>')
+        ->call('saveLesson')
+        ->assertHasErrors(['lessonForm.title' => 'required'])
         ->assertDispatched('alert-show');
 
     // Validation error when title is too short (< 3 chars)
     Livewire::actingAs($this->admin)
-        ->test(MateriEditor::class, [
-            'course_id' => $this->permanentCourse->id,
-            'chapter_id' => $chapter->id,
-        ])
-        ->set('lesson.title', 'ab')
-        ->set('lesson.body_text', '<p>Konten materi</p>')
-        ->call('save')
-        ->assertHasErrors(['lesson.title' => 'min'])
+        ->test(MateriDetail::class, ['id' => $this->permanentCourse->id])
+        ->call('openCreateLesson', $chapter->id)
+        ->set('lessonForm.title', 'ab')
+        ->set('lessonForm.body_text', '<p>Konten materi</p>')
+        ->call('saveLesson')
+        ->assertHasErrors(['lessonForm.title' => 'min'])
         ->assertDispatched('alert-show');
 });
 
@@ -342,4 +311,129 @@ test('chapter and lesson deletion via reusable modal hooks', function () {
         ->assertDispatched('alert-show');
 
     $this->assertDatabaseMissing('chapters', ['id' => $chapter->id]);
+});
+
+test('admin can switch to inline editor, create lesson and return to silabus without page reload', function () {
+    $chapter = Chapter::create([
+        'course_id' => $this->permanentCourse->id,
+        'title' => 'Bab 1: Fondasi BerAKHLAK',
+        'order' => 1,
+    ]);
+
+    $component = Livewire::actingAs($this->admin)
+        ->test(MateriDetail::class, ['id' => $this->permanentCourse->id])
+        ->assertSet('viewMode', 'silabus')
+        ->assertSee('Struktur Bab')
+        ->call('openCreateLesson', $chapter->id)
+        ->assertSet('viewMode', 'editor')
+        ->assertSet('editorChapterId', $chapter->id)
+        ->assertSet('lessonForm.chapter_id', $chapter->id)
+        ->assertSet('lessonForm.order', 1)
+        ->assertSee('Tambah Materi Baru')
+        ->set('lessonForm.title', 'Modul Inline: Kepemimpinan ASN Modern')
+        ->set('lessonForm.body_text', '<p>Konten materi disusun via inline component editor.</p>')
+        ->call('saveLesson')
+        ->assertDispatched('alert-show')
+        ->assertSet('viewMode', 'silabus')
+        ->assertSee('Modul Inline: Kepemimpinan ASN Modern');
+
+    $this->assertDatabaseHas('lessons', [
+        'chapter_id' => $chapter->id,
+        'title' => 'Modul Inline: Kepemimpinan ASN Modern',
+        'order' => 1,
+        'body_text' => '<p>Konten materi disusun via inline component editor.</p>',
+    ]);
+});
+
+test('admin can switch to inline editor, edit lesson and return to silabus without page reload', function () {
+    $chapter = Chapter::create([
+        'course_id' => $this->permanentCourse->id,
+        'title' => 'Bab 2: Implementasi Layanan Publik',
+        'order' => 2,
+    ]);
+
+    $lesson = Lesson::create([
+        'chapter_id' => $chapter->id,
+        'title' => 'Judul Sebelum Edit',
+        'order' => 1,
+        'content_type' => 'article',
+        'body_text' => '<p>Teks sebelum revisi</p>',
+        'version' => 'Versi 1.0',
+    ]);
+
+    Livewire::actingAs($this->admin)
+        ->test(MateriDetail::class, ['id' => $this->permanentCourse->id])
+        ->assertSet('viewMode', 'silabus')
+        ->call('openEditLesson', $lesson->id)
+        ->assertSet('viewMode', 'editor')
+        ->assertSet('editorLessonId', $lesson->id)
+        ->assertSet('lessonForm.title', 'Judul Sebelum Edit')
+        ->assertSee('Edit Materi Pembelajaran')
+        ->set('lessonForm.title', 'Judul Sesudah Revisi Cepat')
+        ->set('lessonForm.body_text', '<p>Teks sesudah revisi cepat tanpa reload page.</p>')
+        ->call('saveLesson')
+        ->assertDispatched('alert-show')
+        ->assertSet('viewMode', 'silabus')
+        ->assertSee('Judul Sesudah Revisi Cepat');
+
+    $this->assertDatabaseHas('lessons', [
+        'id' => $lesson->id,
+        'title' => 'Judul Sesudah Revisi Cepat',
+        'body_text' => '<p>Teks sesudah revisi cepat tanpa reload page.</p>',
+    ]);
+});
+
+test('inline editor validates title and body in MateriDetail', function () {
+    $chapter = Chapter::create([
+        'course_id' => $this->permanentCourse->id,
+        'title' => 'Bab 3: Etika Birokrasi',
+        'order' => 3,
+    ]);
+
+    Livewire::actingAs($this->admin)
+        ->test(MateriDetail::class, ['id' => $this->permanentCourse->id])
+        ->call('openCreateLesson', $chapter->id)
+        ->set('lessonForm.title', '')
+        ->set('lessonForm.body_text', '')
+        ->call('saveLesson')
+        ->assertHasErrors(['lessonForm.title' => 'required'])
+        ->assertDispatched('alert-show');
+});
+
+test('switching between silabus and editor resets validation error bag completely', function () {
+    $chapter = Chapter::create([
+        'course_id' => $this->permanentCourse->id,
+        'title' => 'Bab 4: Integritas Pelayanan',
+        'order' => 4,
+    ]);
+
+    $lesson = Lesson::create([
+        'chapter_id' => $chapter->id,
+        'title' => 'Materi Validasi Bersih',
+        'order' => 1,
+        'content_type' => 'article',
+        'body_text' => '<p>Konten siap edit</p>',
+        'version' => 'Versi 1.0',
+    ]);
+
+    Livewire::actingAs($this->admin)
+        ->test(MateriDetail::class, ['id' => $this->permanentCourse->id])
+        // 1. Open create and trigger validation error
+        ->call('openCreateLesson', $chapter->id)
+        ->set('lessonForm.title', '')
+        ->call('saveLesson')
+        ->assertHasErrors(['lessonForm.title' => 'required'])
+        // 2. Return to silabus
+        ->call('closeEditor')
+        ->assertSet('viewMode', 'silabus')
+        ->assertHasNoErrors()
+        // 3. Open edit lesson -> Error bag must be completely clear!
+        ->call('openEditLesson', $lesson->id)
+        ->assertSet('viewMode', 'editor')
+        ->assertSet('lessonForm.title', 'Materi Validasi Bersih')
+        ->assertHasNoErrors()
+        // 4. Return to silabus and open create again -> Error bag must still be clear!
+        ->call('closeEditor')
+        ->call('openCreateLesson', $chapter->id)
+        ->assertHasNoErrors();
 });

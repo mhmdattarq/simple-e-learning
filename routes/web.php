@@ -10,7 +10,6 @@ use App\Livewire\Admin\Absensi\AbsensiData;
 use App\Livewire\Admin\Dashboard\DashboardIndex;
 use App\Livewire\Admin\Materi\MateriData;
 use App\Livewire\Admin\Materi\MateriDetail;
-use App\Livewire\Admin\Materi\MateriEditor;
 use App\Livewire\Admin\Pendaftaran\PendaftaranData;
 use App\Livewire\Admin\Penjadwalan\PenjadwalanCreate;
 use App\Livewire\Admin\Penjadwalan\PenjadwalanData;
@@ -104,7 +103,17 @@ Route::middleware(['auth', 'role:admin,mentor,verifikator,pimpinan'])->group(fun
             Route::post('/upload-media', [MateriController::class, 'uploadMedia'])->name('upload-media');
             Route::livewire('/data', MateriData::class)->name('data');
             Route::livewire('/detail/{id}', MateriDetail::class)->name('detail');
-            Route::livewire('/detail/{course_id}/editor/{lesson_id?}', MateriEditor::class)->name('editor');
+            Route::get('/detail/{course_id}/editor/{lesson_id?}', function ($course_id, $lesson_id = null) {
+                $params = ['id' => $course_id, 'view' => 'editor'];
+                if ($lesson_id) {
+                    $params['lesson_id'] = $lesson_id;
+                }
+                if (request()->query('chapter_id')) {
+                    $params['chapter_id'] = request()->query('chapter_id');
+                }
+
+                return redirect()->route('materi.detail', $params);
+            })->name('editor');
         });
     });
 });
