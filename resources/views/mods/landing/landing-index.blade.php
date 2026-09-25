@@ -2,7 +2,7 @@
     {{-- 1. Hero Highlight (Digitalent Grid Banner + Highlight Cards) --}}
     @include('mods.landing.sections.hero')
 
-    {{-- 2. Jalur Akademi Pelatihan --}}
+    {{-- 2. Quick Info Jadwal Pelatihan Terdekat (maks 3 batch) --}}
     @include('mods.landing.sections.academies')
 
     {{-- 3. Katalog Pelatihan Terbuka (3 Kategori Kursus Sesuai Arahan PM) --}}

@@ -2,7 +2,6 @@
 
 namespace App\Livewire\Landing;
 
-use App\Models\Category;
 use App\Models\Course;
 use App\Models\CourseUser;
 use Illuminate\Support\Facades\Schema;
@@ -43,15 +42,21 @@ class LandingIndex extends Component
             ? CourseUser::where('status', 'approved')->count()
             : 0;
 
-        $categories = $tablesExist && Schema::hasTable('categories')
-            ? Category::withCount(['courses' => fn ($q) => $q->where('status', 'published')])->get()
+        $upcomingJadwals = $tablesExist
+            ? Course::with('category')
+                ->where('status', 'published')
+                ->where('type', 'batch')
+                ->whereNotNull('start_date')
+                ->orderBy('start_date', 'asc')
+                ->take(3)
+                ->get()
             : collect();
 
         return view('mods.landing.landing-index', compact(
             'courses',
             'totalPublishedCourses',
             'totalApprovedParticipants',
-            'categories',
+            'upcomingJadwals',
         ));
     }
 }

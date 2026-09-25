@@ -24,16 +24,15 @@
                     resmi terhubung ke SIASN BKN.
                 </p>
 
-                {{-- Action CTA Buttons using Master Template thm-btn & Bootstrap --}}
+                {{-- Action CTA Buttons using SIMPEL Button System --}}
                 <div class="d-flex flex-wrap align-items-center gap-3 mb-4">
-                    <a href="#pelatihan" class="thm-btn"
-                        style="background-color: var(--simpel-gold); color: var(--simpel-navy); border-radius: 12px; font-weight: 700; padding: 14px 28px;">
-                        <span class="icon-angles-right me-1"></span> Daftar Pelatihan
+                    <a href="#pelatihan" class="btn-simpel-cta-gold fs-6" style="padding: 13px 26px; border-radius: 12px;">
+                        <span>Daftar Pelatihan</span>
+                        <i class="ri-arrow-right-line"></i>
                     </a>
-                    <a href="#akademi" class="btn btn-outline-light d-inline-flex align-items-center gap-2"
-                        style="border-radius: 12px; font-weight: 600; padding: 13px 24px; border-color: rgba(255,255,255,0.3);">
-                        <i class="ri-compass-3-line text-gold fs-5"></i>
-                        <span>Jelajahi Jalur Akademi</span>
+                    <a href="{{ route('jadwal') }}" class="btn-simpel-outline-light fs-6" style="padding: 13px 24px; border-radius: 12px;">
+                        <i class="ri-calendar-event-line fs-5"></i>
+                        <span>Lihat Jadwal Pelatihan</span>
                     </a>
                 </div>
 
