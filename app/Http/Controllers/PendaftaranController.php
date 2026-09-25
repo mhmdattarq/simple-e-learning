@@ -14,9 +14,17 @@ class PendaftaranController extends Controller
      * Serve JSON for Yajra DataTables server-side.
      * Ultra-Thin Controller pattern untuk penyediaan data Yajra DataTables pendaftaran peserta diklat.
      */
-    public function dataDt()
+    public function dataDt(Request $request)
     {
-        $data = PendaftaranRepo::getDt();
+        $filters = [
+            'course_id' => $request->filled('course_id') ? (int) $request->get('course_id') : null,
+            'status' => $request->filled('status') ? $request->get('status') : null,
+            'opd' => $request->filled('opd') ? trim((string) $request->get('opd')) : null,
+            'start_date' => $request->filled('start_date') ? $request->get('start_date') : null,
+            'end_date' => $request->filled('end_date') ? $request->get('end_date') : null,
+        ];
+
+        $data = PendaftaranRepo::getDt(null, $filters);
 
         return DataTables::of($data)
             ->addColumn('user_name', fn ($row) => $row->user?->name ?? '-')

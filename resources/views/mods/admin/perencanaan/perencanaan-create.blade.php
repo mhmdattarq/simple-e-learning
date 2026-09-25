@@ -81,24 +81,17 @@
                             @enderror
                         </div>
 
-                        {{-- Status Publikasi --}}
+                        {{-- Status Publikasi (Read-Only) --}}
                         <div class="col-md-4">
                             <label class="form-label text-xs fw-semibold text-dark mb-1">
-                                Status Publikasi <span class="text-danger">*</span>
+                                Status Pelatihan
                             </label>
-                            <select class="form-select @error('form.status') is-invalid @enderror"
-                                wire:model="form.status">
-                                <option value="draft">Draft (Konsep Awal)</option>
-                                <option value="submitted">Diajukan (Menunggu Persetujuan)</option>
-                                <option value="approved">Disetujui (Siap Dibuka)</option>
-                                <option value="published">Dibuka (Menerima Pendaftaran)</option>
-                                <option value="ongoing">Berjalan (Pelatihan Sedang Aktif)</option>
-                                <option value="completed">Selesai (Kegiatan Berakhir)</option>
-                                <option value="archived">Diarsipkan (Tersimpan di Arsip)</option>
-                            </select>
-                            @error('form.status')
-                                <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
-                            @enderror
+                            <div class="pt-1">
+                                <span class="badge bg-simple-gold text-dark px-3 py-2 fs-7 fw-semibold border">
+                                    <i class="ri-draft-line me-1"></i>Draft (Konsep Awal)
+                                </span>
+                            </div>
+                            <div class="form-text text-xs text-muted mt-1">Status awal otomatis Draft dan berubah mengikuti alur persetujuan.</div>
                         </div>
 
                         {{-- Nama Lengkap Pelatihan --}}
@@ -339,29 +332,6 @@
                                 @enderror
                             </div>
                         @endif
-
-                        {{-- Periode Pendaftaran (registration_open_at & registration_close_at) --}}
-                        <div class="col-md-6">
-                            <label class="form-label text-xs fw-semibold text-dark mb-1">
-                                Tanggal Buka Pendaftaran
-                            </label>
-                            <input type="date" class="form-control @error('form.registration_open_at') is-invalid @enderror"
-                                wire:model="form.registration_open_at">
-                            @error('form.registration_open_at')
-                                <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label text-xs fw-semibold text-dark mb-1">
-                                Tanggal Tutup Pendaftaran
-                            </label>
-                            <input type="date" class="form-control @error('form.registration_close_at') is-invalid @enderror"
-                                wire:model="form.registration_close_at">
-                            @error('form.registration_close_at')
-                                <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
-                            @enderror
-                        </div>
 
                         {{-- Sasaran Kompetensi Khusus --}}
                         <div class="col-12">

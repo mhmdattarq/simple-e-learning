@@ -277,6 +277,15 @@
                             className: 'text-center',
                             render: function(data, type, row) {
                                 let identity = String(data.registration_number || '').replace(/'/g, "\\'");
+                                let canDelete = {{ auth()->user()?->role === \App\Enums\Role::Admin ? 'true' : 'false' }};
+                                let deleteHtml = canDelete ? `
+                                    <button type="button" class="dropdown-item text-danger d-flex align-items-center gap-2 py-2 px-3 rounded border-0 bg-transparent w-100 text-start"
+                                       data-bs-toggle="modal"
+                                       data-bs-target="#modalDelete"
+                                       wire:click="hookModalDelete(${data.id}, '${identity}')">
+                                        <i class="ri-delete-bin-line"></i> Hapus
+                                    </button>
+                                ` : '';
 
                                 return `
                                 <div class="dropdown">
@@ -286,14 +295,9 @@
                                     <div class="dropdown-menu dropdown-menu-end shadow-sm border-0 p-2" style="border-radius: 10px; min-width: 160px;">
                                         <button type="button" class="dropdown-item d-flex align-items-center gap-2 py-2 px-3 rounded text-navy border-0 bg-transparent w-100 text-start"
                                             wire:click="showDetail(${data.id})">
-                                            <i class="ri-eye-line text-primary"></i> Detail Berkas
+                                            <i class="ri-eye-line text-primary"></i> Detail Pendaftar
                                         </button>
-                                        <button type="button" class="dropdown-item text-danger d-flex align-items-center gap-2 py-2 px-3 rounded border-0 bg-transparent w-100 text-start"
-                                           data-bs-toggle="modal"
-                                           data-bs-target="#modalDelete"
-                                           wire:click="hookModalDelete(${data.id}, '${identity}')">
-                                            <i class="ri-delete-bin-line"></i> Hapus
-                                        </button>
+                                        ${deleteHtml}
                                     </div>
                                 </div>
                             `;

@@ -30,6 +30,20 @@ class PerencanaanEdit extends Component
     {
         $this->id = (int) $id;
         $this->course = PerencanaanRepo::getById($id);
+
+        // Guard: Hanya pelatihan berstatus Draft yang boleh diedit
+        if ($this->course->status !== CourseStatus::Draft) {
+            session()->flash('alert-show', [
+                'type' => 'warning',
+                'title' => 'Akses Dibatasi',
+                'message' => 'Hanya program pelatihan berstatus Draft yang dapat diubah.',
+            ]);
+
+            $this->redirectRoute('perencanaan.data', navigate: true);
+
+            return;
+        }
+
         $this->categories = Category::all();
 
         $this->form = [
@@ -45,10 +59,8 @@ class PerencanaanEdit extends Component
             'target_audience' => $this->course->target_audience ?? '',
             'budget_source' => $this->course->budget_source ?? '',
             'competencies' => $this->course->competencies ?? '',
-            'registration_open_at' => $this->course->registration_open_at?->format('Y-m-d') ?? '',
-            'registration_close_at' => $this->course->registration_close_at?->format('Y-m-d') ?? '',
             'description' => $this->course->description ?? '',
-            'status' => $this->course->status instanceof CourseStatus ? $this->course->status->value : $this->course->status,
+            'status' => 'draft',
         ];
     }
 
@@ -65,10 +77,7 @@ class PerencanaanEdit extends Component
             'form.target_audience' => 'nullable|string|max:255',
             'form.budget_source' => 'nullable|string|max:255',
             'form.competencies' => 'nullable|string',
-            'form.registration_open_at' => 'nullable|date',
-            'form.registration_close_at' => 'nullable|date|after_or_equal:form.registration_open_at',
             'form.description' => 'nullable|string',
-            'form.status' => 'required|in:draft,submitted,approved,published,ongoing,completed,archived',
             'thumbnailFile' => 'nullable|image|max:2048',
             'torFile' => 'nullable|mimes:pdf|max:10240',
         ];
@@ -132,10 +141,7 @@ class PerencanaanEdit extends Component
             'target_audience' => trim($this->form['target_audience'] ?: '') ?: null,
             'budget_source' => trim($this->form['budget_source'] ?: '') ?: null,
             'competencies' => trim($this->form['competencies'] ?: '') ?: null,
-            'registration_open_at' => $this->form['registration_open_at'] ?: null,
-            'registration_close_at' => $this->form['registration_close_at'] ?: null,
             'description' => trim($this->form['description'] ?: '') ?: null,
-            'status' => $this->form['status'],
         ];
 
         if ($this->thumbnailFile) {
@@ -167,8 +173,19 @@ class PerencanaanEdit extends Component
 
     public function submitToLeader()
     {
-        $this->form['status'] = 'submitted';
         $this->formSubmit();
+
+        $process = PerencanaanRepo::submitToLeader($this->id);
+
+        if ($process) {
+            session()->flash('alert-show', [
+                'type' => 'success',
+                'title' => 'Berhasil',
+                'message' => 'Program pelatihan berhasil diajukan ke Pimpinan untuk persetujuan.',
+            ]);
+
+            return $this->redirectRoute('perencanaan.data', navigate: true);
+        }
     }
 
     public function render()

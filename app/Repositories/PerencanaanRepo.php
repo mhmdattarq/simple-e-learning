@@ -47,12 +47,20 @@ class PerencanaanRepo
     }
 
     /**
-     * Update existing course.
+     * Update existing course (Only allowed if status is Draft).
      */
     public static function update($id, array $data): bool
     {
         try {
             $course = self::getById($id);
+
+            // Guard: Hanya status Draft yang boleh diedit
+            if ($course->status !== CourseStatus::Draft) {
+                return false;
+            }
+
+            // Do not allow manual status overwrite from update payload
+            unset($data['status']);
 
             // Handle file replacement cleanup if thumbnail or tor_file changed
             if (isset($data['thumbnail']) && $course->thumbnail && $data['thumbnail'] !== $course->thumbnail) {
@@ -78,12 +86,17 @@ class PerencanaanRepo
     }
 
     /**
-     * Delete course and associated files.
+     * Delete course and associated files (Only allowed if status is Draft).
      */
     public static function delete($id): bool
     {
         try {
             $course = self::getById($id);
+
+            // Guard: Hanya status Draft yang boleh dihapus
+            if ($course->status !== CourseStatus::Draft) {
+                return false;
+            }
 
             if ($course->thumbnail) {
                 Storage::disk('public')->delete($course->thumbnail);
@@ -143,82 +156,6 @@ class PerencanaanRepo
             return true;
         } catch (\Exception $e) {
             Log::error('Ajukan perencanaan diklat ke pimpinan gagal', [
-                'id' => $id,
-                'error' => $e->getMessage(),
-            ]);
-
-            return false;
-        }
-    }
-
-    /**
-     * Buka periode pendaftaran (Published / Dibuka).
-     * Rule PRD: Hanya pelatihan 'disetujui' yang boleh dibuka.
-     */
-    public static function openRegistration(int|string $id): bool
-    {
-        try {
-            $course = self::getById($id);
-            if ($course->status !== CourseStatus::Approved && $course->status !== CourseStatus::Draft) {
-                return false;
-            }
-
-            $course->update([
-                'status' => CourseStatus::Published,
-                'registration_open_at' => $course->registration_open_at ?? now(),
-            ]);
-
-            return true;
-        } catch (\Exception $e) {
-            Log::error('Buka pendaftaran pelatihan gagal', [
-                'id' => $id,
-                'error' => $e->getMessage(),
-            ]);
-
-            return false;
-        }
-    }
-
-    /**
-     * Mulai pelatihan (Berjalan / Ongoing).
-     */
-    public static function startCourse(int|string $id): bool
-    {
-        try {
-            $course = self::getById($id);
-            if ($course->status !== CourseStatus::Published) {
-                return false;
-            }
-
-            $course->update(['status' => CourseStatus::Ongoing]);
-
-            return true;
-        } catch (\Exception $e) {
-            Log::error('Mulai kegiatan pelatihan gagal', [
-                'id' => $id,
-                'error' => $e->getMessage(),
-            ]);
-
-            return false;
-        }
-    }
-
-    /**
-     * Selesaikan pelatihan (Selesai / Completed).
-     */
-    public static function completeCourse(int|string $id): bool
-    {
-        try {
-            $course = self::getById($id);
-            if ($course->status !== CourseStatus::Ongoing) {
-                return false;
-            }
-
-            $course->update(['status' => CourseStatus::Completed]);
-
-            return true;
-        } catch (\Exception $e) {
-            Log::error('Menyelesaikan pelatihan gagal', [
                 'id' => $id,
                 'error' => $e->getMessage(),
             ]);
