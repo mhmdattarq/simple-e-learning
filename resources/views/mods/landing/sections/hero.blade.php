@@ -40,11 +40,11 @@
                 {{-- Key Metric Indicators --}}
                 <div class="row g-3 pt-3 border-top border-white-10 text-white">
                     <div class="col-4">
-                        <h4 class="mb-0 fw-extrabold text-gold">48+</h4>
+                        <h4 class="mb-0 fw-extrabold text-gold">{{ $totalPublishedCourses > 0 ? $totalPublishedCourses.'+' : '—' }}</h4>
                         <small class="text-white-70 fs-8">Tema Pelatihan SPBE</small>
                     </div>
                     <div class="col-4 border-start border-white-15 ps-3">
-                        <h4 class="mb-0 fw-extrabold text-gold">100%</h4>
+                        <h4 class="mb-0 fw-extrabold text-gold">{{ $totalApprovedParticipants > 0 ? $totalApprovedParticipants.'+' : '100%' }}</h4>
                         <small class="text-white-70 fs-8">Beasiswa Pemerintah</small>
                     </div>
                     <div class="col-4 border-start border-white-15 ps-3">
