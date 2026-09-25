@@ -1,21 +1,25 @@
 <div>
-    {{-- KARTU FORM KONTEN INLINE (SWAP COMPONENT ALA DATATABLES SERVER-SIDE) --}}
+    {{-- FORM KONTEN --}}
     <div class="row justify-content-center">
         <div class="col-12">
             <div class="card form-konten-card shadow-sm border-0 mb-40">
                 <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-20 pb-16 border-bottom">
                     <div>
-                        <h5 class="fw-bold text-dark mb-1">{{ $editorLessonId ? 'Edit Materi Pembelajaran' : 'Tambah Materi Baru' }}</h5>
-                        <p class="text-muted fs-8 mb-0">Tulis materi lengkap dengan teks terformat, video YouTube tersemat, gambar, serta lampiran slide/dokumen resmi.</p>
+                        <h5 class="fw-bold text-dark mb-1">
+                            {{ $editorLessonId ? 'Edit Materi Pembelajaran' : 'Tambah Materi Baru' }}</h5>
+                        <p class="text-muted fs-8 mb-0">Tulis materi lengkap dengan teks terformat, video YouTube
+                            tersemat, gambar, serta lampiran slide/dokumen resmi.</p>
                     </div>
                     <div class="d-flex align-items-center gap-2 flex-wrap">
-                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-2 radius-8 fs-8">
+                        <span
+                            class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-2 radius-8 fs-8">
                             <i class="ri-folder-2-line me-1"></i> {{ $activeEditorChapter?->title ?? 'Bab Silabus' }}
                         </span>
                         <span class="badge bg-secondary-subtle text-dark border px-3 py-2 radius-8 fs-8 font-monospace">
                             <i class="ri-hashtag me-1"></i> Materi Urutan #{{ $lessonForm['order'] }}
                         </span>
-                        <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 radius-8 fs-8">
+                        <span
+                            class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 radius-8 fs-8">
                             <i class="ri-shield-check-line me-1"></i> {{ $lessonForm['version'] }}
                         </span>
                     </div>
@@ -23,7 +27,8 @@
 
                 {{-- Judul Konten Materi --}}
                 <div class="mb-20">
-                    <label for="inlineLessonTitleInput" class="form-label fw-semibold text-dark fs-8 mb-1">Judul Materi Pembelajaran <span class="text-danger">*</span></label>
+                    <label for="inlineLessonTitleInput" class="form-label fw-semibold text-dark fs-8 mb-1">Judul Materi
+                        Pembelajaran <span class="text-danger">*</span></label>
                     <input type="text" id="inlineLessonTitleInput" wire:model.live.debounce.300ms="lessonForm.title"
                         class="form-control radius-8 py-2 @error('lessonForm.title') is-invalid @enderror"
                         placeholder="Contoh: Pengantar Core Values BerAKHLAK dan Implementasi Nyata ASN">
@@ -57,10 +62,10 @@
                 {{-- Tombol Tambah / Simpan Konten --}}
                 @if (!$isFrozen)
                     <button type="button" id="btnSubmitKonten" onclick="handleSaveKonten()"
-                        wire:loading.attr="disabled"
-                        class="btn btn-simple-gold w-100 shadow-sm py-12 fw-semibold">
+                        wire:loading.attr="disabled" class="btn btn-simple-gold w-100 shadow-sm py-12 fw-semibold">
                         <span wire:loading.remove wire:target="saveLesson">
-                            <i class="ri-save-line me-1"></i> {{ $editorLessonId ? 'Perbarui Materi' : 'Tambah Materi' }}
+                            <i class="ri-save-line me-1"></i>
+                            {{ $editorLessonId ? 'Perbarui Materi' : 'Tambah Materi' }}
                         </span>
                         <span wire:loading wire:target="saveLesson">
                             <i class="ri-loader-4-line ri-spin me-1"></i> Menyimpan Materi...
