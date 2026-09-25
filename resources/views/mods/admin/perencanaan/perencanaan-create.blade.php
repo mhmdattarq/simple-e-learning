@@ -88,9 +88,13 @@
                             </label>
                             <select class="form-select @error('form.status') is-invalid @enderror"
                                 wire:model="form.status">
-                                <option value="draft">Draft (Belum Ditampilkan di Publik)</option>
-                                <option value="published">Published (Tayang di Katalog)</option>
-                                <option value="archived">Archived (Diarsipkan)</option>
+                                <option value="draft">Draft (Konsep Awal)</option>
+                                <option value="submitted">Diajukan (Menunggu Persetujuan)</option>
+                                <option value="approved">Disetujui (Siap Dibuka)</option>
+                                <option value="published">Dibuka (Menerima Pendaftaran)</option>
+                                <option value="ongoing">Berjalan (Pelatihan Sedang Aktif)</option>
+                                <option value="completed">Selesai (Kegiatan Berakhir)</option>
+                                <option value="archived">Diarsipkan (Tersimpan di Arsip)</option>
                             </select>
                             @error('form.status')
                                 <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
@@ -335,6 +339,41 @@
                                 @enderror
                             </div>
                         @endif
+
+                        {{-- Periode Pendaftaran (registration_open_at & registration_close_at) --}}
+                        <div class="col-md-6">
+                            <label class="form-label text-xs fw-semibold text-dark mb-1">
+                                Tanggal Buka Pendaftaran
+                            </label>
+                            <input type="date" class="form-control @error('form.registration_open_at') is-invalid @enderror"
+                                wire:model="form.registration_open_at">
+                            @error('form.registration_open_at')
+                                <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label text-xs fw-semibold text-dark mb-1">
+                                Tanggal Tutup Pendaftaran
+                            </label>
+                            <input type="date" class="form-control @error('form.registration_close_at') is-invalid @enderror"
+                                wire:model="form.registration_close_at">
+                            @error('form.registration_close_at')
+                                <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        {{-- Sasaran Kompetensi Khusus --}}
+                        <div class="col-12">
+                            <label class="form-label text-xs fw-semibold text-dark mb-1">
+                                Target Kompetensi ASN (Indikator Capaian)
+                            </label>
+                            <textarea class="form-control @error('form.competencies') is-invalid @enderror" wire:model="form.competencies"
+                                rows="2" placeholder="Contoh: Mampu mengoperasikan aplikasi SPBE, menyusun regulasi teknis internal..."></textarea>
+                            @error('form.competencies')
+                                <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
+                            @enderror
+                        </div>
                     </div>
                 </div>
 

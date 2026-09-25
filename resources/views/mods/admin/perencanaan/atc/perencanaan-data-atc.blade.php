@@ -291,6 +291,37 @@
                                             <i class="ri-send-plane-line"></i> Ajukan ke Pimpinan
                                         </button>
                                     `;
+                                } else if (row.status === 'approved' || row.status === 'draft') {
+                                    submitBtn = `
+                                        <button type="button" class="dropdown-item text-success d-flex align-items-center gap-2 py-2 px-3 rounded border-0 bg-transparent w-100 text-start"
+                                            wire:click="openRegistration(${data.id})">
+                                            <i class="ri-broadcast-line"></i> Buka Pendaftaran
+                                        </button>
+                                    `;
+                                } else if (row.status === 'published') {
+                                    submitBtn = `
+                                        <button type="button" class="dropdown-item text-warning d-flex align-items-center gap-2 py-2 px-3 rounded border-0 bg-transparent w-100 text-start"
+                                            wire:click="startCourse(${data.id})">
+                                            <i class="ri-play-circle-line"></i> Mulai Pelatihan
+                                        </button>
+                                    `;
+                                } else if (row.status === 'ongoing') {
+                                    submitBtn = `
+                                        <button type="button" class="dropdown-item text-dark d-flex align-items-center gap-2 py-2 px-3 rounded border-0 bg-transparent w-100 text-start"
+                                            wire:click="completeCourse(${data.id})">
+                                            <i class="ri-check-double-line"></i> Selesaikan Pelatihan
+                                        </button>
+                                    `;
+                                }
+
+                                let archiveBtn = '';
+                                if (row.status === 'completed' || row.status === 'draft') {
+                                    archiveBtn = `
+                                        <button type="button" class="dropdown-item text-secondary d-flex align-items-center gap-2 py-2 px-3 rounded border-0 bg-transparent w-100 text-start"
+                                            wire:click="archiveCourse(${data.id})">
+                                            <i class="ri-archive-line"></i> Arsipkan
+                                        </button>
+                                    `;
                                 }
 
                                 return `
@@ -298,11 +329,12 @@
                                     <button type="button" class="btn btn-sm btn-light border text-dark" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 4px 8px; font-size: 12px; border-radius: 6px;">
                                         <i class="ri-more-2-fill"></i>
                                     </button>
-                                    <div class="dropdown-menu dropdown-menu-end shadow-sm border-0 p-2" style="border-radius: 10px; min-width: 175px;">
+                                    <div class="dropdown-menu dropdown-menu-end shadow-sm border-0 p-2" style="border-radius: 10px; min-width: 185px;">
                                         ${submitBtn}
                                         <a class="dropdown-item d-flex align-items-center gap-2 py-2 px-3 rounded text-warning" href="${editUrl}" wire:navigate>
                                             <i class="ri-edit-line"></i> Edit Pelatihan
                                         </a>
+                                        ${archiveBtn}
                                         <button type="button" class="dropdown-item text-danger d-flex align-items-center gap-2 py-2 px-3 rounded border-0 bg-transparent w-100 text-start"
                                            data-bs-toggle="modal"
                                            data-bs-target="#modalDelete"
@@ -408,7 +440,7 @@
                             }
                         },
 
-                        // Kolom 8: Status Diklat
+                        // Kolom 8: Status Diklat (7 PRD Lifecycle States)
                         {
                             data: 'status',
                             name: 'status',
@@ -417,11 +449,17 @@
                             className: 'text-center',
                             render: function(data) {
                                 if (data === 'published') {
-                                    return '<span class="badge bg-success text-white px-2 py-1"><i class="ri-checkbox-circle-line me-1"></i>Published</span>';
+                                    return '<span class="badge bg-success text-white px-2 py-1"><i class="ri-broadcast-line me-1"></i>Dibuka</span>';
                                 } else if (data === 'submitted') {
-                                    return '<span class="badge bg-info text-white px-2 py-1"><i class="ri-send-plane-line me-1"></i>Diajukan ke Pimpinan</span>';
+                                    return '<span class="badge bg-info text-white px-2 py-1"><i class="ri-send-plane-line me-1"></i>Diajukan</span>';
+                                } else if (data === 'approved') {
+                                    return '<span class="badge bg-primary text-white px-2 py-1"><i class="ri-checkbox-circle-line me-1"></i>Disetujui</span>';
+                                } else if (data === 'ongoing') {
+                                    return '<span class="badge bg-warning text-dark px-2 py-1"><i class="ri-play-circle-line me-1"></i>Berjalan</span>';
+                                } else if (data === 'completed') {
+                                    return '<span class="badge bg-dark text-white px-2 py-1"><i class="ri-check-double-line me-1"></i>Selesai</span>';
                                 } else if (data === 'archived') {
-                                    return '<span class="badge bg-secondary text-white px-2 py-1"><i class="ri-archive-line me-1"></i>Archived</span>';
+                                    return '<span class="badge bg-secondary text-white px-2 py-1"><i class="ri-archive-line me-1"></i>Diarsipkan</span>';
                                 }
                                 return '<span class="badge bg-simple-gold text-dark px-2 py-1"><i class="ri-draft-line me-1"></i>Draft</span>';
                             }

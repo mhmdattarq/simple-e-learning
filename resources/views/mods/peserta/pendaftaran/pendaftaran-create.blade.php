@@ -61,6 +61,18 @@
                                 <span><i class="ri-map-pin-line me-1 text-gold"></i>Lokasi:</span>
                                 <strong class="text-dark">{{ $course->location ?: 'Online / LMS SIMPEL' }}</strong>
                             </div>
+                            @if ($course->registration_open_at || $course->registration_close_at)
+                                <div class="d-flex justify-content-between text-muted">
+                                    <span><i class="ri-timer-line me-1 text-gold"></i>Pendaftaran:</span>
+                                    <strong class="text-dark">{{ $course->registration_open_at?->format('d/m') ?: '-' }} s.d {{ $course->registration_close_at?->format('d/m/Y') ?: '-' }}</strong>
+                                </div>
+                            @endif
+                            @if ($course->competencies)
+                                <div class="mt-2 pt-2 border-top border-simpel">
+                                    <span class="d-block text-muted fs-8 mb-1"><i class="ri-award-line me-1 text-gold"></i>Target Kompetensi:</span>
+                                    <p class="text-dark fs-8 mb-0">{{ $course->competencies }}</p>
+                                </div>
+                            @endif
                         </div>
                     </div>
                 </div>

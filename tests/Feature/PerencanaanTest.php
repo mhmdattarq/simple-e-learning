@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\CourseStatus;
 use App\Livewire\Admin\Perencanaan\PerencanaanCreate;
 use App\Livewire\Admin\Perencanaan\PerencanaanData;
 use App\Livewire\Admin\Perencanaan\PerencanaanEdit;
@@ -245,7 +246,7 @@ test('admin can submit a draft course to leader', function () {
         ->assertDispatched('alert-show')
         ->assertDispatched('reloadDT', data: 'dtTable');
 
-    expect($course->fresh()->status)->toBe('submitted');
+    expect($course->fresh()->status->value)->toBe('submitted');
 
     // Also test via PerencanaanEdit submitToLeader
     $course2 = Course::create([
@@ -265,5 +266,63 @@ test('admin can submit a draft course to leader', function () {
         ->assertHasNoErrors()
         ->assertRedirect(route('perencanaan.data'));
 
-    expect($course2->fresh()->status)->toBe('submitted');
+    expect($course2->fresh()->status->value)->toBe('submitted');
+});
+
+test('admin can transition course across lifecycle states', function () {
+    $admin = User::factory()->admin()->create();
+    $category = Category::first();
+
+    $course = Course::create([
+        'code' => 'PLT-2026-FLOW',
+        'title' => 'Pelatihan Manajemen Risiko SPBE',
+        'category_id' => $category->id,
+        'type' => 'permanent',
+        'method' => 'daring',
+        'quota' => 25,
+        'status' => CourseStatus::Draft,
+        'created_by' => $admin->id,
+    ]);
+
+    // 1. Draft -> Submitted (Diajukan)
+    Livewire::actingAs($admin)
+        ->test(PerencanaanData::class)
+        ->call('submitToLeader', $course->id)
+        ->assertDispatched('alert-show');
+    expect($course->fresh()->status)->toBe(CourseStatus::Submitted);
+
+    // 2. Set to Approved (Disetujui)
+    $course->update([
+        'status' => CourseStatus::Approved,
+        'approved_by' => $admin->id,
+        'approved_at' => now(),
+    ]);
+
+    // 3. Approved -> Published (Dibuka)
+    Livewire::actingAs($admin)
+        ->test(PerencanaanData::class)
+        ->call('openRegistration', $course->id)
+        ->assertDispatched('alert-show');
+    expect($course->fresh()->status)->toBe(CourseStatus::Published);
+
+    // 4. Published -> Ongoing (Berjalan)
+    Livewire::actingAs($admin)
+        ->test(PerencanaanData::class)
+        ->call('startCourse', $course->id)
+        ->assertDispatched('alert-show');
+    expect($course->fresh()->status)->toBe(CourseStatus::Ongoing);
+
+    // 5. Ongoing -> Completed (Selesai)
+    Livewire::actingAs($admin)
+        ->test(PerencanaanData::class)
+        ->call('completeCourse', $course->id)
+        ->assertDispatched('alert-show');
+    expect($course->fresh()->status)->toBe(CourseStatus::Completed);
+
+    // 6. Completed -> Archived (Diarsipkan)
+    Livewire::actingAs($admin)
+        ->test(PerencanaanData::class)
+        ->call('archiveCourse', $course->id)
+        ->assertDispatched('alert-show');
+    expect($course->fresh()->status)->toBe(CourseStatus::Archived);
 });

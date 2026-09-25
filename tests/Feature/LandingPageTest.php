@@ -255,5 +255,5 @@ test('quick info jadwal section on landing page displays maximum 3 upcoming batc
     $response->assertSee('Batch 3 Terdekat');
     $response->assertSee(route('jadwal'));
     $response->assertSee('Lihat Semua Jadwal');
-    $response->assertSee('Lihat Detail Penjadwalan');
+    $response->assertSee('Daftar Pelatihan Ini');
 });

@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\CourseStatus;
 use App\Enums\RegistrationStatus;
 use App\Livewire\Admin\Pendaftaran\PendaftaranData;
 use App\Livewire\Peserta\Pendaftaran\PendaftaranCreate;
@@ -308,4 +309,70 @@ test('admin can export registration recap data to csv', function () {
     expect($content)->toContain('Dr. Cut Nyak Dien, M.Si');
     expect($content)->toContain('Bappeda Aceh');
     expect($content)->toContain('PLT-2026-EXP');
+});
+
+test('peserta cannot register if course is draft, outside dates, or full quota', function () {
+    $peserta = User::factory()->peserta()->create();
+    $category = Category::first();
+
+    // 1. Course is still draft
+    $courseDraft = Course::create([
+        'code' => 'PLT-DRAFT',
+        'title' => 'Pelatihan Belum Dibuka',
+        'category_id' => $category->id,
+        'type' => 'permanent',
+        'method' => 'daring',
+        'quota' => 20,
+        'status' => CourseStatus::Draft,
+    ]);
+
+    $fakePdf = UploadedFile::fake()->create('surat.pdf', 200, 'application/pdf');
+
+    Livewire::actingAs($peserta)
+        ->test(PendaftaranCreate::class, ['id' => $courseDraft->id])
+        ->set('form.nip', '198705052011011002')
+        ->set('form.name', 'Peserta Uji Coba')
+        ->set('form.opd_agency', 'BKPSDM')
+        ->set('form.position', 'Staff')
+        ->set('form.rank_class', 'Penata Muda / III.a')
+        ->set('form.phone_number', '081234567890')
+        ->set('form.email', 'uji@acehtimurkab.go.id')
+        ->set('form.agreement', true)
+        ->set('recommendationLetter', $fakePdf)
+        ->call('submit')
+        ->assertHasErrors(['general']);
+
+    // 2. Course quota is already reached
+    $courseFull = Course::create([
+        'code' => 'PLT-FULL',
+        'title' => 'Pelatihan Kuota Penuh',
+        'category_id' => $category->id,
+        'type' => 'permanent',
+        'method' => 'daring',
+        'quota' => 1,
+        'status' => CourseStatus::Published,
+    ]);
+
+    $anotherUser = User::factory()->peserta()->create();
+    CourseUser::create([
+        'user_id' => $anotherUser->id,
+        'course_id' => $courseFull->id,
+        'registration_number' => 'REG-202609-0001',
+        'status' => RegistrationStatus::Pending,
+        'enrolled_at' => now(),
+    ]);
+
+    Livewire::actingAs($peserta)
+        ->test(PendaftaranCreate::class, ['id' => $courseFull->id])
+        ->set('form.nip', '198705052011011002')
+        ->set('form.name', 'Peserta Uji Coba')
+        ->set('form.opd_agency', 'BKPSDM')
+        ->set('form.position', 'Staff')
+        ->set('form.rank_class', 'Penata Muda / III.a')
+        ->set('form.phone_number', '081234567890')
+        ->set('form.email', 'uji@acehtimurkab.go.id')
+        ->set('form.agreement', true)
+        ->set('recommendationLetter', $fakePdf)
+        ->call('submit')
+        ->assertHasErrors(['general']);
 });

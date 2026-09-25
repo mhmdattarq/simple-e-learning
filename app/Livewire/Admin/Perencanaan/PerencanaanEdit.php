@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Perencanaan;
 
+use App\Enums\CourseStatus;
 use App\Models\Category;
 use App\Models\Course;
 use App\Repositories\PerencanaanRepo;
@@ -43,8 +44,11 @@ class PerencanaanEdit extends Component
             'quota' => $this->course->quota,
             'target_audience' => $this->course->target_audience ?? '',
             'budget_source' => $this->course->budget_source ?? '',
+            'competencies' => $this->course->competencies ?? '',
+            'registration_open_at' => $this->course->registration_open_at?->format('Y-m-d') ?? '',
+            'registration_close_at' => $this->course->registration_close_at?->format('Y-m-d') ?? '',
             'description' => $this->course->description ?? '',
-            'status' => $this->course->status,
+            'status' => $this->course->status instanceof CourseStatus ? $this->course->status->value : $this->course->status,
         ];
     }
 
@@ -60,8 +64,11 @@ class PerencanaanEdit extends Component
             'form.quota' => 'required|integer|min:1',
             'form.target_audience' => 'nullable|string|max:255',
             'form.budget_source' => 'nullable|string|max:255',
+            'form.competencies' => 'nullable|string',
+            'form.registration_open_at' => 'nullable|date',
+            'form.registration_close_at' => 'nullable|date|after_or_equal:form.registration_open_at',
             'form.description' => 'nullable|string',
-            'form.status' => 'required|in:draft,submitted,published,archived',
+            'form.status' => 'required|in:draft,submitted,approved,published,ongoing,completed,archived',
             'thumbnailFile' => 'nullable|image|max:2048',
             'torFile' => 'nullable|mimes:pdf|max:10240',
         ];
@@ -124,6 +131,9 @@ class PerencanaanEdit extends Component
             'quota' => (int) $this->form['quota'],
             'target_audience' => trim($this->form['target_audience'] ?: '') ?: null,
             'budget_source' => trim($this->form['budget_source'] ?: '') ?: null,
+            'competencies' => trim($this->form['competencies'] ?: '') ?: null,
+            'registration_open_at' => $this->form['registration_open_at'] ?: null,
+            'registration_close_at' => $this->form['registration_close_at'] ?: null,
             'description' => trim($this->form['description'] ?: '') ?: null,
             'status' => $this->form['status'],
         ];

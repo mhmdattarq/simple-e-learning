@@ -2,7 +2,9 @@
 
 namespace App\Repositories;
 
+use App\Enums\CourseStatus;
 use App\Enums\RegistrationStatus;
+use App\Models\Course;
 use App\Models\CourseUser;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
@@ -78,6 +80,32 @@ class PendaftaranRepo
     {
         try {
             return DB::transaction(function () use ($userId, $courseId, $userData, $letterFile) {
+                // Rule 1: Course must exist and be in 'published' state
+                $course = Course::lockForUpdate()->findOrFail($courseId);
+                if ($course->status !== CourseStatus::Published) {
+                    throw new \Exception('Periode pendaftaran untuk pelatihan ini belum dibuka atau telah ditutup.');
+                }
+
+                // Rule 2: Registration period dates
+                $now = now();
+                if ($course->registration_open_at && $now->lt($course->registration_open_at)) {
+                    throw new \Exception('Periode pendaftaran untuk pelatihan ini belum dimulai.');
+                }
+                if ($course->registration_close_at && $now->gt($course->registration_close_at)) {
+                    throw new \Exception('Periode pendaftaran untuk pelatihan ini telah berakhir.');
+                }
+
+                // Rule 3: Quota check
+                $enrolledCount = CourseUser::where('course_id', $courseId)->count();
+                if ($enrolledCount >= $course->quota) {
+                    throw new \Exception('Kuota pendaftaran pelatihan ini sudah penuh.');
+                }
+
+                // Rule 4: Duplicate registration check
+                if (self::hasRegistered($userId, $courseId)) {
+                    throw new \Exception('Anda sudah terdaftar pada pelatihan ini.');
+                }
+
                 // 1. Update user's ASN profile details
                 $user = User::findOrFail($userId);
                 $profileFields = array_intersect_key($userData, array_flip([
