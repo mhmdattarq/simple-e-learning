@@ -1,6 +1,8 @@
 <?php
 
 use App\Livewire\Admin\Dashboard\DashboardIndex;
+use App\Models\Category;
+use App\Models\Course;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
@@ -98,4 +100,57 @@ test('authenticated user can logout from landing navbar and is redirected to lan
         ->assertStatus(200)
         ->assertSee('class="thm-btn">Masuk</a>', false)
         ->assertSee('class="thm-btn">Daftar</a>', false);
+});
+
+test('published courses appear in the catalog section on the landing page', function () {
+    $category = Category::factory()->create(['name' => 'Transformasi Digital']);
+    $admin = User::factory()->admin()->create();
+
+    $published = Course::factory()->count(3)->create([
+        'status' => 'published',
+        'category_id' => $category->id,
+        'created_by' => $admin->id,
+    ]);
+
+    Course::factory()->create([
+        'status' => 'draft',
+        'category_id' => $category->id,
+        'created_by' => $admin->id,
+        'title' => 'Draft Yang Tidak Tampil',
+    ]);
+
+    $response = $this->get('/');
+
+    $response->assertStatus(200);
+
+    foreach ($published as $course) {
+        $response->assertSee($course->title);
+    }
+
+    $response->assertDontSee('Draft Yang Tidak Tampil');
+});
+
+test('hero section shows dynamic published course count from database', function () {
+    $admin = User::factory()->admin()->create();
+    $category = Category::factory()->create();
+
+    Course::factory()->count(5)->create([
+        'status' => 'published',
+        'category_id' => $category->id,
+        'created_by' => $admin->id,
+    ]);
+
+    $response = $this->get('/');
+
+    $response->assertStatus(200);
+    // 5 published courses → shows "5+" in hero stat
+    $response->assertSee('5+');
+});
+
+test('landing page shows fallback placeholder when no published courses exist', function () {
+    $response = $this->get('/');
+
+    $response->assertStatus(200);
+    // No published courses → shows static fallback "—" for count
+    $response->assertSee('—');
 });

@@ -2,7 +2,9 @@
 
 namespace App\Livewire\Landing;
 
+use App\Models\Category;
 use App\Models\Course;
+use App\Models\CourseUser;
 use Illuminate\Support\Facades\Schema;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
@@ -23,7 +25,9 @@ class LandingIndex extends Component
 
     public function render()
     {
-        $courses = Schema::hasTable('courses')
+        $tablesExist = Schema::hasTable('courses');
+
+        $courses = $tablesExist
             ? Course::with('category')
                 ->where('status', 'published')
                 ->latest('id')
@@ -31,6 +35,23 @@ class LandingIndex extends Component
                 ->get()
             : collect();
 
-        return view('mods.landing.landing-index', compact('courses'));
+        $totalPublishedCourses = $tablesExist
+            ? Course::where('status', 'published')->count()
+            : 0;
+
+        $totalApprovedParticipants = $tablesExist && Schema::hasTable('course_user')
+            ? CourseUser::where('status', 'approved')->count()
+            : 0;
+
+        $categories = $tablesExist && Schema::hasTable('categories')
+            ? Category::withCount(['courses' => fn ($q) => $q->where('status', 'published')])->get()
+            : collect();
+
+        return view('mods.landing.landing-index', compact(
+            'courses',
+            'totalPublishedCourses',
+            'totalApprovedParticipants',
+            'categories',
+        ));
     }
 }
