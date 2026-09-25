@@ -30,7 +30,7 @@ class LandingIndex extends Component
             ? Course::with('category')
                 ->where('status', 'published')
                 ->latest('id')
-                ->take(6)
+                ->take(3)
                 ->get()
             : collect();
 
