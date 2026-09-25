@@ -44,6 +44,9 @@ class PerencanaanCreate extends Component
             'quota' => '',
             'target_audience' => '',
             'budget_source' => '',
+            'competencies' => '',
+            'registration_open_at' => '',
+            'registration_close_at' => '',
             'description' => '',
             'status' => 'draft',
         ];
@@ -64,8 +67,11 @@ class PerencanaanCreate extends Component
             'form.quota' => 'required|integer|min:1',
             'form.target_audience' => 'nullable|string|max:255',
             'form.budget_source' => 'nullable|string|max:255',
+            'form.competencies' => 'nullable|string',
+            'form.registration_open_at' => 'nullable|date',
+            'form.registration_close_at' => 'nullable|date|after_or_equal:form.registration_open_at',
             'form.description' => 'nullable|string',
-            'form.status' => 'required|in:draft,submitted,published,archived',
+            'form.status' => 'required|in:draft,submitted,approved,published,ongoing,completed,archived',
             'thumbnailFile' => 'nullable|image|max:2048', // 2MB max
             'torFile' => 'nullable|mimes:pdf|max:10240', // 10MB max
         ];
@@ -128,6 +134,9 @@ class PerencanaanCreate extends Component
             'quota' => (int) $this->form['quota'],
             'target_audience' => trim($this->form['target_audience'] ?: '') ?: null,
             'budget_source' => trim($this->form['budget_source'] ?: '') ?: null,
+            'competencies' => trim($this->form['competencies'] ?: '') ?: null,
+            'registration_open_at' => $this->form['registration_open_at'] ?: null,
+            'registration_close_at' => $this->form['registration_close_at'] ?: null,
             'description' => trim($this->form['description'] ?: '') ?: null,
             'status' => $this->form['status'],
             'created_by' => Auth::id(),

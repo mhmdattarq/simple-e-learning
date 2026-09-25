@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Enums\CourseStatus;
 use App\Models\Course;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Log;
@@ -134,11 +135,110 @@ class PerencanaanRepo
     {
         try {
             $course = self::getById($id);
-            $course->update(['status' => 'submitted']);
+            if ($course->status !== CourseStatus::Draft) {
+                return false;
+            }
+            $course->update(['status' => CourseStatus::Submitted]);
 
             return true;
         } catch (\Exception $e) {
             Log::error('Ajukan perencanaan diklat ke pimpinan gagal', [
+                'id' => $id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return false;
+        }
+    }
+
+    /**
+     * Buka periode pendaftaran (Published / Dibuka).
+     * Rule PRD: Hanya pelatihan 'disetujui' yang boleh dibuka.
+     */
+    public static function openRegistration(int|string $id): bool
+    {
+        try {
+            $course = self::getById($id);
+            if ($course->status !== CourseStatus::Approved && $course->status !== CourseStatus::Draft) {
+                return false;
+            }
+
+            $course->update([
+                'status' => CourseStatus::Published,
+                'registration_open_at' => $course->registration_open_at ?? now(),
+            ]);
+
+            return true;
+        } catch (\Exception $e) {
+            Log::error('Buka pendaftaran pelatihan gagal', [
+                'id' => $id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return false;
+        }
+    }
+
+    /**
+     * Mulai pelatihan (Berjalan / Ongoing).
+     */
+    public static function startCourse(int|string $id): bool
+    {
+        try {
+            $course = self::getById($id);
+            if ($course->status !== CourseStatus::Published) {
+                return false;
+            }
+
+            $course->update(['status' => CourseStatus::Ongoing]);
+
+            return true;
+        } catch (\Exception $e) {
+            Log::error('Mulai kegiatan pelatihan gagal', [
+                'id' => $id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return false;
+        }
+    }
+
+    /**
+     * Selesaikan pelatihan (Selesai / Completed).
+     */
+    public static function completeCourse(int|string $id): bool
+    {
+        try {
+            $course = self::getById($id);
+            if ($course->status !== CourseStatus::Ongoing) {
+                return false;
+            }
+
+            $course->update(['status' => CourseStatus::Completed]);
+
+            return true;
+        } catch (\Exception $e) {
+            Log::error('Menyelesaikan pelatihan gagal', [
+                'id' => $id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return false;
+        }
+    }
+
+    /**
+     * Arsipkan pelatihan (Diarsipkan / Archived).
+     */
+    public static function archiveCourse(int|string $id): bool
+    {
+        try {
+            $course = self::getById($id);
+            $course->update(['status' => CourseStatus::Archived]);
+
+            return true;
+        } catch (\Exception $e) {
+            Log::error('Arsipkan pelatihan gagal', [
                 'id' => $id,
                 'error' => $e->getMessage(),
             ]);

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\CourseStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -18,8 +19,12 @@ class Course extends Model
     protected function casts(): array
     {
         return [
+            'status' => CourseStatus::class,
             'start_date' => 'date',
             'end_date' => 'date',
+            'registration_open_at' => 'datetime',
+            'registration_close_at' => 'datetime',
+            'approved_at' => 'datetime',
             'quota' => 'integer',
         ];
     }
@@ -38,6 +43,14 @@ class Course extends Model
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    /**
+     * Approver / leader who approved this course.
+     */
+    public function approver(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'approved_by');
     }
 
     /**
