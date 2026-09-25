@@ -22,6 +22,7 @@ use App\Livewire\Auth\Login;
 use App\Livewire\Auth\Register;
 use App\Livewire\Landing\JadwalIndex;
 use App\Livewire\Landing\LandingIndex;
+use App\Livewire\Landing\PelatihanIndex;
 use App\Livewire\Peserta\Pendaftaran\PendaftaranCreate;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -29,6 +30,7 @@ use Illuminate\Support\Facades\Route;
 // 1. Landing Page (Public)
 Route::livewire('/', LandingIndex::class)->name('landing');
 Route::livewire('/jadwal', JadwalIndex::class)->name('jadwal');
+Route::livewire('/pelatihan', PelatihanIndex::class)->name('pelatihan.index');
 
 // 2. Authentication (Guest)
 Route::middleware('guest')->group(function () {

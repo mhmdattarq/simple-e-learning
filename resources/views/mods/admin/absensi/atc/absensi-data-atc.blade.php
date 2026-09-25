@@ -191,53 +191,66 @@
             }
         }
 
-        // Jalankan saat script dimuat pertama kali
-        document.addEventListener('DOMContentLoaded', function() {
+        // Lifecycle Inisialisasi Tabel: kompatibel penuh dengan reload halaman biasa & navigasi SPA (wire:navigate)
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initAbsensiTable);
+        } else {
             initAbsensiTable();
+        }
 
-            // Setup Filter Custom
-            $('#filter_course_id, #filter_date, #filter_token_status').on('change', function() {
-                if (window.dtTable) {
-                    window.dtTable.ajax.reload();
-                }
-            });
-
-            // Setup Custom Search Box dengan debounce 350ms
-            let searchTimer;
-            $('#custom_search_dt').on('keyup input', function() {
-                clearTimeout(searchTimer);
-                let keyword = this.value;
-                searchTimer = setTimeout(function() {
-                    if (window.dtTable) {
-                        window.dtTable.search(keyword).draw();
-                    }
-                }, 350);
-            });
-
-            $('#btn-refresh-absensi').on('click', function() {
-                if (window.dtTable) {
-                    window.dtTable.ajax.reload(null, false);
-                }
-            });
-
-            $('#btn-reset-filters').on('click', function() {
-                $('#filter_course_id').val('');
-                $('#filter_date').val('');
-                $('#filter_token_status').val('');
-                $('#custom_search_dt').val('');
-                if (window.dtTable) {
-                    window.dtTable.search('').ajax.reload();
-                }
-            });
-        });
-
-        // Jalankan ulang setiap kali Livewire selesai navigasi (SPA wire:navigate)
         document.addEventListener('livewire:navigated', function() {
             initAbsensiTable();
         });
 
+        // Event Delegation untuk Filter & Aksi UI (Tetap aktif meskipun DOM berganti saat wire:navigate)
+        $(document).off('change.absensiFilter', '#filter_course_id, #filter_date, #filter_token_status')
+                   .on('change.absensiFilter', '#filter_course_id, #filter_date, #filter_token_status', function() {
+            if (window.dtTable) {
+                window.dtTable.ajax.reload();
+            }
+        });
+
+        // Setup Custom Search Box dengan debounce 350ms (Event Delegation)
+        let absensiSearchTimer;
+        $(document).off('keyup.absensiSearch input.absensiSearch', '#custom_search_dt')
+                   .on('keyup.absensiSearch input.absensiSearch', '#custom_search_dt', function() {
+            clearTimeout(absensiSearchTimer);
+            let keyword = this.value;
+            absensiSearchTimer = setTimeout(function() {
+                if (window.dtTable) {
+                    window.dtTable.search(keyword).draw();
+                }
+            }, 350);
+        });
+
+        $(document).off('click.absensiRefresh', '#btn-refresh-absensi')
+                   .on('click.absensiRefresh', '#btn-refresh-absensi', function() {
+            if (window.dtTable) {
+                window.dtTable.ajax.reload(null, false);
+            }
+        });
+
+        $(document).off('click.absensiReset', '#btn-reset-filters')
+                   .on('click.absensiReset', '#btn-reset-filters', function() {
+            $('#filter_course_id').val('');
+            $('#filter_date').val('');
+            $('#filter_token_status').val('');
+            $('#custom_search_dt').val('');
+            if (window.dtTable) {
+                window.dtTable.search('').ajax.reload();
+            }
+        });
+
+        $(document).off('change.absensiCheckAll', '.check-data-all')
+                   .on('change.absensiCheckAll', '.check-data-all', function() {
+            $('.check-data-item').prop('checked', this.checked);
+        });
+
         // Listener Event Livewire Modals & Reload DT
-        document.addEventListener('livewire:init', () => {
+        function registerAbsensiLivewireEvents() {
+            if (typeof Livewire === 'undefined' || window._absensiLivewireEventsRegistered) return;
+            window._absensiLivewireEventsRegistered = true;
+
             Livewire.on('reloadDT', () => {
                 if (window.dtTable) {
                     window.dtTable.ajax.reload(null, false);
@@ -295,7 +308,13 @@
                     alert(message);
                 }
             });
-        });
+        }
+
+        if (typeof Livewire !== 'undefined') {
+            registerAbsensiLivewireEvents();
+        } else {
+            document.addEventListener('livewire:init', registerAbsensiLivewireEvents);
+        }
 
         // Global Event Delegation untuk Dropdown Bootstrap dalam Yajra DataTables
         $(document).on('show.bs.dropdown', '#tableAbsensi .dropdown', function() {
