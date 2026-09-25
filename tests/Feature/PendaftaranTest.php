@@ -376,3 +376,321 @@ test('peserta cannot register if course is draft, outside dates, or full quota',
         ->call('submit')
         ->assertHasErrors(['general']);
 });
+
+test('admin can view only approved courses in registration settings dropdown', function () {
+    $admin = User::factory()->admin()->create();
+    $category = Category::first();
+
+    $courseDraft = Course::create([
+        'code' => 'PLT-DRAFT-1',
+        'title' => 'Pelatihan Draft Belum Disetujui',
+        'category_id' => $category->id,
+        'type' => 'batch',
+        'start_date' => now()->addMonth()->toDateString(),
+        'end_date' => now()->addMonth()->addDays(5)->toDateString(),
+        'method' => 'hybrid',
+        'quota' => 20,
+        'status' => CourseStatus::Draft,
+    ]);
+
+    $coursePublished = Course::create([
+        'code' => 'PLT-PUB-1',
+        'title' => 'Pelatihan Sudah Dibuka',
+        'category_id' => $category->id,
+        'type' => 'batch',
+        'start_date' => now()->addMonth()->toDateString(),
+        'end_date' => now()->addMonth()->addDays(5)->toDateString(),
+        'method' => 'hybrid',
+        'quota' => 20,
+        'status' => CourseStatus::Published,
+    ]);
+
+    $courseApproved = Course::create([
+        'code' => 'PLT-APP-1',
+        'title' => 'Pelatihan Siap Dibuka',
+        'category_id' => $category->id,
+        'type' => 'batch',
+        'start_date' => now()->addMonth()->toDateString(),
+        'end_date' => now()->addMonth()->addDays(5)->toDateString(),
+        'method' => 'hybrid',
+        'quota' => 30,
+        'status' => CourseStatus::Approved,
+    ]);
+
+    Livewire::actingAs($admin)
+        ->test(PendaftaranData::class)
+        ->assertViewHas('settingCourses', function ($courses) use ($courseApproved, $courseDraft, $coursePublished) {
+            return $courses->contains($courseApproved)
+                && ! $courses->contains($courseDraft)
+                && ! $courses->contains($coursePublished);
+        })
+        ->set('selectedCourseId', $courseApproved->id)
+        ->assertSet('courseStats.code', 'PLT-APP-1')
+        ->assertSet('courseStats.quota', 30)
+        ->assertSet('courseStats.remaining_quota', 30);
+});
+
+test('admin opening registration period validates dates and course start date correctly', function () {
+    $admin = User::factory()->admin()->create();
+    $category = Category::first();
+
+    $startDate = now()->addDays(20);
+
+    $course = Course::create([
+        'code' => 'PLT-VALIDATE-1',
+        'title' => 'Pelatihan Uji Validasi Periode',
+        'category_id' => $category->id,
+        'type' => 'batch',
+        'start_date' => $startDate->toDateString(),
+        'end_date' => $startDate->copy()->addDays(5)->toDateString(),
+        'method' => 'hybrid',
+        'quota' => 25,
+        'status' => CourseStatus::Approved,
+    ]);
+
+    // 1. Empty dates error
+    Livewire::actingAs($admin)
+        ->test(PendaftaranData::class)
+        ->set('selectedCourseId', $course->id)
+        ->set('registration_open_at', '')
+        ->set('registration_close_at', '')
+        ->call('openPeriod')
+        ->assertHasErrors(['registration_open_at', 'registration_close_at']);
+
+    // 2. Open >= Close error
+    Livewire::actingAs($admin)
+        ->test(PendaftaranData::class)
+        ->set('selectedCourseId', $course->id)
+        ->set('registration_open_at', '2026-10-10T10:00')
+        ->set('registration_close_at', '2026-10-05T10:00')
+        ->call('openPeriod')
+        ->assertHasErrors(['registration_open_at' => 'Tanggal buka pendaftaran harus sebelum tanggal tutup pendaftaran.']);
+
+    // 3. Close date after course start date error
+    Livewire::actingAs($admin)
+        ->test(PendaftaranData::class)
+        ->set('selectedCourseId', $course->id)
+        ->set('registration_open_at', $startDate->copy()->subDays(5)->format('Y-m-d\TH:i'))
+        ->set('registration_close_at', $startDate->copy()->addDays(2)->format('Y-m-d\TH:i'))
+        ->call('openPeriod')
+        ->assertHasErrors(['registration_close_at' => 'Tanggal tutup pendaftaran tidak boleh melewati tanggal mulai pelatihan.']);
+
+    // 4. Past start date cannot be opened
+    $coursePast = Course::create([
+        'code' => 'PLT-PAST-1',
+        'title' => 'Pelatihan Masa Lalu',
+        'category_id' => $category->id,
+        'type' => 'batch',
+        'start_date' => now()->subDays(5)->toDateString(),
+        'end_date' => now()->subDays(2)->toDateString(),
+        'method' => 'hybrid',
+        'quota' => 25,
+        'status' => CourseStatus::Approved,
+    ]);
+
+    Livewire::actingAs($admin)
+        ->test(PendaftaranData::class)
+        ->set('selectedCourseId', $coursePast->id)
+        ->set('registration_open_at', now()->subDays(10)->format('Y-m-d\TH:i'))
+        ->set('registration_close_at', now()->subDays(6)->format('Y-m-d\TH:i'))
+        ->call('openPeriod')
+        ->assertHasErrors(['registration_open_at' => 'Pelatihan tidak dapat dibuka karena tanggal mulai pelatihan telah lewat.']);
+});
+
+test('admin can open and close registration period successfully', function () {
+    $admin = User::factory()->admin()->create();
+    $category = Category::first();
+
+    $startDate = now()->addDays(15);
+
+    $course = Course::create([
+        'code' => 'PLT-OPEN-CLOSE',
+        'title' => 'Pelatihan Buka Tutup Pendaftaran',
+        'category_id' => $category->id,
+        'type' => 'batch',
+        'start_date' => $startDate->toDateString(),
+        'end_date' => $startDate->copy()->addDays(5)->toDateString(),
+        'method' => 'hybrid',
+        'quota' => 30,
+        'status' => CourseStatus::Approved,
+    ]);
+
+    $openAt = $startDate->copy()->subDays(10)->format('Y-m-d\TH:i');
+    $closeAt = $startDate->copy()->subDays(2)->format('Y-m-d\TH:i');
+
+    // Open period
+    Livewire::actingAs($admin)
+        ->test(PendaftaranData::class)
+        ->set('selectedCourseId', $course->id)
+        ->set('registration_open_at', $openAt)
+        ->set('registration_close_at', $closeAt)
+        ->call('openPeriod')
+        ->assertHasNoErrors()
+        ->assertDispatched('alert-show');
+
+    $course->refresh();
+    expect($course->status)->toBe(CourseStatus::Published);
+    expect($course->registration_open_at)->not->toBeNull();
+    expect($course->registration_close_at)->not->toBeNull();
+
+    // Close period
+    Livewire::actingAs($admin)
+        ->test(PendaftaranData::class)
+        ->set('selectedCourseId', $course->id)
+        ->call('closePeriod')
+        ->assertHasNoErrors()
+        ->assertDispatched('alert-show');
+
+    $course->refresh();
+    expect($course->status)->toBe(CourseStatus::Approved);
+    expect($course->registration_close_at)->not->toBeNull();
+});
+
+test('verifikator cannot open or close registration period but can view registrations', function () {
+    $verifikator = User::factory()->verifikator()->create();
+    $category = Category::first();
+
+    $course = Course::create([
+        'code' => 'PLT-VERIF-TEST',
+        'title' => 'Pelatihan Hak Akses Verifikator',
+        'category_id' => $category->id,
+        'type' => 'batch',
+        'start_date' => now()->addDays(10)->toDateString(),
+        'end_date' => now()->addDays(15)->toDateString(),
+        'method' => 'hybrid',
+        'quota' => 30,
+        'status' => CourseStatus::Approved,
+    ]);
+
+    // Verifikator can access index page
+    $this->actingAs($verifikator)->get(route('pendaftaran.data'))->assertOk();
+
+    // Attempting to open registration period aborts 403 Forbidden
+    Livewire::actingAs($verifikator)
+        ->test(PendaftaranData::class)
+        ->set('selectedCourseId', $course->id)
+        ->set('registration_open_at', now()->addDay()->format('Y-m-d\TH:i'))
+        ->set('registration_close_at', now()->addDays(5)->format('Y-m-d\TH:i'))
+        ->call('openPeriod')
+        ->assertForbidden();
+});
+
+test('modal detail pendaftaran displays complete participant, verifier and notes info', function () {
+    $admin = User::factory()->admin()->create();
+    $verifikator = User::factory()->verifikator()->create([
+        'name' => 'Budi Santoso, S.Kom (Verifikator)',
+    ]);
+    $peserta = User::factory()->peserta()->create([
+        'name' => 'Siti Rahmawati',
+        'nip' => '199201012018012001',
+        'opd_agency' => 'Inspektorat Daerah',
+        'position' => 'Auditor Pertama',
+        'rank_class' => 'Penata Muda / III.a',
+        'phone_number' => '081299998888',
+    ]);
+
+    $category = Category::first();
+    $course = Course::create([
+        'code' => 'PLT-DETAIL-1',
+        'title' => 'Pelatihan Audit Investigatif',
+        'category_id' => $category->id,
+        'type' => 'batch',
+        'start_date' => now()->addMonth()->toDateString(),
+        'end_date' => now()->addMonth()->addDays(5)->toDateString(),
+        'method' => 'hybrid',
+        'quota' => 20,
+        'status' => CourseStatus::Published,
+    ]);
+
+    $reg = CourseUser::create([
+        'user_id' => $peserta->id,
+        'course_id' => $course->id,
+        'registration_number' => 'REG-202609-0777',
+        'status' => RegistrationStatus::Verified,
+        'enrolled_at' => now(),
+        'verified_by' => $verifikator->id,
+        'verified_at' => now(),
+        'verification_notes' => 'Berkas surat usulan dan NIP telah valid dan memenuhi syarat.',
+    ]);
+
+    Livewire::actingAs($admin)
+        ->test(PendaftaranData::class)
+        ->call('showDetail', $reg->id)
+        ->assertDispatched('openModal', id: 'modalDetailPendaftaran')
+        ->assertSet('selectedDetail.user_name', 'Siti Rahmawati')
+        ->assertSet('selectedDetail.user_nip', '199201012018012001')
+        ->assertSet('selectedDetail.user_opd', 'Inspektorat Daerah')
+        ->assertSet('selectedDetail.verifier_name', 'Budi Santoso, S.Kom (Verifikator)')
+        ->assertSet('selectedDetail.verification_notes', 'Berkas surat usulan dan NIP telah valid dan memenuhi syarat.');
+});
+
+test('pendaftaran datatable supports multi-filtering by course, status, opd, and date range', function () {
+    $admin = User::factory()->admin()->create();
+    $category = Category::first();
+
+    $course1 = Course::create([
+        'code' => 'PLT-FILT-1',
+        'title' => 'Pelatihan Filter 1',
+        'category_id' => $category->id,
+        'type' => 'permanent',
+        'method' => 'daring',
+        'quota' => 30,
+        'status' => CourseStatus::Published,
+    ]);
+
+    $course2 = Course::create([
+        'code' => 'PLT-FILT-2',
+        'title' => 'Pelatihan Filter 2',
+        'category_id' => $category->id,
+        'type' => 'permanent',
+        'method' => 'daring',
+        'quota' => 30,
+        'status' => CourseStatus::Published,
+    ]);
+
+    $userA = User::factory()->peserta()->create(['opd_agency' => 'Dinas Kesehatan']);
+    $userB = User::factory()->peserta()->create(['opd_agency' => 'Dinas Pendidikan']);
+
+    CourseUser::create([
+        'user_id' => $userA->id,
+        'course_id' => $course1->id,
+        'registration_number' => 'REG-FILT-0001',
+        'status' => RegistrationStatus::Pending,
+        'enrolled_at' => '2026-09-10 10:00:00',
+    ]);
+
+    CourseUser::create([
+        'user_id' => $userB->id,
+        'course_id' => $course2->id,
+        'registration_number' => 'REG-FILT-0002',
+        'status' => RegistrationStatus::Verified,
+        'enrolled_at' => '2026-09-20 10:00:00',
+    ]);
+
+    // 1. Filter by course_id
+    $resCourse = $this->actingAs($admin)->getJson(route('pendaftaran.dt', ['course_id' => $course1->id]));
+    $resCourse->assertOk();
+    expect($resCourse->json('data'))->toHaveCount(1);
+    expect($resCourse->json('data')[0]['registration_number'])->toBe('REG-FILT-0001');
+
+    // 2. Filter by status
+    $resStatus = $this->actingAs($admin)->getJson(route('pendaftaran.dt', ['status' => 'verified']));
+    $resStatus->assertOk();
+    expect($resStatus->json('data'))->toHaveCount(1);
+    expect($resStatus->json('data')[0]['registration_number'])->toBe('REG-FILT-0002');
+
+    // 3. Filter by OPD
+    $resOpd = $this->actingAs($admin)->getJson(route('pendaftaran.dt', ['opd' => 'Kesehatan']));
+    $resOpd->assertOk();
+    expect($resOpd->json('data'))->toHaveCount(1);
+    expect($resOpd->json('data')[0]['registration_number'])->toBe('REG-FILT-0001');
+
+    // 4. Filter by Date range
+    $resDate = $this->actingAs($admin)->getJson(route('pendaftaran.dt', [
+        'start_date' => '2026-09-15',
+        'end_date' => '2026-09-25',
+    ]));
+    $resDate->assertOk();
+    expect($resDate->json('data'))->toHaveCount(1);
+    expect($resDate->json('data')[0]['registration_number'])->toBe('REG-FILT-0002');
+});

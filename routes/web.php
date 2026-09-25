@@ -5,6 +5,7 @@ use App\Http\Controllers\MateriController;
 use App\Http\Controllers\PendaftaranController;
 use App\Http\Controllers\PenjadwalanController;
 use App\Http\Controllers\PerencanaanController;
+use App\Http\Controllers\PimpinanController;
 use App\Http\Controllers\VerifikasiController;
 use App\Livewire\Admin\Absensi\AbsensiData;
 use App\Livewire\Admin\Dashboard\DashboardIndex;
@@ -24,6 +25,10 @@ use App\Livewire\Landing\JadwalIndex;
 use App\Livewire\Landing\LandingIndex;
 use App\Livewire\Landing\PelatihanIndex;
 use App\Livewire\Peserta\Pendaftaran\PendaftaranCreate;
+use App\Livewire\Pimpinan\Dashboard\DashboardIndex as PimpinanDashboard;
+use App\Livewire\Pimpinan\Laporan\LaporanIndex as PimpinanLaporan;
+use App\Livewire\Pimpinan\Persetujuan\PersetujuanData;
+use App\Livewire\Pimpinan\Persetujuan\PersetujuanReview;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -118,6 +123,21 @@ Route::middleware(['auth', 'role:admin,mentor,verifikator,pimpinan'])->group(fun
 
                 return redirect()->route('materi.detail', $params);
             })->name('editor');
+        });
+    });
+
+    // Modul Eksekutif: Pimpinan
+    Route::prefix('pimpinan')->group(function () {
+        Route::name('pimpinan.')->group(function () {
+            Route::livewire('/dashboard', PimpinanDashboard::class)->name('dashboard');
+            Route::prefix('persetujuan')->group(function () {
+                Route::name('persetujuan.')->group(function () {
+                    Route::get('/datatable', [PimpinanController::class, 'persetujuanDt'])->name('dt');
+                    Route::livewire('/data', PersetujuanData::class)->name('data');
+                    Route::livewire('/review/{id}', PersetujuanReview::class)->name('review');
+                });
+            });
+            Route::livewire('/laporan', PimpinanLaporan::class)->name('laporan.data');
         });
     });
 });

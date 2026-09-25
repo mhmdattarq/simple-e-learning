@@ -7,6 +7,7 @@ use App\Livewire\Admin\Perencanaan\PerencanaanEdit;
 use App\Models\Category;
 use App\Models\Course;
 use App\Models\User;
+use App\Repositories\PerencanaanRepo;
 use Database\Seeders\CategorySeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
@@ -117,7 +118,6 @@ test('perencanaan create successfully saves course into database and redirects',
         ->set('form.target_audience', 'Seluruh Staf OPD')
         ->set('form.budget_source', 'APBK Aceh Timur')
         ->set('form.description', 'Pelatihan penguasaan TNDE terintegrasi.')
-        ->set('form.status', 'published')
         ->call('formSubmit')
         ->assertHasNoErrors()
         ->assertRedirect(route('perencanaan.data'));
@@ -127,7 +127,7 @@ test('perencanaan create successfully saves course into database and redirects',
         'title' => 'Pelatihan Teknis Tata Naskah Dinas Elektronik',
         'category_id' => $category->id,
         'quota' => 50,
-        'status' => 'published',
+        'status' => 'draft',
     ]);
 });
 
@@ -152,7 +152,6 @@ test('perencanaan edit mounts existing data and successfully updates course', fu
         ->assertSet('form.title', 'Pelatihan Fungsional Analis Kebijakan')
         ->set('form.title', 'Pelatihan Fungsional Analis Kebijakan Tk. Madya')
         ->set('form.quota', 45)
-        ->set('form.status', 'published')
         ->call('formSubmit')
         ->assertHasNoErrors()
         ->assertRedirect(route('perencanaan.data'));
@@ -161,8 +160,39 @@ test('perencanaan edit mounts existing data and successfully updates course', fu
         'id' => $course->id,
         'title' => 'Pelatihan Fungsional Analis Kebijakan Tk. Madya',
         'quota' => 45,
-        'status' => 'published',
+        'status' => 'draft',
     ]);
+});
+
+test('perencanaan edit cannot edit or mount courses with non-draft status', function () {
+    $admin = User::factory()->admin()->create();
+    $category = Category::first();
+
+    $publishedCourse = Course::create([
+        'code' => 'PLT-2026-PUB',
+        'title' => 'Pelatihan Sudah Dibuka',
+        'category_id' => $category->id,
+        'type' => 'permanent',
+        'method' => 'daring',
+        'quota' => 30,
+        'status' => CourseStatus::Published,
+        'created_by' => $admin->id,
+    ]);
+
+    Livewire::actingAs($admin)
+        ->test(PerencanaanEdit::class, ['id' => $publishedCourse->id])
+        ->assertRedirect(route('perencanaan.data'));
+
+    // Attempt direct repo update
+    $updateResult = PerencanaanRepo::update($publishedCourse->id, [
+        'title' => 'Coba Ubah Judul',
+    ]);
+    expect($updateResult)->toBeFalse();
+
+    // Attempt direct repo delete
+    $deleteResult = PerencanaanRepo::delete($publishedCourse->id);
+    expect($deleteResult)->toBeFalse();
+    expect($publishedCourse->fresh())->not->toBeNull();
 });
 
 test('perencanaan delete event deletes course from database and dispatches events', function () {
@@ -225,7 +255,7 @@ test('header user profile dropdown and logout form render on beranda, data, crea
     }
 });
 
-test('admin can submit a draft course to leader', function () {
+test('admin can submit a draft course to leader via edit page', function () {
     $admin = User::factory()->admin()->create();
     $category = Category::first();
 
@@ -241,35 +271,15 @@ test('admin can submit a draft course to leader', function () {
     ]);
 
     Livewire::actingAs($admin)
-        ->test(PerencanaanData::class)
-        ->call('submitToLeader', $course->id)
-        ->assertDispatched('alert-show')
-        ->assertDispatched('reloadDT', data: 'dtTable');
-
-    expect($course->fresh()->status->value)->toBe('submitted');
-
-    // Also test via PerencanaanEdit submitToLeader
-    $course2 = Course::create([
-        'code' => 'PLT-2026-SUBMIT-2',
-        'title' => 'Pelatihan AI untuk ASN',
-        'category_id' => $category->id,
-        'type' => 'permanent',
-        'method' => 'daring',
-        'quota' => 20,
-        'status' => 'draft',
-        'created_by' => $admin->id,
-    ]);
-
-    Livewire::actingAs($admin)
-        ->test(PerencanaanEdit::class, ['id' => $course2->id])
+        ->test(PerencanaanEdit::class, ['id' => $course->id])
         ->call('submitToLeader')
         ->assertHasNoErrors()
         ->assertRedirect(route('perencanaan.data'));
 
-    expect($course2->fresh()->status->value)->toBe('submitted');
+    expect($course->fresh()->status->value)->toBe('submitted');
 });
 
-test('admin can transition course across lifecycle states', function () {
+test('admin can archive completed course in perencanaan', function () {
     $admin = User::factory()->admin()->create();
     $category = Category::first();
 
@@ -280,46 +290,11 @@ test('admin can transition course across lifecycle states', function () {
         'type' => 'permanent',
         'method' => 'daring',
         'quota' => 25,
-        'status' => CourseStatus::Draft,
+        'status' => CourseStatus::Completed,
         'created_by' => $admin->id,
     ]);
 
-    // 1. Draft -> Submitted (Diajukan)
-    Livewire::actingAs($admin)
-        ->test(PerencanaanData::class)
-        ->call('submitToLeader', $course->id)
-        ->assertDispatched('alert-show');
-    expect($course->fresh()->status)->toBe(CourseStatus::Submitted);
-
-    // 2. Set to Approved (Disetujui)
-    $course->update([
-        'status' => CourseStatus::Approved,
-        'approved_by' => $admin->id,
-        'approved_at' => now(),
-    ]);
-
-    // 3. Approved -> Published (Dibuka)
-    Livewire::actingAs($admin)
-        ->test(PerencanaanData::class)
-        ->call('openRegistration', $course->id)
-        ->assertDispatched('alert-show');
-    expect($course->fresh()->status)->toBe(CourseStatus::Published);
-
-    // 4. Published -> Ongoing (Berjalan)
-    Livewire::actingAs($admin)
-        ->test(PerencanaanData::class)
-        ->call('startCourse', $course->id)
-        ->assertDispatched('alert-show');
-    expect($course->fresh()->status)->toBe(CourseStatus::Ongoing);
-
-    // 5. Ongoing -> Completed (Selesai)
-    Livewire::actingAs($admin)
-        ->test(PerencanaanData::class)
-        ->call('completeCourse', $course->id)
-        ->assertDispatched('alert-show');
-    expect($course->fresh()->status)->toBe(CourseStatus::Completed);
-
-    // 6. Completed -> Archived (Diarsipkan)
+    // Completed -> Archived (Diarsipkan)
     Livewire::actingAs($admin)
         ->test(PerencanaanData::class)
         ->call('archiveCourse', $course->id)

@@ -282,45 +282,32 @@
                                 let url = "{{ route('perencanaan.edit', ':id') }}";
                                 let editUrl = url.replace(':id', row.id);
                                 let identity = String(data.title || data.code || '').replace(/'/g, "\\'");
-                                let submitBtn = '';
+                                let actions = '';
 
                                 if (row.status === 'draft') {
-                                    submitBtn = `
-                                        <button type="button" class="dropdown-item text-primary d-flex align-items-center gap-2 py-2 px-3 rounded border-0 bg-transparent w-100 text-start"
-                                            wire:click="submitToLeader(${data.id})">
-                                            <i class="ri-send-plane-line"></i> Ajukan ke Pimpinan
+                                    actions += `
+                                        <a class="dropdown-item d-flex align-items-center gap-2 py-2 px-3 rounded text-warning" href="${editUrl}" wire:navigate>
+                                            <i class="ri-edit-line"></i> Edit Pelatihan
+                                        </a>
+                                        <button type="button" class="dropdown-item text-danger d-flex align-items-center gap-2 py-2 px-3 rounded border-0 bg-transparent w-100 text-start"
+                                           data-bs-toggle="modal"
+                                           data-bs-target="#modalDelete"
+                                           wire:click="hookModalDelete(${data.id}, '${identity}')">
+                                            <i class="ri-delete-bin-line"></i> Hapus
                                         </button>
                                     `;
-                                } else if (row.status === 'approved' || row.status === 'draft') {
-                                    submitBtn = `
-                                        <button type="button" class="dropdown-item text-success d-flex align-items-center gap-2 py-2 px-3 rounded border-0 bg-transparent w-100 text-start"
-                                            wire:click="openRegistration(${data.id})">
-                                            <i class="ri-broadcast-line"></i> Buka Pendaftaran
-                                        </button>
-                                    `;
-                                } else if (row.status === 'published') {
-                                    submitBtn = `
-                                        <button type="button" class="dropdown-item text-warning d-flex align-items-center gap-2 py-2 px-3 rounded border-0 bg-transparent w-100 text-start"
-                                            wire:click="startCourse(${data.id})">
-                                            <i class="ri-play-circle-line"></i> Mulai Pelatihan
-                                        </button>
-                                    `;
-                                } else if (row.status === 'ongoing') {
-                                    submitBtn = `
-                                        <button type="button" class="dropdown-item text-dark d-flex align-items-center gap-2 py-2 px-3 rounded border-0 bg-transparent w-100 text-start"
-                                            wire:click="completeCourse(${data.id})">
-                                            <i class="ri-check-double-line"></i> Selesaikan Pelatihan
-                                        </button>
-                                    `;
-                                }
-
-                                let archiveBtn = '';
-                                if (row.status === 'completed' || row.status === 'draft') {
-                                    archiveBtn = `
+                                } else if (row.status === 'completed') {
+                                    actions += `
                                         <button type="button" class="dropdown-item text-secondary d-flex align-items-center gap-2 py-2 px-3 rounded border-0 bg-transparent w-100 text-start"
                                             wire:click="archiveCourse(${data.id})">
                                             <i class="ri-archive-line"></i> Arsipkan
                                         </button>
+                                    `;
+                                } else {
+                                    actions += `
+                                        <span class="dropdown-item text-muted d-flex align-items-center gap-2 py-2 px-3 small">
+                                            <i class="ri-lock-line"></i> Terkunci (${row.status})
+                                        </span>
                                     `;
                                 }
 
@@ -330,17 +317,7 @@
                                         <i class="ri-more-2-fill"></i>
                                     </button>
                                     <div class="dropdown-menu dropdown-menu-end shadow-sm border-0 p-2" style="border-radius: 10px; min-width: 185px;">
-                                        ${submitBtn}
-                                        <a class="dropdown-item d-flex align-items-center gap-2 py-2 px-3 rounded text-warning" href="${editUrl}" wire:navigate>
-                                            <i class="ri-edit-line"></i> Edit Pelatihan
-                                        </a>
-                                        ${archiveBtn}
-                                        <button type="button" class="dropdown-item text-danger d-flex align-items-center gap-2 py-2 px-3 rounded border-0 bg-transparent w-100 text-start"
-                                           data-bs-toggle="modal"
-                                           data-bs-target="#modalDelete"
-                                           wire:click="hookModalDelete(${data.id}, '${identity}')">
-                                            <i class="ri-delete-bin-line"></i> Hapus
-                                        </button>
+                                        ${actions}
                                     </div>
                                 </div>
                             `;

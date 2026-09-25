@@ -116,7 +116,7 @@ test('mentor and verifikator and pimpinan are redirected to admin dashboard', fu
         ->set('identifier', 'pimpinan@simpel.go.id')
         ->set('password', 'password123')
         ->call('authenticate')
-        ->assertRedirect(route('admin.dashboard'))
+        ->assertRedirect(route('pimpinan.persetujuan.data'))
         ->assertSessionHas('alert-show', [
             'type' => 'success',
             'title' => 'Berhasil',

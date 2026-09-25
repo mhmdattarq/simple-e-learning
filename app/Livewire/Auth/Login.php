@@ -108,6 +108,18 @@ class Login extends Component
             // Role-based redirection & welcome toast notification:
             // Internal Management (Admin, Mentor, Verifikator, Pimpinan) -> admin.dashboard with welcome toast
             // Siswa ASN (Peserta) -> landing
+            if ($user->isPimpinan()) {
+                $roleName = $user->role instanceof Role ? $user->role->value : (string) $user->role;
+
+                session()->flash('alert-show', [
+                    'type' => 'success',
+                    'title' => 'Berhasil',
+                    'message' => 'berhasil login selamat datang '.$roleName,
+                ]);
+
+                return redirect()->intended(route('pimpinan.persetujuan.data'));
+            }
+
             if ($user->hasAdminAccess()) {
                 $roleName = $user->role instanceof Role ? $user->role->value : (string) $user->role;
 
