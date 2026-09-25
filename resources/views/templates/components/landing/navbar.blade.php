@@ -42,8 +42,8 @@ new class extends Component {
                                     <a href="{{ route('jadwal') }}">Jadwal</a>
                                 </li>
                                 <li
-                                    class="{{ request()->is('katalog-pelatihan*') || request()->is('pelatihan*') ? 'current' : '' }}">
-                                    <a href="#">Katalog Pelatihan</a>
+                                    class="{{ request()->routeIs('pelatihan.index') ? 'current' : '' }}">
+                                    <a href="{{ route('pelatihan.index') }}">Katalog Pelatihan</a>
                                 </li>
                                 <li class="{{ request()->is('alur-pendaftaran*') ? 'current' : '' }}">
                                     <a href="#">Alur Pendaftaran</a>
