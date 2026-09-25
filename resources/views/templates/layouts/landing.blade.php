@@ -68,6 +68,181 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
+    <style>
+        /* Custom Button SIMPEL E-Learning */
+        .btn-simpel-cta-gold {
+            background-color: var(--simpel-gold) !important;
+            color: var(--simpel-navy) !important;
+            border: 1.5px solid var(--simpel-gold) !important;
+            border-radius: 10px !important;
+            font-weight: 700 !important;
+            padding: 11px 18px !important;
+            text-decoration: none !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 8px !important;
+            transition: all 0.25s ease-in-out !important;
+            position: relative !important;
+            overflow: hidden !important;
+            line-height: 1.2 !important;
+        }
+
+        .btn-simpel-cta-gold:hover,
+        .btn-simpel-cta-gold:focus {
+            background-color: var(--simpel-navy) !important;
+            border-color: var(--simpel-navy) !important;
+            color: #ffffff !important;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(7, 26, 51, 0.2) !important;
+        }
+
+        .btn-simpel-cta-gold:hover i,
+        .btn-simpel-cta-gold:hover span,
+        .btn-simpel-cta-gold:focus i,
+        .btn-simpel-cta-gold:focus span {
+            color: #ffffff !important;
+        }
+
+        .btn-simpel-cta-gold::before {
+            display: none !important;
+        }
+
+        .btn-simpel-outline-navy {
+            background-color: transparent !important;
+            color: var(--simpel-navy) !important;
+            border: 1.5px solid var(--simpel-navy) !important;
+            border-radius: 10px !important;
+            font-weight: 600 !important;
+            padding: 9px 18px !important;
+            text-decoration: none !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 8px !important;
+            transition: all 0.2s ease-in-out !important;
+            line-height: 1.2 !important;
+        }
+
+        .btn-simpel-outline-navy:hover,
+        .btn-simpel-outline-navy:focus {
+            background-color: var(--simpel-navy) !important;
+            border-color: var(--simpel-navy) !important;
+            color: #ffffff !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 14px rgba(7, 26, 51, 0.15) !important;
+        }
+
+        .btn-simpel-outline-navy:hover i,
+        .btn-simpel-outline-navy:focus i {
+            color: var(--simpel-gold) !important;
+        }
+
+        .btn-simpel-outline-light {
+            background-color: transparent !important;
+            color: #ffffff !important;
+            border: 1.5px solid rgba(255, 255, 255, 0.35) !important;
+            border-radius: 12px !important;
+            font-weight: 600 !important;
+            padding: 12px 24px !important;
+            text-decoration: none !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 8px !important;
+            transition: all 0.25s ease-in-out !important;
+            line-height: 1.2 !important;
+        }
+
+        .btn-simpel-outline-light:hover,
+        .btn-simpel-outline-light:focus {
+            background-color: var(--simpel-gold) !important;
+            border-color: var(--simpel-gold) !important;
+            color: var(--simpel-navy) !important;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(243, 188, 66, 0.25) !important;
+        }
+
+        .btn-simpel-outline-light:hover i,
+        .btn-simpel-outline-light:hover span,
+        .btn-simpel-outline-light:focus i,
+        .btn-simpel-outline-light:focus span {
+            color: var(--simpel-navy) !important;
+        }
+
+        /* Navbar Auth Buttons Consistency */
+        .main-menu__btn-box-1 .thm-btn {
+            background-color: transparent !important;
+            border: 1.5px solid var(--simpel-navy) !important;
+            color: var(--simpel-navy) !important;
+            border-radius: 10px !important;
+            font-weight: 600 !important;
+            padding: 7px 20px 8px !important;
+            transition: all 0.25s ease-in-out !important;
+            font-size: 15px !important;
+        }
+
+        .main-menu__btn-box-1 .thm-btn:hover {
+            background-color: var(--simpel-navy) !important;
+            border-color: var(--simpel-navy) !important;
+            color: #ffffff !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(7, 26, 51, 0.15) !important;
+        }
+
+        .main-menu__btn-box-1 .thm-btn::before {
+            display: none !important;
+        }
+
+        .main-menu__btn-box-2 .thm-btn {
+            background-color: var(--simpel-gold) !important;
+            border: 1.5px solid var(--simpel-gold) !important;
+            color: var(--simpel-navy) !important;
+            border-radius: 10px !important;
+            font-weight: 700 !important;
+            padding: 7px 22px 8px !important;
+            transition: all 0.25s ease-in-out !important;
+            font-size: 15px !important;
+        }
+
+        .main-menu__btn-box-2 .thm-btn:hover {
+            background-color: var(--simpel-navy) !important;
+            border-color: var(--simpel-navy) !important;
+            color: #ffffff !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 14px rgba(7, 26, 51, 0.2) !important;
+        }
+
+        .main-menu__btn-box-2 .thm-btn::before {
+            display: none !important;
+        }
+
+        /* Universal safety override for any thm-btn styled with gold/navy */
+        .thm-btn[style*="--simpel-gold"],
+        .thm-btn[style*="#f3bc42"] {
+            transition: all 0.25s ease-in-out !important;
+        }
+
+        .thm-btn[style*="--simpel-gold"]::before,
+        .thm-btn[style*="#f3bc42"]::before {
+            display: none !important;
+        }
+
+        .thm-btn[style*="--simpel-gold"]:hover,
+        .thm-btn[style*="#f3bc42"]:hover {
+            background-color: var(--simpel-navy) !important;
+            border-color: var(--simpel-navy) !important;
+            color: #ffffff !important;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(7, 26, 51, 0.2) !important;
+        }
+
+        .thm-btn[style*="--simpel-gold"]:hover *,
+        .thm-btn[style*="#f3bc42"]:hover * {
+            color: #ffffff !important;
+        }
+    </style>
+
     @livewireStyles
 </head>
 

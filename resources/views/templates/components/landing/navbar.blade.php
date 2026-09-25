@@ -30,111 +30,7 @@ new class extends Component {
                                     </div>
                                 </a>
                             </div>
-                            <div class="main-menu__category-box">
-                                <div class="main-menu__category-btn">
-                                    <i class="fas fa-th"></i>
-                                    <p>Kategori Pelatihan</p>
-                                    <span class="icon-down-arrow"></span>
-                                </div>
-                                <ul class="list-unstyled main-menu__category-sub-menu">
-                                    <li>
-                                        <a href="#">
-                                            <div class="main-menu__category-icon">
-                                                <img src="{{ asset('landing/assets/images/icon/categoyr-two-icon-1.png') }}"
-                                                    alt="">
-                                            </div>
-                                            <div class="main-menu__category-content">
-                                                <h5>Pelatihan mandiri</h5>
-                                                <p>Buka 24 Jam</p>
-                                            </div>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#">
-                                            <div class="main-menu__category-icon">
-                                                <img src="{{ asset('landing/assets/images/icon/categoyr-two-icon-2.png') }}"
-                                                    alt="">
-                                            </div>
-                                            <div class="main-menu__category-content">
-                                                <h5>Batch Berkala</h5>
-                                                <p>Daring Terjadwal</p>
-                                            </div>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#">
-                                            <div class="main-menu__category-icon">
-                                                <img src="{{ asset('landing/assets/images/icon/categoyr-two-icon-3.png') }}"
-                                                    alt="">
-                                            </div>
-                                            <div class="main-menu__category-content">
-                                                <h5>Penugasan Khusus</h5>
-                                                <p>Rekomendasi OPD</p>
-                                            </div>
-                                        </a>
-                                    </li>
-                                    {{-- <li>
-                                        <a href="#">
-                                            <div class="main-menu__category-icon">
-                                                <img src="{{ asset('landing/assets/images/icon/categoyr-two-icon-4.png') }}"
-                                                    alt="">
-                                            </div>
-                                            <div class="main-menu__category-content">
-                                                <h5>Health & <br> Wellness</h5>
-                                                <p>3+ Courses</p>
-                                            </div>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#">
-                                            <div class="main-menu__category-icon">
-                                                <img src="{{ asset('landing/assets/images/icon/categoyr-two-icon-5.png') }}"
-                                                    alt="">
-                                            </div>
-                                            <div class="main-menu__category-content">
-                                                <h5>Writing & <br> Communication</h5>
-                                                <p>3+ Courses</p>
-                                            </div>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#">
-                                            <div class="main-menu__category-icon">
-                                                <img src="{{ asset('landing/assets/images/icon/categoyr-two-icon-6.png') }}"
-                                                    alt="">
-                                            </div>
-                                            <div class="main-menu__category-content">
-                                                <h5>User Research & <br> Analytics</h5>
-                                                <p>3+ Courses</p>
-                                            </div>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#">
-                                            <div class="main-menu__category-icon">
-                                                <img src="{{ asset('landing/assets/images/icon/categoyr-two-icon-7.png') }}"
-                                                    alt="">
-                                            </div>
-                                            <div class="main-menu__category-content">
-                                                <h5>Digital <br> Marketing</h5>
-                                                <p>3+ Courses</p>
-                                            </div>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#">
-                                            <div class="main-menu__category-icon">
-                                                <img src="{{ asset('landing/assets/images/icon/categoyr-two-icon-8.png') }}"
-                                                    alt="">
-                                            </div>
-                                            <div class="main-menu__category-content">
-                                                <h5>Lifestyle & <br> Productivity</h5>
-                                                <p>3+ Courses</p>
-                                            </div>
-                                        </a>
-                                    </li> --}}
-                                </ul>
-                            </div>
+
                         </div>
                         <div class="main-menu__main-menu-box">
                             <a href="#" class="mobile-nav__toggler"><i class="fa fa-bars"></i></a>
@@ -142,10 +38,11 @@ new class extends Component {
                                 <li class="{{ request()->routeIs('landing') ? 'current' : '' }}">
                                     <a href="{{ route('landing') }}">Beranda</a>
                                 </li>
-                                <li class="{{ request()->is('akademi*') ? 'current' : '' }}">
-                                    <a href="#">Akademi</a>
+                                <li class="{{ request()->routeIs('jadwal') ? 'current' : '' }}">
+                                    <a href="{{ route('jadwal') }}">Jadwal</a>
                                 </li>
-                                <li class="{{ request()->is('katalog-pelatihan*') || request()->is('pelatihan*') ? 'current' : '' }}">
+                                <li
+                                    class="{{ request()->is('katalog-pelatihan*') || request()->is('pelatihan*') ? 'current' : '' }}">
                                     <a href="#">Katalog Pelatihan</a>
                                 </li>
                                 <li class="{{ request()->is('alur-pendaftaran*') ? 'current' : '' }}">
@@ -225,35 +122,44 @@ new class extends Component {
                                 </div>
                             @else
                                 <div class="dropdown">
-                                    <button class="d-flex align-items-center gap-2 border-0 bg-transparent p-0 text-decoration-none" type="button"
-                                        data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;">
+                                    <button
+                                        class="d-flex align-items-center gap-2 border-0 bg-transparent p-0 text-decoration-none"
+                                        type="button" data-bs-toggle="dropdown" aria-expanded="false"
+                                        style="cursor: pointer;">
                                         <div class="seal"
                                             style="width: 38px !important; height: 38px !important; font-size: 15px !important; border-radius: 10px !important;">
                                             {{ auth()->user() ? strtoupper(substr(auth()->user()->name, 0, 2)) : 'MS' }}
                                         </div>
                                         <div class="d-none d-lg-flex flex-column text-start">
-                                            <span class="fw-bold text-dark fs-6" style="line-height: 1.2;">{{ auth()->user()->name }}</span>
-                                            <small class="text-secondary" style="font-size: 11px;">{{ auth()->user()?->role?->label() ?? 'Peserta' }}</small>
+                                            <span class="fw-bold text-dark fs-6"
+                                                style="line-height: 1.2;">{{ auth()->user()->name }}</span>
+                                            <small class="text-secondary"
+                                                style="font-size: 11px;">{{ auth()->user()?->role?->label() ?? 'Peserta' }}</small>
                                         </div>
-                                        <i class="ri-arrow-down-s-line text-secondary d-none d-lg-block" style="font-size: 18px;"></i>
+                                        <i class="ri-arrow-down-s-line text-secondary d-none d-lg-block"
+                                            style="font-size: 18px;"></i>
                                     </button>
-                                    <div class="dropdown-menu dropdown-menu-end shadow border-0 p-0" style="min-width: 250px; border-radius: 12px; overflow: hidden; margin-top: 10px; z-index: 1050;">
+                                    <div class="dropdown-menu dropdown-menu-end shadow border-0 p-0"
+                                        style="min-width: 250px; border-radius: 12px; overflow: hidden; margin-top: 10px; z-index: 1050;">
                                         <div class="py-3 px-3" style="background: #071a33; color: #fff;">
-                                            <h6 class="text-white fw-semibold mb-1" style="font-size: 14px; line-height: 1.3;">{{ auth()->user()->name }}</h6>
+                                            <h6 class="text-white fw-semibold mb-1"
+                                                style="font-size: 14px; line-height: 1.3;">{{ auth()->user()->name }}</h6>
                                             <div class="d-flex align-items-center gap-1 flex-wrap">
                                                 <span class="badge"
                                                     style="background: #f3bc42; color: #071a33; font-weight: 700; font-size: 11px;">{{ auth()->user()?->role?->label() ?? 'Peserta' }}</span>
-                                                @if(auth()->user()->nip)
-                                                    <small class="text-white-50" style="font-size: 11px;">· {{ auth()->user()->nip }}</small>
+                                                @if (auth()->user()->nip)
+                                                    <small class="text-white-50" style="font-size: 11px;">·
+                                                        {{ auth()->user()->nip }}</small>
                                                 @endif
                                             </div>
                                         </div>
                                         <ul class="list-unstyled p-2 m-0">
-                                            @if(auth()->user()->hasAdminAccess())
+                                            @if (auth()->user()->hasAdminAccess())
                                                 <li>
                                                     <a class="dropdown-item px-3 py-2 text-dark d-flex align-items-center gap-2 rounded"
                                                         href="{{ route('admin.dashboard') }}" style="font-size: 13.5px;">
-                                                        <i class="ri-dashboard-line text-primary" style="font-size: 16px;"></i>
+                                                        <i class="ri-dashboard-line text-primary"
+                                                            style="font-size: 16px;"></i>
                                                         Panel Manajemen
                                                     </a>
                                                 </li>
@@ -278,8 +184,8 @@ new class extends Component {
                                             <li>
                                                 <button type="button"
                                                     class="dropdown-item text-danger px-3 py-2 d-flex align-items-center gap-2 rounded border-0 bg-transparent w-100 text-start"
-                                                    style="font-size: 13.5px; cursor: pointer;"
-                                                    data-bs-toggle="modal" data-bs-target="#modalLogout">
+                                                    style="font-size: 13.5px; cursor: pointer;" data-bs-toggle="modal"
+                                                    data-bs-target="#modalLogout">
                                                     <i class="ri-logout-box-r-line" style="font-size: 16px;"></i> Keluar
                                                 </button>
                                             </li>

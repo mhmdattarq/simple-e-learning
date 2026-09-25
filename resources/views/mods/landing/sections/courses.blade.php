@@ -73,9 +73,9 @@
                                         <small class="text-muted d-block fs-8">Metode Program</small>
                                         <span class="fw-extrabold text-navy fs-7 text-uppercase">{{ $course->method }}</span>
                                     </div>
-                                    <a href="{{ route('pelatihan.daftar', $course->id) }}" class="thm-btn py-2 px-3 fs-7"
-                                        style="background-color: var(--simpel-gold); color: var(--simpel-navy); border-radius: 10px; font-weight: 700;">
-                                        Daftar Pelatihan <i class="ri-arrow-right-line ms-1"></i>
+                                    <a href="{{ route('pelatihan.daftar', $course->id) }}" class="btn-simpel-cta-gold py-2 px-3 fs-7">
+                                        <span>Daftar Pelatihan</span>
+                                        <i class="ri-arrow-right-line ms-1"></i>
                                     </a>
                                 </div>
                             </div>
@@ -119,9 +119,8 @@
                                 <small class="text-muted d-block fs-8">Biaya Program</small>
                                 <span class="fw-extrabold text-navy fs-6">100% BEASISWA</span>
                             </div>
-                            <a href="#alur-pendaftaran" class="thm-btn py-2 px-3 fs-7"
-                                style="background-color: var(--simpel-gold); color: var(--simpel-navy); border-radius: 10px; font-weight: 700;">
-                                Mulai Belajar <i class="ri-arrow-right-line ms-1"></i>
+                            <a href="#alur-pendaftaran" class="btn-simpel-cta-gold py-2 px-3 fs-7">
+                                <span>Mulai Belajar</span> <i class="ri-arrow-right-line ms-1"></i>
                             </a>
                         </div>
                     </div>
@@ -165,9 +164,8 @@
                                 <small class="text-muted d-block fs-8">Biaya Program</small>
                                 <span class="fw-extrabold text-navy fs-6">100% BEASISWA</span>
                             </div>
-                            <a href="#alur-pendaftaran" class="thm-btn py-2 px-3 fs-7"
-                                style="background-color: var(--simpel-gold); color: var(--simpel-navy); border-radius: 10px; font-weight: 700;">
-                                Daftar Batch <i class="ri-arrow-right-line ms-1"></i>
+                            <a href="#alur-pendaftaran" class="btn-simpel-cta-gold py-2 px-3 fs-7">
+                                <span>Daftar Batch</span> <i class="ri-arrow-right-line ms-1"></i>
                             </a>
                         </div>
                     </div>
@@ -211,9 +209,8 @@
                                 <small class="text-muted d-block fs-8">Biaya Program</small>
                                 <span class="fw-extrabold text-navy fs-6">100% BEASISWA</span>
                             </div>
-                            <a href="#alur-pendaftaran" class="thm-btn py-2 px-3 fs-7"
-                                style="background-color: var(--simpel-gold); color: var(--simpel-navy); border-radius: 10px; font-weight: 700;">
-                                Lihat Syarat <i class="ri-arrow-right-line ms-1"></i>
+                            <a href="#alur-pendaftaran" class="btn-simpel-cta-gold py-2 px-3 fs-7">
+                                <span>Lihat Syarat</span> <i class="ri-arrow-right-line ms-1"></i>
                             </a>
                         </div>
                     </div>
@@ -257,9 +254,8 @@
                                 <small class="text-muted d-block fs-8">Biaya Program</small>
                                 <span class="fw-extrabold text-navy fs-6">100% BEASISWA</span>
                             </div>
-                            <a href="#alur-pendaftaran" class="thm-btn py-2 px-3 fs-7"
-                                style="background-color: var(--simpel-gold); color: var(--simpel-navy); border-radius: 10px; font-weight: 700;">
-                                Mulai Belajar <i class="ri-arrow-right-line ms-1"></i>
+                            <a href="#alur-pendaftaran" class="btn-simpel-cta-gold py-2 px-3 fs-7">
+                                <span>Mulai Belajar</span> <i class="ri-arrow-right-line ms-1"></i>
                             </a>
                         </div>
                     </div>
@@ -303,9 +299,8 @@
                                 <small class="text-muted d-block fs-8">Biaya Program</small>
                                 <span class="fw-extrabold text-navy fs-6">100% BEASISWA</span>
                             </div>
-                            <a href="#alur-pendaftaran" class="thm-btn py-2 px-3 fs-7"
-                                style="background-color: var(--simpel-gold); color: var(--simpel-navy); border-radius: 10px; font-weight: 700;">
-                                Daftar Batch <i class="ri-arrow-right-line ms-1"></i>
+                            <a href="#alur-pendaftaran" class="btn-simpel-cta-gold py-2 px-3 fs-7">
+                                <span>Daftar Batch</span> <i class="ri-arrow-right-line ms-1"></i>
                             </a>
                         </div>
                     </div>
@@ -349,9 +344,8 @@
                                 <small class="text-muted d-block fs-8">Biaya Program</small>
                                 <span class="fw-extrabold text-navy fs-6">100% BEASISWA</span>
                             </div>
-                            <a href="#alur-pendaftaran" class="thm-btn py-2 px-3 fs-7"
-                                style="background-color: var(--simpel-gold); color: var(--simpel-navy); border-radius: 10px; font-weight: 700;">
-                                Daftar Batch <i class="ri-arrow-right-line ms-1"></i>
+                            <a href="#alur-pendaftaran" class="btn-simpel-cta-gold py-2 px-3 fs-7">
+                                <span>Daftar Batch</span> <i class="ri-arrow-right-line ms-1"></i>
                             </a>
                         </div>
                     </div>

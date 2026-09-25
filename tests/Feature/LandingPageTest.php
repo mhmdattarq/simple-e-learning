@@ -1,6 +1,7 @@
 <?php
 
 use App\Livewire\Admin\Dashboard\DashboardIndex;
+use App\Livewire\Landing\LandingIndex;
 use App\Models\Category;
 use App\Models\Course;
 use App\Models\User;
@@ -16,7 +17,8 @@ test('landing page can be accessed successfully and displays core sections', fun
     $response->assertSee('landing/assets/css/bootstrap.min.css');
     $response->assertSee('landing/assets/js/script.js');
     $response->assertSee('Akselerasi Kompetensi');
-    $response->assertSee('Pilihan Akademi Berstandar Nasional');
+    $response->assertSee('Jadwal Pelatihan');
+    $response->assertSee('Terdekat');
     $response->assertSee('Katalog Pelatihan Digital Terbuka');
     $response->assertSee('Alur Mudah Pendaftaran');
     $response->assertSee('Pelatihan Mandiri');
@@ -153,4 +155,69 @@ test('landing page shows fallback placeholder when no published courses exist', 
     $response->assertStatus(200);
     // No published courses → shows static fallback "—" for count
     $response->assertSee('—');
+});
+
+test('quick info jadwal section on landing page displays maximum 3 upcoming batch courses and links to jadwal page', function () {
+    $admin = User::factory()->admin()->create();
+    $category = Category::factory()->create();
+
+    // Buat 4 batch course
+    Course::factory()->create([
+        'title' => 'Batch 1 Terdekat',
+        'type' => 'batch',
+        'status' => 'published',
+        'start_date' => now()->addDays(5)->format('Y-m-d'),
+        'end_date' => now()->addDays(10)->format('Y-m-d'),
+        'category_id' => $category->id,
+        'created_by' => $admin->id,
+    ]);
+
+    Course::factory()->create([
+        'title' => 'Batch 2 Terdekat',
+        'type' => 'batch',
+        'status' => 'published',
+        'start_date' => now()->addDays(15)->format('Y-m-d'),
+        'end_date' => now()->addDays(20)->format('Y-m-d'),
+        'category_id' => $category->id,
+        'created_by' => $admin->id,
+    ]);
+
+    Course::factory()->create([
+        'title' => 'Batch 3 Terdekat',
+        'type' => 'batch',
+        'status' => 'published',
+        'start_date' => now()->addDays(25)->format('Y-m-d'),
+        'end_date' => now()->addDays(30)->format('Y-m-d'),
+        'category_id' => $category->id,
+        'created_by' => $admin->id,
+    ]);
+
+    Course::factory()->create([
+        'title' => 'Batch 4 Lebih Jauh',
+        'type' => 'batch',
+        'status' => 'published',
+        'start_date' => now()->addDays(40)->format('Y-m-d'),
+        'end_date' => now()->addDays(45)->format('Y-m-d'),
+        'category_id' => $category->id,
+        'created_by' => $admin->id,
+    ]);
+
+    Livewire::test(LandingIndex::class)
+        ->assertViewHas('upcomingJadwals', function ($jadwals) {
+            return $jadwals->count() === 3
+                && $jadwals->contains('title', 'Batch 1 Terdekat')
+                && $jadwals->contains('title', 'Batch 2 Terdekat')
+                && $jadwals->contains('title', 'Batch 3 Terdekat')
+                && ! $jadwals->contains('title', 'Batch 4 Lebih Jauh');
+        });
+
+    $response = $this->get('/');
+
+    $response->assertStatus(200);
+    $response->assertSee('Batch 1 Terdekat');
+    $response->assertSee('Batch 2 Terdekat');
+    $response->assertSee('Batch 3 Terdekat');
+    $response->assertSee(route('jadwal'));
+    $response->assertSee('Lihat Semua Jadwal');
+    $response->assertSee('Lihat Detail Penjadwalan');
 });

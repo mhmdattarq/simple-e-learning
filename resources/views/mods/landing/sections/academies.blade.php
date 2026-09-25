@@ -1,188 +1,110 @@
-{{-- Section 2: Jalur Akademi Digital Talent ASN (Digitalent Category Grid) --}}
+{{-- Section 2: Quick Info Jadwal Pelatihan Terbaru (maks 3 card) --}}
 <section class="py-5 bg-white border-bottom border-simpel" id="akademi">
     <div class="container py-lg-4 py-2">
+
         {{-- Section Header --}}
-        <div class="row justify-content-center text-center mb-5 wow fadeInUp" data-wow-delay="100ms">
-            <div class="col-lg-8">
-                <h2 class="fw-extrabold text-navy display-6 mb-3">
-                    Pilihan Akademi Berstandar Nasional
+        <div class="row align-items-end justify-content-between mb-4 g-3 wow fadeInUp" data-wow-delay="100ms">
+            <div class="col-lg-7">
+                <h2 class="fw-extrabold text-navy display-6 mb-2">
+                    Jadwal Pelatihan <span class="text-gold">Terdekat</span>
                 </h2>
-                <p class="text-muted fs-6 mb-0 max-w-700 mx-auto">
-                    Kembangkan spesialisasi digital sesuai peran dan fungsi kedinasan Anda melalui kurikulum terstruktur
-                    yang diakui instansi pembina nasional.
+                <p class="text-muted fs-6 mb-0">
+                    Program pelatihan batch yang segera diselenggarakan. Daftar sekarang sebelum kuota habis.
                 </p>
             </div>
-        </div>
-
-        {{-- Academies Grid (6 Cards) --}}
-        <div class="row g-4">
-            {{-- Academy 1: GTA --}}
-            <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="150ms">
-                <div
-                    class="card h-100 p-4 border border-simpel rounded-4 simpel-academy-card bg-white position-relative overflow-hidden">
-                    <div class="d-flex align-items-center justify-content-between mb-3">
-                        <div class="simpel-academy-icon rounded-3 d-flex align-items-center justify-content-center"
-                            style="background: rgba(7, 26, 51, 0.06); color: var(--simpel-navy);">
-                            <i class="ri-government-fill fs-3"></i>
-                        </div>
-                        <span class="badge bg-gold text-navy rounded-pill fw-bold fs-8">14 Silabus</span>
-                    </div>
-                    <h5 class="fw-bold text-navy mb-2">Government Transformation (GTA)</h5>
-                    <p class="text-muted fs-7 mb-4 flex-grow-1">
-                        Peningkatan kapasitas aparatur dalam perencanaan, arsitektur, manajemen perubahan, dan
-                        implementasi SPBE di instansi pemerintah.
-                    </p>
-                    <div class="pt-3 border-top border-simpel d-flex align-items-center justify-content-between">
-                        <span class="fs-8 text-muted fw-medium"><i
-                                class="ri-user-star-line me-1 text-gold"></i>Pelaksana & Pejabat</span>
-                        <a href="#pelatihan"
-                            class="text-navy fw-bold text-decoration-none fs-7 d-inline-flex align-items-center gap-1 hover-gold">
-                            <span>Katalog</span>
-                            <i class="ri-arrow-right-line"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            {{-- Academy 2: CDA --}}
-            <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="200ms">
-                <div
-                    class="card h-100 p-4 border border-simpel rounded-4 simpel-academy-card bg-white position-relative overflow-hidden">
-                    <div class="d-flex align-items-center justify-content-between mb-3">
-                        <div class="simpel-academy-icon rounded-3 d-flex align-items-center justify-content-center"
-                            style="background: rgba(7, 26, 51, 0.06); color: var(--simpel-navy);">
-                            <i class="ri-shield-check-fill fs-3"></i>
-                        </div>
-                        <span class="badge bg-gold text-navy rounded-pill fw-bold fs-8">8 Silabus</span>
-                    </div>
-                    <h5 class="fw-bold text-navy mb-2">Cybersecurity & CSIRT SPBE</h5>
-                    <p class="text-muted fs-7 mb-4 flex-grow-1">
-                        Penguatan proteksi sistem informasi daerah, sertifikasi ISO 27001, audit keamanan siber, dan
-                        penanganan insiden darurat CSIRT.
-                    </p>
-                    <div class="pt-3 border-top border-simpel d-flex align-items-center justify-content-between">
-                        <span class="fs-8 text-muted fw-medium"><i class="ri-lock-line me-1 text-gold"></i>Tim IT &
-                            Pranata Komputer</span>
-                        <a href="#pelatihan"
-                            class="text-navy fw-bold text-decoration-none fs-7 d-inline-flex align-items-center gap-1 hover-gold">
-                            <span>Katalog</span>
-                            <i class="ri-arrow-right-line"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            {{-- Academy 3: DAG --}}
-            <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="250ms">
-                <div
-                    class="card h-100 p-4 border border-simpel rounded-4 simpel-academy-card bg-white position-relative overflow-hidden">
-                    <div class="d-flex align-items-center justify-content-between mb-3">
-                        <div class="simpel-academy-icon rounded-3 d-flex align-items-center justify-content-center"
-                            style="background: rgba(7, 26, 51, 0.06); color: var(--simpel-navy);">
-                            <i class="ri-database-2-fill fs-3"></i>
-                        </div>
-                        <span class="badge bg-gold text-navy rounded-pill fw-bold fs-8">10 Silabus</span>
-                    </div>
-                    <h5 class="fw-bold text-navy mb-2">Data Science & AI Governance</h5>
-                    <p class="text-muted fs-7 mb-4 flex-grow-1">
-                        Pemanfaatan Satu Data Indonesia (SDI), analitika prediktif kebijakan publik, dan implementasi
-                        etika kecerdasan artifisial birokrasi.
-                    </p>
-                    <div class="pt-3 border-top border-simpel d-flex align-items-center justify-content-between">
-                        <span class="fs-8 text-muted fw-medium"><i class="ri-line-chart-line me-1 text-gold"></i>Analis
-                            Data & Perencana</span>
-                        <a href="#pelatihan"
-                            class="text-navy fw-bold text-decoration-none fs-7 d-inline-flex align-items-center gap-1 hover-gold">
-                            <span>Katalog</span>
-                            <i class="ri-arrow-right-line"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            {{-- Academy 4: DLA --}}
-            <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="300ms">
-                <div
-                    class="card h-100 p-4 border border-simpel rounded-4 simpel-academy-card bg-white position-relative overflow-hidden">
-                    <div class="d-flex align-items-center justify-content-between mb-3">
-                        <div class="simpel-academy-icon rounded-3 d-flex align-items-center justify-content-center"
-                            style="background: rgba(7, 26, 51, 0.06); color: var(--simpel-navy);">
-                            <i class="ri-team-fill fs-3"></i>
-                        </div>
-                        <span class="badge bg-gold text-navy rounded-pill fw-bold fs-8">6 Silabus</span>
-                    </div>
-                    <h5 class="fw-bold text-navy mb-2">Digital Leadership Academy (DLA)</h5>
-                    <p class="text-muted fs-7 mb-4 flex-grow-1">
-                        Executive workshop untuk Pejabat Pimpinan Tinggi (JPT) dan Administrator guna mendorong budaya
-                        inovasi dan kepemimpinan digital adaptif.
-                    </p>
-                    <div class="pt-3 border-top border-simpel d-flex align-items-center justify-content-between">
-                        <span class="fs-8 text-muted fw-medium"><i class="ri-award-line me-1 text-gold"></i>JPT &
-                            Administrator</span>
-                        <a href="#pelatihan"
-                            class="text-navy fw-bold text-decoration-none fs-7 d-inline-flex align-items-center gap-1 hover-gold">
-                            <span>Katalog</span>
-                            <i class="ri-arrow-right-line"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            {{-- Academy 5: PSE --}}
-            <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="350ms">
-                <div
-                    class="card h-100 p-4 border border-simpel rounded-4 simpel-academy-card bg-white position-relative overflow-hidden">
-                    <div class="d-flex align-items-center justify-content-between mb-3">
-                        <div class="simpel-academy-icon rounded-3 d-flex align-items-center justify-content-center"
-                            style="background: rgba(7, 26, 51, 0.06); color: var(--simpel-navy);">
-                            <i class="ri-code-s-slash-fill fs-3"></i>
-                        </div>
-                        <span class="badge bg-gold text-navy rounded-pill fw-bold fs-8">9 Silabus</span>
-                    </div>
-                    <h5 class="fw-bold text-navy mb-2">Public Service Engineering</h5>
-                    <p class="text-muted fs-7 mb-4 flex-grow-1">
-                        Pengembangan API gateway antar-instansi, microservices, cloud pemerintahan, dan standar kode
-                        interoperabilitas nasional SPLP.
-                    </p>
-                    <div class="pt-3 border-top border-simpel d-flex align-items-center justify-content-between">
-                        <span class="fs-8 text-muted fw-medium"><i
-                                class="ri-terminal-box-line me-1 text-gold"></i>Software Engineer ASN</span>
-                        <a href="#pelatihan"
-                            class="text-navy fw-bold text-decoration-none fs-7 d-inline-flex align-items-center gap-1 hover-gold">
-                            <span>Katalog</span>
-                            <i class="ri-arrow-right-line"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            {{-- Academy 6: DPR --}}
-            <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="400ms">
-                <div
-                    class="card h-100 p-4 border border-simpel rounded-4 simpel-academy-card bg-white position-relative overflow-hidden">
-                    <div class="d-flex align-items-center justify-content-between mb-3">
-                        <div class="simpel-academy-icon rounded-3 d-flex align-items-center justify-content-center"
-                            style="background: rgba(7, 26, 51, 0.06); color: var(--simpel-navy);">
-                            <i class="ri-broadcast-fill fs-3"></i>
-                        </div>
-                        <span class="badge bg-gold text-navy rounded-pill fw-bold fs-8">7 Silabus</span>
-                    </div>
-                    <h5 class="fw-bold text-navy mb-2">Digital Public Relations (DPR)</h5>
-                    <p class="text-muted fs-7 mb-4 flex-grow-1">
-                        Komunikasi publik digital, manajemen disinformasi/hoaks, narasi kebijakan strategis, dan
-                        kehumasan pemerintah multi-platform.
-                    </p>
-                    <div class="pt-3 border-top border-simpel d-flex align-items-center justify-content-between">
-                        <span class="fs-8 text-muted fw-medium"><i
-                                class="ri-megaphone-line me-1 text-gold"></i>Pranata Humas & Kominfo</span>
-                        <a href="#pelatihan"
-                            class="text-navy fw-bold text-decoration-none fs-7 d-inline-flex align-items-center gap-1 hover-gold">
-                            <span>Katalog</span>
-                            <i class="ri-arrow-right-line"></i>
-                        </a>
-                    </div>
-                </div>
+            <div class="col-lg-5 text-lg-end">
+                <a href="{{ route('jadwal') }}" class="btn-simpel-outline-navy">
+                    <i class="ri-calendar-2-line"></i>
+                    <span>Lihat Semua Jadwal</span>
+                    <i class="ri-arrow-right-line"></i>
+                </a>
             </div>
         </div>
+
+        @if ($upcomingJadwals->isNotEmpty())
+            {{-- Jadwal Cards --}}
+            <div class="row g-4">
+                @foreach ($upcomingJadwals as $jadwal)
+                    <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="{{ $loop->index * 100 + 150 }}ms">
+                        <div
+                            class="card h-100 border border-simpel rounded-4 bg-white shadow-xs overflow-hidden simpel-academy-card position-relative">
+
+                            {{-- Top color bar --}}
+                            <div class="rounded-top-4"
+                                style="height: 4px; background: linear-gradient(90deg, var(--simpel-navy) 0%, var(--simpel-gold) 100%);">
+                            </div>
+
+                            <div class="p-4 d-flex flex-column h-100">
+                                {{-- Date Badge --}}
+                                <div class="d-flex align-items-center justify-content-between mb-3">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="rounded-2 d-flex align-items-center justify-content-center flex-shrink-0"
+                                            style="width: 40px; height: 40px; background: rgba(7,26,51,0.07);">
+                                            <i class="ri-calendar-event-line text-navy fs-5"></i>
+                                        </div>
+                                        <div>
+                                            <div class="fw-extrabold text-navy"
+                                                style="font-size: 20px; line-height: 1.1;">
+                                                {{ $jadwal->start_date->format('d') }}
+                                            </div>
+                                            <div class="fw-bold text-gold fs-8 text-uppercase">
+                                                {{ $jadwal->start_date->translatedFormat('M Y') }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <span class="badge bg-gold text-navy rounded-pill fw-bold fs-8">
+                                        Batch Terjadwal
+                                    </span>
+                                </div>
+
+                                {{-- Category --}}
+                                <span class="badge bg-navy-soft text-navy fw-medium fs-8 mb-2 align-self-start"
+                                    style="background: rgba(7,26,51,0.07); color: var(--simpel-navy);">
+                                    {{ $jadwal->category?->name ?? 'Diklat ASN' }}
+                                </span>
+
+                                {{-- Title --}}
+                                <h5 class="fw-bold text-navy mb-3 flex-grow-1 lh-sm" style="font-size: 15px;">
+                                    {{ $jadwal->title }}
+                                </h5>
+
+                                {{-- Period --}}
+                                <div class="d-flex align-items-center gap-1 text-muted fs-8 mb-4">
+                                    <i class="ri-time-line text-gold"></i>
+                                    <span>
+                                        {{ $jadwal->start_date->translatedFormat('d M Y') }}
+                                        @if ($jadwal->end_date)
+                                            &ndash; {{ $jadwal->end_date->translatedFormat('d M Y') }}
+                                        @endif
+                                    </span>
+                                </div>
+
+                                {{-- CTA --}}
+                                <div class="pt-3 border-top border-simpel mt-auto">
+                                    <a href="{{ route('pelatihan.daftar', $jadwal->id) }}"
+                                        class="btn-simpel-cta-gold w-100">
+                                        <span>Daftar Pelatihan Ini</span>
+                                        <i class="ri-arrow-right-line"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        @else
+            {{-- Empty State --}}
+            <div class="text-center py-5 wow fadeInUp">
+                <i class="ri-calendar-2-line text-gold mb-3 d-block" style="font-size: 52px; opacity: 0.35;"></i>
+                <h5 class="fw-bold text-navy mb-2">Belum Ada Jadwal Pelatihan</h5>
+                <p class="text-muted fs-7 mb-3">
+                    Jadwal batch akan segera diumumkan. Cek katalog pelatihan mandiri yang buka 24/7.
+                </p>
+                <a href="#pelatihan" class="text-navy fw-semibold text-decoration-none fs-7 hover-gold">
+                    Lihat Katalog Pelatihan &rarr;
+                </a>
+            </div>
+        @endif
+
     </div>
 </section>

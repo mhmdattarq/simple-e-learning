@@ -20,6 +20,7 @@ use App\Livewire\Admin\Perencanaan\PerencanaanEdit;
 use App\Livewire\Admin\Verifikasi\VerifikasiData;
 use App\Livewire\Auth\Login;
 use App\Livewire\Auth\Register;
+use App\Livewire\Landing\JadwalIndex;
 use App\Livewire\Landing\LandingIndex;
 use App\Livewire\Peserta\Pendaftaran\PendaftaranCreate;
 use Illuminate\Support\Facades\Auth;
@@ -27,6 +28,7 @@ use Illuminate\Support\Facades\Route;
 
 // 1. Landing Page (Public)
 Route::livewire('/', LandingIndex::class)->name('landing');
+Route::livewire('/jadwal', JadwalIndex::class)->name('jadwal');
 
 // 2. Authentication (Guest)
 Route::middleware('guest')->group(function () {
