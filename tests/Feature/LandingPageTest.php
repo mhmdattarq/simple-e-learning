@@ -104,31 +104,67 @@ test('authenticated user can logout from landing navbar and is redirected to lan
         ->assertSee('class="thm-btn">Daftar</a>', false);
 });
 
-test('published courses appear in the catalog section on the landing page', function () {
+test('published courses appear in the catalog section on the landing page limited to 3 items', function () {
     $category = Category::factory()->create(['name' => 'Transformasi Digital']);
     $admin = User::factory()->admin()->create();
 
-    $published = Course::factory()->count(3)->create([
+    // Kursus ke-4 yang dibuat lebih awal (ID lebih kecil)
+    $courseOld = Course::factory()->create([
         'status' => 'published',
+        'type' => 'permanent',
         'category_id' => $category->id,
         'created_by' => $admin->id,
+        'title' => 'Kursus Keempat Tidak Tampil Di Landing',
+    ]);
+
+    $course1 = Course::factory()->create([
+        'status' => 'published',
+        'type' => 'permanent',
+        'category_id' => $category->id,
+        'created_by' => $admin->id,
+        'title' => 'Kursus Unggulan 1',
+    ]);
+
+    $course2 = Course::factory()->create([
+        'status' => 'published',
+        'type' => 'permanent',
+        'category_id' => $category->id,
+        'created_by' => $admin->id,
+        'title' => 'Kursus Unggulan 2',
+    ]);
+
+    $course3 = Course::factory()->create([
+        'status' => 'published',
+        'type' => 'permanent',
+        'category_id' => $category->id,
+        'created_by' => $admin->id,
+        'title' => 'Kursus Unggulan 3',
     ]);
 
     Course::factory()->create([
         'status' => 'draft',
+        'type' => 'permanent',
         'category_id' => $category->id,
         'created_by' => $admin->id,
         'title' => 'Draft Yang Tidak Tampil',
     ]);
 
+    Livewire::test(LandingIndex::class)
+        ->assertViewHas('courses', function ($courses) {
+            return $courses->count() === 3
+                && $courses->contains('title', 'Kursus Unggulan 1')
+                && $courses->contains('title', 'Kursus Unggulan 2')
+                && $courses->contains('title', 'Kursus Unggulan 3')
+                && ! $courses->contains('title', 'Kursus Keempat Tidak Tampil Di Landing');
+        });
+
     $response = $this->get('/');
 
     $response->assertStatus(200);
-
-    foreach ($published as $course) {
-        $response->assertSee($course->title);
-    }
-
+    $response->assertSee('Kursus Unggulan 1');
+    $response->assertSee('Kursus Unggulan 2');
+    $response->assertSee('Kursus Unggulan 3');
+    $response->assertDontSee('Kursus Keempat Tidak Tampil Di Landing');
     $response->assertDontSee('Draft Yang Tidak Tampil');
 });
 
