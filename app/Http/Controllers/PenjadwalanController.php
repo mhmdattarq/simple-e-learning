@@ -44,6 +44,10 @@ class PenjadwalanController extends Controller
 
                 return '<span class="text-dark"><i class="ri-building-line text-muted me-1"></i>'.htmlspecialchars($row->room_or_link, ENT_QUOTES, 'UTF-8').'</span>';
             })
+            ->addColumn('cancellation_reason', fn ($row) => $row->cancellation_reason)
+            ->addColumn('has_attendance_or_materials', function ($row) {
+                return PenjadwalanRepo::hasAttendanceOrMaterials($row->id);
+            })
             ->addColumn('status_badge', function ($row) {
                 $status = $row->status;
                 if ($status === 'ongoing') {
@@ -51,7 +55,9 @@ class PenjadwalanController extends Controller
                 } elseif ($status === 'completed') {
                     return '<span class="badge bg-success text-white px-2 py-1"><i class="ri-checkbox-circle-line me-1"></i>Selesai</span>';
                 } elseif ($status === 'cancelled') {
-                    return '<span class="badge bg-danger text-white px-2 py-1"><i class="ri-close-circle-line me-1"></i>Dibatalkan</span>';
+                    $reasonTip = $row->cancellation_reason ? ' title="Alasan: '.htmlspecialchars($row->cancellation_reason, ENT_QUOTES, 'UTF-8').'"' : '';
+
+                    return '<span class="badge bg-danger text-white px-2 py-1"'.$reasonTip.'><i class="ri-close-circle-line me-1"></i>Dibatalkan</span>';
                 }
 
                 return '<span class="badge bg-secondary text-white px-2 py-1"><i class="ri-calendar-check-line me-1"></i>Terjadwal</span>';

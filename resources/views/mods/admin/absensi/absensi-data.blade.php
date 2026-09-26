@@ -3,15 +3,18 @@
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
         <div>
             <h5 class="fw-bold text-dark mb-1">Tahap 5: Absensi Elektronik</h5>
-            <p class="text-muted mb-0">Manajemen presensi digital sesi diklat, pembuatan token absensi 6 digit, pemantauan kehadiran realtime, dan koreksi status kehadiran ASN.</p>
+            <p class="text-muted mb-0">Manajemen presensi digital sesi diklat, pembuatan token absensi 6 digit,
+                pemantauan kehadiran realtime, dan koreksi status kehadiran ASN.</p>
         </div>
         <div class="d-flex align-items-center gap-2">
             @if ($isMentor)
-                <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 fs-7 fw-semibold">
+                <span
+                    class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 fs-7 fw-semibold">
                     <i class="ri-user-star-line me-1"></i> Mode Mentor Pengampu Sesi
                 </span>
             @else
-                <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-2 fs-7 fw-semibold">
+                <span
+                    class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-2 fs-7 fw-semibold">
                     <i class="ri-shield-user-line me-1"></i> Mode Admin: Monitoring & Audit Diklat
                 </span>
             @endif
@@ -22,34 +25,40 @@
     <div class="row g-3 mb-24">
         <div class="col-md-4">
             <div class="card border-0 shadow-sm radius-12 p-3 bg-white d-flex flex-row align-items-center gap-3">
-                <div class="p-3 bg-primary-subtle text-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                <div class="p-3 bg-primary-subtle text-primary rounded-circle d-flex align-items-center justify-content-center"
+                    style="width: 50px; height: 50px;">
                     <i class="ri-calendar-check-line fs-4"></i>
                 </div>
                 <div>
                     <h6 class="text-muted fs-8 mb-1">Total Sesi Pelatihan Hari Ini</h6>
-                    <h4 class="fw-bold text-dark mb-0">{{ $totalSessionsToday }} <span class="fs-8 fw-normal text-muted">Sesi</span></h4>
+                    <h4 class="fw-bold text-dark mb-0">{{ $totalSessionsToday }} <span
+                            class="fs-8 fw-normal text-muted">Sesi</span></h4>
                 </div>
             </div>
         </div>
         <div class="col-md-4">
             <div class="card border-0 shadow-sm radius-12 p-3 bg-white d-flex flex-row align-items-center gap-3">
-                <div class="p-3 bg-success-subtle text-success rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                <div class="p-3 bg-success-subtle text-success rounded-circle d-flex align-items-center justify-content-center"
+                    style="width: 50px; height: 50px;">
                     <i class="ri-radar-line fs-4"></i>
                 </div>
                 <div>
                     <h6 class="text-muted fs-8 mb-1">Sesi Token Aktif Berjalan</h6>
-                    <h4 class="fw-bold text-success mb-0">{{ $activeSessionsNow }} <span class="fs-8 fw-normal text-muted">Sesi Terbuka</span></h4>
+                    <h4 class="fw-bold text-success mb-0">{{ $activeSessionsNow }} <span
+                            class="fs-8 fw-normal text-muted">Sesi Terbuka</span></h4>
                 </div>
             </div>
         </div>
         <div class="col-md-4">
             <div class="card border-0 shadow-sm radius-12 p-3 bg-white d-flex flex-row align-items-center gap-3">
-                <div class="p-3 bg-warning-subtle text-warning rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                <div class="p-3 bg-warning-subtle text-warning rounded-circle d-flex align-items-center justify-content-center"
+                    style="width: 50px; height: 50px;">
                     <i class="ri-user-star-line fs-4"></i>
                 </div>
                 <div>
                     <h6 class="text-muted fs-8 mb-1">Masa Berlaku Standar Token</h6>
-                    <h4 class="fw-bold text-dark mb-0">15 <span class="fs-8 fw-normal text-muted">Menit per Sesi</span></h4>
+                    <h4 class="fw-bold text-dark mb-0">15 <span class="fs-8 fw-normal text-muted">Menit per Sesi</span>
+                    </h4>
                 </div>
             </div>
         </div>
@@ -57,15 +66,11 @@
 
     {{-- Main Card with Table --}}
     <div class="card simpel-card border-0 shadow-sm radius-16">
-        <div class="card-header bg-white pt-20 pb-0 px-20 border-0 d-flex align-items-center justify-content-between flex-wrap gap-2">
+        <div
+            class="card-header bg-white pt-20 pb-0 px-20 border-0 d-flex align-items-center justify-content-between flex-wrap gap-2">
             <div class="d-flex align-items-center gap-2">
                 <i class="ri-qr-code-line text-simple fs-5"></i>
                 <h6 class="fw-bold text-dark mb-0 fs-6">Daftar Sesi & Presensi Pelatihan</h6>
-            </div>
-            <div class="d-flex align-items-center gap-2">
-                <button type="button" class="btn btn-sm btn-outline-secondary" id="btn-refresh-absensi" title="Muat Ulang Data">
-                    <i class="ri-refresh-line"></i> Segarkan
-                </button>
             </div>
         </div>
 
@@ -98,12 +103,15 @@
                 <div class="col-md-4">
                     <label class="form-label fs-8 text-muted mb-1">Cari Data Sesi:</label>
                     <div class="input-group input-group-sm">
-                        <span class="input-group-text bg-white text-muted border-end-0"><i class="ri-search-line"></i></span>
-                        <input type="text" id="custom_search_dt" class="form-control form-control-sm border-start-0" placeholder="Ketik judul sesi, mentor, token...">
+                        <span class="input-group-text bg-white text-muted border-end-0"><i
+                                class="ri-search-line"></i></span>
+                        <input type="text" id="custom_search_dt" class="form-control form-control-sm border-start-0"
+                            placeholder="Ketik judul sesi, mentor, token...">
                     </div>
                 </div>
                 <div class="col-md-1">
-                    <button type="button" id="btn-reset-filters" class="btn btn-sm btn-light border w-100" title="Reset Semua Filter">
+                    <button type="button" id="btn-reset-filters" class="btn btn-sm btn-light border w-100"
+                        title="Reset Semua Filter">
                         <i class="ri-refresh-line"></i> Reset
                     </button>
                 </div>
@@ -135,15 +143,18 @@
     </div>
 
     {{-- MODAL 1: BUKA & ATUR TOKEN SESI --}}
-    <div wire:ignore.self class="modal fade" id="modalToken" tabindex="-1" aria-labelledby="modalTokenLabel" aria-hidden="true">
+    <div wire:ignore.self class="modal fade" id="modalToken" tabindex="-1" aria-labelledby="modalTokenLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 shadow radius-16 overflow-hidden">
                 <div class="modal-header bg-navy text-white px-4 py-3">
                     <div class="d-flex align-items-center gap-2">
                         <i class="ri-key-2-line fs-5 text-warning"></i>
-                        <h6 class="modal-title fw-bold mb-0 text-white" id="modalTokenLabel">Pengaturan Token Absensi Sesi</h6>
+                        <h6 class="modal-title fw-bold mb-0 text-white" id="modalTokenLabel">Pengaturan Token Absensi
+                            Sesi</h6>
                     </div>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-4">
                     <div class="mb-3">
@@ -154,16 +165,21 @@
 
                     @if ($isTokenActive && $activeToken)
                         <div class="text-center p-3 my-3 bg-light border border-success-subtle rounded-3">
-                            <span class="text-muted fs-8 text-uppercase tracking-wider fw-semibold d-block mb-1">Kode Token Aktif</span>
-                            <div class="display-4 fw-bold text-success my-1 font-monospace" style="letter-spacing: 6px;">{{ $activeToken }}</div>
+                            <span class="text-muted fs-8 text-uppercase tracking-wider fw-semibold d-block mb-1">Kode
+                                Token Aktif</span>
+                            <div class="display-4 fw-bold text-success my-1 font-monospace"
+                                style="letter-spacing: 6px;">{{ $activeToken }}</div>
                             <p class="text-muted fs-8 mb-2">
-                                <i class="ri-time-line text-warning me-1"></i> Aktif sampai pukul <strong>{{ $activeTokenExpires }} WIB</strong>
+                                <i class="ri-time-line text-warning me-1"></i> Aktif sampai pukul
+                                <strong>{{ $activeTokenExpires }} WIB</strong>
                             </p>
                             <div class="d-flex justify-content-center gap-2">
-                                <button type="button" class="btn btn-sm btn-outline-success" onclick="navigator.clipboard.writeText('{{ $activeToken }}'); alert('Kode token disalin!');">
+                                <button type="button" class="btn btn-sm btn-outline-success"
+                                    onclick="navigator.clipboard.writeText('{{ $activeToken }}'); alert('Kode token disalin!');">
                                     <i class="ri-file-copy-line"></i> Salin Token
                                 </button>
-                                <button type="button" class="btn btn-sm btn-outline-danger" wire:click="closeToken({{ $selectedScheduleId }})">
+                                <button type="button" class="btn btn-sm btn-outline-danger"
+                                    wire:click="closeToken({{ $selectedScheduleId }})">
                                     <i class="ri-close-circle-line"></i> Tutup Sekarang
                                 </button>
                             </div>
@@ -177,12 +193,16 @@
 
                     <form wire:submit.prevent="submitOpenToken">
                         <div class="mb-3">
-                            <label class="form-label fw-semibold text-dark fs-8">Masa Berlaku Token (Menit) <span class="text-danger">*</span></label>
+                            <label class="form-label fw-semibold text-dark fs-8">Masa Berlaku Token (Menit) <span
+                                    class="text-danger">*</span></label>
                             <div class="input-group">
-                                <input type="number" class="form-control @error('tokenValidityMinutes') is-invalid @enderror" wire:model="tokenValidityMinutes" min="5" max="180">
+                                <input type="number"
+                                    class="form-control @error('tokenValidityMinutes') is-invalid @enderror"
+                                    wire:model="tokenValidityMinutes" min="5" max="180">
                                 <span class="input-group-text fs-8 text-muted">Menit</span>
                             </div>
-                            <small class="text-muted fs-8">Durasi standar: 15 menit. Anda dapat mengatur rentang 5 hingga 180 menit.</small>
+                            <small class="text-muted fs-8">Durasi standar: 15 menit. Anda dapat mengatur rentang 5
+                                hingga 180 menit.</small>
                             @error('tokenValidityMinutes')
                                 <div class="text-danger fs-8 mt-1">{{ $message }}</div>
                             @enderror
@@ -190,8 +210,10 @@
 
                         <div class="d-flex justify-content-end gap-2 mt-4">
                             <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
-                            <button type="submit" class="btn btn-simple-gold d-inline-flex align-items-center gap-1" wire:loading.attr="disabled">
-                                <span wire:loading.remove><i class="ri-shield-keyhole-line"></i> {{ $isTokenActive ? 'Perpanjang / Buat Baru' : 'Buka Sesi Token' }}</span>
+                            <button type="submit" class="btn btn-simple-gold d-inline-flex align-items-center gap-1"
+                                wire:loading.attr="disabled">
+                                <span wire:loading.remove><i class="ri-shield-keyhole-line"></i>
+                                    {{ $isTokenActive ? 'Perpanjang / Buat Baru' : 'Buka Sesi Token' }}</span>
                                 <span wire:loading><i class="ri-loader-4-line ri-spin"></i> Memproses...</span>
                             </button>
                         </div>
@@ -202,7 +224,8 @@
     </div>
 
     {{-- MODAL 2: REKAPITULASI PRESENSI & RIWAYAT HADIR PESERTA --}}
-    <div wire:ignore.self class="modal fade" id="modalAttendanceSheet" tabindex="-1" aria-labelledby="modalSheetLabel" aria-hidden="true">
+    <div wire:ignore.self class="modal fade" id="modalAttendanceSheet" tabindex="-1"
+        aria-labelledby="modalSheetLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content border-0 shadow radius-16 overflow-hidden">
                 <div class="modal-header bg-navy text-white px-4 py-3">
@@ -214,7 +237,8 @@
                             {{ $attendanceSheet['schedule']->session_title ?? '-' }}
                         </small>
                     </div>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-4 bg-light">
                     @if ($attendanceSheet)
@@ -235,13 +259,15 @@
                             <div class="col-md-2">
                                 <div class="bg-white p-2 rounded border text-center">
                                     <small class="text-warning d-block fs-8">Terlambat</small>
-                                    <h5 class="fw-bold text-warning mb-0">{{ $attendanceSheet['terlambat_count'] }}</h5>
+                                    <h5 class="fw-bold text-warning mb-0">{{ $attendanceSheet['terlambat_count'] }}
+                                    </h5>
                                 </div>
                             </div>
                             <div class="col-md-2">
                                 <div class="bg-white p-2 rounded border text-center">
                                     <small class="text-info d-block fs-8">Izin / Sakit</small>
-                                    <h5 class="fw-bold text-info mb-0">{{ $attendanceSheet['izin_count'] + $attendanceSheet['sakit_count'] }}</h5>
+                                    <h5 class="fw-bold text-info mb-0">
+                                        {{ $attendanceSheet['izin_count'] + $attendanceSheet['sakit_count'] }}</h5>
                                 </div>
                             </div>
                             <div class="col-md-2">
@@ -253,7 +279,8 @@
                             <div class="col-md-2">
                                 <div class="bg-white p-2 rounded border text-center">
                                     <small class="text-secondary d-block fs-8">Belum Absen</small>
-                                    <h5 class="fw-bold text-muted mb-0">{{ $attendanceSheet['belum_absen_count'] }}</h5>
+                                    <h5 class="fw-bold text-muted mb-0">{{ $attendanceSheet['belum_absen_count'] }}
+                                    </h5>
                                 </div>
                             </div>
                         </div>
@@ -290,29 +317,38 @@
                                                 </td>
                                                 <td class="text-center">
                                                     @if ($p['status'] === 'hadir')
-                                                        <span class="badge bg-success text-white px-2 py-1"><i class="ri-checkbox-circle-line me-1"></i>Hadir</span>
+                                                        <span class="badge bg-success text-white px-2 py-1"><i
+                                                                class="ri-checkbox-circle-line me-1"></i>Hadir</span>
                                                     @elseif ($p['status'] === 'terlambat')
-                                                        <span class="badge bg-warning text-dark px-2 py-1"><i class="ri-time-line me-1"></i>Terlambat</span>
+                                                        <span class="badge bg-warning text-dark px-2 py-1"><i
+                                                                class="ri-time-line me-1"></i>Terlambat</span>
                                                     @elseif ($p['status'] === 'izin')
-                                                        <span class="badge bg-info text-white px-2 py-1"><i class="ri-information-line me-1"></i>Izin</span>
+                                                        <span class="badge bg-info text-white px-2 py-1"><i
+                                                                class="ri-information-line me-1"></i>Izin</span>
                                                     @elseif ($p['status'] === 'sakit')
-                                                        <span class="badge bg-secondary text-white px-2 py-1"><i class="ri-first-aid-kit-line me-1"></i>Sakit</span>
+                                                        <span class="badge bg-secondary text-white px-2 py-1"><i
+                                                                class="ri-first-aid-kit-line me-1"></i>Sakit</span>
                                                     @elseif ($p['status'] === 'alpa')
-                                                        <span class="badge bg-danger text-white px-2 py-1"><i class="ri-close-circle-line me-1"></i>Alpa</span>
+                                                        <span class="badge bg-danger text-white px-2 py-1"><i
+                                                                class="ri-close-circle-line me-1"></i>Alpa</span>
                                                     @else
-                                                        <span class="badge bg-light text-muted px-2 py-1 border">Belum Absen</span>
+                                                        <span class="badge bg-light text-muted px-2 py-1 border">Belum
+                                                            Absen</span>
                                                     @endif
                                                 </td>
                                                 <td>
                                                     @if ($p['is_manual_correction'])
-                                                        <small class="text-dark d-block"><em>"{{ $p['correction_reason'] }}"</em></small>
-                                                        <small class="text-muted" style="font-size: 11px;">Oleh: {{ $p['corrected_by_name'] ?? 'Admin/Mentor' }}</small>
+                                                        <small
+                                                            class="text-dark d-block"><em>"{{ $p['correction_reason'] }}"</em></small>
+                                                        <small class="text-muted" style="font-size: 11px;">Oleh:
+                                                            {{ $p['corrected_by_name'] ?? 'Admin/Mentor' }}</small>
                                                     @else
                                                         <span class="text-muted fs-8">-</span>
                                                     @endif
                                                 </td>
                                                 <td class="text-center">
-                                                    <button type="button" class="btn btn-sm btn-outline-warning py-1 px-2 fs-8"
+                                                    <button type="button"
+                                                        class="btn btn-sm btn-outline-warning py-1 px-2 fs-8"
                                                         wire:click="hookModalCorrection({{ $p['user_id'] }}, '{{ addslashes($p['name']) }}', '{{ $p['status'] }}')">
                                                         <i class="ri-edit-line"></i> Koreksi
                                                     </button>
@@ -339,15 +375,18 @@
     </div>
 
     {{-- MODAL 3: KOREKSI MANUAL KEHADIRAN (ADMIN / MENTOR) --}}
-    <div wire:ignore.self class="modal fade" id="modalCorrection" tabindex="-1" aria-labelledby="modalCorrectionLabel" aria-hidden="true" style="z-index: 1070;">
+    <div wire:ignore.self class="modal fade" id="modalCorrection" tabindex="-1"
+        aria-labelledby="modalCorrectionLabel" aria-hidden="true" style="z-index: 1070;">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 shadow radius-16 overflow-hidden">
                 <div class="modal-header bg-navy text-white px-4 py-3">
                     <div class="d-flex align-items-center gap-2">
                         <i class="ri-edit-2-line fs-5 text-warning"></i>
-                        <h6 class="modal-title fw-bold mb-0 text-white" id="modalCorrectionLabel">Koreksi Manual Status Kehadiran</h6>
+                        <h6 class="modal-title fw-bold mb-0 text-white" id="modalCorrectionLabel">Koreksi Manual
+                            Status Kehadiran</h6>
                     </div>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-4">
                     <div class="mb-3">
@@ -357,8 +396,10 @@
 
                     <form wire:submit.prevent="submitCorrection">
                         <div class="mb-3">
-                            <label class="form-label fw-semibold text-dark fs-8">Status Kehadiran <span class="text-danger">*</span></label>
-                            <select class="form-select @error('correctionStatus') is-invalid @enderror" wire:model="correctionStatus">
+                            <label class="form-label fw-semibold text-dark fs-8">Status Kehadiran <span
+                                    class="text-danger">*</span></label>
+                            <select class="form-select @error('correctionStatus') is-invalid @enderror"
+                                wire:model="correctionStatus">
                                 <option value="hadir">Hadir</option>
                                 <option value="terlambat">Terlambat</option>
                                 <option value="izin">Izin</option>
@@ -371,8 +412,11 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label fw-semibold text-dark fs-8">Alasan Pengubahan Status (Wajib untuk Rekam Audit) <span class="text-danger">*</span></label>
-                            <textarea class="form-control @error('correctionReason') is-invalid @enderror" wire:model="correctionReason" rows="3" placeholder="Contoh: Peserta hadir namun kendala jaringan saat input token; telah dikonfirmasi di kelas."></textarea>
+                            <label class="form-label fw-semibold text-dark fs-8">Alasan Pengubahan Status (Wajib untuk
+                                Rekam Audit) <span class="text-danger">*</span></label>
+                            <textarea class="form-control @error('correctionReason') is-invalid @enderror" wire:model="correctionReason"
+                                rows="3"
+                                placeholder="Contoh: Peserta hadir namun kendala jaringan saat input token; telah dikonfirmasi di kelas."></textarea>
                             @error('correctionReason')
                                 <div class="text-danger fs-8 mt-1">{{ $message }}</div>
                             @enderror
@@ -380,7 +424,8 @@
 
                         <div class="d-flex justify-content-end gap-2 mt-4">
                             <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
-                            <button type="submit" class="btn btn-simple-gold d-inline-flex align-items-center gap-1" wire:loading.attr="disabled">
+                            <button type="submit" class="btn btn-simple-gold d-inline-flex align-items-center gap-1"
+                                wire:loading.attr="disabled">
                                 <span wire:loading.remove><i class="ri-check-line"></i> Simpan Koreksi</span>
                                 <span wire:loading><i class="ri-loader-4-line ri-spin"></i> Menyimpan...</span>
                             </button>
@@ -388,7 +433,7 @@
                     </form>
                 </div>
             </div>
+        </div>
     </div>
-</div>
 
-@include('mods.admin.absensi.atc.absensi-data-atc')
+    @include('mods.admin.absensi.atc.absensi-data-atc')

@@ -34,7 +34,7 @@ window.addEventListener("closeModal", (param) => {
 });
 
 // 2. Listener Membuka Modal Bootstrap
-window.addEventListener("showModal", (param) => {
+const handleShowModal = (param) => {
     const id =
         param.detail?.id ??
         (Array.isArray(param.detail) ? param.detail[0]?.id : param.detail);
@@ -51,7 +51,9 @@ window.addEventListener("showModal", (param) => {
             $("#" + id).modal("show");
         }
     }
-});
+};
+window.addEventListener("showModal", handleShowModal);
+window.addEventListener("openModal", handleShowModal);
 
 // 3. Listener Reload DataTables Reaktif Tanpa Refresh Halaman (Robust multi-table & SPA safe)
 window.addEventListener("reloadDT", (param) => {
@@ -88,23 +90,6 @@ window.addEventListener("reloadDT", (param) => {
     }
 });
 
-// 4. Delegated Handler untuk Bootstrap Dropdown pada Dynamic DataTables & SPA Navigation
-if (typeof $ !== "undefined") {
-    $(document).on("click", '[data-bs-toggle="dropdown"]', function (e) {
-        if (typeof bootstrap !== "undefined" && bootstrap.Dropdown) {
-            const dropdown = bootstrap.Dropdown.getOrCreateInstance(this, {
-                boundary: "window",
-                popperConfig: function (defaultBsPopperConfig) {
-                    return {
-                        ...defaultBsPopperConfig,
-                        strategy: "fixed"
-                    };
-                }
-            });
-            dropdown.toggle();
-        }
-    });
-}
 
 // 5. Lifecycle Livewire Navigation: Bersihkan state modal, dropdown, dan backdrop yatim
 document.addEventListener("livewire:navigated", () => {

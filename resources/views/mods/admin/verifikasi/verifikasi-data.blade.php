@@ -8,16 +8,6 @@
         </div>
     </div>
 
-    @if (session()->has('success_message'))
-        <div class="alert alert-success alert-dismissible fade show rounded-12 border-0 shadow-sm mb-4" role="alert">
-            <div class="d-flex align-items-center gap-2">
-                <i class="ri-checkbox-circle-fill fs-5"></i>
-                <div>{{ session('success_message') }}</div>
-            </div>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    @endif
-
     {{-- Main Card with Table (Identical to Perencanaan, Pendaftaran & Penjadwalan) --}}
     <div class="card simpel-card border-0 shadow-sm radius-16">
         <div

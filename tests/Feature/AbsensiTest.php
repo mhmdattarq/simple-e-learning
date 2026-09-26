@@ -166,17 +166,24 @@ test('assigned mentor can open attendance session token with validity minutes', 
         ->and($this->schedule->isAttendanceActive())->toBeTrue();
 });
 
-test('admin cannot open token and receives access denied alert', function () {
+test('admin can also open attendance session token with validity minutes', function () {
     $this->actingAs($this->admin);
 
     Livewire::test(AbsensiData::class)
         ->call('hookModalToken', $this->schedule->id)
-        ->assertDispatched('alert', function ($name, $params) {
-            return ($params['type'] ?? '') === 'error' && str_contains($params['message'] ?? '', 'Akses ditolak');
-        });
+        ->assertSet('selectedScheduleId', $this->schedule->id)
+        ->set('tokenValidityMinutes', 20)
+        ->set('lateThresholdMinutes', 10)
+        ->call('submitOpenToken')
+        ->assertDispatched('alert')
+        ->assertDispatched('reloadDT');
 
     $this->schedule->refresh();
-    expect($this->schedule->is_attendance_open)->toBeFalse();
+    expect($this->schedule->is_attendance_open)->toBeTrue()
+        ->and($this->schedule->attendance_token)->not->toBeNull()
+        ->and($this->schedule->token_validity_minutes)->toBe(20)
+        ->and($this->schedule->late_threshold_minutes)->toBe(10)
+        ->and($this->schedule->isAttendanceActive())->toBeTrue();
 });
 
 test('other mentor cannot open token for session they do not teach', function () {
@@ -208,20 +215,27 @@ test('assigned mentor can close attendance session token early', function () {
         ->and($this->schedule->isAttendanceActive())->toBeFalse();
 });
 
-test('admin cannot close token and receives access denied alert', function () {
+test('admin can also close attendance session token and auto mark unattended as alpa', function () {
     $this->actingAs($this->admin);
 
     AbsensiRepo::openAttendanceSession($this->schedule, 15);
     expect($this->schedule->fresh()->isAttendanceActive())->toBeTrue();
 
     Livewire::test(AbsensiData::class)
+        ->set('autoAlpaOnClose', true)
         ->call('closeToken', $this->schedule->id)
-        ->assertDispatched('alert', function ($name, $params) {
-            return ($params['type'] ?? '') === 'error' && str_contains($params['message'] ?? '', 'Akses ditolak');
-        });
+        ->assertDispatched('alert')
+        ->assertDispatched('reloadDT');
 
-    // Token tetap aktif karena admin tidak berhak menutup
-    expect($this->schedule->fresh()->isAttendanceActive())->toBeTrue();
+    expect($this->schedule->fresh()->isAttendanceActive())->toBeFalse();
+
+    // Peserta belum absen otomatis menjadi alpa
+    $this->assertDatabaseHas('attendances', [
+        'schedule_id' => $this->schedule->id,
+        'user_id' => $this->peserta->id,
+        'status' => 'alpa',
+        'method' => 'manual',
+    ]);
 });
 
 test('admin can perform manual attendance correction with reason', function () {
@@ -311,4 +325,75 @@ test('absensi datatable filter status token works correctly', function () {
         'token_status' => 'expired',
     ]));
     expect(count($responseExpired->json('data')))->toBe(1);
+});
+
+test('cancelled sessions do not appear in absensi datatable', function () {
+    $this->schedule->update(['status' => 'cancelled']);
+
+    $response = $this->actingAs($this->admin)->getJson(route('absensi.dt'));
+    $response->assertStatus(200);
+    expect(count($response->json('data')))->toBe(0);
+});
+
+test('verified participant can check in with token or qr and records method correctly', function () {
+    $token = AbsensiRepo::openAttendanceSession($this->schedule, 30, 15);
+
+    // 1. Check in via token
+    $result = AbsensiRepo::checkInPeserta($this->peserta, $token, 'token');
+    expect($result['success'])->toBeTrue()
+        ->and($result['attendance']->status)->toBe('hadir')
+        ->and($result['attendance']->method)->toBe('token');
+
+    $this->assertDatabaseHas('attendances', [
+        'schedule_id' => $this->schedule->id,
+        'user_id' => $this->peserta->id,
+        'status' => 'hadir',
+        'method' => 'token',
+    ]);
+});
+
+test('participant check in records terlambat if check in exceeds late threshold', function () {
+    // Sesi dibuka dengan toleransi keterlambatan 5 menit, tapi token dibuka 10 menit yang lalu
+    $token = AbsensiRepo::openAttendanceSession($this->schedule, 30, 5);
+    $this->schedule->update([
+        'token_opened_at' => now()->subMinutes(10),
+    ]);
+
+    $result = AbsensiRepo::checkInPeserta($this->peserta, $token, 'qr');
+    expect($result['success'])->toBeTrue()
+        ->and($result['attendance']->status)->toBe('terlambat')
+        ->and($result['attendance']->method)->toBe('qr');
+
+    $this->assertDatabaseHas('attendances', [
+        'schedule_id' => $this->schedule->id,
+        'user_id' => $this->peserta->id,
+        'status' => 'terlambat',
+        'method' => 'qr',
+    ]);
+});
+
+test('unverified participant or already checked in participant cannot check in again', function () {
+    $token = AbsensiRepo::openAttendanceSession($this->schedule, 30, 15);
+
+    // 1. Peserta tidak terverifikasi (status pending)
+    $unverifiedUser = User::factory()->peserta()->create();
+    CourseUser::create([
+        'user_id' => $unverifiedUser->id,
+        'course_id' => $this->course->id,
+        'registration_number' => 'REG-2026-PENDING',
+        'status' => 'pending',
+    ]);
+
+    $resUnverified = AbsensiRepo::checkInPeserta($unverifiedUser, $token);
+    expect($resUnverified['success'])->toBeFalse()
+        ->and($resUnverified['message'])->toContain('tidak terdaftar sebagai peserta terverifikasi');
+
+    // 2. Peserta berhasil check in pertama kali
+    $resFirst = AbsensiRepo::checkInPeserta($this->peserta, $token);
+    expect($resFirst['success'])->toBeTrue();
+
+    // 3. Peserta mencoba check in kedua kali
+    $resSecond = AbsensiRepo::checkInPeserta($this->peserta, $token);
+    expect($resSecond['success'])->toBeFalse()
+        ->and($resSecond['message'])->toContain('sudah tercatat melakukan presensi');
 });

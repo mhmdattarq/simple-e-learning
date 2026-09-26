@@ -28,6 +28,10 @@ class AbsensiData extends Component
 
     public int $tokenValidityMinutes = 15;
 
+    public int $lateThresholdMinutes = 15;
+
+    public bool $autoAlpaOnClose = true;
+
     public ?string $activeToken = null;
 
     public ?string $activeTokenExpires = null;
@@ -54,7 +58,7 @@ class AbsensiData extends Component
 
     /**
      * Buka Modal Pengaturan / Generate Token Sesi.
-     * Otorisasi khusus mentor pengampu sesi diklat.
+     * Otorisasi: Admin atau Mentor pengampu sesi diklat.
      */
     public function hookModalToken(int $scheduleId): void
     {
@@ -66,8 +70,8 @@ class AbsensiData extends Component
         }
 
         $user = Auth::user();
-        if (! $user || ! $user->isMentor() || (int) $schedule->mentor_id !== (int) $user->id) {
-            $this->dispatch('alert', type: 'error', message: 'Akses ditolak: Hanya mentor pengampu sesi ini yang berhak membuka atau mengatur token absensi.');
+        if (! $user || ! AbsensiRepo::canManage($user, $schedule)) {
+            $this->dispatch('alert', type: 'error', message: 'Akses ditolak: Hanya Admin atau mentor pengampu sesi ini yang berhak membuka atau mengatur token absensi.');
 
             return;
         }
@@ -76,6 +80,7 @@ class AbsensiData extends Component
         $this->selectedScheduleTitle = $schedule->session_title;
         $this->selectedCourseTitle = $schedule->course?->title ?? '-';
         $this->tokenValidityMinutes = $schedule->token_validity_minutes ?: 15;
+        $this->lateThresholdMinutes = $schedule->late_threshold_minutes ?: 15;
         $this->activeToken = $schedule->attendance_token;
         $this->activeTokenExpires = $schedule->token_expires_at?->format('H:i') ?? null;
         $this->isTokenActive = $schedule->isAttendanceActive();
@@ -85,16 +90,20 @@ class AbsensiData extends Component
 
     /**
      * Submit Buka / Regenerate Token Sesi.
-     * Otorisasi khusus mentor pengampu sesi diklat.
+     * Otorisasi: Admin atau Mentor pengampu sesi diklat.
      */
     public function submitOpenToken(): void
     {
         $this->validate([
             'tokenValidityMinutes' => 'required|integer|min:5|max:180',
+            'lateThresholdMinutes' => 'required|integer|min:1|max:180',
         ], [
             'tokenValidityMinutes.required' => 'Masa berlaku token wajib diisi.',
             'tokenValidityMinutes.min' => 'Masa berlaku minimal 5 menit.',
             'tokenValidityMinutes.max' => 'Masa berlaku maksimal 180 menit (3 jam).',
+            'lateThresholdMinutes.required' => 'Batas waktu keterlambatan wajib diisi.',
+            'lateThresholdMinutes.min' => 'Batas waktu keterlambatan minimal 1 menit.',
+            'lateThresholdMinutes.max' => 'Batas waktu keterlambatan maksimal 180 menit.',
         ]);
 
         if (! $this->selectedScheduleId) {
@@ -104,13 +113,13 @@ class AbsensiData extends Component
         $schedule = CourseSchedule::findOrFail($this->selectedScheduleId);
 
         $user = Auth::user();
-        if (! $user || ! $user->isMentor() || (int) $schedule->mentor_id !== (int) $user->id) {
-            $this->dispatch('alert', type: 'error', message: 'Akses ditolak: Hanya mentor pengampu sesi ini yang berwenang membuka token.');
+        if (! $user || ! AbsensiRepo::canManage($user, $schedule)) {
+            $this->dispatch('alert', type: 'error', message: 'Akses ditolak: Anda tidak memiliki wewenang untuk membuka token sesi ini.');
 
             return;
         }
 
-        $token = AbsensiRepo::openAttendanceSession($schedule, $this->tokenValidityMinutes);
+        $token = AbsensiRepo::openAttendanceSession($schedule, $this->tokenValidityMinutes, $this->lateThresholdMinutes);
 
         $this->activeToken = $token;
         $this->activeTokenExpires = $schedule->fresh()->token_expires_at?->format('H:i');
@@ -122,7 +131,7 @@ class AbsensiData extends Component
 
     /**
      * Tutup Sesi Token Absensi.
-     * Otorisasi khusus mentor pengampu sesi diklat.
+     * Otorisasi: Admin atau Mentor pengampu sesi diklat.
      */
     public function closeToken(int $scheduleId): void
     {
@@ -132,13 +141,13 @@ class AbsensiData extends Component
         }
 
         $user = Auth::user();
-        if (! $user || ! $user->isMentor() || (int) $schedule->mentor_id !== (int) $user->id) {
-            $this->dispatch('alert', type: 'error', message: 'Akses ditolak: Hanya mentor pengampu sesi ini yang berwenang menutup token sesi.');
+        if (! $user || ! AbsensiRepo::canManage($user, $schedule)) {
+            $this->dispatch('alert', type: 'error', message: 'Akses ditolak: Anda tidak memiliki wewenang untuk menutup token sesi ini.');
 
             return;
         }
 
-        AbsensiRepo::closeAttendanceSession($schedule);
+        AbsensiRepo::closeAttendanceSession($schedule, $this->autoAlpaOnClose);
 
         if ($this->selectedScheduleId === $scheduleId) {
             $this->isTokenActive = false;

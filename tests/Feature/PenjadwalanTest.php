@@ -3,6 +3,7 @@
 use App\Livewire\Admin\Penjadwalan\PenjadwalanCreate;
 use App\Livewire\Admin\Penjadwalan\PenjadwalanData;
 use App\Livewire\Admin\Penjadwalan\PenjadwalanEdit;
+use App\Models\Attendance;
 use App\Models\Category;
 use App\Models\Course;
 use App\Models\CourseSchedule;
@@ -261,6 +262,127 @@ test('admin can delete schedule session via universal delete hook', function () 
         ->assertDispatched('reloadDT');
 
     $this->assertDatabaseMissing('course_schedules', [
+        'id' => $schedule->id,
+    ]);
+});
+
+test('schedule creation rejects session date outside course period for batch courses', function () {
+    $this->actingAs($this->admin);
+
+    $batchCourse = Course::create([
+        'code' => 'BATCH-PERIOD-01',
+        'title' => 'Diklat Kepemimpinan Batch 1',
+        'category_id' => $this->category->id,
+        'type' => 'batch',
+        'method' => 'luring',
+        'quota' => 20,
+        'status' => 'published',
+        'start_date' => '2026-11-01',
+        'end_date' => '2026-11-10',
+    ]);
+
+    // Session date 2026-11-15 is after end_date 2026-11-10
+    Livewire::test(PenjadwalanCreate::class)
+        ->set('form.course_id', $batchCourse->id)
+        ->set('form.mentor_id', $this->mentor->id)
+        ->set('form.session_title', 'Sesi di Luar Periode Diklat')
+        ->set('form.session_date', '2026-11-15')
+        ->set('form.start_time', '09:00')
+        ->set('form.end_time', '11:00')
+        ->set('form.room_or_link', 'Ruang A')
+        ->call('formSubmit')
+        ->assertHasErrors(['form.session_date']);
+
+    $this->assertDatabaseMissing('course_schedules', [
+        'session_title' => 'Sesi di Luar Periode Diklat',
+    ]);
+});
+
+test('schedule creation rejects draft unapproved course', function () {
+    $this->actingAs($this->admin);
+
+    $draftCourse = Course::create([
+        'code' => 'DRAFT-COURSE-01',
+        'title' => 'Diklat Belum Disetujui Pimpinan',
+        'category_id' => $this->category->id,
+        'type' => 'permanent',
+        'method' => 'daring',
+        'quota' => 20,
+        'status' => 'draft',
+    ]);
+
+    Livewire::test(PenjadwalanCreate::class)
+        ->set('form.course_id', $draftCourse->id)
+        ->set('form.mentor_id', $this->mentor->id)
+        ->set('form.session_title', 'Sesi Kursus Draft')
+        ->set('form.session_date', '2026-11-05')
+        ->set('form.start_time', '09:00')
+        ->set('form.end_time', '11:00')
+        ->set('form.room_or_link', 'https://zoom.us')
+        ->call('formSubmit')
+        ->assertHasErrors(['form.course_id']);
+});
+
+test('admin can cancel schedule session with recorded reason', function () {
+    $this->actingAs($this->admin);
+
+    $schedule = CourseSchedule::create([
+        'course_id' => $this->course->id,
+        'mentor_id' => $this->mentor->id,
+        'session_title' => 'Sesi yang Dibatalkan',
+        'session_date' => '2026-10-28',
+        'start_time' => '08:00',
+        'end_time' => '10:00',
+        'room_or_link' => 'Ruang 3',
+        'status' => 'scheduled',
+        'created_by' => $this->admin->id,
+    ]);
+
+    Livewire::test(PenjadwalanData::class)
+        ->call('openCancelModal', $schedule->id, $schedule->session_title)
+        ->assertSet('cancelScheduleId', $schedule->id)
+        ->set('cancellationReason', 'Narasumber ditugaskan dinas luar mendadak oleh Kepala Dinas.')
+        ->call('submitCancel')
+        ->assertHasNoErrors()
+        ->assertDispatched('closeModal', id: 'modalCancelSchedule')
+        ->assertDispatched('reloadDT');
+
+    $updated = $schedule->fresh();
+    expect($updated->status)->toBe('cancelled');
+    expect($updated->cancellation_reason)->toBe('Narasumber ditugaskan dinas luar mendadak oleh Kepala Dinas.');
+});
+
+test('schedule cannot be permanently deleted when attendances exist', function () {
+    $this->actingAs($this->admin);
+
+    $schedule = CourseSchedule::create([
+        'course_id' => $this->course->id,
+        'mentor_id' => $this->mentor->id,
+        'session_title' => 'Sesi dengan Absensi',
+        'session_date' => '2026-10-29',
+        'start_time' => '08:00',
+        'end_time' => '10:00',
+        'room_or_link' => 'Ruang 4',
+        'status' => 'completed',
+        'attendance_token' => '123456',
+        'created_by' => $this->admin->id,
+    ]);
+
+    $peserta = User::factory()->peserta()->create();
+    Attendance::create([
+        'schedule_id' => $schedule->id,
+        'user_id' => $peserta->id,
+        'status' => 'hadir',
+        'check_in_at' => now(),
+    ]);
+
+    Livewire::test(PenjadwalanData::class)
+        ->call('delete', ['id' => $schedule->id])
+        ->assertDispatched('alert-show', function ($event, $params) {
+            return $params['data']['type'] === 'warning' && str_contains($params['data']['message'], 'tidak dapat dihapus permanen');
+        });
+
+    $this->assertDatabaseHas('course_schedules', [
         'id' => $schedule->id,
     ]);
 });

@@ -64,9 +64,12 @@
                                 Program Pelatihan <span class="text-danger">*</span>
                             </label>
                             <select class="form-select @error('form.course_id') is-invalid @enderror" wire:model="form.course_id">
-                                <option value="">-- Pilih Program Pelatihan --</option>
+                                <option value="">-- Pilih Program Pelatihan (Disetujui / Dibuka) --</option>
                                 @foreach ($courses as $c)
-                                    <option value="{{ $c->id }}">{{ $c->code }} — {{ $c->title }} ({{ ucfirst($c->method) }})</option>
+                                    @php
+                                        $periodText = $c->isPermanent() ? 'Mandiri' : ($c->start_date && $c->end_date ? $c->start_date->format('d/m/y').'-'.$c->end_date->format('d/m/y') : 'Batch');
+                                    @endphp
+                                    <option value="{{ $c->id }}">{{ $c->code }} — {{ $c->title }} [{{ $c->status->label() }} &bull; {{ $periodText }}]</option>
                                 @endforeach
                             </select>
                             @error('form.course_id')
