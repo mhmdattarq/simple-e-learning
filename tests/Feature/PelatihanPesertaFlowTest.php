@@ -241,3 +241,110 @@ test('portal presensi button is hidden in materi belajar when user has attended'
         ->test(MateriBelajar::class, ['id' => $this->course->id])
         ->assertDontSee('Portal Presensi');
 });
+
+test('participant follows sequential lesson flow with Sebelumnya and Selanjutnya buttons', function () {
+    CourseUser::create([
+        'user_id' => $this->peserta->id,
+        'course_id' => $this->course->id,
+        'registration_number' => 'REG-2026-0003',
+        'status' => 'verified',
+    ]);
+
+    Attendance::create([
+        'schedule_id' => $this->schedule1->id,
+        'user_id' => $this->peserta->id,
+        'status' => 'hadir',
+        'check_in_at' => now(),
+    ]);
+
+    $chapter1 = Chapter::create([
+        'course_id' => $this->course->id,
+        'schedule_id' => $this->schedule1->id,
+        'title' => 'Bab 1: Pengenalan Komputasi Awan',
+        'order' => 1,
+    ]);
+
+    $lesson1 = Lesson::create([
+        'chapter_id' => $chapter1->id,
+        'title' => 'Materi 1.1: Konsep Cloud',
+        'order' => 1,
+        'content_type' => 'article',
+        'body_text' => '<p>Konten Materi 1.1</p>',
+    ]);
+
+    $lesson2 = Lesson::create([
+        'chapter_id' => $chapter1->id,
+        'title' => 'Materi 1.2: Model Layanan IaaS PaaS SaaS',
+        'order' => 2,
+        'content_type' => 'article',
+        'body_text' => '<p>Konten Materi 1.2</p>',
+    ]);
+
+    $chapter2 = Chapter::create([
+        'course_id' => $this->course->id,
+        'schedule_id' => $this->schedule1->id,
+        'title' => 'Bab 2: Arsitektur Cloud ASN',
+        'order' => 2,
+    ]);
+
+    $lesson3 = Lesson::create([
+        'chapter_id' => $chapter2->id,
+        'title' => 'Materi 2.1: Desain Keamanan',
+        'order' => 1,
+        'content_type' => 'article',
+        'body_text' => '<p>Konten Materi 2.1</p>',
+    ]);
+
+    // Peserta pertama kali masuk: otomatis membuka lesson1
+    $component = Livewire::actingAs($this->peserta)
+        ->test(MateriBelajar::class, ['id' => $this->course->id])
+        ->assertSet('selectedLessonId', $lesson1->id)
+        ->assertSee('Sebelumnya')
+        ->assertSee('Selanjutnya')
+        ->assertDontSee('Tandai Selesai Belajar');
+
+    // Peserta tidak bisa langsung loncat ke materi 1.2 atau 2.1 karena terkunci
+    $component->call('selectLesson', $lesson2->id)
+        ->assertDispatched('show-toast')
+        ->assertSet('selectedLessonId', $lesson1->id);
+
+    // Klik Selanjutnya -> Materi 1.1 ditandai selesai dan otomatis pindah ke Materi 1.2
+    $component->call('nextLesson')
+        ->assertSet('selectedLessonId', $lesson2->id)
+        ->assertSee('Sebelumnya')
+        ->assertSee('Tandai Selesai Belajar'); // Karena lesson 2 adalah materi terakhir di Bab 1
+
+    // Verifikasi lesson 1 selesai di database
+    $this->assertDatabaseHas('lesson_user', [
+        'user_id' => $this->peserta->id,
+        'lesson_id' => $lesson1->id,
+        'is_completed' => 1,
+    ]);
+
+    // Peserta bisa kembali ke materi sebelumnya (Materi 1.1)
+    $component->call('previousLesson')
+        ->assertSet('selectedLessonId', $lesson1->id);
+
+    // Dari materi 1.1, klik Selanjutnya kembali ke materi 1.2
+    $component->call('nextLesson')
+        ->assertSet('selectedLessonId', $lesson2->id);
+
+    // Di materi 1.2 (akhir bab 1), klik Tandai Selesai Belajar memunculkan modal
+    $component->call('promptCompleteChapter')
+        ->assertSet('showCompleteModal', true)
+        ->assertSee('Konfirmasi Selesai Bab')
+        ->assertSee('Apakah Anda yakin menandai bab');
+
+    // Konfirmasi selesai bab -> bab 1 tuntas dan otomatis maju ke Materi 2.1 (Bab 2)
+    $component->call('confirmCompleteChapter')
+        ->assertSet('showCompleteModal', false)
+        ->assertSet('selectedLessonId', $lesson3->id)
+        ->assertSee('Materi 2.1: Desain Keamanan');
+
+    // Verifikasi kedua materi di Bab 1 selesai
+    $this->assertDatabaseHas('lesson_user', [
+        'user_id' => $this->peserta->id,
+        'lesson_id' => $lesson2->id,
+        'is_completed' => 1,
+    ]);
+});

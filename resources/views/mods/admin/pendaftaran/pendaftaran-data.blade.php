@@ -264,6 +264,7 @@
                             <th>Nama Pelatihan</th>
                             <th class="text-center" style="width: 130px;">Tgl Daftar</th>
                             <th class="text-center" style="width: 110px;">Status</th>
+                            <th class="text-center" style="width: 90px;">Aksi</th>
                         </tr>
                         {{-- Thead Kedua: Filter pencarian spesifik per kolom tabel --}}
                         <tr id="header-filter" class="bg-light">
@@ -289,6 +290,7 @@
                                 <input type="text" class="form-control form-control-sm search-col-dt"
                                     placeholder="Cari status...">
                             </th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody></tbody>
@@ -467,9 +469,16 @@
                     @endif
                 </div>
 
-                <div class="modal-footer border-0 pt-0 px-4 pb-4">
+                <div class="modal-footer border-0 pt-0 px-4 pb-4 d-flex justify-content-between align-items-center">
                     <button type="button" class="btn btn-light px-4 rounded-pill"
                         data-bs-dismiss="modal">Tutup</button>
+                    @if ($selectedDetail && (auth()->user()?->isVerifikator() || auth()->user()?->isAdmin()))
+                        <a href="{{ route('verifikasi.periksa', $selectedDetail['id']) }}" wire:navigate
+                            class="btn btn-primary px-4 rounded-pill d-inline-flex align-items-center gap-1 shadow-sm"
+                            data-bs-dismiss="modal">
+                            <i class="ri-shield-check-line"></i> Periksa / Verifikasi Berkas
+                        </a>
+                    @endif
                 </div>
             </div>
         </div>
