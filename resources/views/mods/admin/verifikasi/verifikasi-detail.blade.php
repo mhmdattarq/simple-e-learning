@@ -27,10 +27,9 @@
             </p>
         </div>
         <div>
-            <a href="{{ route('verifikasi.data') }}"
-                class="btn btn-danger d-inline-flex align-items-center gap-1 radius-8 px-3 py-2" wire:navigate>
+            <a href="{{ route('verifikasi.data') }}" class="btn btn-danger d-flex align-items-center" wire:navigate>
                 <i class="ri-arrow-left-line"></i>
-                <span>Kembali ke Daftar</span>
+                <span>Kembali</span>
             </a>
         </div>
     </div>
@@ -232,9 +231,11 @@
                                                 <div class="d-flex align-items-center gap-2">
                                                     <i class="ri-checkbox-circle-fill text-success fs-5"></i>
                                                     <div>
-                                                        <span class="fw-bold text-dark fs-7 d-block">Diverifikasi / Lolos
+                                                        <span class="fw-bold text-dark fs-7 d-block">Diverifikasi /
+                                                            Lolos
                                                             Syarat</span>
-                                                        <small class="text-muted fs-8">Berkas lengkap, sah, dan memenuhi
+                                                        <small class="text-muted fs-8">Berkas lengkap, sah, dan
+                                                            memenuhi
                                                             kuota diklat.</small>
                                                     </div>
                                                 </div>
@@ -252,7 +253,8 @@
                                                     <div>
                                                         <span class="fw-bold text-dark fs-7 d-block">Perlu Perbaikan
                                                             Berkas</span>
-                                                        <small class="text-muted fs-8">Berkas kurang jelas / belum bertanda
+                                                        <small class="text-muted fs-8">Berkas kurang jelas / belum
+                                                            bertanda
                                                             tangan resmi atasan.</small>
                                                     </div>
                                                 </div>
@@ -319,7 +321,8 @@
                     </div>
                 @else
                     {{-- Informasi Status Peserta yang Sudah Lolos / Diverifikasi --}}
-                    <div class="card simpel-card border-0 shadow-sm radius-16 bg-success bg-opacity-10 border border-success border-opacity-25">
+                    <div
+                        class="card simpel-card border-0 shadow-sm radius-16 bg-success bg-opacity-10 border border-success border-opacity-25">
                         <div class="card-body p-20">
                             <div class="d-flex align-items-start gap-3">
                                 <div class="rounded-circle d-flex align-items-center justify-content-center bg-success text-white flex-shrink-0"
@@ -329,14 +332,22 @@
                                 <div class="flex-grow-1">
                                     <h6 class="fw-bold text-success mb-1 fs-6">Berkas Telah Diverifikasi & Lolos</h6>
                                     <p class="text-muted fs-8 mb-2">
-                                        Data calon peserta ini telah selesai diperiksa dan dinyatakan memenuhi persyaratan diklat ASN.
+                                        Data calon peserta ini telah selesai diperiksa dan dinyatakan memenuhi
+                                        persyaratan diklat ASN.
                                     </p>
                                     @if ($registration->verifier)
-                                        <div class="p-2 rounded-8 bg-white border border-success border-opacity-25 fs-8 text-dark">
-                                            <div><i class="ri-user-follow-line text-success me-1"></i>Verifikator: <strong>{{ $registration->verifier?->name }}</strong></div>
-                                            <div class="mt-1 text-muted"><i class="ri-time-line me-1"></i>Waktu: {{ $registration->verified_at?->format('d M Y, H:i') }} WIB</div>
+                                        <div
+                                            class="p-2 rounded-8 bg-white border border-success border-opacity-25 fs-8 text-dark">
+                                            <div><i class="ri-user-follow-line text-success me-1"></i>Verifikator:
+                                                <strong>{{ $registration->verifier?->name }}</strong>
+                                            </div>
+                                            <div class="mt-1 text-muted"><i class="ri-time-line me-1"></i>Waktu:
+                                                {{ $registration->verified_at?->format('d M Y, H:i') }} WIB</div>
                                             @if ($registration->verification_notes)
-                                                <div class="mt-1 text-muted"><i class="ri-chat-1-line me-1"></i>Catatan: <em>"{{ $registration->verification_notes }}"</em></div>
+                                                <div class="mt-1 text-muted"><i
+                                                        class="ri-chat-1-line me-1"></i>Catatan:
+                                                    <em>"{{ $registration->verification_notes }}"</em>
+                                                </div>
                                             @endif
                                         </div>
                                     @endif

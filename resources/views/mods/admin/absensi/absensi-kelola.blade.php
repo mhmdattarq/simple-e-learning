@@ -15,15 +15,14 @@
             </p>
         </div>
         <div class="d-flex align-items-center gap-2">
-            <button type="button" class="btn btn-success d-inline-flex align-items-center gap-1 radius-8 px-3 py-2"
-                wire:click="loadAttendanceSheet" title="Segarkan Data Presensi">
+            <button type="button" class="btn btn-success d-flex align-items-center" wire:click="loadAttendanceSheet"
+                title="Segarkan Data Presensi">
                 <i class="ri-refresh-line"></i>
                 <span>Refresh Data</span>
             </button>
-            <a href="{{ route('absensi.data') }}"
-                class="btn btn-danger d-inline-flex align-items-center gap-1 radius-8 px-3 py-2" wire:navigate>
+            <a href="{{ route('absensi.data') }}" class="btn btn-danger d-flex align-items-center" wire:navigate>
                 <i class="ri-arrow-left-line"></i>
-                <span>Kembali ke Daftar</span>
+                <span>Kembali</span>
             </a>
         </div>
     </div>
@@ -427,10 +426,12 @@
                     <div id="enlarged_qr_token" class="display-4 fw-bold text-success font-monospace"
                         style="letter-spacing: 6px;">{{ $activeToken }}</div>
                     <div class="text-primary fs-8 mt-2">
-                        <i class="ri-links-line me-1"></i> Tautan Presensi: <code id="enlarged_qr_url" class="text-primary bg-light px-2 py-1 rounded"></code>
+                        <i class="ri-links-line me-1"></i> Tautan Presensi: <code id="enlarged_qr_url"
+                            class="text-primary bg-light px-2 py-1 rounded"></code>
                     </div>
                 </div>
-                <p class="text-muted fs-8 mb-0">Peserta dapat memindai QR Code di layar proyektor ini dengan kamera ponsel atau membuka tautan di atas.</p>
+                <p class="text-muted fs-8 mb-0">Peserta dapat memindai QR Code di layar proyektor ini dengan kamera
+                    ponsel atau membuka tautan di atas.</p>
             </div>
         </div>
     </div>
