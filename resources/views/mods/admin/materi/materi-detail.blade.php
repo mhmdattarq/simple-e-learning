@@ -97,8 +97,20 @@
                         <i class="ri-infinity-line me-1"></i>Permanen (Self-Paced)
                     </span>
                 @endif
+                @if ($schedule)
+                    <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1 radius-4 fs-8">
+                        <i class="ri-calendar-event-line me-1"></i>Sesi: {{ $schedule->session_title }}
+                    </span>
+                @endif
             </div>
-            <h5 class="fw-bold text-dark mb-0">{{ $course->title }}</h5>
+            <h5 class="fw-bold text-dark mb-0">
+                @if ($schedule)
+                    {{ $schedule->session_title }}
+                    <small class="text-muted fs-7 d-block fw-normal">{{ $course->title }}</small>
+                @else
+                    {{ $course->title }}
+                @endif
+            </h5>
         </div>
 
         <div class="d-flex align-items-center gap-2">
@@ -112,7 +124,7 @@
                         <i class="ri-lock-2-line me-1"></i> Curriculum Frozen (Terkunci)
                     </span>
                 @else
-                    <a href="{{ route('materi.data') }}" class="btn btn-sm btn-danger d-flex align-items-center radius-8"
+                    <a href="{{ $schedule ? route('materi.sesi', $course->id) : route('materi.data') }}" class="btn btn-sm btn-danger d-flex align-items-center radius-8"
                         wire:navigate>
                         <i class="ri-arrow-left-line"></i> Kembali
                     </a>

@@ -16,6 +16,7 @@ class Chapter extends Model
     protected function casts(): array
     {
         return [
+            'schedule_id' => 'integer',
             'order' => 'integer',
         ];
     }
@@ -26,6 +27,14 @@ class Chapter extends Model
     public function course(): BelongsTo
     {
         return $this->belongsTo(Course::class, 'course_id');
+    }
+
+    /**
+     * Sesi jadwal pelatihan yang menaungi bab materi ini (opsional).
+     */
+    public function schedule(): BelongsTo
+    {
+        return $this->belongsTo(CourseSchedule::class, 'schedule_id');
     }
 
     /**

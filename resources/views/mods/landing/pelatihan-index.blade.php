@@ -87,13 +87,71 @@
                                             </div>
                                         </div>
 
-                                        {{-- Right: CTA Button --}}
+                                        {{-- Right: CTA Button (State-based Conditioning) --}}
                                         <div class="col-auto">
-                                            <a href="{{ route('pelatihan.daftar', $course->id) }}"
-                                                class="btn-simpel-cta-gold">
-                                                <span>Daftar Pelatihan</span>
-                                                <i class="ri-arrow-right-line"></i>
-                                            </a>
+                                            @php
+                                                $reg = auth()->check() ? ($userRegistrations[$course->id] ?? null) : null;
+                                                $regStatus = $reg ? (is_object($reg->status) ? $reg->status->value : $reg->status) : null;
+                                                $courseSchedules = $course->schedules ?? collect();
+                                                $hasAttendedAny = false;
+                                                $activeOpenSchedule = null;
+                                                $nextUnattendedSchedule = null;
+
+                                                if ($reg && in_array($regStatus, ['verified', 'active', 'completed'])) {
+                                                    foreach ($courseSchedules as $schItem) {
+                                                        if (isset($userAttendances[$schItem->id])) {
+                                                            $hasAttendedAny = true;
+                                                        } elseif ($schItem->isAttendanceActive() && !$activeOpenSchedule) {
+                                                            $activeOpenSchedule = $schItem;
+                                                        } elseif (!$nextUnattendedSchedule) {
+                                                            $nextUnattendedSchedule = $schItem;
+                                                        }
+                                                    }
+                                                }
+                                            @endphp
+
+                                            @if(!auth()->check() || !$reg)
+                                                {{-- Belum Mendaftar / Guest --}}
+                                                <a href="{{ route('pelatihan.daftar', $course->id) }}"
+                                                    class="btn-simpel-cta-gold">
+                                                    <span>Daftar Pelatihan</span>
+                                                    <i class="ri-arrow-right-line"></i>
+                                                </a>
+                                            @elseif($regStatus === 'pending')
+                                                {{-- Sudah Daftar, Menunggu Verifikasi --}}
+                                                <button type="button" class="btn btn-secondary radius-10 px-3 py-2 fs-7 fw-semibold d-inline-flex align-items-center gap-2" disabled>
+                                                    <i class="ri-time-line text-warning"></i>
+                                                    <span>Menunggu Verifikasi</span>
+                                                </button>
+                                            @elseif($regStatus === 'rejected')
+                                                {{-- Pendaftaran Ditolak --}}
+                                                <button type="button" class="btn btn-outline-danger radius-10 px-3 py-2 fs-7 fw-semibold d-inline-flex align-items-center gap-2" disabled>
+                                                    <i class="ri-close-circle-line"></i>
+                                                    <span>Pendaftaran Ditolak</span>
+                                                </button>
+                                            @elseif($activeOpenSchedule)
+                                                {{-- Sesi Sedang Dibuka Presensinya --}}
+                                                <a href="{{ route('presensi.index', $activeOpenSchedule->attendance_token ? ['token' => $activeOpenSchedule->attendance_token] : []) }}"
+                                                    class="btn btn-warning fw-bold text-dark radius-10 px-3 py-2 fs-7 d-inline-flex align-items-center gap-2 shadow-sm">
+                                                    <i class="ri-qr-code-line"></i>
+                                                    <span>Absen Sesi</span>
+                                                </a>
+                                            @elseif($courseSchedules->isNotEmpty() && !$hasAttendedAny)
+                                                {{-- Belum Pernah Absen di Sesi Apapun --}}
+                                                <a href="{{ route('presensi.index', $nextUnattendedSchedule?->attendance_token ? ['token' => $nextUnattendedSchedule->attendance_token] : []) }}"
+                                                    class="btn btn-warning fw-bold text-dark radius-10 px-3 py-2 fs-7 d-inline-flex align-items-center gap-2 shadow-sm">
+                                                    <i class="ri-qr-code-line"></i>
+                                                    <span>Absen Sesi</span>
+                                                </a>
+                                            @else
+                                                {{-- Sudah Absen / Terverifikasi: Akses Materi Pembelajaran --}}
+                                                <a href="{{ route('peserta.materi', $course->id) }}"
+                                                    class="btn btn-success fw-bold text-white radius-10 px-3 py-2 fs-7 d-inline-flex align-items-center gap-2 shadow-sm">
+                                                    <i class="ri-book-open-line"></i>
+                                                    <span>Akses Materi</span>
+                                                    <i class="ri-arrow-right-line"></i>
+                                                </a>
+                                            @endif
                                         </div>
                                     </div>
                                 </div>

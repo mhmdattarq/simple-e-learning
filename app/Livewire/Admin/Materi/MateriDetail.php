@@ -4,6 +4,7 @@ namespace App\Livewire\Admin\Materi;
 
 use App\Models\Chapter;
 use App\Models\Course;
+use App\Models\CourseSchedule;
 use App\Models\Lesson;
 use App\Repositories\MateriRepo;
 use Illuminate\Support\Facades\Auth;
@@ -17,6 +18,11 @@ class MateriDetail extends Component
     public int $courseId;
 
     public ?Course $course = null;
+
+    #[Url(as: 'schedule_id')]
+    public ?int $scheduleId = null;
+
+    public ?CourseSchedule $schedule = null;
 
     public bool $isFrozen = false;
 
@@ -63,14 +69,39 @@ class MateriDetail extends Component
         'version' => 'Versi 1.0',
     ];
 
-    public function mount(int $id): void
+    public function mount(int $id, ?int $schedule_id = null): void
     {
         $this->courseId = $id;
+        if ($schedule_id) {
+            $this->scheduleId = $schedule_id;
+        }
+
         $this->course = Course::with(['category', 'schedules.mentor'])->findOrFail($id);
 
+        if ($this->scheduleId) {
+            $this->schedule = CourseSchedule::with('mentor')
+                ->where('course_id', $this->courseId)
+                ->find($this->scheduleId);
+        }
+
         $user = Auth::user();
-        $this->isAdmin = $user ? $user->hasAdminAccess() : true;
+        $this->isAdmin = $user ? $user->isAdmin() : false;
         $this->isMentor = $user ? $user->isMentor() : false;
+
+        // Otorisasi: Mentor hanya berhak jika mengajar pada sesi atau pelatihan ini
+        if ($this->isMentor && ! $this->isAdmin) {
+            if ($this->scheduleId) {
+                $teaches = CourseSchedule::where('id', $this->scheduleId)
+                    ->where('mentor_id', $user?->id)
+                    ->exists();
+                abort_if(! $teaches, 403, 'Akses ditolak: Anda bukan mentor pengampu sesi ini.');
+            } else {
+                $teaches = CourseSchedule::where('course_id', $this->courseId)
+                    ->where('mentor_id', $user?->id)
+                    ->exists();
+                abort_if(! $teaches, 403, 'Akses ditolak: Anda tidak ditugaskan pada pelatihan ini.');
+            }
+        }
 
         // Check Batch Freeze rule ala Dicoding
         $this->isFrozen = $this->course->isCurriculumFrozen();
@@ -85,7 +116,11 @@ class MateriDetail extends Component
             } elseif ($this->editorChapterId) {
                 $this->openCreateLesson($this->editorChapterId);
             } else {
-                $firstChapter = Chapter::where('course_id', $this->courseId)->orderBy('order', 'asc')->first();
+                $query = Chapter::where('course_id', $this->courseId);
+                if ($this->scheduleId) {
+                    $query->where('schedule_id', $this->scheduleId);
+                }
+                $firstChapter = $query->orderBy('order', 'asc')->first();
                 if ($firstChapter) {
                     $this->openCreateLesson($firstChapter->id);
                 } else {
@@ -100,7 +135,7 @@ class MateriDetail extends Component
      */
     public function loadCurriculum(): void
     {
-        $curriculum = MateriRepo::getCurriculumByCourse($this->courseId);
+        $curriculum = MateriRepo::getCurriculumByCourse($this->courseId, $this->scheduleId);
 
         $this->chapters = $curriculum->map(function ($chapter) {
             return [
@@ -223,6 +258,7 @@ class MateriDetail extends Component
             // Create via Repository
             $created = MateriRepo::createChapter([
                 'course_id' => $this->courseId,
+                'schedule_id' => $this->scheduleId,
                 'title' => $this->chapterForm['title'],
                 'order' => $this->chapterForm['order'],
             ]);
@@ -434,12 +470,17 @@ class MateriDetail extends Component
 
         $chapter = Chapter::where('course_id', $this->courseId)->find($chapterId);
         if (! $chapter) {
-            $chapter = Chapter::where('course_id', $this->courseId)->orderBy('order', 'asc')->first();
+            $query = Chapter::where('course_id', $this->courseId);
+            if ($this->scheduleId) {
+                $query->where('schedule_id', $this->scheduleId);
+            }
+            $chapter = $query->orderBy('order', 'asc')->first();
         }
 
         if (! $chapter) {
             $chapter = MateriRepo::createChapter([
                 'course_id' => $this->courseId,
+                'schedule_id' => $this->scheduleId,
                 'title' => 'Bab 1: Pendahuluan & Materi Umum',
                 'order' => 1,
             ]);

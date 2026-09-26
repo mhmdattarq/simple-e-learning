@@ -12,6 +12,7 @@ use App\Livewire\Admin\Absensi\AbsensiKelola;
 use App\Livewire\Admin\Dashboard\DashboardIndex;
 use App\Livewire\Admin\Materi\MateriData;
 use App\Livewire\Admin\Materi\MateriDetail;
+use App\Livewire\Admin\Materi\MateriSesi;
 use App\Livewire\Admin\Pendaftaran\PendaftaranData;
 use App\Livewire\Admin\Penjadwalan\PenjadwalanCreate;
 use App\Livewire\Admin\Penjadwalan\PenjadwalanData;
@@ -27,6 +28,7 @@ use App\Livewire\Landing\JadwalIndex;
 use App\Livewire\Landing\LandingIndex;
 use App\Livewire\Landing\PelatihanIndex;
 use App\Livewire\Peserta\Absensi\PresensiIndex;
+use App\Livewire\Peserta\Materi\MateriBelajar;
 use App\Livewire\Peserta\Pendaftaran\PendaftaranCreate;
 use App\Livewire\Pimpinan\Dashboard\DashboardIndex as PimpinanDashboard;
 use App\Livewire\Pimpinan\Laporan\LaporanIndex as PimpinanLaporan;
@@ -46,9 +48,10 @@ Route::middleware('guest')->group(function () {
     Route::livewire('/register', Register::class)->name('register');
 });
 
-// 3. Peserta / Siswa Registration & Attendance (Authenticated)
+// 3. Peserta / Siswa Registration, Learning & Attendance (Authenticated)
 Route::middleware('auth')->group(function () {
     Route::livewire('/pelatihan/{id}/daftar', PendaftaranCreate::class)->name('pelatihan.daftar');
+    Route::livewire('/pelatihan/{id}/materi', MateriBelajar::class)->name('peserta.materi');
     Route::livewire('/presensi', PresensiIndex::class)->name('presensi.index');
 });
 
@@ -117,6 +120,7 @@ Route::middleware(['auth', 'role:admin,mentor,verifikator,pimpinan'])->group(fun
         Route::name('materi.')->group(function () {
             Route::post('/upload-media', [MateriController::class, 'uploadMedia'])->name('upload-media');
             Route::livewire('/data', MateriData::class)->name('data');
+            Route::livewire('/sesi/{id}', MateriSesi::class)->name('sesi');
             Route::livewire('/detail/{id}', MateriDetail::class)->name('detail');
             Route::get('/detail/{course_id}/editor/{lesson_id?}', function ($course_id, $lesson_id = null) {
                 $params = ['id' => $course_id, 'view' => 'editor'];

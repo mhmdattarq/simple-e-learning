@@ -14,10 +14,11 @@ class MateriRepo
     /**
      * Mengambil struktur kurikulum lengkap (Bab dan Unit Materi) untuk suatu pelatihan.
      */
-    public static function getCurriculumByCourse(int $courseId): Collection
+    public static function getCurriculumByCourse(int $courseId, ?int $scheduleId = null): Collection
     {
         return Chapter::query()
             ->where('course_id', $courseId)
+            ->when($scheduleId, fn ($query) => $query->where('schedule_id', $scheduleId))
             ->with(['lessons' => function ($query) {
                 $query->orderBy('order', 'asc');
             }])
@@ -28,12 +29,13 @@ class MateriRepo
     /**
      * Mengambil daftar bab sederhana untuk dropdown pada form editor materi.
      */
-    public static function getChaptersList(int $courseId): Collection
+    public static function getChaptersList(int $courseId, ?int $scheduleId = null): Collection
     {
         return Chapter::query()
             ->where('course_id', $courseId)
+            ->when($scheduleId, fn ($query) => $query->where('schedule_id', $scheduleId))
             ->orderBy('order', 'asc')
-            ->get(['id', 'title', 'order', 'course_id']);
+            ->get(['id', 'title', 'order', 'course_id', 'schedule_id']);
     }
 
     /**
@@ -51,12 +53,17 @@ class MateriRepo
     {
         try {
             if (empty($data['order'])) {
-                $maxOrder = Chapter::where('course_id', $data['course_id'])->max('order') ?? 0;
+                $query = Chapter::where('course_id', $data['course_id']);
+                if (! empty($data['schedule_id'])) {
+                    $query->where('schedule_id', $data['schedule_id']);
+                }
+                $maxOrder = $query->max('order') ?? 0;
                 $data['order'] = $maxOrder + 1;
             }
 
             return Chapter::create([
                 'course_id' => $data['course_id'],
+                'schedule_id' => $data['schedule_id'] ?? null,
                 'title' => trim($data['title']),
                 'order' => (int) $data['order'],
             ]);
