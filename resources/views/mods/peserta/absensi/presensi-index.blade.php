@@ -73,6 +73,15 @@
                                             <span><i class="ri-shield-check-line text-success me-1"></i><strong>Status:</strong> <span class="badge bg-success">{{ $lastCheckInResult['status_label'] }}</span></span>
                                             <span><i class="ri-qr-code-line text-info me-1"></i><strong>Metode:</strong> {{ $lastCheckInResult['method'] }}</span>
                                         </div>
+                                        @if($previewCourseId)
+                                            <div class="mt-3 pt-2 border-top">
+                                                <a href="{{ route('peserta.materi', $previewCourseId) }}" class="btn btn-success btn-sm fw-bold radius-8 text-white px-3 py-2 fs-8 d-inline-flex align-items-center gap-1 shadow-sm">
+                                                    <i class="ri-book-open-line"></i>
+                                                    <span>Masuk ke Halaman Materi</span>
+                                                    <i class="ri-arrow-right-line"></i>
+                                                </a>
+                                            </div>
+                                        @endif
                                     </div>
                                 </div>
                             @endif
@@ -148,12 +157,19 @@
                                                 <span>Anda belum terdaftar atau belum diverifikasi resmi sebagai peserta pada diklat ini.</span>
                                             </div>
                                         @elseif($existingAttendance)
-                                            <div class="alert alert-info border-0 p-2 mb-0 fs-8 d-flex align-items-center justify-content-between">
+                                            <div class="alert alert-info border-0 p-2 mb-0 fs-8 d-flex align-items-center justify-content-between flex-wrap gap-2">
                                                 <div class="d-flex align-items-center gap-2">
                                                     <i class="ri-information-line fs-6 text-info"></i>
                                                     <span>Anda telah melakukan presensi pada sesi ini. Status: <strong>{{ ucfirst($existingAttendance->status) }}</strong></span>
                                                 </div>
-                                                <span class="badge bg-info text-white">{{ $existingAttendance->check_in_at?->format('H:i') ?? '-' }} WIB</span>
+                                                <div class="d-flex align-items-center gap-2">
+                                                    <span class="badge bg-info text-white">{{ $existingAttendance->check_in_at?->format('H:i') ?? '-' }} WIB</span>
+                                                    @if($previewCourseId)
+                                                        <a href="{{ route('peserta.materi', $previewCourseId) }}" class="btn btn-sm btn-primary fw-bold text-white radius-8 px-2 py-1 fs-8 d-inline-flex align-items-center gap-1">
+                                                            <i class="ri-book-open-line"></i> Buka Materi
+                                                        </a>
+                                                    @endif
+                                                </div>
                                             </div>
                                         @else
                                             <div class="alert alert-success border-0 p-2 mb-0 fs-8 d-flex align-items-center gap-2">
@@ -164,28 +180,37 @@
                                     </div>
                                 @endif
 
-                                {{-- Tombol Submit Presensi --}}
+                                {{-- Tombol Submit Presensi / Masuk Materi --}}
                                 <div class="d-grid">
-                                    <button type="submit"
-                                        class="btn btn-primary btn-lg fw-bold radius-12 d-flex align-items-center justify-content-center gap-2 py-3"
-                                        @if(!$previewScheduleId || !$isVerifiedForCourse || $existingAttendance) disabled @endif
-                                        wire:loading.attr="disabled">
-                                        <span wire:loading.remove>
-                                            <i class="ri-send-plane-fill fs-5"></i>
-                                            @if($existingAttendance)
-                                                Sudah Melakukan Presensi
-                                            @elseif(!$previewScheduleId)
-                                                Masukkan Token 6 Digit di Atas
-                                            @elseif(!$isVerifiedForCourse)
-                                                Bukan Peserta Terverifikasi
-                                            @else
-                                                Kirim Presensi Kehadiran Sekarang
-                                            @endif
-                                        </span>
-                                        <span wire:loading>
-                                            <i class="ri-loader-4-line ri-spin fs-5"></i> Memproses Presensi...
-                                        </span>
-                                    </button>
+                                    @if($existingAttendance && $previewCourseId)
+                                        <a href="{{ route('peserta.materi', $previewCourseId) }}"
+                                            class="btn btn-primary btn-lg fw-bold radius-12 d-flex align-items-center justify-content-center gap-2 py-3 shadow-sm text-decoration-none">
+                                            <i class="ri-book-open-line fs-5"></i>
+                                            <span>Masuk ke Materi Pembelajaran</span>
+                                            <i class="ri-arrow-right-line fs-5"></i>
+                                        </a>
+                                    @else
+                                        <button type="submit"
+                                            class="btn btn-primary btn-lg fw-bold radius-12 d-flex align-items-center justify-content-center gap-2 py-3"
+                                            @if(!$previewScheduleId || !$isVerifiedForCourse || $existingAttendance) disabled @endif
+                                            wire:loading.attr="disabled">
+                                            <span wire:loading.remove>
+                                                <i class="ri-send-plane-fill fs-5"></i>
+                                                @if($existingAttendance)
+                                                    Sudah Melakukan Presensi
+                                                @elseif(!$previewScheduleId)
+                                                    Masukkan Token 6 Digit di Atas
+                                                @elseif(!$isVerifiedForCourse)
+                                                    Bukan Peserta Terverifikasi
+                                                @else
+                                                    Kirim Presensi Kehadiran Sekarang
+                                                @endif
+                                            </span>
+                                            <span wire:loading>
+                                                <i class="ri-loader-4-line ri-spin fs-5"></i> Memproses Presensi...
+                                            </span>
+                                        </button>
+                                    @endif
                                 </div>
                             </form>
                         </div>

@@ -199,6 +199,7 @@ test('verified participant can access peserta materi room with session attendanc
         ->assertSee('Pengenalan Shapefile dan GeoJSON')
         ->assertSee('Hadir (Terbuka)')
         ->assertSee('Belum Absen (Terkunci)')
+        ->assertDontSee('Portal Presensi') // Sembunyi karena peserta sudah melakukan absensi
         ->call('selectLesson', $lesson2->id) // Attempt to select locked Sesi 2 lesson
         ->assertDispatched('show-toast') // Warning dispatched
         ->call('toggleCompleteLesson', $lesson1->id); // Can complete unlocked Sesi 1 lesson
@@ -209,4 +210,34 @@ test('verified participant can access peserta materi room with session attendanc
         'lesson_id' => $lesson1->id,
         'is_completed' => 1,
     ]);
+});
+
+test('portal presensi button is hidden in materi belajar when user has attended', function () {
+    CourseUser::create([
+        'user_id' => $this->peserta->id,
+        'course_id' => $this->course->id,
+        'registration_number' => 'REG-2026-0002',
+        'status' => 'verified',
+    ]);
+
+    // Close active attendance on schedule 1
+    $this->schedule1->update(['is_attendance_open' => false]);
+
+    // Belum ada attendance sama sekali -> Portal Presensi muncul
+    Livewire::actingAs($this->peserta)
+        ->test(MateriBelajar::class, ['id' => $this->course->id])
+        ->assertSee('Portal Presensi');
+
+    // Peserta melakukan absensi
+    Attendance::create([
+        'schedule_id' => $this->schedule1->id,
+        'user_id' => $this->peserta->id,
+        'status' => 'hadir',
+        'check_in_at' => now(),
+    ]);
+
+    // Setelah absen -> tombol Portal Presensi HILANG
+    Livewire::actingAs($this->peserta)
+        ->test(MateriBelajar::class, ['id' => $this->course->id])
+        ->assertDontSee('Portal Presensi');
 });
