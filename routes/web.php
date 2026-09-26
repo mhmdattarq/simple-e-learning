@@ -19,6 +19,7 @@ use App\Livewire\Admin\Perencanaan\PerencanaanCreate;
 use App\Livewire\Admin\Perencanaan\PerencanaanData;
 use App\Livewire\Admin\Perencanaan\PerencanaanEdit;
 use App\Livewire\Admin\Verifikasi\VerifikasiData;
+use App\Livewire\Admin\Verifikasi\VerifikasiDetail;
 use App\Livewire\Auth\Login;
 use App\Livewire\Auth\Register;
 use App\Livewire\Landing\JadwalIndex;
@@ -85,6 +86,7 @@ Route::middleware(['auth', 'role:admin,mentor,verifikator,pimpinan'])->group(fun
         Route::name('verifikasi.')->group(function () {
             Route::get('/datatable', [VerifikasiController::class, 'dataDt'])->name('dt');
             Route::livewire('/data', VerifikasiData::class)->name('data');
+            Route::livewire('/periksa/{id}', VerifikasiDetail::class)->name('periksa');
         });
     });
 

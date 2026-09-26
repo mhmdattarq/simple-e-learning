@@ -223,10 +223,7 @@
         }
 
         #tablePendaftaran .dropdown-menu {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            z-index: 1060 !important;
+            z-index: 1065 !important;
         }
     </style>
 @endpush
@@ -252,59 +249,11 @@
                     pageLength: 25,
                     dom: 'lrtip',
                     order: [
-                        [8, 'desc'] // Default order by Tgl Daftar
+                        [5, 'desc'] // Default order by Tgl Daftar
                     ],
                     ajax: '{{ route('pendaftaran.dt') }}',
                     columns: [
-                        // Kolom 0: Checkbox Baris
-                        {
-                            data: null,
-                            name: 'id',
-                            orderable: false,
-                            searchable: false,
-                            className: 'text-center',
-                            render: function(data) {
-                                return '<input class="form-check-input check-data-item" type="checkbox" value="' + data.id + '">';
-                            }
-                        },
-
-                        // Kolom 1: Aksi Dropdown
-                        {
-                            data: null,
-                            name: 'id',
-                            orderable: false,
-                            searchable: false,
-                            className: 'text-center',
-                            render: function(data, type, row) {
-                                let identity = String(data.registration_number || '').replace(/'/g, "\\'");
-                                let canDelete = {{ auth()->user()?->role === \App\Enums\Role::Admin ? 'true' : 'false' }};
-                                let deleteHtml = canDelete ? `
-                                    <button type="button" class="dropdown-item text-danger d-flex align-items-center gap-2 py-2 px-3 rounded border-0 bg-transparent w-100 text-start"
-                                       data-bs-toggle="modal"
-                                       data-bs-target="#modalDelete"
-                                       wire:click="hookModalDelete(${data.id}, '${identity}')">
-                                        <i class="ri-delete-bin-line"></i> Hapus
-                                    </button>
-                                ` : '';
-
-                                return `
-                                <div class="dropdown">
-                                    <button type="button" class="btn btn-sm btn-light border text-dark" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 4px 8px; font-size: 12px; border-radius: 6px;">
-                                        <i class="ri-more-2-fill"></i>
-                                    </button>
-                                    <div class="dropdown-menu dropdown-menu-end shadow-sm border-0 p-2" style="border-radius: 10px; min-width: 160px;">
-                                        <button type="button" class="dropdown-item d-flex align-items-center gap-2 py-2 px-3 rounded text-navy border-0 bg-transparent w-100 text-start"
-                                            wire:click="showDetail(${data.id})">
-                                            <i class="ri-eye-line text-primary"></i> Detail Pendaftar
-                                        </button>
-                                        ${deleteHtml}
-                                    </div>
-                                </div>
-                            `;
-                            }
-                        },
-
-                        // Kolom 2: Nomor Urut Otomatis
+                        // Kolom 0: Nomor Urut Otomatis
                         {
                             data: null,
                             orderable: false,
@@ -315,7 +264,7 @@
                             }
                         },
 
-                        // Kolom 3: No. Registrasi
+                        // Kolom 1: No. Registrasi
                         {
                             data: 'registration_number',
                             name: 'registration_number',
@@ -327,7 +276,7 @@
                             }
                         },
 
-                        // Kolom 4: Nama Peserta
+                        // Kolom 2: Nama Peserta
                         {
                             data: 'user_name',
                             name: 'user.name',
@@ -344,7 +293,7 @@
                             }
                         },
 
-                        // Kolom 5: NIP & Instansi
+                        // Kolom 3: NIP & Instansi
                         {
                             data: 'user_nip',
                             name: 'user.nip',
@@ -361,7 +310,7 @@
                             }
                         },
 
-                        // Kolom 6: Nama Pelatihan
+                        // Kolom 4: Nama Pelatihan
                         {
                             data: 'course_title',
                             name: 'course.title',
@@ -378,24 +327,7 @@
                             }
                         },
 
-                        // Kolom 7: Surat Tugas (PDF)
-                        {
-                            data: 'letter_url',
-                            name: 'recommendation_letter_path',
-                            orderable: false,
-                            searchable: false,
-                            className: 'text-center',
-                            render: function(data) {
-                                if (data) {
-                                    return `<a href="${data}" target="_blank" class="btn btn-sm btn-outline-danger py-1 px-2 rounded-pill fs-8">
-                                        <i class="ri-file-pdf-line me-1"></i>PDF
-                                    </a>`;
-                                }
-                                return `<span class="text-muted fs-8">-</span>`;
-                            }
-                        },
-
-                        // Kolom 8: Tanggal Daftar
+                        // Kolom 5: Tanggal Daftar
                         {
                             data: 'enrolled_at_formatted',
                             name: 'enrolled_at',
@@ -404,7 +336,7 @@
                             className: 'text-center fs-8 text-muted'
                         },
 
-                        // Kolom 9: Status
+                        // Kolom 6: Status
                         {
                             data: 'status_badge',
                             name: 'status',

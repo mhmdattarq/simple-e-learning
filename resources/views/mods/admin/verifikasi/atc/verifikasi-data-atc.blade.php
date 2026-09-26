@@ -223,10 +223,7 @@
         }
 
         #tableVerifikasi .dropdown-menu {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            z-index: 1060 !important;
+            z-index: 1065 !important;
         }
     </style>
 @endpush
@@ -254,24 +251,11 @@
                     pageLength: 25,
                     dom: 'lrtip',
                     order: [
-                        [8, 'desc'] // Default order by Tgl Daftar
+                        [7, 'desc'] // Default order by Tgl Daftar
                     ],
                     ajax: '{{ route('verifikasi.dt') }}',
                     columns: [
-                        // Kolom 0: Checkbox Baris
-                        {
-                            data: null,
-                            name: 'id',
-                            orderable: false,
-                            searchable: false,
-                            className: 'text-center',
-                            render: function(data) {
-                                return '<input class="form-check-input check-data-item" type="checkbox" value="' +
-                                    data.id + '">';
-                            }
-                        },
-
-                        // Kolom 1: Aksi Dropdown
+                        // Kolom 1: Tombol Aksi Periksa Berkas
                         {
                             data: null,
                             name: 'id',
@@ -279,23 +263,13 @@
                             searchable: false,
                             className: 'text-center',
                             render: function(data, type, row) {
+                                let url = '{{ route('verifikasi.periksa', ':id') }}'.replace(':id', data
+                                    .id);
                                 return `
-                                <div class="dropdown">
-                                    <button type="button" class="btn btn-sm btn-light border text-dark" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 4px 8px; font-size: 12px; border-radius: 6px;">
-                                        <i class="ri-more-2-fill"></i>
-                                    </button>
-                                    <div class="dropdown-menu dropdown-menu-end shadow-sm border-0 p-2" style="border-radius: 10px; min-width: 170px;">
-                                        <button type="button" class="dropdown-item d-flex align-items-center gap-2 py-2 px-3 rounded text-navy border-0 bg-transparent w-100 text-start"
-                                            wire:click="openVerifyModal(${data.id})">
-                                            <i class="ri-shield-check-line text-success"></i> Periksa Berkas
-                                        </button>
-                                        <button type="button" class="dropdown-item d-flex align-items-center gap-2 py-2 px-3 rounded text-navy border-0 bg-transparent w-100 text-start"
-                                            wire:click="showDetail(${data.id})">
-                                            <i class="ri-eye-line text-primary"></i> Detail Berkas
-                                        </button>
-                                    </div>
-                                </div>
-                            `;
+                                    <a href="${url}" wire:navigate class="btn btn-sm btn-outline-primary d-inline-flex align-items-center gap-1 py-1 px-2 fw-semibold rounded" style="font-size: 12px; white-space: nowrap;">
+                                        <i class="ri-file-search-line"></i> Periksa Berkas
+                                    </a>
+                                `;
                             }
                         },
 
@@ -373,24 +347,7 @@
                             }
                         },
 
-                        // Kolom 7: Surat Tugas (PDF)
-                        {
-                            data: 'letter_url',
-                            name: 'recommendation_letter_path',
-                            orderable: false,
-                            searchable: false,
-                            className: 'text-center',
-                            render: function(data) {
-                                if (data) {
-                                    return `<a href="${data}" target="_blank" class="btn btn-sm btn-outline-danger py-1 px-2 rounded-pill fs-8">
-                                        <i class="ri-file-pdf-line me-1"></i>PDF
-                                    </a>`;
-                                }
-                                return `<span class="text-muted fs-8">-</span>`;
-                            }
-                        },
-
-                        // Kolom 8: Tanggal Daftar
+                        // Kolom 7: Tanggal Daftar
                         {
                             data: 'enrolled_at_formatted',
                             name: 'enrolled_at',
@@ -399,7 +356,7 @@
                             className: 'text-center fs-8 text-muted'
                         },
 
-                        // Kolom 9: Status
+                        // Kolom 8: Status
                         {
                             data: 'status_badge',
                             name: 'status',
@@ -422,11 +379,6 @@
                                 table.column(colIndex).search(this.value).draw();
                             }
                         });
-
-                        // 4. Checkbox Pilih Semua
-                        $('.check-data-all').on('change', function() {
-                            $('.check-data-item').prop('checked', this.checked);
-                        });
                     }
                 });
             }
@@ -444,6 +396,14 @@
         window.addEventListener('reloadDT', function() {
             if (window.dtTable) {
                 window.dtTable.ajax.reload(null, false);
+            }
+        });
+
+        // Event delegation agar link dinamis DataTables dieksekusi via Livewire.navigate (SPA tanpa reload)
+        $(document).on('click', '#tableVerifikasi a[wire\\:navigate]', function(e) {
+            if (window.Livewire && typeof window.Livewire.navigate === 'function') {
+                e.preventDefault();
+                window.Livewire.navigate(this.href);
             }
         });
     </script>

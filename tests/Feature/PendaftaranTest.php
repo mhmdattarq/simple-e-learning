@@ -189,6 +189,58 @@ test('peserta can successfully register to course with atomic transaction and fi
     expect($peserta->opd_agency)->toBe('Dinas Komunikasi dan Informatika');
 });
 
+test('peserta gets clear error message when registration period has not started or ended', function () {
+    $peserta = User::factory()->peserta()->create();
+    $category = Category::first();
+    $fakePdf = UploadedFile::fake()->create('surat.pdf', 200, 'application/pdf');
+
+    // Case 1: Registration not started yet
+    $courseFuture = Course::create([
+        'code' => 'PLT-FUT-001',
+        'title' => 'Pelatihan Masa Depan',
+        'category_id' => $category->id,
+        'type' => 'permanent',
+        'method' => 'daring',
+        'quota' => 20,
+        'status' => CourseStatus::Published,
+        'registration_open_at' => now()->addDays(2),
+        'registration_close_at' => now()->addDays(5),
+    ]);
+
+    Livewire::actingAs($peserta)
+        ->test(PendaftaranCreate::class, ['id' => $courseFuture->id])
+        ->set('form.nip', '199001012020011001')
+        ->set('form.name', 'Peserta Baru')
+        ->set('form.opd_agency', 'Dinas Pendidikan')
+        ->set('form.agreement', true)
+        ->set('recommendationLetter', $fakePdf)
+        ->call('submit')
+        ->assertHasErrors(['general' => 'Periode pendaftaran untuk pelatihan ini belum dimulai.']);
+
+    // Case 2: Registration period ended
+    $coursePast = Course::create([
+        'code' => 'PLT-PAST-001',
+        'title' => 'Pelatihan Masa Lalu',
+        'category_id' => $category->id,
+        'type' => 'permanent',
+        'method' => 'daring',
+        'quota' => 20,
+        'status' => CourseStatus::Published,
+        'registration_open_at' => now()->subDays(5),
+        'registration_close_at' => now()->subDay(),
+    ]);
+
+    Livewire::actingAs($peserta)
+        ->test(PendaftaranCreate::class, ['id' => $coursePast->id])
+        ->set('form.nip', '199001012020011001')
+        ->set('form.name', 'Peserta Baru')
+        ->set('form.opd_agency', 'Dinas Pendidikan')
+        ->set('form.agreement', true)
+        ->set('recommendationLetter', $fakePdf)
+        ->call('submit')
+        ->assertHasErrors(['general' => 'Periode pendaftaran untuk pelatihan ini telah berakhir.']);
+});
+
 test('peserta cannot register twice to the same course', function () {
     $peserta = User::factory()->peserta()->create();
     $category = Category::first();
@@ -427,7 +479,23 @@ test('admin can view only approved courses in registration settings dropdown', f
         ->set('selectedCourseId', $courseApproved->id)
         ->assertSet('courseStats.code', 'PLT-APP-1')
         ->assertSet('courseStats.quota', 30)
-        ->assertSet('courseStats.remaining_quota', 30);
+        ->assertSee('Periode Pelatihan');
+
+    $coursePermanent = Course::create([
+        'code' => 'PLT-APP-PERM',
+        'title' => 'Pelatihan Mandiri Disetujui',
+        'category_id' => $category->id,
+        'type' => 'permanent',
+        'method' => 'daring',
+        'quota' => 50,
+        'status' => CourseStatus::Approved,
+    ]);
+
+    Livewire::actingAs($admin)
+        ->test(PendaftaranData::class)
+        ->set('selectedCourseId', $coursePermanent->id)
+        ->assertSet('courseStats.is_permanent', true)
+        ->assertDontSee('Periode Pelatihan');
 });
 
 test('admin opening registration period validates dates and course start date correctly', function () {

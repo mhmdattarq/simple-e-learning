@@ -238,6 +238,7 @@ class PendaftaranData extends Component
 
         return view('mods.admin.pendaftaran.pendaftaran-data', [
             'settingCourses' => $settingCourses,
+            'canManageRegistration' => auth()->user()?->can('manageRegistration', Course::class) ?? false,
         ]);
     }
 }

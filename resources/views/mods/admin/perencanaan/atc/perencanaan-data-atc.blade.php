@@ -223,10 +223,7 @@
         }
 
         #tablePerencanaan .dropdown-menu {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            z-index: 1060 !important;
+            z-index: 1065 !important;
         }
     </style>
 @endpush
@@ -313,7 +310,7 @@
 
                                 return `
                                 <div class="dropdown">
-                                    <button type="button" class="btn btn-sm btn-light border text-dark" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 4px 8px; font-size: 12px; border-radius: 6px;">
+                                    <button type="button" class="btn btn-sm btn-light border text-dark" data-bs-toggle="dropdown" data-bs-strategy="fixed" data-bs-boundary="window" aria-expanded="false" style="padding: 4px 8px; font-size: 12px; border-radius: 6px;">
                                         <i class="ri-more-2-fill"></i>
                                     </button>
                                     <div class="dropdown-menu dropdown-menu-end shadow-sm border-0 p-2" style="border-radius: 10px; min-width: 185px;">
@@ -475,5 +472,11 @@
 
         // Saat navigasi SPA Livewire (wire:navigate)
         document.addEventListener('livewire:navigated', initPerencanaanTable);
+
+        window.addEventListener('reloadDT', function() {
+            if (window.dtTable && typeof window.dtTable.ajax?.reload === 'function') {
+                window.dtTable.ajax.reload(null, false);
+            }
+        });
     </script>
 @endpush

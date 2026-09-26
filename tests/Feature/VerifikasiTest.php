@@ -2,6 +2,7 @@
 
 use App\Enums\RegistrationStatus;
 use App\Livewire\Admin\Verifikasi\VerifikasiData;
+use App\Livewire\Admin\Verifikasi\VerifikasiDetail;
 use App\Models\Category;
 use App\Models\Course;
 use App\Models\CourseUser;
@@ -265,4 +266,101 @@ test('verifikasi repository getStats aggregates status counts correctly', functi
     expect($stats['verified'])->toBe(1);
     expect($stats['revision_required'])->toBe(0);
     expect($stats['rejected'])->toBe(0);
+});
+
+test('unauthorized users cannot access verifikasi periksa route', function () {
+    $peserta = User::factory()->peserta()->create();
+    $reg = CourseUser::create([
+        'user_id' => $peserta->id,
+        'course_id' => $this->course->id,
+        'registration_number' => 'REG-AUTH-01',
+        'status' => RegistrationStatus::Pending,
+        'enrolled_at' => now(),
+    ]);
+
+    // Guest redirected to login
+    $this->get(route('verifikasi.periksa', $reg->id))
+        ->assertRedirect(route('login'));
+
+    // Peserta gets 403 Forbidden
+    $this->actingAs($peserta)
+        ->get(route('verifikasi.periksa', $reg->id))
+        ->assertStatus(403);
+});
+
+test('verifikator and admin can access verifikasi periksa page and view participant info', function () {
+    $verifikator = User::factory()->verifikator()->create();
+    $peserta = User::factory()->peserta()->create([
+        'name' => 'Kurnia Dewi, S.STP',
+        'nip' => '199203152015022001',
+        'opd_agency' => 'Bappeda Aceh Timur',
+    ]);
+
+    $reg = CourseUser::create([
+        'user_id' => $peserta->id,
+        'course_id' => $this->course->id,
+        'registration_number' => 'REG-PAGE-01',
+        'status' => RegistrationStatus::Pending,
+        'enrolled_at' => now(),
+    ]);
+
+    $this->actingAs($verifikator)
+        ->get(route('verifikasi.periksa', $reg->id))
+        ->assertStatus(200)
+        ->assertSee('Pemeriksaan Berkas Calon Peserta')
+        ->assertSee('Kurnia Dewi, S.STP')
+        ->assertSee('199203152015022001')
+        ->assertSee('Bappeda Aceh Timur')
+        ->assertSee('REG-PAGE-01');
+
+    Livewire::actingAs($verifikator)
+        ->test(VerifikasiDetail::class, ['id' => $reg->id])
+        ->assertOk()
+        ->assertSet('registration.registration_number', 'REG-PAGE-01');
+});
+
+test('verifikator can submit verification decision from dedicated periksa page and is redirected', function () {
+    $verifikator = User::factory()->verifikator()->create(['name' => 'Teuku Verifikator']);
+    $peserta = User::factory()->peserta()->create(['name' => 'Rahmat Hidayat']);
+
+    $reg = CourseUser::create([
+        'user_id' => $peserta->id,
+        'course_id' => $this->course->id,
+        'registration_number' => 'REG-SUBMIT-01',
+        'status' => RegistrationStatus::Pending,
+        'enrolled_at' => now(),
+    ]);
+
+    Livewire::actingAs($verifikator)
+        ->test(VerifikasiDetail::class, ['id' => $reg->id])
+        ->set('verifyForm.status', 'verified')
+        ->set('verifyForm.verification_notes', 'Berkas memenuhi kualifikasi pendaftaran.')
+        ->call('submitVerification')
+        ->assertHasNoErrors()
+        ->assertRedirect(route('verifikasi.data'));
+
+    $updated = $reg->fresh();
+    expect($updated->status)->toBe(RegistrationStatus::Verified);
+    expect($updated->verification_notes)->toBe('Berkas memenuhi kualifikasi pendaftaran.');
+    expect($updated->verified_by)->toBe($verifikator->id);
+});
+
+test('verifikator cannot submit revision without mandatory notes on dedicated periksa page', function () {
+    $verifikator = User::factory()->verifikator()->create();
+    $peserta = User::factory()->peserta()->create();
+
+    $reg = CourseUser::create([
+        'user_id' => $peserta->id,
+        'course_id' => $this->course->id,
+        'registration_number' => 'REG-SUBMIT-02',
+        'status' => RegistrationStatus::Pending,
+        'enrolled_at' => now(),
+    ]);
+
+    Livewire::actingAs($verifikator)
+        ->test(VerifikasiDetail::class, ['id' => $reg->id])
+        ->set('verifyForm.status', 'revision_required')
+        ->set('verifyForm.verification_notes', '')
+        ->call('submitVerification')
+        ->assertHasErrors(['verifyForm.verification_notes']);
 });
