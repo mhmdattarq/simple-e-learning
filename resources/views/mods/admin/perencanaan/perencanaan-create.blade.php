@@ -64,19 +64,15 @@
                             @enderror
                         </div>
 
-                        {{-- Kategori --}}
+                        {{-- Kategori Pelatihan (Input Teks Langsung) --}}
                         <div class="col-md-5">
                             <label class="form-label text-xs fw-semibold text-dark mb-1">
                                 Kategori Pelatihan <span class="text-danger">*</span>
                             </label>
-                            <select class="form-select @error('form.category_id') is-invalid @enderror"
-                                wire:model="form.category_id">
-                                <option value="">-- Pilih Kategori Diklat --</option>
-                                @foreach ($categories as $category)
-                                    <option value="{{ $category->id }}">{{ $category->name }}</option>
-                                @endforeach
-                            </select>
-                            @error('form.category_id')
+                            <input type="text" class="form-control @error('form.category_name') is-invalid @enderror"
+                                wire:model="form.category_name"
+                                placeholder="Contoh: Pelatihan Teknis / Fungsional / Kepemimpinan">
+                            @error('form.category_name')
                                 <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
                             @enderror
                         </div>
@@ -110,7 +106,7 @@
                         {{-- Ringkasan / Deskripsi --}}
                         <div class="col-12">
                             <label class="form-label text-xs fw-semibold text-dark mb-1">
-                                Deskripsi & Sasaran Kompetensi
+                                Deskripsi & Sasaran Kompetensi <span class="text-danger">*</span>
                             </label>
                             <textarea class="form-control @error('form.description') is-invalid @enderror" wire:model="form.description"
                                 rows="3" placeholder="Jelaskan tujuan umum diklat, output kompetensi aparatur, dan ringkasan silabus..."></textarea>
@@ -131,30 +127,69 @@
                         <h6 class="fw-bold mb-0 fs-6" style="color: #071a33;">Pelaksanaan, Waktu & Kuota</h6>
                     </div>
                     <div class="row g-3">
-                        {{-- Layout Dinamis Berdasarkan Tipe Pelatihan --}}
-                        @if ($form['type'] === 'batch')
-                            {{-- Row 1 Batch: Tipe + Tanggal Mulai + Tanggal Selesai --}}
-                            <div class="col-md-4">
-                                <label class="form-label text-xs fw-semibold text-dark mb-1">
-                                    Tipe Akses Belajar <span class="text-danger">*</span>
-                                </label>
-                                <select class="form-select @error('form.type') is-invalid @enderror"
-                                    wire:model.live="form.type">
-                                    <option value="permanent">Permanen (Akses Mandiri / Tanpa Batas)</option>
-                                    <option value="batch">Batch (Berdasarkan Gelombang / Periode)</option>
-                                </select>
-                                <div class="form-text text-xs text-muted mt-1"><i
-                                        class="ri-calendar-check-line me-1"></i>Berdasarkan jadwal gelombang.</div>
-                                @error('form.type')
-                                    <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
-                                @enderror
+                        {{-- Row 1: Tipe Akses, Metode Pelaksanaan & Kuota Maksimal --}}
+                        <div class="col-md-4" wire:key="field-type">
+                            <label class="form-label text-xs fw-semibold text-dark mb-1">
+                                Tipe Akses Belajar <span class="text-danger">*</span>
+                            </label>
+                            <select id="input_type" class="form-select @error('form.type') is-invalid @enderror"
+                                wire:model.live="form.type">
+                                <option value="permanent">Permanen (Akses Mandiri / Tanpa Batas)</option>
+                                <option value="batch">Batch (Berdasarkan Gelombang / Periode)</option>
+                            </select>
+                            <div class="form-text text-xs text-muted mt-1">
+                                @if (($form['type'] ?? '') === 'batch')
+                                    <i class="ri-calendar-check-line me-1"></i>Berdasarkan jadwal gelombang.
+                                @else
+                                    <i class="ri-time-line me-1"></i>Akses mandiri (self-paced) sepanjang tahun.
+                                @endif
                             </div>
+                            @error('form.type')
+                                <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
+                            @enderror
+                        </div>
 
-                            <div class="col-md-4">
+                        <div class="col-md-4" wire:key="field-method">
+                            <label class="form-label text-xs fw-semibold text-dark mb-1">
+                                Metode Pelaksanaan <span class="text-danger">*</span>
+                            </label>
+                            <select id="input_method" class="form-select @error('form.method') is-invalid @enderror"
+                                wire:model="form.method">
+                                <option value="daring">Daring (Online / LMS Penuh)</option>
+                                <option value="luring">Luring (Tatap Muka Fisik)</option>
+                                <option value="hybrid">Hybrid (Kombinasi Daring & Luring)</option>
+                            </select>
+                            <div class="form-text text-xs text-muted mt-1"><i
+                                    class="ri-computer-line me-1"></i>Platform atau media kegiatan.</div>
+                            @error('form.method')
+                                <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="col-md-4" wire:key="field-quota">
+                            <label class="form-label text-xs fw-semibold text-dark mb-1">
+                                Kuota Maksimal Peserta <span class="text-danger">*</span>
+                            </label>
+                            <div class="input-group">
+                                <input id="input_quota" type="number" min="1"
+                                    class="form-control @error('form.quota') is-invalid @enderror"
+                                    wire:model="form.quota" placeholder="40">
+                                <span class="input-group-text bg-light text-muted">Orang</span>
+                            </div>
+                            <div class="form-text text-xs text-muted mt-1"><i
+                                    class="ri-user-line me-1"></i>Kapasitas maksimal aparatur.</div>
+                            @error('form.quota')
+                                <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        {{-- Row 2 (Khusus Tipe Batch): Tanggal Mulai & Selesai --}}
+                        @if (($form['type'] ?? '') === 'batch')
+                            <div class="col-md-6" wire:key="field-start-date">
                                 <label class="form-label text-xs fw-semibold text-dark mb-1">
                                     Tanggal Mulai <span class="text-danger">*</span>
                                 </label>
-                                <input type="date"
+                                <input id="input_start_date" type="date"
                                     class="form-control @error('form.start_date') is-invalid @enderror"
                                     wire:model="form.start_date">
                                 @error('form.start_date')
@@ -162,181 +197,61 @@
                                 @enderror
                             </div>
 
-                            <div class="col-md-4">
+                            <div class="col-md-6" wire:key="field-end-date">
                                 <label class="form-label text-xs fw-semibold text-dark mb-1">
                                     Tanggal Selesai <span class="text-danger">*</span>
                                 </label>
-                                <input type="date" class="form-control @error('form.end_date') is-invalid @enderror"
+                                <input id="input_end_date" type="date"
+                                    class="form-control @error('form.end_date') is-invalid @enderror"
                                     wire:model="form.end_date">
                                 @error('form.end_date')
                                     <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
                                 @enderror
                             </div>
-
-                            {{-- Row 2 Batch: Metode + Kuota + Lokasi --}}
-                            <div class="col-md-4">
-                                <label class="form-label text-xs fw-semibold text-dark mb-1">
-                                    Metode Pelaksanaan <span class="text-danger">*</span>
-                                </label>
-                                <select class="form-select @error('form.method') is-invalid @enderror"
-                                    wire:model="form.method">
-                                    <option value="daring">Daring (Online / LMS Penuh)</option>
-                                    <option value="luring">Luring (Tatap Muka Fisik)</option>
-                                    <option value="hybrid">Hybrid (Kombinasi Daring & Luring)</option>
-                                </select>
-                                @error('form.method')
-                                    <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="col-md-4">
-                                <label class="form-label text-xs fw-semibold text-dark mb-1">
-                                    Kuota Maksimal Peserta <span class="text-danger">*</span>
-                                </label>
-                                <div class="input-group">
-                                    <input type="number" min="1"
-                                        class="form-control @error('form.quota') is-invalid @enderror"
-                                        wire:model="form.quota" placeholder="40">
-                                    <span class="input-group-text bg-light text-muted">Orang</span>
-                                </div>
-                                @error('form.quota')
-                                    <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="col-md-4">
-                                <label class="form-label text-xs fw-semibold text-dark mb-1">
-                                    Ruangan Fisik / Tautan Kelas Online
-                                </label>
-                                <input type="text"
-                                    class="form-control @error('form.location') is-invalid @enderror"
-                                    wire:model="form.location" placeholder="Contoh: Aula BKPSDM / Link Zoom">
-                                @error('form.location')
-                                    <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            {{-- Row 3 Batch: Sasaran + Anggaran --}}
-                            <div class="col-md-6">
-                                <label class="form-label text-xs fw-semibold text-dark mb-1">
-                                    Sasaran Peserta
-                                </label>
-                                <input type="text"
-                                    class="form-control @error('form.target_audience') is-invalid @enderror"
-                                    wire:model="form.target_audience"
-                                    placeholder="Contoh: Pejabat Administrator Gol. III & IV">
-                                @error('form.target_audience')
-                                    <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="col-md-6">
-                                <label class="form-label text-xs fw-semibold text-dark mb-1">
-                                    Sumber Dana / Anggaran
-                                </label>
-                                <input type="text"
-                                    class="form-control @error('form.budget_source') is-invalid @enderror"
-                                    wire:model="form.budget_source"
-                                    placeholder="Contoh: DPA-BKPSDM Aceh Timur TA 2026">
-                                @error('form.budget_source')
-                                    <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        @else
-                            {{-- Row 1 Permanent: Tipe + Metode + Kuota (Symmetric 3 columns) --}}
-                            <div class="col-md-4">
-                                <label class="form-label text-xs fw-semibold text-dark mb-1">
-                                    Tipe Akses Belajar <span class="text-danger">*</span>
-                                </label>
-                                <select class="form-select @error('form.type') is-invalid @enderror"
-                                    wire:model.live="form.type">
-                                    <option value="permanent">Permanen (Akses Mandiri / Tanpa Batas)</option>
-                                    <option value="batch">Batch (Berdasarkan Gelombang / Periode)</option>
-                                </select>
-                                <div class="form-text text-xs text-muted mt-1"><i class="ri-time-line me-1"></i>Akses
-                                    mandiri (self-paced) sepanjang tahun.</div>
-                                @error('form.type')
-                                    <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="col-md-4">
-                                <label class="form-label text-xs fw-semibold text-dark mb-1">
-                                    Metode Pelaksanaan <span class="text-danger">*</span>
-                                </label>
-                                <select class="form-select @error('form.method') is-invalid @enderror"
-                                    wire:model="form.method">
-                                    <option value="daring">Daring (Online / LMS Penuh)</option>
-                                    <option value="luring">Luring (Tatap Muka Fisik)</option>
-                                    <option value="hybrid">Hybrid (Kombinasi Daring & Luring)</option>
-                                </select>
-                                <div class="form-text text-xs text-muted mt-1"><i
-                                        class="ri-computer-line me-1"></i>Platform atau media kegiatan.</div>
-                                @error('form.method')
-                                    <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="col-md-4">
-                                <label class="form-label text-xs fw-semibold text-dark mb-1">
-                                    Kuota Maksimal Peserta <span class="text-danger">*</span>
-                                </label>
-                                <div class="input-group">
-                                    <input type="number" min="1"
-                                        class="form-control @error('form.quota') is-invalid @enderror"
-                                        wire:model="form.quota" placeholder="40">
-                                    <span class="input-group-text bg-light text-muted">Orang</span>
-                                </div>
-                                <div class="form-text text-xs text-muted mt-1"><i
-                                        class="ri-user-line me-1"></i>Kapasitas maksimal aparatur.</div>
-                                @error('form.quota')
-                                    <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            {{-- Row 2 Permanent: Ruangan + Sasaran + Anggaran (Symmetric 3 columns) --}}
-                            <div class="col-md-4">
-                                <label class="form-label text-xs fw-semibold text-dark mb-1">
-                                    Ruangan Fisik / Tautan Kelas Online
-                                </label>
-                                <input type="text"
-                                    class="form-control @error('form.location') is-invalid @enderror"
-                                    wire:model="form.location" placeholder="Contoh: Aula BKPSDM / Link Zoom">
-                                @error('form.location')
-                                    <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="col-md-4">
-                                <label class="form-label text-xs fw-semibold text-dark mb-1">
-                                    Sasaran Peserta
-                                </label>
-                                <input type="text"
-                                    class="form-control @error('form.target_audience') is-invalid @enderror"
-                                    wire:model="form.target_audience"
-                                    placeholder="Contoh: Seluruh ASN Pemkab Aceh Timur">
-                                @error('form.target_audience')
-                                    <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="col-md-4">
-                                <label class="form-label text-xs fw-semibold text-dark mb-1">
-                                    Sumber Dana / Anggaran
-                                </label>
-                                <input type="text"
-                                    class="form-control @error('form.budget_source') is-invalid @enderror"
-                                    wire:model="form.budget_source" placeholder="Contoh: DPA-BKPSDM TA 2026">
-                                @error('form.budget_source')
-                                    <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
-                                @enderror
-                            </div>
                         @endif
 
-                        {{-- Sasaran Kompetensi Khusus --}}
-                        <div class="col-12">
+                        {{-- Row 3: Ruangan / Tautan, Sasaran Peserta & Sumber Dana --}}
+                        <div class="col-md-4" wire:key="field-location">
                             <label class="form-label text-xs fw-semibold text-dark mb-1">
-                                Target Kompetensi ASN (Indikator Capaian)
+                                Ruangan Fisik / Tautan Kelas Online <span class="text-danger">*</span>
+                            </label>
+                            <input id="input_location" type="text"
+                                class="form-control @error('form.location') is-invalid @enderror"
+                                wire:model="form.location" placeholder="Contoh: Aula BKPSDM / Link Zoom">
+                            @error('form.location')
+                                <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="col-md-4" wire:key="field-target-audience">
+                            <label class="form-label text-xs fw-semibold text-dark mb-1">
+                                Sasaran Peserta <span class="text-danger">*</span>
+                            </label>
+                            <input id="input_target_audience" type="text"
+                                class="form-control @error('form.target_audience') is-invalid @enderror"
+                                wire:model="form.target_audience"
+                                placeholder="Contoh: Seluruh ASN Pemkab Aceh Timur">
+                            @error('form.target_audience')
+                                <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="col-md-4" wire:key="field-budget-source">
+                            <label class="form-label text-xs fw-semibold text-dark mb-1">
+                                Sumber Dana / Anggaran <span class="text-danger">*</span>
+                            </label>
+                            <input id="input_budget_source" type="text"
+                                class="form-control @error('form.budget_source') is-invalid @enderror"
+                                wire:model="form.budget_source" placeholder="Contoh: DPA-BKPSDM TA 2026">
+                            @error('form.budget_source')
+                                <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        {{-- Sasaran Kompetensi Khusus --}}
+                        <div class="col-12" wire:key="field-competencies">
+                            <label class="form-label text-xs fw-semibold text-dark mb-1">
+                                Target Kompetensi ASN (Indikator Capaian) <span class="text-danger">*</span>
                             </label>
                             <textarea class="form-control @error('form.competencies') is-invalid @enderror" wire:model="form.competencies"
                                 rows="2" placeholder="Contoh: Mampu mengoperasikan aplikasi SPBE, menyusun regulasi teknis internal..."></textarea>

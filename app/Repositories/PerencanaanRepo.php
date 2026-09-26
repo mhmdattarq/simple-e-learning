@@ -3,10 +3,12 @@
 namespace App\Repositories;
 
 use App\Enums\CourseStatus;
+use App\Models\Category;
 use App\Models\Course;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class PerencanaanRepo
 {
@@ -182,5 +184,34 @@ class PerencanaanRepo
 
             return false;
         }
+    }
+
+    /**
+     * Resolve category ID from name string (case-insensitive find or create) or numeric ID.
+     */
+    public static function resolveCategoryId(int|string $categoryInput): int
+    {
+        if (is_numeric($categoryInput) && $cat = Category::find($categoryInput)) {
+            return $cat->id;
+        }
+
+        $categoryName = trim((string) $categoryInput);
+        $category = Category::whereRaw('LOWER(name) = ?', [strtolower($categoryName)])->first();
+
+        if (! $category) {
+            $baseSlug = Str::slug($categoryName) ?: 'kategori';
+            $slug = $baseSlug;
+            $count = 1;
+            while (Category::where('slug', $slug)->exists()) {
+                $slug = $baseSlug.'-'.$count++;
+            }
+
+            $category = Category::create([
+                'name' => $categoryName,
+                'slug' => $slug,
+            ]);
+        }
+
+        return $category->id;
     }
 }

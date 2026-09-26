@@ -53,31 +53,60 @@ window.addEventListener("showModal", (param) => {
     }
 });
 
-// 3. Listener Reload DataTables Reaktif Tanpa Refresh Halaman
+// 3. Listener Reload DataTables Reaktif Tanpa Refresh Halaman (Robust multi-table & SPA safe)
 window.addEventListener("reloadDT", (param) => {
-    const dtName =
-        param.detail?.data ??
-        (Array.isArray(param.detail) ? param.detail[0]?.data : param.detail);
-    try {
-        if (window[dtName]) {
-            window[dtName].ajax.reload(null, false);
-        } else if (window.dtTable) {
-            window.dtTable.ajax.reload(null, false);
-        } else {
-            eval(dtName).ajax.reload(null, false);
-        }
-    } catch (e) {
-        if (typeof $ !== "undefined") {
-            $(".table.dataTable").each(function () {
-                if ($.fn.DataTable.isDataTable(this)) {
+    let reloaded = false;
+
+    // 3a. Reload semua tabel DataTables yang sedang aktif di halaman saat ini
+    if (typeof $ !== "undefined" && $.fn.DataTable) {
+        $(".table.dataTable, table.dataTable, table[id^='table']").each(function () {
+            if ($.fn.DataTable.isDataTable(this)) {
+                try {
                     $(this).DataTable().ajax.reload(null, false);
+                    reloaded = true;
+                } catch (e) {
+                    console.warn("Gagal reload DataTable aktif:", e);
                 }
-            });
+            }
+        });
+    }
+
+    // 3b. Fallback target spesifik jika ada
+    if (!reloaded) {
+        const dtName =
+            param.detail?.data ??
+            (Array.isArray(param.detail) ? param.detail[0]?.data : param.detail);
+        try {
+            if (window[dtName] && typeof window[dtName].ajax?.reload === "function") {
+                window[dtName].ajax.reload(null, false);
+            } else if (window.dtTable && typeof window.dtTable.ajax?.reload === "function") {
+                window.dtTable.ajax.reload(null, false);
+            }
+        } catch (e) {
+            console.warn("Fallback reloadDT gagal:", e);
         }
     }
 });
 
-// 4. Lifecycle Livewire Navigation: Bersihkan state modal dan backdrop yatim
+// 4. Delegated Handler untuk Bootstrap Dropdown pada Dynamic DataTables & SPA Navigation
+if (typeof $ !== "undefined") {
+    $(document).on("click", '[data-bs-toggle="dropdown"]', function (e) {
+        if (typeof bootstrap !== "undefined" && bootstrap.Dropdown) {
+            const dropdown = bootstrap.Dropdown.getOrCreateInstance(this, {
+                boundary: "window",
+                popperConfig: function (defaultBsPopperConfig) {
+                    return {
+                        ...defaultBsPopperConfig,
+                        strategy: "fixed"
+                    };
+                }
+            });
+            dropdown.toggle();
+        }
+    });
+}
+
+// 5. Lifecycle Livewire Navigation: Bersihkan state modal, dropdown, dan backdrop yatim
 document.addEventListener("livewire:navigated", () => {
     if (typeof $ !== "undefined") {
         $(".modal-backdrop").remove();
@@ -85,5 +114,11 @@ document.addEventListener("livewire:navigated", () => {
             .removeClass("modal-open")
             .css("overflow", "")
             .css("padding-right", "");
+
+        // Tutup dropdown yang mungkin tertinggal dari halaman sebelumnya
+        $(".dropdown-menu.show").removeClass("show");
+        $('[data-bs-toggle="dropdown"].show')
+            .removeClass("show")
+            .attr("aria-expanded", "false");
     }
 });

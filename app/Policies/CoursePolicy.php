@@ -29,7 +29,7 @@ class CoursePolicy
      * Determine whether the user can open or close registration period.
      * Rule PRD: Admin Diklat / Super Admin can configure registration period.
      */
-    public function manageRegistration(User $user, Course $course): bool
+    public function manageRegistration(User $user, ?Course $course = null): bool
     {
         return $user->role === Role::Admin;
     }

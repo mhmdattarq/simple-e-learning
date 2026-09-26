@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Repositories\PerencanaanRepo;
 use Database\Seeders\CategorySeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
@@ -80,22 +81,35 @@ test('perencanaan datatable endpoint returns valid yajra json response', functio
 test('perencanaan create validates required fields and batch dates', function () {
     $admin = User::factory()->admin()->create();
 
-    // 1. Validates required fields
+    // 1. Validates required fields (All text inputs)
     Livewire::actingAs($admin)
         ->test(PerencanaanCreate::class)
         ->set('form.code', '')
         ->set('form.title', '')
-        ->set('form.category_id', '')
+        ->set('form.category_name', '')
+        ->set('form.description', '')
+        ->set('form.location', '')
+        ->set('form.target_audience', '')
+        ->set('form.budget_source', '')
+        ->set('form.competencies', '')
         ->call('formSubmit')
-        ->assertHasErrors(['form.code', 'form.title', 'form.category_id']);
+        ->assertHasErrors([
+            'form.code',
+            'form.title',
+            'form.category_name',
+            'form.description',
+            'form.location',
+            'form.target_audience',
+            'form.budget_source',
+            'form.competencies',
+        ]);
 
     // 2. Validates batch requires start_date and end_date
-    $category = Category::first();
     Livewire::actingAs($admin)
         ->test(PerencanaanCreate::class)
         ->set('form.code', 'PLT-BATCH-01')
         ->set('form.title', 'Pelatihan Batch Kepemimpinan')
-        ->set('form.category_id', $category->id)
+        ->set('form.category_name', 'Pelatihan Kepemimpinan')
         ->set('form.type', 'batch')
         ->set('form.start_date', '')
         ->set('form.end_date', '')
@@ -111,12 +125,14 @@ test('perencanaan create successfully saves course into database and redirects',
         ->test(PerencanaanCreate::class)
         ->set('form.code', 'PLT-2026-009')
         ->set('form.title', 'Pelatihan Teknis Tata Naskah Dinas Elektronik')
-        ->set('form.category_id', $category->id)
+        ->set('form.category_name', $category->name)
         ->set('form.type', 'permanent')
         ->set('form.method', 'daring')
         ->set('form.quota', 50)
+        ->set('form.location', 'Online LMS SIMPEL')
         ->set('form.target_audience', 'Seluruh Staf OPD')
         ->set('form.budget_source', 'APBK Aceh Timur')
+        ->set('form.competencies', 'Penguasaan TNDE dan arsip digital')
         ->set('form.description', 'Pelatihan penguasaan TNDE terintegrasi.')
         ->call('formSubmit')
         ->assertHasNoErrors()
@@ -127,6 +143,7 @@ test('perencanaan create successfully saves course into database and redirects',
         'title' => 'Pelatihan Teknis Tata Naskah Dinas Elektronik',
         'category_id' => $category->id,
         'quota' => 50,
+        'location' => 'Online LMS SIMPEL',
         'status' => 'draft',
     ]);
 });
@@ -142,6 +159,11 @@ test('perencanaan edit mounts existing data and successfully updates course', fu
         'type' => 'permanent',
         'method' => 'daring',
         'quota' => 30,
+        'location' => 'Aula BKPSDM',
+        'target_audience' => 'ASN Analis',
+        'budget_source' => 'DPA-BKPSDM',
+        'competencies' => 'Analisis kebijakan publik',
+        'description' => 'Pelatihan analis kebijakan pemerintah.',
         'status' => 'draft',
         'created_by' => $admin->id,
     ]);
@@ -150,6 +172,7 @@ test('perencanaan edit mounts existing data and successfully updates course', fu
         ->test(PerencanaanEdit::class, ['id' => $course->id])
         ->assertSet('form.code', 'PLT-2026-002')
         ->assertSet('form.title', 'Pelatihan Fungsional Analis Kebijakan')
+        ->assertSet('form.category_name', $category->name)
         ->set('form.title', 'Pelatihan Fungsional Analis Kebijakan Tk. Madya')
         ->set('form.quota', 45)
         ->call('formSubmit')
@@ -266,6 +289,11 @@ test('admin can submit a draft course to leader via edit page', function () {
         'type' => 'permanent',
         'method' => 'daring',
         'quota' => 30,
+        'location' => 'LMS Daring',
+        'target_audience' => 'ASN',
+        'budget_source' => 'APBK',
+        'competencies' => 'Transformasi digital',
+        'description' => 'Pelatihan transformasi digital aparatur.',
         'status' => 'draft',
         'created_by' => $admin->id,
     ]);
@@ -300,4 +328,102 @@ test('admin can archive completed course in perencanaan', function () {
         ->call('archiveCourse', $course->id)
         ->assertDispatched('alert-show');
     expect($course->fresh()->status)->toBe(CourseStatus::Archived);
+});
+
+test('perencanaan create auto-creates new category when user inputs a novel category name', function () {
+    $admin = User::factory()->admin()->create();
+
+    $novelCategoryName = 'Pelatihan Keamanan Siber ASN';
+
+    // Pastikan kategori belum ada
+    $this->assertDatabaseMissing('categories', [
+        'name' => $novelCategoryName,
+    ]);
+
+    Livewire::actingAs($admin)
+        ->test(PerencanaanCreate::class)
+        ->set('form.code', 'PLT-CYBER-01')
+        ->set('form.title', 'Dasar Keamanan Siber Pemerintah')
+        ->set('form.category_name', $novelCategoryName)
+        ->set('form.type', 'permanent')
+        ->set('form.method', 'daring')
+        ->set('form.quota', 25)
+        ->set('form.location', 'Lab Komputer BKPSDM')
+        ->set('form.target_audience', 'Pranata Komputer')
+        ->set('form.budget_source', 'DPA 2026')
+        ->set('form.competencies', 'Audit keamanan siber')
+        ->set('form.description', 'Pelatihan keamanan siber ASN.')
+        ->call('formSubmit')
+        ->assertHasNoErrors()
+        ->assertRedirect(route('perencanaan.data'));
+
+    $createdCategory = Category::where('name', $novelCategoryName)->first();
+    expect($createdCategory)->not->toBeNull();
+    expect($createdCategory->slug)->toBe('pelatihan-keamanan-siber-asn');
+
+    $this->assertDatabaseHas('courses', [
+        'code' => 'PLT-CYBER-01',
+        'category_id' => $createdCategory->id,
+    ]);
+});
+
+test('perencanaan edit can update category name to a different category', function () {
+    $admin = User::factory()->admin()->create();
+    $catA = Category::create(['name' => 'Kategori Awal', 'slug' => 'kategori-awal']);
+
+    $course = Course::create([
+        'code' => 'PLT-EDIT-CAT',
+        'title' => 'Pelatihan Ganti Kategori',
+        'category_id' => $catA->id,
+        'type' => 'permanent',
+        'method' => 'daring',
+        'quota' => 20,
+        'location' => 'Gedung Diklat',
+        'target_audience' => 'Pejabat Fungsional',
+        'budget_source' => 'APBD',
+        'competencies' => 'Kompetensi teknis',
+        'description' => 'Pelatihan perubahan kategori.',
+        'status' => 'draft',
+        'created_by' => $admin->id,
+    ]);
+
+    Livewire::actingAs($admin)
+        ->test(PerencanaanEdit::class, ['id' => $course->id])
+        ->assertSet('form.category_name', 'Kategori Awal')
+        ->set('form.category_name', 'Kategori Baru Terverifikasi')
+        ->call('formSubmit')
+        ->assertHasNoErrors()
+        ->assertRedirect(route('perencanaan.data'));
+
+    $catB = Category::where('name', 'Kategori Baru Terverifikasi')->first();
+    expect($catB)->not->toBeNull();
+    expect($course->fresh()->category_id)->toBe($catB->id);
+});
+
+test('perencanaan create validates quota min/max, title length, and method', function () {
+    $admin = User::factory()->admin()->create();
+
+    Livewire::actingAs($admin)
+        ->test(PerencanaanCreate::class)
+        ->set('form.title', 'AB') // less than 3 chars
+        ->set('form.quota', 0) // less than 1
+        ->set('form.method', 'invalid_method')
+        ->call('formSubmit')
+        ->assertHasErrors([
+            'form.title' => 'min',
+            'form.quota' => 'min',
+            'form.method' => 'in',
+        ]);
+});
+
+test('perencanaan create validates file upload mime types', function () {
+    $admin = User::factory()->admin()->create();
+
+    $invalidDoc = UploadedFile::fake()->create('kak.txt', 100, 'text/plain');
+
+    Livewire::actingAs($admin)
+        ->test(PerencanaanCreate::class)
+        ->set('torFile', $invalidDoc)
+        ->call('formSubmit')
+        ->assertHasErrors(['torFile' => 'mimes']);
 });

@@ -120,21 +120,27 @@ class PendaftaranCreate extends Component
 
         $this->validate();
 
-        $registered = PendaftaranRepo::register(
-            userId: Auth::id(),
-            courseId: $this->course->id,
-            userData: $this->form,
-            letterFile: $this->recommendationLetter
-        );
+        try {
+            $registered = PendaftaranRepo::register(
+                userId: Auth::id(),
+                courseId: $this->course->id,
+                userData: $this->form,
+                letterFile: $this->recommendationLetter
+            );
 
-        if ($registered) {
-            $this->registrationSuccess = true;
-            $this->newRegistrationNumber = $registered->registration_number;
-            $this->alreadyRegistered = true;
-            $this->existingRegistration = $registered;
+            if ($registered) {
+                $this->registrationSuccess = true;
+                $this->newRegistrationNumber = $registered->registration_number;
+                $this->alreadyRegistered = true;
+                $this->existingRegistration = $registered;
 
-            session()->flash('success_message', 'Pendaftaran pelatihan Anda berhasil dikirim! Menunggu verifikasi berkas oleh admin.');
-        } else {
+                session()->flash('success_message', 'Pendaftaran pelatihan Anda berhasil dikirim! Menunggu verifikasi berkas oleh admin.');
+            } else {
+                $this->addError('general', 'Terjadi kesalahan sistem saat memproses pendaftaran. Silakan coba beberapa saat lagi.');
+            }
+        } catch (\DomainException $e) {
+            $this->addError('general', $e->getMessage());
+        } catch (\Exception $e) {
             $this->addError('general', 'Terjadi kesalahan sistem saat memproses pendaftaran. Silakan coba beberapa saat lagi.');
         }
     }

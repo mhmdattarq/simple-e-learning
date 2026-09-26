@@ -263,27 +263,27 @@ class PendaftaranRepo
                 // Rule 1: Course must exist and be in 'published' state
                 $course = Course::lockForUpdate()->findOrFail($courseId);
                 if ($course->status !== CourseStatus::Published) {
-                    throw new \Exception('Periode pendaftaran untuk pelatihan ini belum dibuka atau telah ditutup.');
+                    throw new \DomainException('Periode pendaftaran untuk pelatihan ini belum dibuka atau telah ditutup.');
                 }
 
                 // Rule 2: Registration period dates
                 $now = now();
                 if ($course->registration_open_at && $now->lt($course->registration_open_at)) {
-                    throw new \Exception('Periode pendaftaran untuk pelatihan ini belum dimulai.');
+                    throw new \DomainException('Periode pendaftaran untuk pelatihan ini belum dimulai.');
                 }
                 if ($course->registration_close_at && $now->gt($course->registration_close_at)) {
-                    throw new \Exception('Periode pendaftaran untuk pelatihan ini telah berakhir.');
+                    throw new \DomainException('Periode pendaftaran untuk pelatihan ini telah berakhir.');
                 }
 
                 // Rule 3: Quota check
                 $enrolledCount = CourseUser::where('course_id', $courseId)->count();
                 if ($enrolledCount >= $course->quota) {
-                    throw new \Exception('Kuota pendaftaran pelatihan ini sudah penuh.');
+                    throw new \DomainException('Kuota pendaftaran pelatihan ini sudah penuh.');
                 }
 
                 // Rule 4: Duplicate registration check
                 if (self::hasRegistered($userId, $courseId)) {
-                    throw new \Exception('Anda sudah terdaftar pada pelatihan ini.');
+                    throw new \DomainException('Anda sudah terdaftar pada pelatihan ini.');
                 }
 
                 // 1. Update user's ASN profile details
@@ -315,6 +315,14 @@ class PendaftaranRepo
                     'enrolled_at' => now(),
                 ]);
             });
+        } catch (\DomainException $e) {
+            Log::warning('Pendaftaran pelatihan ditolak (validasi domain)', [
+                'user_id' => $userId,
+                'course_id' => $courseId,
+                'error' => $e->getMessage(),
+            ]);
+
+            throw $e;
         } catch (\Exception $e) {
             Log::error('Pendaftaran pelatihan gagal', [
                 'user_id' => $userId,
