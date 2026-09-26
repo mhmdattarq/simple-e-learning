@@ -24,18 +24,23 @@ class CourseSchedule extends Model
         'status',
         'created_by',
         'attendance_token',
+        'token_opened_at',
         'token_validity_minutes',
+        'late_threshold_minutes',
         'token_expires_at',
         'is_attendance_open',
+        'cancellation_reason',
     ];
 
     protected function casts(): array
     {
         return [
             'session_date' => 'date:Y-m-d',
+            'token_opened_at' => 'datetime',
             'token_expires_at' => 'datetime',
             'is_attendance_open' => 'boolean',
             'token_validity_minutes' => 'integer',
+            'late_threshold_minutes' => 'integer',
         ];
     }
 
@@ -80,6 +85,34 @@ class CourseSchedule extends Model
             && ! empty($this->attendance_token)
             && $this->token_expires_at
             && $this->token_expires_at->isFuture();
+    }
+
+    /**
+     * Dapatkan label status absensi baku: Sedang Dibuka / Ditutup / Belum Dibuka.
+     */
+    public function getAttendanceStatus(): string
+    {
+        if ($this->isAttendanceActive()) {
+            return 'Sedang Dibuka';
+        }
+
+        if ((! $this->is_attendance_open && ! empty($this->attendance_token)) || ($this->token_expires_at && $this->token_expires_at->isPast())) {
+            return 'Ditutup';
+        }
+
+        return 'Belum Dibuka';
+    }
+
+    /**
+     * Dapatkan badge status absensi.
+     */
+    public function getAttendanceStatusBadge(): string
+    {
+        return match ($this->getAttendanceStatus()) {
+            'Sedang Dibuka' => '<span class="badge bg-success text-white px-2 py-1"><i class="ri-broadcast-line me-1"></i>Sedang Dibuka</span>',
+            'Ditutup' => '<span class="badge bg-secondary text-white px-2 py-1"><i class="ri-lock-line me-1"></i>Ditutup</span>',
+            default => '<span class="badge bg-light text-muted border px-2 py-1"><i class="ri-time-line me-1"></i>Belum Dibuka</span>',
+        };
     }
 
     /**

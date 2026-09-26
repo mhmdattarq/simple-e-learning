@@ -70,7 +70,11 @@ class VerifikasiDetail extends Component
             default => $this->verifyForm['status'],
         };
 
-        session()->flash('success_message', "Keputusan verifikasi pendaftaran {$this->registration->registration_number} berhasil disimpan: {$statusLabel}.");
+        session()->flash('alert-show', [
+            'type' => 'success',
+            'title' => 'Berhasil',
+            'message' => "Keputusan verifikasi pendaftaran {$this->registration->registration_number} berhasil disimpan: {$statusLabel}.",
+        ]);
 
         $this->redirect(route('verifikasi.data'), navigate: true);
     }

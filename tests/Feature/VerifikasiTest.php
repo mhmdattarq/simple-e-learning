@@ -337,6 +337,9 @@ test('verifikator can submit verification decision from dedicated periksa page a
         ->set('verifyForm.verification_notes', 'Berkas memenuhi kualifikasi pendaftaran.')
         ->call('submitVerification')
         ->assertHasNoErrors()
+        ->assertSessionHas('alert-show', function ($alert) {
+            return $alert['type'] === 'success' && str_contains($alert['message'], 'Diverifikasi / Diterima');
+        })
         ->assertRedirect(route('verifikasi.data'));
 
     $updated = $reg->fresh();
@@ -363,4 +366,43 @@ test('verifikator cannot submit revision without mandatory notes on dedicated pe
         ->set('verifyForm.verification_notes', '')
         ->call('submitVerification')
         ->assertHasErrors(['verifyForm.verification_notes']);
+});
+
+test('hides decision card on periksa page when participant is already verified', function () {
+    $verifikator = User::factory()->verifikator()->create();
+    $peserta1 = User::factory()->peserta()->create();
+    $peserta2 = User::factory()->peserta()->create();
+
+    // 1. Pending registration shows decision card form
+    $regPending = CourseUser::create([
+        'user_id' => $peserta1->id,
+        'course_id' => $this->course->id,
+        'registration_number' => 'REG-DECISION-01',
+        'status' => RegistrationStatus::Pending,
+        'enrolled_at' => now(),
+    ]);
+
+    $this->actingAs($verifikator)
+        ->get(route('verifikasi.periksa', $regPending->id))
+        ->assertStatus(200)
+        ->assertSee('Keputusan Verifikasi Berkas')
+        ->assertSee('Simpan Keputusan');
+
+    // 2. Verified registration hides decision form and shows verified notice
+    $regVerified = CourseUser::create([
+        'user_id' => $peserta2->id,
+        'course_id' => $this->course->id,
+        'registration_number' => 'REG-DECISION-02',
+        'status' => RegistrationStatus::Verified,
+        'enrolled_at' => now(),
+        'verified_by' => $verifikator->id,
+        'verified_at' => now(),
+        'verification_notes' => 'Dokumen sah.',
+    ]);
+
+    $this->actingAs($verifikator)
+        ->get(route('verifikasi.periksa', $regVerified->id))
+        ->assertStatus(200)
+        ->assertDontSee('Simpan Keputusan')
+        ->assertSee('Berkas Telah Diverifikasi & Lolos', false);
 });

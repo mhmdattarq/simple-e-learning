@@ -211,6 +211,12 @@
 
         .table-responsive {
             min-height: 320px;
+            overflow: visible !important;
+        }
+
+        #tablePerencanaan_wrapper .dataTables_scroll,
+        #tablePerencanaan_wrapper .dataTables_scrollBody {
+            overflow: visible !important;
         }
 
         #tablePerencanaan {
@@ -218,12 +224,21 @@
         }
 
         #tablePerencanaan .dropdown {
-            position: relative;
+            position: relative !important;
             display: inline-block;
         }
 
         #tablePerencanaan .dropdown-menu {
+            position: absolute !important;
+            top: 100% !important;
+            left: 0 !important;
+            right: auto !important;
+            margin-top: 4px !important;
             z-index: 1065 !important;
+        }
+
+        #tablePerencanaan button[data-bs-toggle="dropdown"] * {
+            pointer-events: none;
         }
     </style>
 @endpush
@@ -310,10 +325,14 @@
 
                                 return `
                                 <div class="dropdown">
-                                    <button type="button" class="btn btn-sm btn-light border text-dark" data-bs-toggle="dropdown" data-bs-strategy="fixed" data-bs-boundary="window" aria-expanded="false" style="padding: 4px 8px; font-size: 12px; border-radius: 6px;">
+                                    <button type="button" class="btn btn-sm btn-light border text-dark"
+                                        data-bs-toggle="dropdown"
+                                        data-bs-display="static"
+                                        aria-expanded="false"
+                                        style="padding: 4px 8px; font-size: 12px; border-radius: 6px;">
                                         <i class="ri-more-2-fill"></i>
                                     </button>
-                                    <div class="dropdown-menu dropdown-menu-end shadow-sm border-0 p-2" style="border-radius: 10px; min-width: 185px;">
+                                    <div class="dropdown-menu dropdown-menu-start shadow-sm border-0 p-2" style="border-radius: 10px; min-width: 185px;">
                                         ${actions}
                                     </div>
                                 </div>

@@ -2,9 +2,7 @@
 
 namespace App\Livewire\Admin\Penjadwalan;
 
-use App\Models\Course;
 use App\Models\CourseSchedule;
-use App\Models\User;
 use App\Repositories\PenjadwalanRepo;
 use Illuminate\Support\Collection;
 use Livewire\Component;
@@ -27,8 +25,8 @@ class PenjadwalanEdit extends Component
     {
         $this->id = (int) $id;
         $this->schedule = PenjadwalanRepo::getById($id);
-        $this->courses = Course::orderBy('title')->get();
-        $this->mentors = User::whereIn('role', ['mentor', 'admin'])->orderBy('name')->get();
+        $this->courses = PenjadwalanRepo::getCoursesList();
+        $this->mentors = PenjadwalanRepo::getMentorsList();
 
         $this->form = [
             'course_id' => $this->schedule->course_id,
@@ -44,8 +42,10 @@ class PenjadwalanEdit extends Component
 
     public function rules(): array
     {
+        $eligibleCourseIds = PenjadwalanRepo::getCoursesList()->pluck('id')->toArray();
+
         return [
-            'form.course_id' => 'required|exists:courses,id',
+            'form.course_id' => ['required', 'in:'.implode(',', $eligibleCourseIds)],
             'form.mentor_id' => 'required|exists:users,id',
             'form.session_title' => 'required|string|max:255',
             'form.session_date' => 'required|date',
@@ -60,7 +60,7 @@ class PenjadwalanEdit extends Component
     {
         return [
             'form.course_id.required' => 'Program pelatihan wajib dipilih.',
-            'form.course_id.exists' => 'Program pelatihan yang dipilih tidak valid.',
+            'form.course_id.in' => 'Program pelatihan yang dipilih harus berstatus Disetujui atau Dibuka.',
             'form.mentor_id.required' => 'Narasumber / Mentor pengampu wajib dipilih.',
             'form.mentor_id.exists' => 'Narasumber / Mentor yang dipilih tidak valid.',
             'form.session_title.required' => 'Judul materi / agenda sesi wajib diisi.',
@@ -93,7 +93,16 @@ class PenjadwalanEdit extends Component
         $this->conflictError = null;
         $this->validate();
 
-        // Validasi pencegahan konflik jadwal mentor dan ruangan (anti-bentrok) kecuali jadwal ini
+        // 1. Validasi kesesuaian waktu sesi dengan periode pelatihan
+        $periodError = PenjadwalanRepo::validateCoursePeriod($this->form['course_id'], $this->form['session_date']);
+        if ($periodError) {
+            $this->conflictError = $periodError;
+            $this->addError('form.session_date', $periodError);
+
+            return;
+        }
+
+        // 2. Validasi pencegahan konflik jadwal mentor dan ruangan (anti-bentrok) kecuali jadwal ini
         $conflict = PenjadwalanRepo::checkConflict($this->form, $this->id);
         if ($conflict) {
             $this->conflictError = $conflict;

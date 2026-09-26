@@ -2,9 +2,11 @@
 
 namespace App\Repositories;
 
+use App\Enums\CourseStatus;
 use App\Models\Course;
 use App\Models\CourseSchedule;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
@@ -46,6 +48,43 @@ class PenjadwalanRepo
     }
 
     /**
+     * Validasi apakah tanggal pelaksanaan sesi berada di dalam periode pelatihan (start_date - end_date).
+     *
+     * @return string|null Error message if outside period, null if valid.
+     */
+    public static function validateCoursePeriod(int|string $courseId, ?string $sessionDate): ?string
+    {
+        if (! $courseId || ! $sessionDate) {
+            return null;
+        }
+
+        $course = Course::find($courseId);
+        if (! $course) {
+            return 'Program pelatihan yang dipilih tidak ditemukan.';
+        }
+
+        // Jika pelatihan mandiri (permanent), tidak memiliki batas periode tanggal mulai/selesai tertentu
+        if ($course->isPermanent()) {
+            return null;
+        }
+
+        if ($course->start_date && $course->end_date) {
+            $sessionCarbon = Carbon::parse($sessionDate)->startOfDay();
+            $startCarbon = $course->start_date->copy()->startOfDay();
+            $endCarbon = $course->end_date->copy()->endOfDay();
+
+            if ($sessionCarbon->lt($startCarbon) || $sessionCarbon->gt($endCarbon)) {
+                $startFormatted = $course->start_date->format('d/m/Y');
+                $endFormatted = $course->end_date->format('d/m/Y');
+
+                return "Waktu sesi tidak valid: Tanggal sesi ({$sessionCarbon->format('d/m/Y')}) harus berada di dalam periode pelaksanaan pelatihan {$course->code} ({$startFormatted} s.d {$endFormatted}).";
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Validasi anti-bentrok jadwal mentor dan ruangan/lokasi sesi pelatihan.
      * Validates mentor availability and physical room collision.
      *
@@ -67,11 +106,12 @@ class PenjadwalanRepo
         $startTimeFormatted = strlen($startTime) === 5 ? $startTime.':00' : $startTime;
         $endTimeFormatted = strlen($endTime) === 5 ? $endTime.':00' : $endTime;
 
-        // 1. Check Mentor Clash (Mentor cannot teach two sessions simultaneously)
+        // 1. Check Mentor Clash (Mentor cannot teach two sessions simultaneously, ignore cancelled)
         if ($mentorId) {
             $mentorConflict = CourseSchedule::query()
                 ->where('session_date', $sessionDate)
                 ->where('mentor_id', $mentorId)
+                ->where('status', '!=', 'cancelled')
                 ->when($excludeId, fn ($q) => $q->where('id', '!=', $excludeId))
                 ->where(function ($q) use ($startTimeFormatted, $endTimeFormatted) {
                     $q->where('start_time', '<', $endTimeFormatted)
@@ -87,7 +127,7 @@ class PenjadwalanRepo
             }
         }
 
-        // 2. Check Physical Room Collision (only if room_or_link is not an online URL link)
+        // 2. Check Physical Room Collision (only if room_or_link is not an online URL link, ignore cancelled)
         $isOnlineLink = filter_var($roomOrLink, FILTER_VALIDATE_URL) !== false
             || str_starts_with($roomOrLink, 'http://')
             || str_starts_with($roomOrLink, 'https://');
@@ -96,6 +136,7 @@ class PenjadwalanRepo
             $roomConflict = CourseSchedule::query()
                 ->where('session_date', $sessionDate)
                 ->whereRaw('LOWER(TRIM(room_or_link)) = ?', [strtolower($roomOrLink)])
+                ->where('status', '!=', 'cancelled')
                 ->when($excludeId, fn ($q) => $q->where('id', '!=', $excludeId))
                 ->where(function ($q) use ($startTimeFormatted, $endTimeFormatted) {
                     $q->where('start_time', '<', $endTimeFormatted)
@@ -152,12 +193,63 @@ class PenjadwalanRepo
     }
 
     /**
+     * Cek apakah sesi jadwal sudah memiliki data presensi/absensi atau keterkaitan materi.
+     */
+    public static function hasAttendanceOrMaterials(int|string $id): bool
+    {
+        $schedule = CourseSchedule::withCount('attendances')->with('course')->findOrFail($id);
+
+        if ($schedule->attendances_count > 0 || ! empty($schedule->attendance_token)) {
+            return true;
+        }
+
+        // Cek apakah pelatihan memiliki materi silabus yang sudah terbit/dibuat
+        if ($schedule->course && $schedule->course->chapters()->count() > 0) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Batalkan sesi jadwal dan simpan alasan pembatalan.
+     */
+    public static function cancel(int|string $id, string $reason): CourseSchedule
+    {
+        return DB::transaction(function () use ($id, $reason) {
+            $schedule = CourseSchedule::lockForUpdate()->findOrFail($id);
+            $schedule->update([
+                'status' => 'cancelled',
+                'cancellation_reason' => trim($reason),
+                'is_attendance_open' => false,
+            ]);
+
+            Log::info('Course schedule cancelled', [
+                'schedule_id' => $schedule->id,
+                'reason' => $reason,
+            ]);
+
+            return $schedule;
+        });
+    }
+
+    /**
      * Delete a course schedule session.
+     * Aturan penting: Sesi yang sudah memiliki absensi atau materi tidak boleh dihapus permanen.
      */
     public static function delete(int|string $id): bool
     {
         return DB::transaction(function () use ($id) {
-            $schedule = CourseSchedule::findOrFail($id);
+            $schedule = CourseSchedule::withCount('attendances')->with('course')->findOrFail($id);
+
+            if ($schedule->attendances_count > 0 || ! empty($schedule->attendance_token)) {
+                throw new \DomainException('Sesi jadwal tidak dapat dihapus permanen karena sudah memiliki data absensi/token presensi. Silakan batalkan sesi jadwal ini.');
+            }
+
+            if ($schedule->course && $schedule->course->chapters()->count() > 0) {
+                throw new \DomainException('Sesi jadwal tidak dapat dihapus permanen karena pelatihan telah memiliki materi kurikulum. Silakan batalkan sesi jadwal ini.');
+            }
+
             $deleted = $schedule->delete();
 
             Log::info('Course schedule deleted', ['schedule_id' => $id]);
@@ -167,14 +259,15 @@ class PenjadwalanRepo
     }
 
     /**
-     * Get published/active courses for schedule assignment.
+     * Get approved/published courses for schedule assignment.
+     * Aturan penting: Jadwal hanya dibuat untuk pelatihan yang sudah disetujui / dibuka.
      */
     public static function getCoursesList(): Collection
     {
         return Course::query()
-            ->whereIn('status', ['published', 'draft'])
+            ->whereIn('status', [CourseStatus::Approved, CourseStatus::Published, CourseStatus::Ongoing])
             ->orderBy('title')
-            ->get(['id', 'title', 'code', 'type', 'method']);
+            ->get(['id', 'title', 'code', 'type', 'method', 'status', 'start_date', 'end_date']);
     }
 
     /**

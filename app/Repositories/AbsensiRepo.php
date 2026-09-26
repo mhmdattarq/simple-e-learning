@@ -20,6 +20,7 @@ class AbsensiRepo
     {
         $query = CourseSchedule::query()
             ->with(['course', 'mentor', 'attendances'])
+            ->where('status', '!=', 'cancelled')
             ->select('course_schedules.*');
 
         if ($courseId) {
@@ -56,6 +57,26 @@ class AbsensiRepo
     }
 
     /**
+     * Cek apakah user berwenang mengelola absensi sesi (Admin atau Mentor pengampu sesi).
+     */
+    public static function canManage(?User $user, CourseSchedule $schedule): bool
+    {
+        if (! $user) {
+            return false;
+        }
+
+        if ($user->isAdmin()) {
+            return true;
+        }
+
+        if ($user->isMentor() && (int) $schedule->mentor_id === (int) $user->id) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Find schedule by ID with full relations.
      */
     public static function getById(int|string $scheduleId): CourseSchedule
@@ -67,15 +88,18 @@ class AbsensiRepo
      * Generate / Buka Sesi Token Absensi Elektronik.
      * Default masa berlaku token: 15 menit per sesi diklat.
      */
-    public static function openAttendanceSession(CourseSchedule $schedule, int $validityMinutes = 15): string
+    public static function openAttendanceSession(CourseSchedule $schedule, int $validityMinutes = 15, int $lateThresholdMinutes = 15): string
     {
         // Token 6-digit angka acak aman (100000 - 999999)
         $token = (string) random_int(100000, 999999);
+        $openedAt = now();
 
         $schedule->update([
             'attendance_token' => $token,
+            'token_opened_at' => $openedAt,
             'token_validity_minutes' => $validityMinutes,
-            'token_expires_at' => now()->addMinutes($validityMinutes),
+            'late_threshold_minutes' => $lateThresholdMinutes,
+            'token_expires_at' => $openedAt->copy()->addMinutes($validityMinutes),
             'is_attendance_open' => true,
         ]);
 
@@ -83,6 +107,7 @@ class AbsensiRepo
             'schedule_id' => $schedule->id,
             'token' => $token,
             'validity_minutes' => $validityMinutes,
+            'late_threshold_minutes' => $lateThresholdMinutes,
             'expires_at' => $schedule->token_expires_at,
         ]);
 
@@ -90,9 +115,10 @@ class AbsensiRepo
     }
 
     /**
-     * Tutup Sesi Token Absensi Lebih Awal.
+     * Tutup Sesi Token Absensi.
+     * Dapat otomatis membukukan sisa peserta yang belum absen menjadi status Alpa.
      */
-    public static function closeAttendanceSession(CourseSchedule $schedule): bool
+    public static function closeAttendanceSession(CourseSchedule $schedule, bool $autoAlpa = false): bool
     {
         $schedule->update([
             'is_attendance_open' => false,
@@ -101,17 +127,58 @@ class AbsensiRepo
 
         Log::info('Absensi: Token sesi ditutup', [
             'schedule_id' => $schedule->id,
+            'auto_alpa' => $autoAlpa,
         ]);
+
+        if ($autoAlpa) {
+            self::markUnattendedAsAlpa($schedule);
+        }
 
         return true;
     }
 
     /**
-     * Input Peserta: Presensi Mandiri via Token 6 Digit.
+     * Rekap peserta yang belum absen menjadi status Alpa setelah absensi ditutup.
+     */
+    public static function markUnattendedAsAlpa(CourseSchedule $schedule): int
+    {
+        $enrolledUserIds = CourseUser::where('course_id', $schedule->course_id)
+            ->whereIn('status', ['verified', 'active', 'completed'])
+            ->pluck('user_id');
+
+        $existingUserIds = Attendance::where('schedule_id', $schedule->id)
+            ->pluck('user_id');
+
+        $missingUserIds = $enrolledUserIds->diff($existingUserIds);
+
+        $count = 0;
+        foreach ($missingUserIds as $userId) {
+            Attendance::create([
+                'schedule_id' => $schedule->id,
+                'user_id' => $userId,
+                'status' => 'alpa',
+                'method' => 'manual',
+                'check_in_at' => null,
+                'is_manual_correction' => false,
+                'correction_reason' => 'Otomatis direkap Alpa setelah sesi absensi ditutup.',
+            ]);
+            $count++;
+        }
+
+        Log::info('Absensi: Otomatis rekap Alpa untuk peserta belum absen', [
+            'schedule_id' => $schedule->id,
+            'count' => $count,
+        ]);
+
+        return $count;
+    }
+
+    /**
+     * Input Peserta: Presensi Mandiri via Token 6 Digit atau Scan QR Code.
      *
      * @return array{success: bool, message: string, attendance?: Attendance}
      */
-    public static function checkInPeserta(User $user, string $token): array
+    public static function checkInPeserta(User $user, string $token, string $method = 'token'): array
     {
         $cleanToken = trim($token);
 
@@ -122,10 +189,11 @@ class AbsensiRepo
             ];
         }
 
-        // 1. Cari sesi aktif dengan token tersebut
+        // 1. Cari sesi aktif dengan token tersebut (pastikan sesi tidak dibatalkan)
         $schedule = CourseSchedule::query()
             ->where('attendance_token', $cleanToken)
             ->where('is_attendance_open', true)
+            ->where('status', '!=', 'cancelled')
             ->where('token_expires_at', '>', now())
             ->first();
 
@@ -150,7 +218,7 @@ class AbsensiRepo
             ];
         }
 
-        // 3. Cek apakah user sudah pernah absen pada sesi ini
+        // 3. Cek apakah user sudah pernah absen pada sesi ini (Aturan: hanya boleh absen satu kali)
         $existing = Attendance::query()
             ->where('schedule_id', $schedule->id)
             ->where('user_id', $user->id)
@@ -163,12 +231,23 @@ class AbsensiRepo
             ];
         }
 
-        // 4. Rekam presensi kehadiran
-        return DB::transaction(function () use ($schedule, $user) {
+        // 4. Tentukan status kehadiran (Hadir vs Terlambat)
+        $status = 'hadir';
+        $lateThreshold = $schedule->late_threshold_minutes ?? 15;
+        $openedAt = $schedule->token_opened_at ?? ($schedule->token_expires_at ? $schedule->token_expires_at->copy()->subMinutes($schedule->token_validity_minutes) : null);
+        if ($openedAt && now()->greaterThan($openedAt->copy()->addMinutes($lateThreshold))) {
+            $status = 'terlambat';
+        }
+
+        $validMethod = in_array($method, ['token', 'qr', 'manual']) ? $method : 'token';
+
+        // 5. Rekam presensi kehadiran
+        return DB::transaction(function () use ($schedule, $user, $status, $validMethod) {
             $attendance = Attendance::create([
                 'schedule_id' => $schedule->id,
                 'user_id' => $user->id,
-                'status' => 'hadir',
+                'status' => $status,
+                'method' => $validMethod,
                 'check_in_at' => now(),
                 'is_manual_correction' => false,
             ]);
@@ -176,12 +255,16 @@ class AbsensiRepo
             Log::info('Absensi: Peserta berhasil check-in', [
                 'schedule_id' => $schedule->id,
                 'user_id' => $user->id,
+                'status' => $status,
+                'method' => $validMethod,
                 'time' => now(),
             ]);
 
+            $lateNotice = $status === 'terlambat' ? ' (Tercatat Terlambat)' : '';
+
             return [
                 'success' => true,
-                'message' => 'Presensi berhasil direkam! Selamat mengikuti sesi pembelajaran.',
+                'message' => "Presensi berhasil direkam{$lateNotice}! Selamat mengikuti sesi pembelajaran.",
                 'attendance' => $attendance,
             ];
         });
@@ -252,6 +335,8 @@ class AbsensiRepo
                 'agency' => $user->agency ?? 'Pemerintah Kabupaten Aceh Timur',
                 'attendance_id' => $att?->id,
                 'status' => $status,
+                'method' => $att?->method ?? '-',
+                'method_badge' => $att ? $att->getMethodBadge() : '-',
                 'check_in_at' => $att?->check_in_at?->format('H:i:s d/m/Y') ?? '-',
                 'is_manual_correction' => (bool) ($att?->is_manual_correction ?? false),
                 'correction_reason' => $att?->correction_reason,
@@ -296,6 +381,7 @@ class AbsensiRepo
                 ],
                 [
                     'status' => $status,
+                    'method' => 'manual',
                     'check_in_at' => now(),
                     'is_manual_correction' => true,
                     'correction_reason' => trim($reason),

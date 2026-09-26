@@ -194,128 +194,157 @@
                     </div>
                 </div>
 
-                {{-- Card 2: Form Keputusan Verifikasi --}}
-                <div class="card simpel-card border-0 shadow-sm radius-16">
-                    <div
-                        class="card-header bg-white py-16 px-20 border-bottom d-flex align-items-center justify-content-between">
-                        <div class="d-flex align-items-center gap-2">
-                            <i class="ri-shield-check-line text-simple fs-5"></i>
-                            <h6 class="fw-bold text-dark mb-0 fs-6">Keputusan Verifikasi Berkas</h6>
+                {{-- Card 2: Form Keputusan Verifikasi (Disembunyikan jika peserta sudah diverifikasi / lolos) --}}
+                @if ($registration->status !== \App\Enums\RegistrationStatus::Verified)
+                    <div class="card simpel-card border-0 shadow-sm radius-16">
+                        <div
+                            class="card-header bg-white py-16 px-20 border-bottom d-flex align-items-center justify-content-between">
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="ri-shield-check-line text-simple fs-5"></i>
+                                <h6 class="fw-bold text-dark mb-0 fs-6">Keputusan Verifikasi Berkas</h6>
+                            </div>
+                        </div>
+
+                        <div class="card-body p-20">
+                            @if ($registration->verifier)
+                                <div class="mb-3 p-3 rounded-12 bg-light border border-simpel fs-8">
+                                    <div class="text-muted mb-1"><i class="ri-history-line me-1"></i>Riwayat Pemeriksaan
+                                        Terakhir:</div>
+                                    <div class="text-dark">
+                                        Diverifikasi oleh: <strong>{{ $registration->verifier?->name }}</strong>
+                                        pada {{ $registration->verified_at?->format('d/m/Y H:i') }} WIB
+                                    </div>
+                                </div>
+                            @endif
+
+                            <form wire:submit="submitVerification">
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold text-dark fs-7 mb-2">
+                                        Pilih Keputusan Kelayakan <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="vstack gap-2">
+                                        {{-- Diverifikasi / Lolos --}}
+                                        <label class="p-3 rounded-12 border cursor-pointer decision-card d-block"
+                                            style="{{ $verifyForm['status'] === 'verified' ? 'background-color: #f0fdf4; border-color: #22c55e !important; box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.2);' : 'background-color: #ffffff; border-color: #e2e8f0;' }}">
+                                            <div class="d-flex align-items-center gap-2">
+                                                <input type="radio" wire:model.live="verifyForm.status"
+                                                    value="verified" class="form-check-input mt-0">
+                                                <div class="d-flex align-items-center gap-2">
+                                                    <i class="ri-checkbox-circle-fill text-success fs-5"></i>
+                                                    <div>
+                                                        <span class="fw-bold text-dark fs-7 d-block">Diverifikasi / Lolos
+                                                            Syarat</span>
+                                                        <small class="text-muted fs-8">Berkas lengkap, sah, dan memenuhi
+                                                            kuota diklat.</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </label>
+
+                                        {{-- Perlu Perbaikan --}}
+                                        <label class="p-3 rounded-12 border cursor-pointer decision-card d-block"
+                                            style="{{ $verifyForm['status'] === 'revision_required' ? 'background-color: #fffbeb; border-color: #f59e0b !important; box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.2);' : 'background-color: #ffffff; border-color: #e2e8f0;' }}">
+                                            <div class="d-flex align-items-center gap-2">
+                                                <input type="radio" wire:model.live="verifyForm.status"
+                                                    value="revision_required" class="form-check-input mt-0">
+                                                <div class="d-flex align-items-center gap-2">
+                                                    <i class="ri-error-warning-fill text-warning fs-5"></i>
+                                                    <div>
+                                                        <span class="fw-bold text-dark fs-7 d-block">Perlu Perbaikan
+                                                            Berkas</span>
+                                                        <small class="text-muted fs-8">Berkas kurang jelas / belum bertanda
+                                                            tangan resmi atasan.</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </label>
+
+                                        {{-- Ditolak --}}
+                                        <label class="p-3 rounded-12 border cursor-pointer decision-card d-block"
+                                            style="{{ $verifyForm['status'] === 'rejected' ? 'background-color: #fef2f2; border-color: #ef4444 !important; box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);' : 'background-color: #ffffff; border-color: #e2e8f0;' }}">
+                                            <div class="d-flex align-items-center gap-2">
+                                                <input type="radio" wire:model.live="verifyForm.status"
+                                                    value="rejected" class="form-check-input mt-0">
+                                                <div class="d-flex align-items-center gap-2">
+                                                    <i class="ri-close-circle-fill text-danger fs-5"></i>
+                                                    <div>
+                                                        <span class="fw-bold text-dark fs-7 d-block">Tolak
+                                                            Pendaftaran</span>
+                                                        <small class="text-muted fs-8">Peserta tidak memenuhi kriteria
+                                                            persyaratan pelatihan.</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </label>
+                                    </div>
+                                    @error('verifyForm.status')
+                                        <div class="invalid-feedback d-block mt-1">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                {{-- Catatan Verifikator --}}
+                                <div class="mb-4">
+                                    <label class="form-label fw-bold text-dark fs-7 mb-1">
+                                        Catatan Tim Verifikator
+                                        @if (in_array($verifyForm['status'], ['revision_required', 'rejected'], true))
+                                            <span class="text-danger">*</span>
+                                        @else
+                                            <span class="text-muted fw-normal fs-8">(Opsional)</span>
+                                        @endif
+                                    </label>
+                                    <textarea wire:model="verifyForm.verification_notes" rows="3"
+                                        class="form-control fs-7 @error('verifyForm.verification_notes') is-invalid @enderror"
+                                        placeholder="{{ $verifyForm['status'] === 'revision_required' ? 'Contoh: Format surat rekomendasi belum ditandatangani Kepala OPD / belum stempel basah...' : ($verifyForm['status'] === 'rejected' ? 'Contoh: Kualifikasi jabatan tidak sesuai sasaran diklat...' : 'Catatan tambahan untuk calon peserta (opsional)...') }}"></textarea>
+                                    @error('verifyForm.verification_notes')
+                                        <div class="invalid-feedback d-block mt-1">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                {{-- Tombol Aksi Simpan --}}
+                                <div class="d-flex align-items-center gap-2 pt-2 border-top mt-3">
+                                    <button type="submit"
+                                        class="btn btn-simple-gold px-4 py-2 radius-8 fs-7 fw-semibold ms-auto d-inline-flex align-items-center gap-2 w-100"
+                                        wire:loading.attr="disabled">
+                                        <span wire:loading.remove wire:target="submitVerification">
+                                            <i class="ri-check-line"></i> Simpan Keputusan
+                                        </span>
+                                        <span wire:loading wire:target="submitVerification">
+                                            <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+                                            Menyimpan...
+                                        </span>
+                                    </button>
+                                </div>
+                            </form>
                         </div>
                     </div>
-
-                    <div class="card-body p-20">
-                        @if ($registration->verifier)
-                            <div class="mb-3 p-3 rounded-12 bg-light border border-simpel fs-8">
-                                <div class="text-muted mb-1"><i class="ri-history-line me-1"></i>Riwayat Pemeriksaan
-                                    Terakhir:</div>
-                                <div class="text-dark">
-                                    Diverifikasi oleh: <strong>{{ $registration->verifier?->name }}</strong>
-                                    pada {{ $registration->verified_at?->format('d/m/Y H:i') }} WIB
+                @else
+                    {{-- Informasi Status Peserta yang Sudah Lolos / Diverifikasi --}}
+                    <div class="card simpel-card border-0 shadow-sm radius-16 bg-success bg-opacity-10 border border-success border-opacity-25">
+                        <div class="card-body p-20">
+                            <div class="d-flex align-items-start gap-3">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center bg-success text-white flex-shrink-0"
+                                    style="width: 44px; height: 44px;">
+                                    <i class="ri-checkbox-circle-fill fs-4"></i>
                                 </div>
-                            </div>
-                        @endif
-
-                        <form wire:submit="submitVerification">
-                            <div class="mb-3">
-                                <label class="form-label fw-bold text-dark fs-7 mb-2">
-                                    Pilih Keputusan Kelayakan <span class="text-danger">*</span>
-                                </label>
-                                <div class="vstack gap-2">
-                                    {{-- Diverifikasi / Lolos --}}
-                                    <label class="p-3 rounded-12 border cursor-pointer decision-card d-block"
-                                        style="{{ $verifyForm['status'] === 'verified' ? 'background-color: #f0fdf4; border-color: #22c55e !important; box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.2);' : 'background-color: #ffffff; border-color: #e2e8f0;' }}">
-                                        <div class="d-flex align-items-center gap-2">
-                                            <input type="radio" wire:model.live="verifyForm.status"
-                                                value="verified" class="form-check-input mt-0">
-                                            <div class="d-flex align-items-center gap-2">
-                                                <i class="ri-checkbox-circle-fill text-success fs-5"></i>
-                                                <div>
-                                                    <span class="fw-bold text-dark fs-7 d-block">Diverifikasi / Lolos
-                                                        Syarat</span>
-                                                    <small class="text-muted fs-8">Berkas lengkap, sah, dan memenuhi
-                                                        kuota diklat.</small>
-                                                </div>
-                                            </div>
+                                <div class="flex-grow-1">
+                                    <h6 class="fw-bold text-success mb-1 fs-6">Berkas Telah Diverifikasi & Lolos</h6>
+                                    <p class="text-muted fs-8 mb-2">
+                                        Data calon peserta ini telah selesai diperiksa dan dinyatakan memenuhi persyaratan diklat ASN.
+                                    </p>
+                                    @if ($registration->verifier)
+                                        <div class="p-2 rounded-8 bg-white border border-success border-opacity-25 fs-8 text-dark">
+                                            <div><i class="ri-user-follow-line text-success me-1"></i>Verifikator: <strong>{{ $registration->verifier?->name }}</strong></div>
+                                            <div class="mt-1 text-muted"><i class="ri-time-line me-1"></i>Waktu: {{ $registration->verified_at?->format('d M Y, H:i') }} WIB</div>
+                                            @if ($registration->verification_notes)
+                                                <div class="mt-1 text-muted"><i class="ri-chat-1-line me-1"></i>Catatan: <em>"{{ $registration->verification_notes }}"</em></div>
+                                            @endif
                                         </div>
-                                    </label>
-
-                                    {{-- Perlu Perbaikan --}}
-                                    <label class="p-3 rounded-12 border cursor-pointer decision-card d-block"
-                                        style="{{ $verifyForm['status'] === 'revision_required' ? 'background-color: #fffbeb; border-color: #f59e0b !important; box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.2);' : 'background-color: #ffffff; border-color: #e2e8f0;' }}">
-                                        <div class="d-flex align-items-center gap-2">
-                                            <input type="radio" wire:model.live="verifyForm.status"
-                                                value="revision_required" class="form-check-input mt-0">
-                                            <div class="d-flex align-items-center gap-2">
-                                                <i class="ri-error-warning-fill text-warning fs-5"></i>
-                                                <div>
-                                                    <span class="fw-bold text-dark fs-7 d-block">Perlu Perbaikan
-                                                        Berkas</span>
-                                                    <small class="text-muted fs-8">Berkas kurang jelas / belum bertanda
-                                                        tangan resmi atasan.</small>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </label>
-
-                                    {{-- Ditolak --}}
-                                    <label class="p-3 rounded-12 border cursor-pointer decision-card d-block"
-                                        style="{{ $verifyForm['status'] === 'rejected' ? 'background-color: #fef2f2; border-color: #ef4444 !important; box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);' : 'background-color: #ffffff; border-color: #e2e8f0;' }}">
-                                        <div class="d-flex align-items-center gap-2">
-                                            <input type="radio" wire:model.live="verifyForm.status"
-                                                value="rejected" class="form-check-input mt-0">
-                                            <div class="d-flex align-items-center gap-2">
-                                                <i class="ri-close-circle-fill text-danger fs-5"></i>
-                                                <div>
-                                                    <span class="fw-bold text-dark fs-7 d-block">Tolak
-                                                        Pendaftaran</span>
-                                                    <small class="text-muted fs-8">Peserta tidak memenuhi kriteria
-                                                        persyaratan pelatihan.</small>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </label>
-                                </div>
-                                @error('verifyForm.status')
-                                    <div class="invalid-feedback d-block mt-1">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            {{-- Catatan Verifikator --}}
-                            <div class="mb-4">
-                                <label class="form-label fw-bold text-dark fs-7 mb-1">
-                                    Catatan Tim Verifikator
-                                    @if (in_array($verifyForm['status'], ['revision_required', 'rejected'], true))
-                                        <span class="text-danger">*</span>
-                                    @else
-                                        <span class="text-muted fw-normal fs-8">(Opsional)</span>
                                     @endif
-                                </label>
-                                <textarea wire:model="verifyForm.verification_notes" rows="3"
-                                    class="form-control fs-7 @error('verifyForm.verification_notes') is-invalid @enderror"
-                                    placeholder="{{ $verifyForm['status'] === 'revision_required' ? 'Contoh: Format surat rekomendasi belum ditandatangani Kepala OPD / belum stempel basah...' : ($verifyForm['status'] === 'rejected' ? 'Contoh: Kualifikasi jabatan tidak sesuai sasaran diklat...' : 'Catatan tambahan untuk calon peserta (opsional)...') }}"></textarea>
-                                @error('verifyForm.verification_notes')
-                                    <div class="invalid-feedback d-block mt-1">{{ $message }}</div>
-                                @enderror
+                                </div>
                             </div>
-
-                            {{-- Tombol Aksi Simpan --}}
-                            <div class="d-flex align-items-center gap-2 pt-2 border-top mt-3">
-                                <button type="submit"
-                                    class="btn btn-simple-gold px-4 py-2 radius-8 fs-7 fw-semibold ms-auto d-inline-flex align-items-center gap-2 w-100"
-                                    wire:loading.attr="disabled">
-                                    <span wire:loading.remove wire:target="submitVerification">
-                                        <i class="ri-check-line"></i> Simpan Keputusan
-                                    </span>
-                                    <span wire:loading wire:target="submitVerification">
-                                        <span class="spinner-border spinner-border-sm me-1" role="status"></span>
-                                        Menyimpan...
-                                    </span>
-                                </button>
-                            </div>
-                        </form>
+                        </div>
                     </div>
-                </div>
+                @endif
             </div>
         </div>
     </div>

@@ -16,6 +16,7 @@ class Attendance extends Model
         'schedule_id',
         'user_id',
         'status',
+        'method',
         'check_in_at',
         'is_manual_correction',
         'correction_reason',
@@ -66,6 +67,18 @@ class Attendance extends Model
             'sakit' => '<span class="badge bg-secondary text-white px-2 py-1"><i class="ri-first-aid-kit-line me-1"></i>Sakit</span>',
             'alpa' => '<span class="badge bg-danger text-white px-2 py-1"><i class="ri-close-circle-line me-1"></i>Alpa</span>',
             default => '<span class="badge bg-light text-muted px-2 py-1">Belum Absen</span>',
+        };
+    }
+
+    /**
+     * HTML Badge metode presensi.
+     */
+    public function getMethodBadge(): string
+    {
+        return match ($this->method) {
+            'qr' => '<span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1"><i class="ri-qr-code-line me-1"></i>QR Code</span>',
+            'manual' => '<span class="badge bg-warning-subtle text-dark border border-warning-subtle px-2 py-1"><i class="ri-edit-line me-1"></i>Koreksi Manual</span>',
+            default => '<span class="badge bg-light text-secondary border px-2 py-1"><i class="ri-key-2-line me-1"></i>Token</span>',
         };
     }
 }

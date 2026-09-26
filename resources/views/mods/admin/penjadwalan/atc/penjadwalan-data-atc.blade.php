@@ -211,6 +211,12 @@
 
         .table-responsive {
             min-height: 320px;
+            overflow: visible !important;
+        }
+
+        #tablePenjadwalan_wrapper .dataTables_scroll,
+        #tablePenjadwalan_wrapper .dataTables_scrollBody {
+            overflow: visible !important;
         }
 
         #tablePenjadwalan {
@@ -218,12 +224,21 @@
         }
 
         #tablePenjadwalan .dropdown {
-            position: relative;
+            position: relative !important;
             display: inline-block;
         }
 
         #tablePenjadwalan .dropdown-menu {
+            position: absolute !important;
+            top: 100% !important;
+            left: 0 !important;
+            right: auto !important;
+            margin-top: 4px !important;
             z-index: 1065 !important;
+        }
+
+        #tablePenjadwalan button[data-bs-toggle="dropdown"] * {
+            pointer-events: none;
         }
     </style>
 @endpush
@@ -275,23 +290,55 @@
                             render: function(data, type, row) {
                                 let url = "{{ route('penjadwalan.edit', ':id') }}";
                                 let editUrl = url.replace(':id', row.id);
-                                let titleSafe = String(data.session_title || '').replace(/'/g, "\\'");
+                                let isCancelled = row.status === 'cancelled';
+                                let hasAttendanceOrMaterials = row.has_attendance_or_materials;
 
-                                return `
-                                <div class="dropdown">
-                                    <button type="button" class="btn btn-sm btn-light border text-dark" data-bs-toggle="dropdown" data-bs-strategy="fixed" data-bs-boundary="window" aria-expanded="false" style="padding: 4px 8px; font-size: 12px; border-radius: 6px;">
-                                        <i class="ri-more-2-fill"></i>
-                                    </button>
-                                    <div class="dropdown-menu dropdown-menu-end shadow-sm border-0 p-2" style="border-radius: 10px; min-width: 160px;">
-                                        <a class="dropdown-item d-flex align-items-center gap-2 py-2 px-3 rounded text-warning" href="${editUrl}" wire:navigate>
-                                            <i class="ri-edit-line"></i> Edit Jadwal
-                                        </a>
+                                let deleteAction = '';
+                                if (hasAttendanceOrMaterials) {
+                                    deleteAction = `
+                                        <button type="button" class="dropdown-item text-muted d-flex align-items-center gap-2 py-2 px-3 rounded border-0 bg-transparent w-100 text-start"
+                                            title="Sesi sudah memiliki absensi atau materi kurikulum sehingga tidak dapat dihapus permanen. Silakan gunakan Batalkan Sesi."
+                                            onclick="alert('Sesi ini sudah memiliki riwayat absensi atau materi pelatihan sehingga tidak boleh dihapus permanen. Silakan gunakan menu Batalkan Sesi.')">
+                                            <i class="ri-delete-bin-line opacity-50"></i> <span class="text-decoration-line-through text-muted">Hapus</span>
+                                        </button>
+                                    `;
+                                } else {
+                                    deleteAction = `
                                         <button type="button" class="dropdown-item text-danger d-flex align-items-center gap-2 py-2 px-3 rounded border-0 bg-transparent w-100 text-start"
                                            data-bs-toggle="modal"
                                            data-bs-target="#modalDelete"
-                                           wire:click="hookModalDelete(${data.id}, '${titleSafe}')">
-                                            <i class="ri-delete-bin-line"></i> Hapus
+                                           wire:click="hookModalDelete(${data.id})">
+                                            <i class="ri-delete-bin-line"></i> Hapus Permanen
                                         </button>
+                                    `;
+                                }
+
+                                let cancelAction = '';
+                                if (!isCancelled) {
+                                    cancelAction = `
+                                        <button type="button" class="dropdown-item text-secondary d-flex align-items-center gap-2 py-2 px-3 rounded border-0 bg-transparent w-100 text-start"
+                                            wire:click="openCancelModal(${data.id})">
+                                            <i class="ri-close-circle-line text-danger"></i> Batalkan Sesi
+                                        </button>
+                                    `;
+                                }
+
+                                return `
+                                <div class="dropdown">
+                                    <button type="button" class="btn btn-sm btn-light border text-dark"
+                                        data-bs-toggle="dropdown"
+                                        data-bs-display="static"
+                                        aria-expanded="false"
+                                        style="padding: 4px 8px; font-size: 12px; border-radius: 6px;">
+                                        <i class="ri-more-2-fill"></i>
+                                    </button>
+                                    <div class="dropdown-menu dropdown-menu-start shadow-sm border-0 p-2" style="border-radius: 10px; min-width: 175px;">
+                                        <a class="dropdown-item d-flex align-items-center gap-2 py-2 px-3 rounded text-warning" href="${editUrl}" wire:navigate>
+                                            <i class="ri-edit-line"></i> Edit Jadwal
+                                        </a>
+                                        ${cancelAction}
+                                        <div class="dropdown-divider my-1"></div>
+                                        ${deleteAction}
                                     </div>
                                 </div>
                             `;
@@ -411,17 +458,17 @@
             }
         }
 
-        // Initialize on DOM ready and Livewire navigation
-        $(document).ready(function() {
+        // Lifecycle Inisialisasi Tabel: kompatibel penuh dengan reload halaman biasa & navigasi SPA (wire:navigate)
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initPenjadwalanTable);
+        } else {
             initPenjadwalanTable();
-        });
+        }
 
-        document.addEventListener('livewire:navigated', function() {
-            initPenjadwalanTable();
-        });
+        document.addEventListener('livewire:navigated', initPenjadwalanTable);
 
         window.addEventListener('reloadDT', function() {
-            if (window.dtTable) {
+            if (window.dtTable && typeof window.dtTable.ajax?.reload === 'function') {
                 window.dtTable.ajax.reload(null, false);
             }
         });
