@@ -349,7 +349,7 @@ class AbsensiRepo
         $percentage = $totalEnrolled > 0 ? round(($totalPresent / $totalEnrolled) * 100, 1) : 0;
 
         return [
-            'schedule' => $schedule,
+            'schedule' => $schedule->loadMissing(['course', 'mentor']),
             'total_enrolled' => $totalEnrolled,
             'hadir_count' => $hadirCount,
             'terlambat_count' => $terlambatCount,

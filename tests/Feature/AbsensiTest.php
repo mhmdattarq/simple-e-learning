@@ -1,6 +1,7 @@
 <?php
 
 use App\Livewire\Admin\Absensi\AbsensiData;
+use App\Livewire\Admin\Absensi\AbsensiKelola;
 use App\Models\Category;
 use App\Models\Course;
 use App\Models\CourseSchedule;
@@ -108,6 +109,10 @@ test('absensi datatable endpoint returns valid yajra json response', function ()
                     'mentor_name',
                     'session_date_formatted',
                     'time_range',
+                    'attendance_status',
+                    'attendance_status_badge',
+                    'attendance_ratio_badge',
+                    'action',
                     'token_badge',
                     'attendance_summary_badge',
                     'is_current_mentor',
@@ -116,6 +121,7 @@ test('absensi datatable endpoint returns valid yajra json response', function ()
         ])
         ->assertJsonFragment([
             'session_title' => e('Fundamental Kriptografi & Pengamanan Jaringan'),
+            'attendance_status' => 'Belum Dibuka',
         ]);
 });
 
@@ -155,7 +161,7 @@ test('assigned mentor can open attendance session token with validity minutes', 
         ->assertSet('selectedScheduleId', $this->schedule->id)
         ->set('tokenValidityMinutes', 30)
         ->call('submitOpenToken')
-        ->assertDispatched('alert')
+        ->assertDispatched('alert-show')
         ->assertDispatched('reloadDT');
 
     $this->schedule->refresh();
@@ -175,7 +181,7 @@ test('admin can also open attendance session token with validity minutes', funct
         ->set('tokenValidityMinutes', 20)
         ->set('lateThresholdMinutes', 10)
         ->call('submitOpenToken')
-        ->assertDispatched('alert')
+        ->assertDispatched('alert-show')
         ->assertDispatched('reloadDT');
 
     $this->schedule->refresh();
@@ -191,8 +197,10 @@ test('other mentor cannot open token for session they do not teach', function ()
 
     Livewire::test(AbsensiData::class)
         ->call('hookModalToken', $this->schedule->id)
-        ->assertDispatched('alert', function ($name, $params) {
-            return ($params['type'] ?? '') === 'error' && str_contains($params['message'] ?? '', 'Akses ditolak');
+        ->assertDispatched('alert-show', function ($name, $params) {
+            $data = $params['data'] ?? $params;
+
+            return ($data['type'] ?? '') === 'danger' && str_contains($data['message'] ?? '', 'Akses ditolak');
         });
 
     $this->schedule->refresh();
@@ -207,7 +215,7 @@ test('assigned mentor can close attendance session token early', function () {
 
     Livewire::test(AbsensiData::class)
         ->call('closeToken', $this->schedule->id)
-        ->assertDispatched('alert')
+        ->assertDispatched('alert-show')
         ->assertDispatched('reloadDT');
 
     $this->schedule->refresh();
@@ -224,7 +232,7 @@ test('admin can also close attendance session token and auto mark unattended as 
     Livewire::test(AbsensiData::class)
         ->set('autoAlpaOnClose', true)
         ->call('closeToken', $this->schedule->id)
-        ->assertDispatched('alert')
+        ->assertDispatched('alert-show')
         ->assertDispatched('reloadDT');
 
     expect($this->schedule->fresh()->isAttendanceActive())->toBeFalse();
@@ -249,7 +257,7 @@ test('admin can perform manual attendance correction with reason', function () {
         ->set('correctionReason', 'Peserta mengajukan izin dinas luar dari BKPSDM.')
         ->call('submitCorrection')
         ->assertDispatched('close-modal-correction')
-        ->assertDispatched('alert')
+        ->assertDispatched('alert-show')
         ->assertDispatched('reloadDT');
 
     $this->assertDatabaseHas('attendances', [
@@ -396,4 +404,115 @@ test('unverified participant or already checked in participant cannot check in a
     $resSecond = AbsensiRepo::checkInPeserta($this->peserta, $token);
     expect($resSecond['success'])->toBeFalse()
         ->and($resSecond['message'])->toContain('sudah tercatat melakukan presensi');
+});
+
+test('openManageAttendance sets schedule and sheet data and dispatches open-modal-sheet', function () {
+    Livewire::actingAs($this->admin)
+        ->test(AbsensiData::class)
+        ->call('openManageAttendance', $this->schedule->id)
+        ->assertSet('selectedScheduleId', $this->schedule->id)
+        ->assertSet('sheetScheduleId', $this->schedule->id)
+        ->assertDispatched('open-modal-sheet');
+});
+
+test('openManageAttendance dispatches render-qr when session token is active', function () {
+    $token = AbsensiRepo::openAttendanceSession($this->schedule, 20, 15);
+
+    Livewire::actingAs($this->admin)
+        ->test(AbsensiData::class)
+        ->call('openManageAttendance', $this->schedule->id)
+        ->assertSet('isTokenActive', true)
+        ->assertSet('activeToken', $token)
+        ->assertDispatched('open-modal-sheet')
+        ->assertDispatched('render-qr', token: $token);
+});
+
+test('submitOpenToken in manage attendance modal dispatches render-qr and refreshes sheet', function () {
+    Livewire::actingAs($this->admin)
+        ->test(AbsensiData::class)
+        ->call('openManageAttendance', $this->schedule->id)
+        ->set('tokenValidityMinutes', 30)
+        ->set('lateThresholdMinutes', 10)
+        ->call('submitOpenToken')
+        ->assertSet('isTokenActive', true)
+        ->assertDispatched('render-qr')
+        ->assertDispatched('reloadDT');
+});
+
+test('refreshAttendanceSheet refreshes the attendance sheet data', function () {
+    $component = Livewire::actingAs($this->admin)
+        ->test(AbsensiData::class)
+        ->call('openManageAttendance', $this->schedule->id)
+        ->call('refreshAttendanceSheet');
+
+    expect($component->get('attendanceSheet'))->not->toBeNull();
+});
+
+test('openManageAttendance can be triggered via open-manage-attendance Livewire event', function () {
+    Livewire::actingAs($this->admin)
+        ->test(AbsensiData::class)
+        ->dispatch('open-manage-attendance', scheduleId: $this->schedule->id)
+        ->assertSet('selectedScheduleId', $this->schedule->id)
+        ->assertSet('sheetScheduleId', $this->schedule->id)
+        ->assertDispatched('open-modal-sheet');
+});
+
+test('admin and assigned mentor can access absensi kelola page', function () {
+    $this->actingAs($this->admin)
+        ->get(route('absensi.kelola', $this->schedule->id))
+        ->assertStatus(200)
+        ->assertSee('Kelola Absensi Sesi Pelatihan')
+        ->assertSee($this->schedule->session_title);
+
+    $this->actingAs($this->mentor)
+        ->get(route('absensi.kelola', $this->schedule->id))
+        ->assertStatus(200)
+        ->assertSee('Kelola Absensi Sesi Pelatihan');
+});
+
+test('unassigned mentor and participant cannot access absensi kelola page', function () {
+    $this->actingAs($this->otherMentor)
+        ->get(route('absensi.kelola', $this->schedule->id))
+        ->assertStatus(403);
+
+    $this->actingAs($this->peserta)
+        ->get(route('absensi.kelola', $this->schedule->id))
+        ->assertStatus(403);
+});
+
+test('AbsensiKelola component can open and close token session', function () {
+    $test = Livewire::actingAs($this->admin)
+        ->test(AbsensiKelola::class, ['id' => $this->schedule->id])
+        ->set('tokenValidityMinutes', 25)
+        ->set('lateThresholdMinutes', 10)
+        ->call('submitOpenToken')
+        ->assertSet('isTokenActive', true)
+        ->assertDispatched('render-qr')
+        ->assertDispatched('alert-show');
+
+    expect($this->schedule->fresh()->isAttendanceActive())->toBeTrue();
+
+    $test->call('closeToken')
+        ->assertSet('isTokenActive', false)
+        ->assertDispatched('alert-show');
+
+    expect($this->schedule->fresh()->is_attendance_open)->toBeFalse();
+});
+
+test('AbsensiKelola component can perform manual attendance correction', function () {
+    Livewire::actingAs($this->admin)
+        ->test(AbsensiKelola::class, ['id' => $this->schedule->id])
+        ->call('hookModalCorrection', $this->peserta->id, $this->peserta->name, 'belum_absen')
+        ->set('correctionStatus', 'hadir')
+        ->set('correctionReason', 'Peserta hadir fisik terkonfirmasi di kelas.')
+        ->call('submitCorrection')
+        ->assertDispatched('close-modal-correction')
+        ->assertDispatched('alert-show');
+
+    $this->assertDatabaseHas('attendances', [
+        'schedule_id' => $this->schedule->id,
+        'user_id' => $this->peserta->id,
+        'status' => 'hadir',
+        'is_manual_correction' => true,
+    ]);
 });

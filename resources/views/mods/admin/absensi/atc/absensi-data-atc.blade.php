@@ -68,23 +68,11 @@
                         "<'row'<'col-sm-12'tr>>" +
                         "<'row mt-3'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
                     order: [
-                        [4, 'desc']
-                    ], // Urutkan default berdasarkan Tanggal (Kolom 4: Tanggal & Waktu)
+                        [3, 'desc']
+                    ], // Urutkan default berdasarkan Tanggal & Jam Sesi (Kolom 3)
                     searchDelay: 400,
                     columns: [
-                        // Kolom 0: Checkbox
-                        {
-                            data: null,
-                            name: 'id',
-                            orderable: false,
-                            searchable: false,
-                            className: 'text-center',
-                            render: function(data) {
-                                return '<input class="form-check-input check-data-item" type="checkbox" value="' + data.id + '">';
-                            }
-                        },
-
-                        // Kolom 1: Nomor Urut Otomatis
+                        // Kolom 0: Nomor Urut Otomatis
                         {
                             data: null,
                             orderable: false,
@@ -95,18 +83,7 @@
                             }
                         },
 
-                        // Kolom 2: Judul Sesi / Agenda
-                        {
-                            data: 'session_title',
-                            name: 'session_title',
-                            orderable: true,
-                            searchable: true,
-                            render: function(data) {
-                                return `<span class="fw-bold text-dark d-block" style="font-size: 13.5px;">${data}</span>`;
-                            }
-                        },
-
-                        // Kolom 3: Pelatihan
+                        // Kolom 1: Pelatihan
                         {
                             data: 'course_title',
                             name: 'course.title',
@@ -123,7 +100,18 @@
                             }
                         },
 
-                        // Kolom 4: Tanggal & Waktu
+                        // Kolom 2: Judul Sesi
+                        {
+                            data: 'session_title',
+                            name: 'session_title',
+                            orderable: true,
+                            searchable: true,
+                            render: function(data) {
+                                return `<span class="fw-bold text-dark d-block" style="font-size: 13.5px;">${data}</span>`;
+                            }
+                        },
+
+                        // Kolom 3: Tanggal & Jam Sesi
                         {
                             data: 'session_date_formatted',
                             name: 'session_date',
@@ -139,7 +127,7 @@
                             }
                         },
 
-                        // Kolom 5: Mentor Pengampu
+                        // Kolom 4: Mentor
                         {
                             data: 'mentor_name',
                             name: 'mentor.name',
@@ -156,20 +144,31 @@
                             }
                         },
 
-                        // Kolom 6: Status & Token Sesi
+                        // Kolom 5: Status Absensi (Belum Dibuka / Sedang Dibuka / Ditutup)
                         {
-                            data: 'token_badge',
-                            name: 'attendance_token',
+                            data: 'attendance_status_badge',
+                            name: 'is_attendance_open',
                             orderable: false,
-                            searchable: true
+                            searchable: false,
+                            className: 'text-center'
                         },
 
-                        // Kolom 7: Rekap Presensi
+                        // Kolom 6: Kehadiran (Jumlah hadir dibanding peserta terverifikasi)
                         {
-                            data: 'attendance_summary_badge',
+                            data: 'attendance_ratio_badge',
                             name: 'id',
                             orderable: false,
-                            searchable: false
+                            searchable: false,
+                            className: 'text-center'
+                        },
+
+                        // Kolom 7: Aksi (Kelola Absensi)
+                        {
+                            data: 'action',
+                            name: 'action',
+                            orderable: false,
+                            searchable: false,
+                            className: 'text-center'
                         }
                     ],
                     language: {
@@ -241,11 +240,6 @@
             }
         });
 
-        $(document).off('change.absensiCheckAll', '.check-data-all')
-                   .on('change.absensiCheckAll', '.check-data-all', function() {
-            $('.check-data-item').prop('checked', this.checked);
-        });
-
         // Listener Event Livewire Modals & Reload DT
         function registerAbsensiLivewireEvents() {
             if (typeof Livewire === 'undefined' || window._absensiLivewireEventsRegistered) return;
@@ -254,58 +248,6 @@
             Livewire.on('reloadDT', () => {
                 if (window.dtTable) {
                     window.dtTable.ajax.reload(null, false);
-                }
-            });
-
-            Livewire.on('open-modal-token', () => {
-                var modalEl = document.getElementById('modalToken');
-                if (modalEl && typeof bootstrap !== 'undefined') {
-                    var modal = bootstrap.Modal.getOrCreateInstance(modalEl);
-                    modal.show();
-                }
-            });
-
-            Livewire.on('open-modal-sheet', () => {
-                var modalEl = document.getElementById('modalAttendanceSheet');
-                if (modalEl && typeof bootstrap !== 'undefined') {
-                    var modal = bootstrap.Modal.getOrCreateInstance(modalEl);
-                    modal.show();
-                }
-            });
-
-            Livewire.on('open-modal-correction', () => {
-                var modalEl = document.getElementById('modalCorrection');
-                if (modalEl && typeof bootstrap !== 'undefined') {
-                    var modal = bootstrap.Modal.getOrCreateInstance(modalEl);
-                    modal.show();
-                }
-            });
-
-            Livewire.on('close-modal-correction', () => {
-                var modalEl = document.getElementById('modalCorrection');
-                if (modalEl && typeof bootstrap !== 'undefined') {
-                    var modalInstance = bootstrap.Modal.getInstance(modalEl) || bootstrap.Modal.getOrCreateInstance(modalEl);
-                    if (modalInstance) {
-                        modalInstance.hide();
-                    }
-                }
-            });
-
-            Livewire.on('alert', (event) => {
-                let data = Array.isArray(event) ? event[0] : event;
-                let type = data.type || 'info';
-                let message = data.message || '';
-
-                if (typeof Swal !== 'undefined') {
-                    Swal.fire({
-                        icon: type,
-                        title: type === 'success' ? 'Berhasil!' : (type === 'error' ? 'Peringatan!' : 'Informasi'),
-                        text: message,
-                        timer: 3000,
-                        showConfirmButton: false
-                    });
-                } else {
-                    alert(message);
                 }
             });
         }

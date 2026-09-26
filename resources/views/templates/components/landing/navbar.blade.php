@@ -45,6 +45,9 @@ new class extends Component {
                                     class="{{ request()->routeIs('pelatihan.index') ? 'current' : '' }}">
                                     <a href="{{ route('pelatihan.index') }}">Katalog Pelatihan</a>
                                 </li>
+                                <li class="{{ request()->routeIs('presensi.*') ? 'current' : '' }}">
+                                    <a href="{{ route('presensi.index') }}">Presensi</a>
+                                </li>
                                 <li class="{{ request()->is('alur-pendaftaran*') ? 'current' : '' }}">
                                     <a href="#">Alur Pendaftaran</a>
                                 </li>
@@ -164,6 +167,13 @@ new class extends Component {
                                                     </a>
                                                 </li>
                                             @endif
+                                            <li>
+                                                <a class="dropdown-item px-3 py-2 text-dark d-flex align-items-center gap-2 rounded"
+                                                    href="{{ route('presensi.index') }}" style="font-size: 13.5px;">
+                                                    <i class="ri-qr-code-line text-success" style="font-size: 16px;"></i>
+                                                    Presensi Pelatihan
+                                                </a>
+                                            </li>
                                             <li>
                                                 <a class="dropdown-item px-3 py-2 text-dark d-flex align-items-center gap-2 rounded"
                                                     href="javascript:void(0)" style="font-size: 13.5px;">

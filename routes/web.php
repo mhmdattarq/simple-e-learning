@@ -8,6 +8,7 @@ use App\Http\Controllers\PerencanaanController;
 use App\Http\Controllers\PimpinanController;
 use App\Http\Controllers\VerifikasiController;
 use App\Livewire\Admin\Absensi\AbsensiData;
+use App\Livewire\Admin\Absensi\AbsensiKelola;
 use App\Livewire\Admin\Dashboard\DashboardIndex;
 use App\Livewire\Admin\Materi\MateriData;
 use App\Livewire\Admin\Materi\MateriDetail;
@@ -25,6 +26,7 @@ use App\Livewire\Auth\Register;
 use App\Livewire\Landing\JadwalIndex;
 use App\Livewire\Landing\LandingIndex;
 use App\Livewire\Landing\PelatihanIndex;
+use App\Livewire\Peserta\Absensi\PresensiIndex;
 use App\Livewire\Peserta\Pendaftaran\PendaftaranCreate;
 use App\Livewire\Pimpinan\Dashboard\DashboardIndex as PimpinanDashboard;
 use App\Livewire\Pimpinan\Laporan\LaporanIndex as PimpinanLaporan;
@@ -44,9 +46,10 @@ Route::middleware('guest')->group(function () {
     Route::livewire('/register', Register::class)->name('register');
 });
 
-// 3. Peserta / Siswa Registration to Course (Authenticated)
+// 3. Peserta / Siswa Registration & Attendance (Authenticated)
 Route::middleware('auth')->group(function () {
     Route::livewire('/pelatihan/{id}/daftar', PendaftaranCreate::class)->name('pelatihan.daftar');
+    Route::livewire('/presensi', PresensiIndex::class)->name('presensi.index');
 });
 
 // 4. Logout (Authenticated)
@@ -105,6 +108,7 @@ Route::middleware(['auth', 'role:admin,mentor,verifikator,pimpinan'])->group(fun
         Route::name('absensi.')->group(function () {
             Route::get('/datatable', [AbsensiController::class, 'dataDt'])->name('dt');
             Route::livewire('/data', AbsensiData::class)->name('data');
+            Route::livewire('/kelola/{id}', AbsensiKelola::class)->name('kelola');
         });
     });
 

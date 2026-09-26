@@ -58,6 +58,37 @@ class AbsensiController extends Controller
 
                 return "{$start} - {$end} WIB";
             })
+            ->addColumn('attendance_status', function ($row) {
+                return $row->getAttendanceStatus();
+            })
+            ->addColumn('attendance_status_badge', function ($row) {
+                return $row->getAttendanceStatusBadge();
+            })
+            ->addColumn('attendance_ratio_badge', function ($row) {
+                $enrolled = $row->course?->participants()
+                    ->wherePivotIn('status', ['verified', 'active', 'completed'])
+                    ->count() ?? 0;
+                $present = $row->attendances->whereIn('status', ['hadir', 'terlambat'])->count();
+
+                $percent = $enrolled > 0 ? round(($present / $enrolled) * 100) : 0;
+                $color = $percent >= 80 ? 'success' : ($percent >= 50 ? 'warning' : 'secondary');
+
+                return '<div class="d-inline-flex flex-column align-items-center gap-1">
+                    <span class="badge bg-light text-dark border px-2 py-1 fs-7">
+                        <i class="ri-user-follow-line text-primary me-1"></i><strong>'.$present.'</strong> / '.$enrolled.' Peserta
+                    </span>
+                    <span class="badge bg-'.$color.'-subtle text-'.$color.' border border-'.$color.'-subtle px-2 py-0" style="font-size: 11px;">
+                        '.$percent.'% Hadir
+                    </span>
+                </div>';
+            })
+            ->addColumn('action', function ($row) {
+                $url = route('absensi.kelola', $row->id);
+
+                return '<a href="'.$url.'" class="btn btn-sm btn-outline-primary d-inline-flex align-items-center gap-1 px-3 py-1 radius-6 fw-medium" wire:navigate>
+                    <i class="ri-settings-3-line"></i> Kelola Absensi
+                </a>';
+            })
             ->addColumn('token_badge', function ($row) {
                 if ($row->isAttendanceActive()) {
                     $expiresTime = $row->token_expires_at->format('H:i');
@@ -84,16 +115,16 @@ class AbsensiController extends Controller
 
                 $percent = $enrolled > 0 ? round(($present / $enrolled) * 100) : 0;
                 $color = $percent >= 80 ? 'success' : ($percent >= 50 ? 'warning' : 'secondary');
+                $url = route('absensi.kelola', $row->id);
 
-                return '<button type="button" class="btn btn-sm btn-light border py-1 px-2 d-inline-flex align-items-center gap-2 text-start"
-                    wire:click="showAttendanceDetail('.$row->id.')"
+                return '<a href="'.$url.'" class="btn btn-sm btn-light border py-1 px-2 d-inline-flex align-items-center gap-2 text-start" wire:navigate
                     title="Klik untuk melihat rekapitulasi kehadiran peserta">
                     <span class="badge bg-'.$color.' text-white px-2 py-1 fw-semibold">'.$percent.'%</span>
                     <span class="text-muted fs-8">('.$present.'/'.$enrolled.' hadir)</span>
                     <i class="ri-eye-line text-primary ms-1"></i>
-                </button>';
+                </a>';
             })
-            ->rawColumns(['token_badge', 'attendance_summary_badge'])
+            ->rawColumns(['token_badge', 'attendance_summary_badge', 'attendance_status_badge', 'attendance_ratio_badge', 'action'])
             ->toJson();
     }
 }

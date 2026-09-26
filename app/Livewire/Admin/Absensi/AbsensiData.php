@@ -7,6 +7,7 @@ use App\Models\CourseSchedule;
 use App\Repositories\AbsensiRepo;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 #[Layout('templates.layouts.app')]
@@ -64,14 +65,14 @@ class AbsensiData extends Component
     {
         $schedule = CourseSchedule::with('course')->find($scheduleId);
         if (! $schedule) {
-            $this->dispatch('alert', type: 'error', message: 'Sesi jadwal tidak ditemukan.');
+            $this->dispatch('alert-show', data: ['type' => 'danger', 'message' => 'Sesi jadwal tidak ditemukan.']);
 
             return;
         }
 
         $user = Auth::user();
         if (! $user || ! AbsensiRepo::canManage($user, $schedule)) {
-            $this->dispatch('alert', type: 'error', message: 'Akses ditolak: Hanya Admin atau mentor pengampu sesi ini yang berhak membuka atau mengatur token absensi.');
+            $this->dispatch('alert-show', data: ['type' => 'danger', 'message' => 'Akses ditolak: Hanya Admin atau mentor pengampu sesi ini yang berhak membuka atau mengatur token absensi.']);
 
             return;
         }
@@ -114,19 +115,28 @@ class AbsensiData extends Component
 
         $user = Auth::user();
         if (! $user || ! AbsensiRepo::canManage($user, $schedule)) {
-            $this->dispatch('alert', type: 'error', message: 'Akses ditolak: Anda tidak memiliki wewenang untuk membuka token sesi ini.');
+            $this->dispatch('alert-show', data: ['type' => 'danger', 'message' => 'Akses ditolak: Anda tidak memiliki wewenang untuk membuka token sesi ini.']);
 
             return;
         }
 
         $token = AbsensiRepo::openAttendanceSession($schedule, $this->tokenValidityMinutes, $this->lateThresholdMinutes);
 
+        $fresh = $schedule->fresh();
         $this->activeToken = $token;
-        $this->activeTokenExpires = $schedule->fresh()->token_expires_at?->format('H:i');
+        $this->activeTokenExpires = $fresh->token_expires_at?->format('H:i');
         $this->isTokenActive = true;
 
-        $this->dispatch('alert', type: 'success', message: "Token absensi [{$token}] berhasil dibuka dan aktif selama {$this->tokenValidityMinutes} menit.");
+        if ($this->sheetScheduleId === $schedule->id) {
+            $this->attendanceSheet = AbsensiRepo::getScheduleAttendanceSheet($fresh);
+        }
+
+        $this->dispatch('alert-show', data: [
+            'type' => 'success',
+            'message' => "Token absensi [{$token}] berhasil dibuka dan aktif selama {$this->tokenValidityMinutes} menit.",
+        ]);
         $this->dispatch('reloadDT');
+        $this->dispatch('render-qr', token: $token);
     }
 
     /**
@@ -142,19 +152,81 @@ class AbsensiData extends Component
 
         $user = Auth::user();
         if (! $user || ! AbsensiRepo::canManage($user, $schedule)) {
-            $this->dispatch('alert', type: 'error', message: 'Akses ditolak: Anda tidak memiliki wewenang untuk menutup token sesi ini.');
+            $this->dispatch('alert-show', data: ['type' => 'danger', 'message' => 'Akses ditolak: Anda tidak memiliki wewenang untuk menutup token sesi ini.']);
 
             return;
         }
 
         AbsensiRepo::closeAttendanceSession($schedule, $this->autoAlpaOnClose);
 
+        $fresh = $schedule->fresh();
         if ($this->selectedScheduleId === $scheduleId) {
             $this->isTokenActive = false;
         }
 
-        $this->dispatch('alert', type: 'info', message: 'Sesi token absensi telah ditutup.');
+        if ($this->sheetScheduleId === $scheduleId) {
+            $this->attendanceSheet = AbsensiRepo::getScheduleAttendanceSheet($fresh);
+        }
+
+        $this->dispatch('alert-show', data: ['type' => 'info', 'message' => 'Sesi token absensi telah ditutup.']);
         $this->dispatch('reloadDT');
+    }
+
+    /**
+     * Aksi Tombol Kelola Absensi:
+     * Menyiapkan data sesi, kontrol token, dan lembar rekapitulasi presensi.
+     */
+    #[On('open-manage-attendance')]
+    public function openManageAttendance(int $scheduleId): void
+    {
+        $schedule = CourseSchedule::with(['course', 'mentor'])->find($scheduleId);
+        if (! $schedule) {
+            $this->dispatch('alert-show', data: ['type' => 'danger', 'message' => 'Sesi jadwal tidak ditemukan.']);
+
+            return;
+        }
+
+        // Set context token
+        $this->selectedScheduleId = $schedule->id;
+        $this->selectedScheduleTitle = $schedule->session_title;
+        $this->selectedCourseTitle = $schedule->course?->title ?? '-';
+        $this->tokenValidityMinutes = $schedule->token_validity_minutes ?: 15;
+        $this->lateThresholdMinutes = $schedule->late_threshold_minutes ?: 15;
+        $this->activeToken = $schedule->attendance_token;
+        $this->activeTokenExpires = $schedule->token_expires_at?->format('H:i') ?? null;
+        $this->isTokenActive = $schedule->isAttendanceActive();
+
+        // Set context lembar rekapitulasi kehadiran
+        $this->sheetScheduleId = $schedule->id;
+        $this->attendanceSheet = AbsensiRepo::getScheduleAttendanceSheet($schedule);
+
+        $this->dispatch('open-modal-sheet');
+
+        if ($this->isTokenActive && $this->activeToken) {
+            $this->dispatch('render-qr', token: $this->activeToken);
+        }
+    }
+
+    /**
+     * Segarkan Lembar Presensi Sesi Saat Ini.
+     */
+    public function refreshAttendanceSheet(): void
+    {
+        if (! $this->sheetScheduleId) {
+            return;
+        }
+
+        $schedule = CourseSchedule::with(['course', 'mentor'])->find($this->sheetScheduleId);
+        if ($schedule) {
+            $this->attendanceSheet = AbsensiRepo::getScheduleAttendanceSheet($schedule);
+            $this->isTokenActive = $schedule->isAttendanceActive();
+            $this->activeToken = $schedule->attendance_token;
+            $this->activeTokenExpires = $schedule->token_expires_at?->format('H:i');
+
+            if ($this->isTokenActive && $this->activeToken) {
+                $this->dispatch('render-qr', token: $this->activeToken);
+            }
+        }
     }
 
     /**
@@ -164,7 +236,7 @@ class AbsensiData extends Component
     {
         $schedule = CourseSchedule::with(['course', 'mentor'])->find($scheduleId);
         if (! $schedule) {
-            $this->dispatch('alert', type: 'error', message: 'Sesi jadwal tidak ditemukan.');
+            $this->dispatch('alert-show', data: ['type' => 'danger', 'message' => 'Sesi jadwal tidak ditemukan.']);
 
             return;
         }
@@ -221,7 +293,10 @@ class AbsensiData extends Component
         $this->attendanceSheet = AbsensiRepo::getScheduleAttendanceSheet($schedule);
 
         $this->dispatch('close-modal-correction');
-        $this->dispatch('alert', type: 'success', message: 'Status kehadiran peserta berhasil dikoreksi.');
+        $this->dispatch('alert-show', data: [
+            'type' => 'success',
+            'message' => 'Status kehadiran peserta berhasil dikoreksi.',
+        ]);
         $this->dispatch('reloadDT');
     }
 

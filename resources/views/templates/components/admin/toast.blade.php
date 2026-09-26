@@ -18,13 +18,21 @@ new class extends Component {
     }
 
     #[On('alert-show')]
-    public function show($data = [])
+    #[On('alert')]
+    public function show($data = [], ?string $type = null, ?string $message = null)
     {
         if (is_array($data)) {
-            $this->type = $data['type'] ?? 'success';
-            $this->msg = $data['message'] ?? ($data['msg'] ?? '');
+            $this->type = $data['type'] ?? ($type ?? 'success');
+            $this->msg = $data['message'] ?? ($data['msg'] ?? ($message ?? ''));
         } else {
             $this->msg = (string) $data;
+            if ($type) {
+                $this->type = $type;
+            }
+        }
+
+        if ($this->type === 'error') {
+            $this->type = 'danger';
         }
 
         $this->isShow = true;
@@ -43,7 +51,15 @@ new class extends Component {
                 x-show="show" x-transition>
                 <div class="d-flex align-items-center justify-content-between p-2">
                     <div class="toast-body d-flex align-items-center gap-2 py-1 px-2">
-                        <i class="ri-checkbox-circle-fill fs-5 ms-3"></i>
+                        @php
+                            $toastIcon = match($type) {
+                                'danger', 'error' => 'ri-error-warning-fill',
+                                'warning' => 'ri-alert-fill',
+                                'info' => 'ri-information-fill',
+                                default => 'ri-checkbox-circle-fill',
+                            };
+                        @endphp
+                        <i class="{{ $toastIcon }} fs-5 ms-3"></i>
                         <span class="fs-7 fw-medium">{{ $msg }}</span>
                     </div>
                     <button type="button" class="btn-close btn-close-white me-3" wire:click="$set('isShow', false)"
