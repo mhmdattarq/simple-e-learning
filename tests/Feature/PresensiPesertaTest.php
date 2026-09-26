@@ -90,9 +90,7 @@ test('peserta can check in successfully using manual token', function () {
         ->test(PresensiIndex::class)
         ->set('token', $this->token)
         ->call('submitPresensi')
-        ->assertSet('errorMessage', '')
-        ->assertSee('Presensi Berhasil Dicatat!')
-        ->assertSee('Hadir Tepat Waktu');
+        ->assertRedirect(route('peserta.materi', $this->course->id));
 
     $this->assertDatabaseHas('attendances', [
         'schedule_id' => $this->schedule->id,
@@ -110,8 +108,7 @@ test('peserta scanning QR code automatically captures token and records method a
         ->assertSet('method', 'qr')
         ->assertSet('previewScheduleId', $this->schedule->id)
         ->call('submitPresensi')
-        ->assertSet('errorMessage', '')
-        ->assertSee('Scan QR Code');
+        ->assertRedirect(route('peserta.materi', $this->course->id));
 
     $this->assertDatabaseHas('attendances', [
         'schedule_id' => $this->schedule->id,
@@ -133,8 +130,7 @@ test('peserta checking in after late threshold is marked as terlambat', function
         ->test(PresensiIndex::class)
         ->set('token', $this->token)
         ->call('submitPresensi')
-        ->assertSet('errorMessage', '')
-        ->assertSee('Hadir Terlambat');
+        ->assertRedirect(route('peserta.materi', $this->course->id));
 
     $this->assertDatabaseHas('attendances', [
         'schedule_id' => $this->schedule->id,

@@ -23,6 +23,8 @@ class PresensiIndex extends Component
 
     public ?int $previewScheduleId = null;
 
+    public ?int $previewCourseId = null;
+
     public ?string $previewCourseTitle = null;
 
     public ?string $previewSessionTitle = null;
@@ -96,6 +98,7 @@ class PresensiIndex extends Component
 
         $user = Auth::user();
         $this->previewScheduleId = $schedule->id;
+        $this->previewCourseId = $schedule->course_id;
         $this->previewCourseTitle = $schedule->course?->title ?? '-';
         $this->previewSessionTitle = $schedule->session_title;
         $this->previewMentorName = $schedule->mentor?->name ?? '-';
@@ -121,6 +124,7 @@ class PresensiIndex extends Component
     public function resetPreview(): void
     {
         $this->previewScheduleId = null;
+        $this->previewCourseId = null;
         $this->previewCourseTitle = null;
         $this->previewSessionTitle = null;
         $this->previewMentorName = null;
@@ -139,7 +143,7 @@ class PresensiIndex extends Component
         $this->checkTokenPreview();
     }
 
-    public function submitPresensi(): void
+    public function submitPresensi()
     {
         $this->errorMessage = '';
         $this->lastCheckInResult = null;
@@ -177,6 +181,14 @@ class PresensiIndex extends Component
 
         // Refresh existing attendance state
         $this->existingAttendance = $attendance;
+
+        $courseId = $attendance->schedule?->course_id ?? $this->previewCourseId;
+
+        if ($courseId) {
+            session()->flash('success', 'Presensi berhasil dicatat! Selamat mengikuti sesi pembelajaran.');
+
+            return redirect()->route('peserta.materi', $courseId);
+        }
     }
 
     public function render()

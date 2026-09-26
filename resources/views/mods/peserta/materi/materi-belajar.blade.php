@@ -17,9 +17,17 @@
                     <a href="{{ route('pelatihan.index') }}" class="btn btn-outline-light btn-sm radius-8 px-3 py-2 fs-8">
                         <i class="ri-arrow-left-line me-1"></i> Katalog Pelatihan
                     </a>
-                    <a href="{{ route('presensi.index') }}" class="btn btn-warning btn-sm text-dark fw-bold radius-8 px-3 py-2 fs-8">
-                        <i class="ri-qr-code-line me-1"></i> Portal Presensi
-                    </a>
+                    @php
+                        $allAttended = $schedules->isNotEmpty() && $schedules->every(fn($s) => isset($attendances[$s->id]));
+                        $hasActiveUnattended = $schedules->contains(fn($s) => $s->isAttendanceActive() && !isset($attendances[$s->id]));
+                        $hasAttended = $attendances->isNotEmpty();
+                        $showPortalPresensi = (!$hasAttended && $schedules->isNotEmpty()) || $hasActiveUnattended;
+                    @endphp
+                    @if($showPortalPresensi && !$allAttended)
+                        <a href="{{ route('presensi.index') }}" class="btn btn-warning btn-sm text-dark fw-bold radius-8 px-3 py-2 fs-8">
+                            <i class="ri-qr-code-line me-1"></i> Portal Presensi
+                        </a>
+                    @endif
                 </div>
             </div>
         </div>
@@ -28,6 +36,13 @@
     {{-- Main Content Section --}}
     <section class="py-4" style="background: #f8fafc; min-height: 80vh;">
         <div class="container">
+            @if(session('success'))
+                <div class="alert alert-success border-0 shadow-sm radius-12 p-3 mb-4 d-flex align-items-center gap-2">
+                    <i class="ri-checkbox-circle-fill text-success fs-5"></i>
+                    <span class="fs-8 fw-semibold text-dark">{{ session('success') }}</span>
+                </div>
+            @endif
+
             <div class="row g-4">
                 {{-- Sidebar: Daftar Sesi & Materi --}}
                 <div class="col-lg-4 col-12">
