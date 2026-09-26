@@ -6,7 +6,7 @@
 
 ---
 
-## 👥 Pengguna & Peran Hak Akses (User Roles)
+## Pengguna & Peran Hak Akses (User Roles)
 
 | Peran (Role)                   | Key Enum      | Tanggung Jawab Utama                                                                                                                   |
 | :----------------------------- | :------------ | :------------------------------------------------------------------------------------------------------------------------------------- |
@@ -18,7 +18,7 @@
 
 ---
 
-## 🔑 Akun Demo Pengujian (Default Seeders)
+## Akun Demo Pengujian (Default Seeders)
 
 Semua akun default menggunakan kata sandi: **`password`**
 
@@ -34,7 +34,7 @@ Semua akun default menggunakan kata sandi: **`password`**
 
 ---
 
-## 📜 Lisensi & Pengembang
+## Lisensi & Pengembang
 
 Proyek ini dikembangkan untuk **Badan Kepegawaian dan Pengembangan Sumber Daya Manusia (BKPSDM) Kabupaten Aceh Timur**.  
 Hak Cipta © 2026 BKPSDM Kabupaten Aceh Timur. Seluruh hak cipta dilindungi undang-undang.
