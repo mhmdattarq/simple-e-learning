@@ -3,17 +3,9 @@
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
         <div>
             <h5 class="fw-bold text-dark mb-1">Tahap 6: Ruang Materi & Silabus Kurikulum</h5>
-            <p class="text-muted mb-0">Manajemen bab dan unit materi pembelajaran sekuensial ala Dicoding, naskah rich text (Editor.js), serta proteksi curriculum freeze.</p>
+            <p class="text-muted mb-0">Manajemen bab dan unit materi pembelajaran sekuensial ala Dicoding, naskah rich
+                text (Editor.js), serta proteksi curriculum freeze.</p>
         </div>
-        @if ($isAdmin)
-            <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-2 radius-8 fs-8">
-                <i class="ri-shield-user-line me-1"></i> Mode Admin Diklat (Akses Penuh / Backup Mentor)
-            </span>
-        @else
-            <span class="badge bg-info-subtle text-info border border-info-subtle px-3 py-2 radius-8 fs-8">
-                <i class="ri-user-star-line me-1"></i> Mode Widyaiswara (Kelas Ampuan Anda)
-            </span>
-        @endif
     </div>
 
     {{-- Filter Toolbar --}}
@@ -22,8 +14,11 @@
             <div class="row g-3 align-items-center">
                 <div class="col-md-5">
                     <div class="position-relative">
-                        <input type="text" wire:model.live.debounce.300ms="search" class="form-control form-control-sm ps-40 radius-8" placeholder="Cari judul atau kode pelatihan...">
-                        <i class="ri-search-line position-absolute top-50 start-0 translate-middle-y ms-3 text-muted fs-6"></i>
+                        <input type="text" wire:model.live.debounce.300ms="search"
+                            class="form-control form-control-sm ps-40 radius-8"
+                            placeholder="Cari judul atau kode pelatihan...">
+                        <i
+                            class="ri-search-line position-absolute top-50 start-0 translate-middle-y ms-3 text-muted fs-6"></i>
                     </div>
                 </div>
                 <div class="col-md-3">
@@ -51,15 +46,18 @@
                     {{-- Card Header Thumbnail / Gradient --}}
                     <div class="position-relative p-20 bg-light border-bottom">
                         <div class="d-flex align-items-center justify-content-between mb-2">
-                            <span class="badge bg-secondary-subtle text-secondary px-2 py-1 radius-4 font-monospace fs-8">
+                            <span
+                                class="badge bg-secondary-subtle text-secondary px-2 py-1 radius-4 font-monospace fs-8">
                                 {{ $c->code }}
                             </span>
                             @if ($c->isBatch())
-                                <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-2 py-1 radius-4 fs-8">
+                                <span
+                                    class="badge bg-warning-subtle text-warning border border-warning-subtle px-2 py-1 radius-4 fs-8">
                                     <i class="ri-calendar-line me-1"></i>Batch (Angkatan)
                                 </span>
                             @else
-                                <span class="badge bg-info-subtle text-info border border-info-subtle px-2 py-1 radius-4 fs-8">
+                                <span
+                                    class="badge bg-info-subtle text-info border border-info-subtle px-2 py-1 radius-4 fs-8">
                                     <i class="ri-infinity-line me-1"></i>Permanen
                                 </span>
                             @endif
@@ -89,19 +87,23 @@
                             {{-- Batch Freeze Status Indicator ala Dicoding --}}
                             <div class="mb-3">
                                 @if ($isFrozen)
-                                    <div class="p-2 radius-8 bg-danger-subtle text-danger border border-danger-subtle d-flex align-items-center gap-2 fs-8">
+                                    <div
+                                        class="p-2 radius-8 bg-danger-subtle text-danger border border-danger-subtle d-flex align-items-center gap-2 fs-8">
                                         <i class="ri-lock-2-line fs-6 flex-shrink-0"></i>
                                         <div>
                                             <strong>Curriculum Freeze Aktif</strong><br>
-                                            <span class="text-muted fs-9">Batch telah berjalan, struktur materi dikunci demi integritas progres peserta.</span>
+                                            <span class="text-muted fs-9">Batch telah berjalan, struktur materi dikunci
+                                                demi integritas progres peserta.</span>
                                         </div>
                                     </div>
                                 @else
-                                    <div class="p-2 radius-8 bg-success-subtle text-success border border-success-subtle d-flex align-items-center gap-2 fs-8">
+                                    <div
+                                        class="p-2 radius-8 bg-success-subtle text-success border border-success-subtle d-flex align-items-center gap-2 fs-8">
                                         <i class="ri-lock-unlock-line fs-6 flex-shrink-0"></i>
                                         <div>
                                             <strong>Kurikulum Terbuka</strong><br>
-                                            <span class="text-muted fs-9">Dapat menambah/memperbarui Bab & Materi pembelajaran.</span>
+                                            <span class="text-muted fs-9">Dapat menambah/memperbarui Bab & Materi
+                                                pembelajaran.</span>
                                         </div>
                                     </div>
                                 @endif
@@ -111,7 +113,7 @@
                             <div class="d-flex align-items-center gap-2 mb-3 fs-8 text-muted">
                                 <i class="ri-user-voice-line text-simple"></i>
                                 <span>
-                                    Mentor: 
+                                    Mentor:
                                     @php
                                         $mentors = $c->schedules->pluck('mentor.name')->filter()->unique();
                                     @endphp
@@ -122,7 +124,9 @@
 
                         {{-- Action Button --}}
                         <div class="pt-10 border-top mt-2">
-                            <a href="{{ route('materi.sesi', $c->id) }}" class="btn btn-sm btn-outline-primary w-100 d-inline-flex align-items-center justify-content-center gap-2 radius-8 py-2 font-weight-500 shadow-none" wire:navigate>
+                            <a href="{{ route('materi.sesi', $c->id) }}"
+                                class="btn btn-sm btn-outline-primary w-100 d-inline-flex align-items-center justify-content-center gap-2 radius-8 py-2 font-weight-500 shadow-none"
+                                wire:navigate>
                                 <i class="ri-calendar-event-line fs-6"></i>
                                 <span>Kelola Sesi & Materi</span>
                                 <i class="ri-arrow-right-line ms-auto"></i>
