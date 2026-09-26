@@ -77,6 +77,14 @@ class CourseSchedule extends Model
     }
 
     /**
+     * Bab materi pembelajaran yang diasosiasikan dengan sesi ini.
+     */
+    public function chapters(): HasMany
+    {
+        return $this->hasMany(Chapter::class, 'schedule_id')->orderBy('order', 'asc');
+    }
+
+    /**
      * Cek apakah token absensi sedang aktif dibuka dan belum kedaluwarsa.
      */
     public function isAttendanceActive(): bool

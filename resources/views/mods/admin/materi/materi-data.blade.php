@@ -122,9 +122,9 @@
 
                         {{-- Action Button --}}
                         <div class="pt-10 border-top mt-2">
-                            <a href="{{ route('materi.detail', $c->id) }}" class="btn btn-sm btn-outline-primary w-100 d-inline-flex align-items-center justify-content-center gap-2 radius-8 py-2 font-weight-500 shadow-none" wire:navigate>
-                                <i class="ri-book-open-line fs-6"></i>
-                                <span>Kelola Silabus & Materi</span>
+                            <a href="{{ route('materi.sesi', $c->id) }}" class="btn btn-sm btn-outline-primary w-100 d-inline-flex align-items-center justify-content-center gap-2 radius-8 py-2 font-weight-500 shadow-none" wire:navigate>
+                                <i class="ri-calendar-event-line fs-6"></i>
+                                <span>Kelola Sesi & Materi</span>
                                 <i class="ri-arrow-right-line ms-auto"></i>
                             </a>
                         </div>
