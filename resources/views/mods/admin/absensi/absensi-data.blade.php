@@ -6,6 +6,17 @@
             <p class="text-muted mb-0">Manajemen presensi digital sesi diklat, pembuatan token absensi 6 digit,
                 pemantauan kehadiran realtime, dan koreksi status kehadiran ASN.</p>
         </div>
+        <div>
+            @if(auth()->user()->isAdmin())
+                <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-2 radius-8 fs-8">
+                    <i class="ri-shield-user-line me-1"></i> Mode Admin: Monitoring
+                </span>
+            @elseif(auth()->user()->isMentor())
+                <span class="badge bg-info-subtle text-info border border-info-subtle px-3 py-2 radius-8 fs-8">
+                    <i class="ri-user-star-line me-1"></i> Mode Mentor Pengampu Sesi
+                </span>
+            @endif
+        </div>
     </div>
 
     {{-- Kartu Ringkasan Statistik & Indikator Sesi --}}

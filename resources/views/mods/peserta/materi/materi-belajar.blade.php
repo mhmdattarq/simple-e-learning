@@ -110,14 +110,13 @@
                                                             @php
                                                                 $isDone = in_array($lesson->id, $completedLessonIds);
                                                                 $isSelected = $selectedLessonId === $lesson->id;
+                                                                $isAccessible = $isAttended && ($this->isLessonAccessible($lesson->id) || auth()->user()->hasAdminAccess());
                                                             @endphp
-                                                            <button type="button"
-                                                                wire:click="selectLesson({{ $lesson->id }})"
-                                                                class="list-group-item list-group-item-action d-flex align-items-center justify-content-between p-2 fs-8 border-0 {{ $isSelected ? 'bg-primary text-white' : ($isAttended ? 'hover-bg-light' : 'opacity-60 text-muted') }}"
-                                                                @if(!$isAttended) title="Lakukan absensi pada Sesi ini untuk membuka materi" @endif>
-                                                                <div class="d-flex align-items-center gap-2 overflow-hidden">
-                                                                    @if(!$isAttended)
-                                                                        <i class="ri-lock-2-line text-warning flex-shrink-0"></i>
+                                                            <div class="list-group-item d-flex align-items-center justify-content-between p-2 fs-8 border-0 {{ $isSelected ? 'bg-primary text-white fw-bold shadow-sm' : ($isAccessible ? ($isDone ? 'bg-light bg-opacity-50 text-dark' : 'text-dark') : 'opacity-50 bg-light text-muted') }}"
+                                                                style="user-select: none;">
+                                                                <div class="d-flex align-items-center gap-2 overflow-hidden text-start">
+                                                                    @if(!$isAttended || !$isAccessible)
+                                                                        <i class="ri-lock-2-line text-secondary flex-shrink-0"></i>
                                                                     @elseif($isDone)
                                                                         <i class="ri-checkbox-circle-fill text-success flex-shrink-0 {{ $isSelected ? 'text-white' : '' }}"></i>
                                                                     @else
@@ -134,7 +133,7 @@
                                                                         <i class="ri-article-line {{ $isSelected ? 'text-white' : 'text-muted' }}"></i>
                                                                     @endif
                                                                 </div>
-                                                            </button>
+                                                            </div>
                                                         @endforeach
                                                     </div>
                                                 </div>
@@ -160,19 +159,21 @@
                                                         @php
                                                             $isDone = in_array($lesson->id, $completedLessonIds);
                                                             $isSelected = $selectedLessonId === $lesson->id;
+                                                            $isAccessible = $this->isLessonAccessible($lesson->id) || auth()->user()->hasAdminAccess();
                                                         @endphp
-                                                        <button type="button"
-                                                            wire:click="selectLesson({{ $lesson->id }})"
-                                                            class="list-group-item list-group-item-action d-flex align-items-center justify-content-between p-2 fs-8 border-0 {{ $isSelected ? 'bg-primary text-white' : 'hover-bg-light' }}">
-                                                            <div class="d-flex align-items-center gap-2 overflow-hidden">
-                                                                @if($isDone)
+                                                        <div class="list-group-item d-flex align-items-center justify-content-between p-2 fs-8 border-0 {{ $isSelected ? 'bg-primary text-white fw-bold shadow-sm' : ($isAccessible ? ($isDone ? 'bg-light bg-opacity-50 text-dark' : 'text-dark') : 'opacity-50 bg-light text-muted') }}"
+                                                            style="user-select: none;">
+                                                            <div class="d-flex align-items-center gap-2 overflow-hidden text-start">
+                                                                @if(!$isAccessible)
+                                                                    <i class="ri-lock-2-line text-secondary flex-shrink-0"></i>
+                                                                @elseif($isDone)
                                                                     <i class="ri-checkbox-circle-fill text-success flex-shrink-0 {{ $isSelected ? 'text-white' : '' }}"></i>
                                                                 @else
                                                                     <i class="ri-play-circle-line flex-shrink-0 {{ $isSelected ? 'text-white' : 'text-primary' }}"></i>
                                                                 @endif
                                                                 <span class="text-truncate">{{ $lesson->title }}</span>
                                                             </div>
-                                                        </button>
+                                                        </div>
                                                     @endforeach
                                                 </div>
                                             </div>
@@ -222,17 +223,24 @@
                                 </div>
                             </div>
                         @else
-                            {{-- Viewer Materi Terbuka --}}
-                            <div class="card border-0 shadow-sm radius-16 bg-white overflow-hidden mb-4">
+                            {{-- Viewer Materi Terbuka ala Dicoding --}}
+                            <div class="card border-0 shadow-sm radius-16 bg-white overflow-hidden mb-4 position-relative">
                                 {{-- Header Materi --}}
-                                <div class="p-24 border-bottom">
+                                <div class="p-24 border-bottom bg-white">
                                     <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-2">
                                         <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-1 fs-8 rounded-pill">
                                             <i class="ri-folder-2-line me-1"></i> {{ $currentChapter?->title ?? 'Bab Pembelajaran' }}
                                         </span>
-                                        <span class="badge bg-secondary-subtle text-secondary px-3 py-1 fs-8 rounded-pill text-uppercase">
-                                            <i class="ri-file-info-line me-1"></i> Tipe: {{ $currentLesson->content_type }}
-                                        </span>
+                                        <div class="d-flex align-items-center gap-2">
+                                            @if($isCompleted)
+                                                <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-1 fs-8 rounded-pill">
+                                                    <i class="ri-checkbox-circle-fill me-1"></i> Selesai Dipelajari
+                                                </span>
+                                            @endif
+                                            <span class="badge bg-secondary-subtle text-secondary px-3 py-1 fs-8 rounded-pill text-uppercase">
+                                                <i class="ri-file-info-line me-1"></i> {{ $currentLesson->content_type }}
+                                            </span>
+                                        </div>
                                     </div>
                                     <h3 class="fw-bold text-dark mb-1 fs-4">{{ $currentLesson->title }}</h3>
                                     @if($currentSchedule)
@@ -242,8 +250,8 @@
                                     @endif
                                 </div>
 
-                                {{-- Body Materi --}}
-                                <div class="card-body p-24">
+                                {{-- Body Materi ala Dicoding --}}
+                                <div class="card-body p-24 p-md-32">
                                     {{-- Video Player --}}
                                     @if($currentLesson->content_type === 'video' && $currentLesson->video_url)
                                         <div class="ratio ratio-16x9 rounded-12 overflow-hidden shadow-sm mb-4 bg-dark">
@@ -260,10 +268,63 @@
                                         </div>
                                     @endif
 
-                                    {{-- Konten Teks / Artikel --}}
+                                    {{-- Konten Teks / Artikel Bersih & Render Gambar/Format --}}
                                     @if($currentLesson->body_text)
-                                        <div class="article-content fs-7 text-dark lh-lg mb-4 p-3 bg-light rounded-12 border">
-                                            {!! nl2br(e($currentLesson->body_text)) !!}
+                                        <div class="article-content fs-6 text-dark lh-lg mb-4 p-4 bg-white rounded-12 border shadow-none" style="font-size: 15.5px; color: #1e293b; line-height: 1.85;">
+                                            <style>
+                                                .article-content img {
+                                                    max-width: 100%;
+                                                    max-height: 480px;
+                                                    object-fit: contain;
+                                                    height: auto;
+                                                    display: block;
+                                                    margin: 1.5rem auto;
+                                                    border-radius: 12px;
+                                                    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+                                                    border: 1px solid #e2e8f0;
+                                                }
+                                                .article-content h1, .article-content h2, .article-content h3, .article-content h4 {
+                                                    color: #0f172a;
+                                                    font-weight: 700;
+                                                    margin-top: 1.75rem;
+                                                    margin-bottom: 0.85rem;
+                                                    letter-spacing: -0.2px;
+                                                }
+                                                .article-content p {
+                                                    margin-bottom: 1.25rem;
+                                                    word-wrap: break-word;
+                                                }
+                                                .article-content ul, .article-content ol {
+                                                    padding-left: 1.75rem;
+                                                    margin-bottom: 1.25rem;
+                                                }
+                                                .article-content li {
+                                                    margin-bottom: 0.4rem;
+                                                }
+                                                .article-content blockquote {
+                                                    border-left: 4px solid #3b82f6;
+                                                    padding: 10px 20px;
+                                                    margin: 1.5rem 0;
+                                                    background: #f8fafc;
+                                                    border-radius: 0 8px 8px 0;
+                                                    color: #475569;
+                                                }
+                                                .article-content table {
+                                                    width: 100%;
+                                                    border-collapse: collapse;
+                                                    margin: 1.5rem 0;
+                                                }
+                                                .article-content table th, .article-content table td {
+                                                    border: 1px solid #e2e8f0;
+                                                    padding: 10px 14px;
+                                                    font-size: 14px;
+                                                }
+                                                .article-content table th {
+                                                    background-color: #f1f5f9;
+                                                    font-weight: 600;
+                                                }
+                                            </style>
+                                            {!! $currentLesson->body_text !!}
                                         </div>
                                     @endif
 
@@ -285,27 +346,39 @@
                                     @endif
                                 </div>
 
-                                {{-- Footer Aksi Selesai --}}
-                                <div class="card-footer bg-white p-20 border-top d-flex align-items-center justify-content-between flex-wrap gap-2">
-                                    <div class="fs-8 text-muted">
-                                        @if($isCompleted)
-                                            <span class="text-success fw-bold d-flex align-items-center gap-1">
-                                                <i class="ri-checkbox-circle-fill"></i> Anda telah menyelesaikan materi ini.
-                                            </span>
-                                        @else
-                                            <span>Tandai selesai jika Anda telah mempelajari materi ini.</span>
-                                        @endif
-                                    </div>
+                                {{-- Footer Navigasi Dicoding: Sticky Bottom Bar agar tombol selalu mudah diakses jika artikel panjang --}}
+                                <div class="card-footer bg-white p-20 border-top d-flex align-items-center justify-content-between flex-wrap gap-3 sticky-bottom shadow-sm"
+                                    style="bottom: 0; z-index: 5; background-color: #ffffff !important; border-top: 1px solid #e2e8f0;">
+                                    {{-- Tombol Sebelumnya --}}
                                     <div>
                                         <button type="button"
-                                            wire:click="toggleCompleteLesson({{ $currentLesson->id }})"
-                                            class="btn {{ $isCompleted ? 'btn-outline-secondary' : 'btn-success' }} fw-bold radius-10 px-4 py-2 fs-7 d-inline-flex align-items-center gap-2">
-                                            @if($isCompleted)
-                                                <i class="ri-restart-line"></i> Batalkan Status Selesai
-                                            @else
-                                                <i class="ri-checkbox-circle-line"></i> Tandai Selesai Belajar
-                                            @endif
+                                            wire:click="previousLesson"
+                                            class="btn btn-outline-secondary radius-10 px-4 py-2 fs-7 fw-semibold d-inline-flex align-items-center gap-2 shadow-none"
+                                            @if($isFirstLesson) disabled @endif>
+                                            <i class="ri-arrow-left-line"></i>
+                                            <span>Sebelumnya</span>
                                         </button>
+                                    </div>
+
+                                    {{-- Tombol Kanan: Selanjutnya atau Tandai Selesai Belajar --}}
+                                    <div>
+                                        @if(!$isLastInChapter)
+                                            {{-- Masih ada materi berikutnya dalam bab yang sama --}}
+                                            <button type="button"
+                                                wire:click="nextLesson"
+                                                class="btn btn-primary radius-10 px-4 py-2 fs-7 fw-semibold d-inline-flex align-items-center gap-2 shadow-sm">
+                                                <span>Selanjutnya</span>
+                                                <i class="ri-arrow-right-line"></i>
+                                            </button>
+                                        @else
+                                            {{-- Di materi terakhir bab: Munculkan Tandai Selesai Belajar --}}
+                                            <button type="button"
+                                                wire:click="promptCompleteChapter"
+                                                class="btn btn-success radius-10 px-4 py-2 fs-7 fw-bold d-inline-flex align-items-center gap-2 shadow-sm">
+                                                <i class="ri-checkbox-circle-line"></i>
+                                                <span>Tandai Selesai Belajar</span>
+                                            </button>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
@@ -326,4 +399,47 @@
             </div>
         </div>
     </section>
+
+    {{-- Modal Konfirmasi Selesai Bab ala Dicoding --}}
+    @if($showCompleteModal)
+        <div class="modal fade show d-block" tabindex="-1" style="background: rgba(15, 23, 42, 0.6); z-index: 1060;" role="dialog" aria-modal="true">
+            <div class="modal-dialog modal-dialog-centered" style="max-width: 440px;">
+                <div class="modal-content border-0 radius-20 shadow-lg overflow-hidden bg-white">
+                    <div class="modal-body p-4 text-center">
+                        {{-- Icon Badge --}}
+                        <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3 text-success"
+                            style="width: 64px; height: 64px; background-color: #ecfdf5; box-shadow: 0 8px 24px rgba(16, 185, 129, 0.15);">
+                            <i class="ri-checkbox-circle-fill" style="font-size: 32px;"></i>
+                        </div>
+
+                        <h5 class="fw-bold text-dark mb-2">Konfirmasi Selesai Bab</h5>
+
+                        <div class="bg-light p-3 rounded-12 border mb-4 text-start">
+                            <p class="text-muted fs-8 mb-0 line-height-base">
+                                Apakah Anda yakin menandai bab <strong>{{ $currentChapter?->title ?? 'ini' }}</strong> selesai?
+                                @if($hasNextChapter)
+                                    Setelah ini, sistem akan otomatis mengarahkan Anda ke materi bab berikutnya.
+                                @else
+                                    Seluruh modul pembelajaran pada materi ini telah Anda tuntaskan.
+                                @endif
+                            </p>
+                        </div>
+
+                        <div class="d-flex align-items-center gap-2">
+                            <button type="button"
+                                wire:click="cancelCompleteChapter"
+                                class="btn btn-outline-secondary w-50 py-2 radius-10 fw-semibold fs-8">
+                                Batal
+                            </button>
+                            <button type="button"
+                                wire:click="confirmCompleteChapter"
+                                class="btn btn-success w-50 py-2 radius-10 fw-semibold fs-8 d-inline-flex align-items-center justify-content-center gap-1 shadow-sm">
+                                <i class="ri-check-line"></i> Ya, Selesai
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
 </div>

@@ -24,7 +24,7 @@ new class extends Component {
             <div class="sidebar-menu-area">
                 <ul class="sidebar-menu" id="sidebar-menu">
                     @if (auth()->user()?->isPimpinan())
-                        {{-- Menu Khusus Pimpinan (Eksekutif) --}}
+                        {{-- 1. Menu Khusus Pimpinan (Eksekutif) --}}
                         <li class="sidebar-menu-group-title">MENU EKSEKUTIF</li>
                         <li class="nav-item">
                             <a class="nav-link {{ request()->routeIs('pimpinan.dashboard') ? 'active' : '' }}"
@@ -47,8 +47,62 @@ new class extends Component {
                                 <span>Laporan & Rekap</span>
                             </a>
                         </li>
+                    @elseif (auth()->user()?->isMentor())
+                        {{-- 2. Menu Khusus Mentor / Pengampu --}}
+                        <li class="sidebar-menu-group-title">MENU PENGAMPU</li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}"
+                                href="{{ route('admin.dashboard') }}" title="Beranda" wire:navigate>
+                                <i class="ri-home-2-line menu-icon"></i>
+                                <span>Dashboard</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('penjadwalan*') ? 'active' : '' }}"
+                                href="{{ route('penjadwalan.data') }}" title="Penjadwalan" wire:navigate>
+                                <i class="ri-calendar-event-line menu-icon"></i>
+                                <span>Penjadwalan</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('absensi*') ? 'active' : '' }}"
+                                href="{{ route('absensi.data') }}" title="Absensi Elektronik" wire:navigate>
+                                <i class="ri-time-line menu-icon"></i>
+                                <span>Absensi Elektronik</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('materi*') ? 'active' : '' }}"
+                                href="{{ route('materi.data') }}" title="Ruang Materi" wire:navigate>
+                                <i class="ri-book-read-line menu-icon"></i>
+                                <span>Ruang Materi</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="javascript:void(0)" title="Evaluasi & Kuis">
+                                <i class="ri-star-smile-line menu-icon"></i>
+                                <span>Evaluasi & Kuis</span>
+                            </a>
+                        </li>
+                    @elseif (auth()->user()?->isVerifikator())
+                        {{-- 3. Menu Khusus Verifikator Berkas --}}
+                        <li class="sidebar-menu-group-title">MENU VERIFIKATOR</li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}"
+                                href="{{ route('admin.dashboard') }}" title="Beranda" wire:navigate>
+                                <i class="ri-home-2-line menu-icon"></i>
+                                <span>Dashboard</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('pendaftaran*') ? 'active' : '' }}"
+                                href="{{ route('pendaftaran.data') }}" title="Pendaftaran" wire:navigate>
+                                <i class="ri-user-add-line menu-icon"></i>
+                                <span>Pendaftaran</span>
+                            </a>
+                        </li>
                     @else
-                        {{-- Menu Operasional Admin / Verifikator / Mentor --}}
+                        {{-- 4. Menu Lengkap Administrator (Superadmin & Backup Handle) --}}
                         <li class="sidebar-menu-group-title">MENU UTAMA</li>
                         <li class="nav-item">
                             <a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}"

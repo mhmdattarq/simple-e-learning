@@ -49,10 +49,9 @@ new class extends Component {
                             x-show="open"
                             x-cloak
                             :class="{ 'show': open }"
-                            style="position: absolute; right: 0; top: calc(100% + 8px); z-index: 1060; width: 320px; display: none;"
-                            :style="open ? 'display: block;' : 'display: none;'">
+                            style="position: absolute; right: 0; left: auto !important; top: calc(100% + 8px); z-index: 1060; width: 320px; max-width: calc(100vw - 32px); border-radius: 14px; overflow: hidden; border: 1px solid #e2e8f0;">
                             <div class="py-12 px-16 border-bottom d-flex align-items-center justify-content-between"
-                                style="background-color: #071a33; border-radius: 8px 8px 0 0;">
+                                style="background-color: #071a33;">
                                 <h6 class="text-white fw-semibold mb-0 fs-6">Notifikasi SIMPEL</h6>
                                 <span class="badge bg-warning text-dark">3 Baru</span>
                             </div>
@@ -117,18 +116,22 @@ new class extends Component {
                             <i class="ri-arrow-down-s-line text-secondary-light d-none d-lg-block"
                                 :style="open ? 'transform: rotate(180deg); transition: transform 0.2s;' : 'transition: transform 0.2s;'"></i>
                         </button>
-                        <div class="dropdown-menu dropdown-menu-sm dropdown-menu-end shadow-lg"
+                        <div class="dropdown-menu dropdown-menu-end shadow-lg p-0"
                             x-show="open"
                             x-cloak
                             :class="{ 'show': open }"
-                            style="position: absolute; right: 0; top: calc(100% + 8px); z-index: 1060; min-width: 250px; display: none;"
-                            :style="open ? 'display: block;' : 'display: none;'">
-                            <div class="py-12 px-16 radius-8 mb-12" style="background: #071a33; color: #fff;">
-                                <h6 class="text-white fw-semibold mb-1" style="font-size: 14px;">{{ auth()->user()->name ?? 'Administrator' }}</h6>
-                                <span class="badge"
-                                    style="background: #f3bc42; color: #071a33; font-weight: 700;">{{ auth()->user()?->role?->label() ?? 'Admin Diklat' }}</span>
+                            style="position: absolute; right: 0; left: auto !important; top: calc(100% + 8px); z-index: 1060; min-width: 250px; max-width: calc(100vw - 32px); border-radius: 14px; overflow: hidden; border: 1px solid #e2e8f0;">
+                            <div class="py-16 px-16" style="background: #071a33; color: #fff;">
+                                <h6 class="text-white fw-semibold mb-1" style="font-size: 14px; line-height: 1.3; word-break: break-word;">{{ auth()->user()->name ?? 'Administrator' }}</h6>
+                                <div class="d-flex align-items-center gap-1 flex-wrap">
+                                    <span class="badge"
+                                        style="background: #f3bc42; color: #071a33; font-weight: 700; font-size: 11px;">{{ auth()->user()?->role?->label() ?? 'Admin Diklat' }}</span>
+                                    @if (auth()->user()?->nip)
+                                        <small class="text-white-50" style="font-size: 11px;">· {{ auth()->user()->nip }}</small>
+                                    @endif
+                                </div>
                             </div>
-                            <ul class="to-top-list list-unstyled p-0 m-0">
+                            <ul class="to-top-list list-unstyled p-2 m-0">
                                 <li>
                                     <a class="dropdown-item text-black px-12 py-8 hover-text-primary d-flex align-items-center gap-2 rounded"
                                         href="javascript:void(0)">

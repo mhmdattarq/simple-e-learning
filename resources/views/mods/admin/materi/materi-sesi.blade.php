@@ -138,12 +138,10 @@
                                     Konten</span>
                             </div>
                             @if ($chapterCount > 0)
-                                <span class="badge bg-success-subtle text-success border border-success-subtle">Sudah
-                                    Ada Materi</span>
+                                <span class="badge bg-success-subtle text-success border border-success-subtle">Sudah Ada Materi</span>
                             @else
                                 <span
-                                    class="badge bg-secondary-subtle text-secondary border border-secondary-subtle">Belum
-                                    Ada Materi</span>
+                                    class="badge bg-secondary-subtle text-secondary border border-secondary-subtle">Belum Ada Materi</span>
                             @endif
                         </div>
 

@@ -4,7 +4,15 @@
         <div>
             <span class="text-uppercase fw-bold text-xs" style="color: #b37a05; letter-spacing: 1.5px;">Sistem
                 Manajemen Pelatihan</span>
-            <h4 class="fw-bold mb-0 text-dark">Beranda Administrator</h4>
+            <h4 class="fw-bold mb-0 text-dark">
+                @if(auth()->user()?->isMentor())
+                    Beranda Mentor / Pengampu
+                @elseif(auth()->user()?->isVerifikator())
+                    Beranda Verifikator Berkas
+                @else
+                    Beranda Administrator
+                @endif
+            </h4>
         </div>
         <div class="d-flex align-items-center gap-2">
             <span class="simpel-badge simpel-badge-navy">
@@ -31,10 +39,12 @@
                 Data terintegrasi, real time, transparan, dan akuntabel — BKPSDM Kabupaten Aceh Timur.
             </p>
         </div>
-        <button type="button" class="btn-simpel-gold" data-bs-toggle="modal" data-bs-target="#modalRencanaPelatihan">
-            <i class="ri-add-line"></i>
-            Buat Rencana Pelatihan
-        </button>
+        @if(auth()->user()?->isAdmin())
+            <button type="button" class="btn-simpel-gold" data-bs-toggle="modal" data-bs-target="#modalRencanaPelatihan">
+                <i class="ri-add-line"></i>
+                Buat Rencana Pelatihan
+            </button>
+        @endif
     </div>
 
     {{-- 8-Stage Flow / Siklus Pelatihan --}}

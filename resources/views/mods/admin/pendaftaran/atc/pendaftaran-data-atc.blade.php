@@ -343,6 +343,22 @@
                             orderable: true,
                             searchable: true,
                             className: 'text-center'
+                        },
+
+                        // Kolom 7: Aksi Detail
+                        {
+                            data: 'id',
+                            name: 'id',
+                            orderable: false,
+                            searchable: false,
+                            className: 'text-center',
+                            render: function(data, type, row) {
+                                return `
+                                    <button type="button" class="btn btn-sm btn-outline-primary d-inline-flex align-items-center gap-1 py-1 px-2 rounded-pill btn-detail-pendaftaran" data-id="${data}" style="font-size: 11.5px; white-space: nowrap;">
+                                        <i class="ri-eye-line"></i> Detail
+                                    </button>
+                                `;
+                            }
                         }
                     ],
                     language: {
@@ -356,6 +372,19 @@
                     let colIdx = $(this).parent().index();
                     if (window.dtTable.column(colIdx).search() !== this.value) {
                         window.dtTable.column(colIdx).search(this.value).draw();
+                    }
+                });
+
+                // Listener untuk tombol Detail Pendaftaran membuka modal Livewire
+                $('#tablePendaftaran').off('click', '.btn-detail-pendaftaran').on('click', '.btn-detail-pendaftaran', function(e) {
+                    e.preventDefault();
+                    let regId = $(this).data('id');
+                    let lwEl = document.getElementById('tablePendaftaran')?.closest('[wire\\:id]');
+                    if (lwEl && window.Livewire) {
+                        let component = Livewire.find(lwEl.getAttribute('wire:id'));
+                        if (component) {
+                            component.call('showDetail', regId);
+                        }
                     }
                 });
             }
