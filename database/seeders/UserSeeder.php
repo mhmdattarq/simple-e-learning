@@ -73,6 +73,7 @@ class UserSeeder extends Seeder
         ];
 
         foreach ($users as $userData) {
+            $userData['email_verified_at'] = now();
             User::updateOrCreate(
                 ['email' => $userData['email']],
                 $userData

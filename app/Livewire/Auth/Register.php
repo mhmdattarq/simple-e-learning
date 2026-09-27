@@ -4,7 +4,6 @@ namespace App\Livewire\Auth;
 
 use App\Repositories\AuthRepo;
 use Livewire\Attributes\Layout;
-use Livewire\Attributes\Title;
 use Livewire\Component;
 
 #[Layout('templates.layouts.auth')]
@@ -83,7 +82,7 @@ class Register extends Component
             return;
         }
 
-        session()->flash('success', 'Pendaftaran akun berhasil! Silakan masuk dengan email/NIP dan kata sandi Anda.');
+        session()->flash('success', 'Pendaftaran akun berhasil! Tautan aktivasi telah dikirimkan ke email '.$user->email.'. Silakan verifikasi email Anda sebelum masuk.');
 
         return $this->redirectRoute('login', navigate: true);
     }

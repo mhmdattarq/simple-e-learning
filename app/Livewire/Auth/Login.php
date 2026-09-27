@@ -3,12 +3,15 @@
 namespace App\Livewire\Auth;
 
 use App\Enums\Role;
+use App\Mail\VerifyEmailNotification;
+use App\Models\AuditLog;
+use App\Models\EmailVerification;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Layout;
-use Livewire\Attributes\Title;
 use Livewire\Component;
 
 #[Layout('templates.layouts.auth')]
@@ -65,12 +68,53 @@ class Login extends Component
         ];
     }
 
+    public string $unverifiedEmail = '';
+
+    /**
+     * Resend email verification link with rate limiting.
+     */
+    public function resendVerification(): void
+    {
+        if (empty($this->unverifiedEmail)) {
+            return;
+        }
+
+        $throttleKey = 'resend-verify|'.Str::lower($this->unverifiedEmail).'|'.request()->ip();
+
+        if (RateLimiter::tooManyAttempts($throttleKey, 3)) {
+            $seconds = RateLimiter::availableIn($throttleKey);
+            $this->errorMessage = "Terlalu banyak permintaan kirim ulang. Silakan tunggu {$seconds} detik lagi.";
+
+            return;
+        }
+
+        RateLimiter::hit($throttleKey, 300);
+
+        $user = User::where('email', Str::lower($this->unverifiedEmail))->first();
+        if ($user && ! $user->email_verified_at) {
+            $rawToken = EmailVerification::createTokenFor($user);
+            Mail::to($user->email)->send(new VerifyEmailNotification($user, $rawToken));
+
+            AuditLog::log(
+                action: 'user.verification_resent',
+                auditable: $user,
+                oldValues: null,
+                newValues: ['email' => $user->email],
+                notes: 'Tautan verifikasi email dikirim ulang dari portal masuk.'
+            );
+        }
+
+        session()->flash('success', 'Tautan aktivasi baru telah dikirimkan ke email Anda. Silakan periksa kotak masuk atau spam.');
+        $this->errorMessage = '';
+    }
+
     /**
      * Handle incoming authentication attempt.
      */
     public function authenticate()
     {
         $this->errorMessage = '';
+        $this->unverifiedEmail = '';
 
         $resolvedIdentifier = trim($this->identifier !== '' ? $this->identifier : $this->email);
 
@@ -96,7 +140,7 @@ class Login extends Component
         $field = is_numeric($resolvedIdentifier) ? 'nip' : 'email';
 
         $throttleKey = Str::transliterate(
-            Str::lower($resolvedIdentifier) . '|' . request()->ip()
+            Str::lower($resolvedIdentifier).'|'.request()->ip()
         );
 
         if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
@@ -114,11 +158,32 @@ class Login extends Component
         ];
 
         if (Auth::attempt($credentials, $this->remember)) {
+            /** @var User $user */
+            $user = Auth::user();
+
+            // Proteksi email belum diverifikasi
+            if (! $user->email_verified_at) {
+                $unverified = $user->email;
+                Auth::logout();
+                $this->unverifiedEmail = $unverified;
+                $this->errorMessage = 'Alamat email akun Anda belum diverifikasi. Silakan periksa kotak masuk atau spam email Anda.';
+                $this->addError('identifier', $this->errorMessage);
+                $this->addError('email', $this->errorMessage);
+
+                return;
+            }
+
             RateLimiter::clear($throttleKey);
             session()->regenerate();
 
-            /** @var User $user */
-            $user = Auth::user();
+            // Catat log autentikasi berhasil
+            AuditLog::log(
+                action: 'user.login',
+                auditable: $user,
+                oldValues: null,
+                newValues: ['role' => $user->role?->value ?? (string) $user->role],
+                notes: 'Pengguna berhasil masuk ke sistem.'
+            );
 
             // Role-based redirection & welcome toast notification:
             // Internal Management (Admin, Mentor, Verifikator, Pimpinan) -> admin.dashboard with welcome toast
@@ -129,7 +194,7 @@ class Login extends Component
                 session()->flash('alert-show', [
                     'type' => 'success',
                     'title' => 'Berhasil',
-                    'message' => 'berhasil login selamat datang ' . $roleName,
+                    'message' => 'berhasil login selamat datang '.$roleName,
                 ]);
 
                 return redirect()->intended(route('pimpinan.persetujuan.data'));
@@ -141,7 +206,7 @@ class Login extends Component
                 session()->flash('alert-show', [
                     'type' => 'success',
                     'title' => 'Berhasil',
-                    'message' => 'berhasil login selamat datang ' . $roleName,
+                    'message' => 'berhasil login selamat datang '.$roleName,
                 ]);
 
                 return redirect()->intended(route('admin.dashboard'));
