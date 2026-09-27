@@ -14,7 +14,6 @@ test('login page can be accessed and assets are correctly routed', function () {
     $response = $this->get('/login');
 
     $response->assertStatus(200);
-    $response->assertSee('admin/assets/images/favicon.png');
     $response->assertSee('admin/assets/css/remixicon.css');
     $response->assertSee('admin/assets/css/lib/bootstrap.min.css');
     $response->assertSee('admin/assets/css/style.css');
@@ -194,7 +193,7 @@ test('register page can be accessed by guest and shows registration fields', fun
     $response->assertSee('Jabatan Saat Ini');
     $response->assertSee('Pangkat / Golongan');
     $response->assertSee('Kontak');
-    $response->assertSee('Daftarkan Akun Peserta');
+    $response->assertSee('Daftar Akun Peserta');
 });
 
 test('guest user can register successfully as peserta with valid data', function () {

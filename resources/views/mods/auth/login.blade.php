@@ -83,6 +83,21 @@
                 </div>
             @endif
 
+            @if ($unverifiedEmail)
+                <div class="alert alert-warning py-10 px-12 radius-8 text-xs mb-16 border-0 bg-warning-50 text-warning-800 d-flex flex-column gap-2"
+                    style="background-color: #fffbeb !important; border: 1px solid #fef3c7 !important; color: #92400e !important; border-radius: 10px;">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="ri-mail-unread-line fs-5 flex-shrink-0 text-warning"></i>
+                        <span>Email belum aktif. Tautan aktivasi baru dapat dikirimkan ke <strong>{{ $unverifiedEmail }}</strong>.</span>
+                    </div>
+                    <div class="pt-1">
+                        <button type="button" wire:click="resendVerification" class="btn btn-sm btn-warning text-dark text-xs py-1 px-3 rounded-pill fw-semibold shadow-none">
+                            <i class="ri-send-plane-fill me-1"></i> Kirim Ulang Tautan Aktivasi
+                        </button>
+                    </div>
+                </div>
+            @endif
+
             {{-- Login Form --}}
             <form wire:submit="authenticate">
                 {{-- Email or NIP --}}

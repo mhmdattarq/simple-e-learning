@@ -42,10 +42,13 @@ Route::livewire('/', LandingIndex::class)->name('landing');
 Route::livewire('/jadwal', JadwalIndex::class)->name('jadwal');
 Route::livewire('/pelatihan', PelatihanIndex::class)->name('pelatihan.index');
 
+use App\Livewire\Auth\VerifyEmail;
+
 // 2. Authentication (Guest)
 Route::middleware('guest')->group(function () {
     Route::livewire('/login', Login::class)->middleware('throttle:login')->name('login');
     Route::livewire('/register', Register::class)->name('register');
+    Route::livewire('/email/verify/{token}', VerifyEmail::class)->name('verification.verify');
 });
 
 // 3. Peserta / Siswa Registration, Learning & Attendance (Authenticated)
