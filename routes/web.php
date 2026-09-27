@@ -42,6 +42,7 @@ Route::livewire('/', LandingIndex::class)->name('landing');
 Route::livewire('/jadwal', JadwalIndex::class)->name('jadwal');
 Route::livewire('/pelatihan', PelatihanIndex::class)->name('pelatihan.index');
 
+use App\Http\Controllers\Auth\GoogleAuthController;
 use App\Livewire\Auth\VerifyEmail;
 
 // 2. Authentication (Guest)
@@ -49,10 +50,15 @@ Route::middleware('guest')->group(function () {
     Route::livewire('/login', Login::class)->middleware('throttle:login')->name('login');
     Route::livewire('/register', Register::class)->name('register');
     Route::livewire('/email/verify/{token}', VerifyEmail::class)->name('verification.verify');
+    Route::get('/auth/google/redirect', [GoogleAuthController::class, 'redirect'])->name('auth.google.redirect');
+    Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback'])->name('auth.google.callback');
 });
+
+use App\Livewire\Peserta\Profile\ProfileIndex;
 
 // 3. Peserta / Siswa Registration, Learning & Attendance (Authenticated)
 Route::middleware('auth')->group(function () {
+    Route::livewire('/profil', ProfileIndex::class)->name('peserta.profil');
     Route::livewire('/pelatihan/{id}/daftar', PendaftaranCreate::class)->name('pelatihan.daftar');
     Route::livewire('/pelatihan/{id}/materi', MateriBelajar::class)->name('peserta.materi');
     Route::livewire('/presensi', PresensiIndex::class)->middleware('throttle:attendance')->name('presensi.index');

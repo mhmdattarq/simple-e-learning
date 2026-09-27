@@ -36,9 +36,17 @@ class PendaftaranCreate extends Component
 
     public function mount(int|string $id): void
     {
-        $this->course = Course::with('category')->findOrFail($id);
-
         $user = Auth::user();
+
+        if (! $user?->isAsnProfileComplete()) {
+            session()->flash('warning', 'Profil kepegawaian ASN Anda belum lengkap. Silakan lengkapi NIP dan data kepegawaian Anda terlebih dahulu sebelum mendaftar pelatihan.');
+
+            $this->redirect(route('peserta.profil'), navigate: true);
+
+            return;
+        }
+
+        $this->course = Course::with('category')->findOrFail($id);
 
         // Check if user has already enrolled in this course
         $existing = CourseUser::where('user_id', $user->id)
@@ -114,6 +122,12 @@ class PendaftaranCreate extends Component
 
     public function submit(): void
     {
+        if (! Auth::user()?->isAsnProfileComplete()) {
+            $this->addError('general', 'Data profil ASN Anda belum lengkap. Silakan lengkapi NIP dan data kepegawaian Anda terlebih dahulu.');
+
+            return;
+        }
+
         if ($this->alreadyRegistered) {
             return;
         }

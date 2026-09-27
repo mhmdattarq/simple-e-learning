@@ -82,6 +82,12 @@ class Register extends Component
             return;
         }
 
+        session()->flash('alert-show', [
+            'type' => 'success',
+            'title' => 'Pendaftaran Berhasil',
+            'message' => 'Pendaftaran akun berhasil! Tautan aktivasi telah dikirimkan ke email '.$user->email.'.',
+        ]);
+
         session()->flash('success', 'Pendaftaran akun berhasil! Tautan aktivasi telah dikirimkan ke email '.$user->email.'. Silakan verifikasi email Anda sebelum masuk.');
 
         return $this->redirectRoute('login', navigate: true);
