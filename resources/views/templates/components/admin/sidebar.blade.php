@@ -165,17 +165,6 @@ new class extends Component {
                                 <span>Sertifikat & Pelaporan</span>
                             </a>
                         </li>
-
-                        @if (auth()->user()?->isAdmin())
-                            <li class="sidebar-menu-group-title">EKSEKUTIF</li>
-                            <li class="nav-item">
-                                <a class="nav-link {{ request()->routeIs('pimpinan.persetujuan*') ? 'active' : '' }}"
-                                    href="{{ route('pimpinan.persetujuan.data') }}" title="Persetujuan Rencana" wire:navigate>
-                                    <i class="ri-checkbox-circle-line menu-icon"></i>
-                                    <span>Persetujuan Rencana</span>
-                                </a>
-                            </li>
-                        @endif
                     @endif
                 </ul>
             </div>

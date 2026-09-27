@@ -68,8 +68,7 @@
             </div>
 
             @if (session()->has('success'))
-                <div
-                    class="alert alert-success py-8 px-12 radius-8 text-xs mb-16 d-flex align-items-center gap-2 border-0 bg-success-50 text-success-700"
+                <div class="alert alert-success py-8 px-12 radius-8 text-xs mb-16 d-flex align-items-center gap-2 border-0 bg-success-50 text-success-700"
                     style="background-color: #def4e9; color: #16845b;">
                     <i class="ri-checkbox-circle-fill text-base flex-shrink-0"></i>
                     <span>{{ session('success') }}</span>
@@ -92,8 +91,9 @@
                         Email atau NIP
                     </label>
                     @php
-                        $hasIdentifierValidationError = ($errors->has('identifier') && $errors->first('identifier') !== $errorMessage)
-                            || ($errors->has('email') && $errors->first('email') !== $errorMessage);
+                        $hasIdentifierValidationError =
+                            ($errors->has('identifier') && $errors->first('identifier') !== $errorMessage) ||
+                            ($errors->has('email') && $errors->first('email') !== $errorMessage);
                     @endphp
                     <div class="auth-input-wrapper">
                         <span class="auth-field-icon">
@@ -147,15 +147,24 @@
 
                 {{-- Submit Button --}}
                 <button type="submit" class="btn-auth-primary w-100" wire:loading.attr="disabled">
-                    <span wire:loading.remove>Masuk ke Portal</span>
+                    <span wire:loading.remove>Masuk</span>
                     <span wire:loading style="display: none;">
                         <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                         Memproses...
                     </span>
                 </button>
 
+                <div class="mt-32 center-border-horizontal text-center">
+                    <span class="bg-base z-1 px-4">atau</span>
+                </div>
+                <div class="mt-32 d-flex align-items-center gap-3">
+                    <button type="button" class="btn btn-secondary w-100">
+                        <i class="ri-google-line"></i>
+                        Masuk Dengan Google
+                    </button>
+                </div>
                 {{-- Footer Info --}}
-                <div class="text-center pt-16 border-top">
+                <div class="text-center pt-16">
                     <p class="text-xs text-muted mb-0">
                         Belum memiliki akun?
                         <a href="{{ route('register') }}"

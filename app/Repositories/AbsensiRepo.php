@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Attendance;
+use App\Models\AuditLog;
 use App\Models\CourseSchedule;
 use App\Models\CourseUser;
 use App\Models\User;
@@ -387,6 +388,19 @@ class AbsensiRepo
                     'correction_reason' => trim($reason),
                     'corrected_by' => $correctorId,
                 ]
+            );
+
+            AuditLog::log(
+                action: 'attendance.corrected',
+                auditable: $attendance,
+                newValues: [
+                    'schedule_id' => $scheduleId,
+                    'user_id' => $userId,
+                    'status' => $status,
+                    'correction_reason' => trim($reason),
+                ],
+                notes: 'Koreksi manual presensi: '.trim($reason),
+                userId: $correctorId
             );
 
             Log::info('Absensi: Koreksi manual status kehadiran', [

@@ -30,9 +30,9 @@ test('admin sees full operational menu in sidebar', function () {
     $response->assertSee('Evaluasi & Kuis', false);
     $response->assertSee('Sertifikat & Pelaporan', false);
 
-    // Executive section for admin backup
-    $response->assertSee('EKSEKUTIF');
-    $response->assertSee(route('pimpinan.persetujuan.data'));
+    // Admin should NOT see executive approval menu (only Pimpinan can see it)
+    $response->assertDontSee('EKSEKUTIF');
+    $response->assertDontSee(route('pimpinan.persetujuan.data'));
 });
 
 test('mentor sees only designated mentor menus in sidebar', function () {
