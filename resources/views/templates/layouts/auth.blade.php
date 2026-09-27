@@ -35,6 +35,8 @@
 </head>
 
 <body>
+    {{-- Notifikasi Toast Universal dari Admin --}}
+    <livewire:admin.toast />
 
     {{ $slot }}
 

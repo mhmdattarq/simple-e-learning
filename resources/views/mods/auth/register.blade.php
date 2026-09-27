@@ -328,10 +328,10 @@
                     <span class="bg-base z-1 px-4">atau</span>
                 </div>
                 <div class="mt-32 d-flex align-items-center gap-3">
-                    <button type="button" class="btn btn-secondary w-100">
+                    <a href="{{ route('auth.google.redirect') }}" class="btn btn-secondary w-100 d-inline-flex align-items-center justify-content-center gap-2">
                         <i class="ri-google-line"></i>
                         Buat Akun Dengan Google
-                    </button>
+                    </a>
                 </div>
 
                 {{-- Footer Info --}}

@@ -247,6 +247,9 @@
 </head>
 
 <body class="custom-cursor">
+    {{-- Notifikasi Toast Universal dari Admin --}}
+    <livewire:admin.toast />
+
     @auth
         {{-- Modal Universal & Konfirmasi Aksi --}}
         <livewire:admin.modal />

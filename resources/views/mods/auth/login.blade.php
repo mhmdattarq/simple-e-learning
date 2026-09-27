@@ -83,6 +83,30 @@
                 </div>
             @endif
 
+            @if ($lockoutSeconds > 0)
+                <div x-data="{
+                        seconds: {{ $lockoutSeconds }},
+                        timer: null,
+                        init() {
+                            this.timer = setInterval(() => {
+                                if (this.seconds > 0) {
+                                    this.seconds--;
+                                } else {
+                                    clearInterval(this.timer);
+                                }
+                            }, 1000);
+                        }
+                    }"
+                    class="alert alert-danger py-10 px-12 radius-8 text-xs mb-16 border-0 d-flex align-items-center gap-2"
+                    style="border-radius: 10px; background-color: #fff1f2 !important; border: 1px solid #fecdd3 !important; color: #9f1239 !important;">
+                    <i class="ri-alarm-warning-line fs-5 flex-shrink-0 text-danger"></i>
+                    <div>
+                        <span class="fw-bold">Akun/IP Dikunci Sementara:</span>
+                        <span>Silakan tunggu <strong x-text="seconds"></strong> detik lagi sebelum mencoba kembali.</span>
+                    </div>
+                </div>
+            @endif
+
             @if ($unverifiedEmail)
                 <div class="alert alert-warning py-10 px-12 radius-8 text-xs mb-16 border-0 bg-warning-50 text-warning-800 d-flex flex-column gap-2"
                     style="background-color: #fffbeb !important; border: 1px solid #fef3c7 !important; color: #92400e !important; border-radius: 10px;">
@@ -161,7 +185,8 @@
                 </div>
 
                 {{-- Submit Button --}}
-                <button type="submit" class="btn-auth-primary w-100" wire:loading.attr="disabled">
+                <button type="submit" class="btn-auth-primary w-100" wire:loading.attr="disabled"
+                    @if ($lockoutSeconds > 0) disabled style="opacity: 0.6; cursor: not-allowed;" @endif>
                     <span wire:loading.remove>Masuk</span>
                     <span wire:loading style="display: none;">
                         <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
@@ -173,10 +198,10 @@
                     <span class="bg-base z-1 px-4">atau</span>
                 </div>
                 <div class="mt-32 d-flex align-items-center gap-3">
-                    <button type="button" class="btn btn-secondary w-100">
+                    <a href="{{ route('auth.google.redirect') }}" class="btn btn-secondary w-100 d-inline-flex align-items-center justify-content-center gap-2">
                         <i class="ri-google-line"></i>
                         Masuk Dengan Google
-                    </button>
+                    </a>
                 </div>
                 {{-- Footer Info --}}
                 <div class="text-center pt-16">

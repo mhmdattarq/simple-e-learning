@@ -35,7 +35,8 @@ test('participant registration sends activation email, creates secure verificati
         ->set('form.password_confirmation', 'Rahasia123!')
         ->call('register')
         ->assertHasNoErrors()
-        ->assertRedirect(route('login'));
+        ->assertRedirect(route('login'))
+        ->assertSessionHas('alert-show');
 
     $user = User::where('email', 'teuku.ryan@acehtimurkab.go.id')->first();
     expect($user)->not->toBeNull();

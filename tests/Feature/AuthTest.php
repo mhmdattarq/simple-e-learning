@@ -45,7 +45,7 @@ test('admin can login using email and is redirected to admin dashboard with welc
     expect(auth()->user()->isAdmin())->toBeTrue();
 });
 
-test('peserta can login using 18 digit nip and is redirected to landing page without welcome toast', function () {
+test('peserta can login using 18 digit nip and is redirected to landing page with welcome toast', function () {
     $peserta = User::factory()->peserta()->create([
         'nip' => '199205052018011005',
         'email' => 'peserta@simpel.go.id',
@@ -57,7 +57,11 @@ test('peserta can login using 18 digit nip and is redirected to landing page wit
         ->set('password', 'password123')
         ->call('authenticate')
         ->assertRedirect(route('landing'))
-        ->assertSessionMissing('alert-show');
+        ->assertSessionHas('alert-show', [
+            'type' => 'success',
+            'title' => 'Berhasil',
+            'message' => 'berhasil login selamat datang peserta',
+        ]);
 
     $this->assertAuthenticatedAs($peserta);
     expect(auth()->user()->isPeserta())->toBeTrue();

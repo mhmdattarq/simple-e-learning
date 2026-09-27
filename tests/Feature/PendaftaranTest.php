@@ -107,9 +107,7 @@ test('pendaftaran datatable endpoint returns valid yajra json response', functio
 });
 
 test('peserta registration validates required fields, NIP 18 digits, agreement and PDF file', function () {
-    $peserta = User::factory()->peserta()->create([
-        'nip' => null,
-    ]);
+    $peserta = User::factory()->peserta()->create();
 
     $category = Category::first();
     $course = Course::create([

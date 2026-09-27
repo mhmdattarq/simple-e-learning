@@ -33,6 +33,7 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'last_login_at' => 'datetime',
             'password' => 'hashed',
             'role' => Role::class,
         ];
@@ -69,6 +70,20 @@ class User extends Authenticatable
     public function hasAdminAccess(): bool
     {
         return $this->role?->hasAdminAccess() ?? false;
+    }
+
+    public function isGoogleUser(): bool
+    {
+        return ! empty($this->google_id);
+    }
+
+    public function isAsnProfileComplete(): bool
+    {
+        return ! empty($this->nip)
+            && strlen(trim((string) $this->nip)) === 18
+            && ! empty($this->opd_agency)
+            && ! empty($this->position)
+            && ! empty($this->rank_class);
     }
 
     /**
