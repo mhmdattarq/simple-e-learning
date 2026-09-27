@@ -44,7 +44,7 @@ Route::livewire('/pelatihan', PelatihanIndex::class)->name('pelatihan.index');
 
 // 2. Authentication (Guest)
 Route::middleware('guest')->group(function () {
-    Route::livewire('/login', Login::class)->name('login');
+    Route::livewire('/login', Login::class)->middleware('throttle:login')->name('login');
     Route::livewire('/register', Register::class)->name('register');
 });
 
@@ -52,7 +52,7 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::livewire('/pelatihan/{id}/daftar', PendaftaranCreate::class)->name('pelatihan.daftar');
     Route::livewire('/pelatihan/{id}/materi', MateriBelajar::class)->name('peserta.materi');
-    Route::livewire('/presensi', PresensiIndex::class)->name('presensi.index');
+    Route::livewire('/presensi', PresensiIndex::class)->middleware('throttle:attendance')->name('presensi.index');
 });
 
 // 4. Logout (Authenticated)
@@ -68,8 +68,8 @@ Route::post('/logout', function () {
 Route::middleware(['auth', 'role:admin,mentor,verifikator,pimpinan'])->group(function () {
     Route::livewire('/admin/dashboard', DashboardIndex::class)->name('admin.dashboard');
 
-    // Modul 1: Tahap Perencanaan
-    Route::prefix('perencanaan')->group(function () {
+    // Modul 1: Tahap Perencanaan (Khusus Administrator)
+    Route::prefix('perencanaan')->middleware('role:admin')->group(function () {
         Route::name('perencanaan.')->group(function () {
             Route::get('/datatable', [PerencanaanController::class, 'dataDt'])->name('dt');
             Route::livewire('/data', PerencanaanData::class)->name('data');
@@ -78,8 +78,8 @@ Route::middleware(['auth', 'role:admin,mentor,verifikator,pimpinan'])->group(fun
         });
     });
 
-    // Modul 2: Tahap Pendaftaran
-    Route::prefix('pendaftaran')->group(function () {
+    // Modul 2: Tahap Pendaftaran (Admin, Verifikator, Pimpinan)
+    Route::prefix('pendaftaran')->middleware('role:admin,verifikator,pimpinan')->group(function () {
         Route::name('pendaftaran.')->group(function () {
             Route::get('/datatable', [PendaftaranController::class, 'dataDt'])->name('dt');
             Route::get('/export-rekap', [PendaftaranController::class, 'exportRekap'])->name('export');
@@ -87,8 +87,8 @@ Route::middleware(['auth', 'role:admin,mentor,verifikator,pimpinan'])->group(fun
         });
     });
 
-    // Modul 3: Tahap Verifikasi
-    Route::prefix('verifikasi')->group(function () {
+    // Modul 3: Tahap Verifikasi (Khusus Admin & Verifikator Berkas)
+    Route::prefix('verifikasi')->middleware('role:admin,verifikator')->group(function () {
         Route::name('verifikasi.')->group(function () {
             Route::get('/datatable', [VerifikasiController::class, 'dataDt'])->name('dt');
             Route::livewire('/data', VerifikasiData::class)->name('data');
@@ -96,8 +96,8 @@ Route::middleware(['auth', 'role:admin,mentor,verifikator,pimpinan'])->group(fun
         });
     });
 
-    // Modul 4: Tahap Penjadwalan
-    Route::prefix('penjadwalan')->group(function () {
+    // Modul 4: Tahap Penjadwalan (Admin & Mentor Pengampu)
+    Route::prefix('penjadwalan')->middleware('role:admin,mentor')->group(function () {
         Route::name('penjadwalan.')->group(function () {
             Route::get('/datatable', [PenjadwalanController::class, 'dataDt'])->name('dt');
             Route::livewire('/data', PenjadwalanData::class)->name('data');
@@ -106,8 +106,8 @@ Route::middleware(['auth', 'role:admin,mentor,verifikator,pimpinan'])->group(fun
         });
     });
 
-    // Modul 5: Tahap Absensi Elektronik
-    Route::prefix('absensi')->group(function () {
+    // Modul 5: Tahap Absensi Elektronik (Admin & Mentor Pengampu)
+    Route::prefix('absensi')->middleware('role:admin,mentor')->group(function () {
         Route::name('absensi.')->group(function () {
             Route::get('/datatable', [AbsensiController::class, 'dataDt'])->name('dt');
             Route::livewire('/data', AbsensiData::class)->name('data');
@@ -115,10 +115,10 @@ Route::middleware(['auth', 'role:admin,mentor,verifikator,pimpinan'])->group(fun
         });
     });
 
-    // Modul 6: Tahap Ruang Materi (Kurikulum & Silabus)
-    Route::prefix('materi')->group(function () {
+    // Modul 6: Tahap Ruang Materi (Admin & Mentor Pengampu)
+    Route::prefix('materi')->middleware('role:admin,mentor')->group(function () {
         Route::name('materi.')->group(function () {
-            Route::post('/upload-media', [MateriController::class, 'uploadMedia'])->name('upload-media');
+            Route::post('/upload-media', [MateriController::class, 'uploadMedia'])->middleware('throttle:uploads')->name('upload-media');
             Route::livewire('/data', MateriData::class)->name('data');
             Route::livewire('/sesi/{id}', MateriSesi::class)->name('sesi');
             Route::livewire('/detail/{id}', MateriDetail::class)->name('detail');
@@ -136,8 +136,8 @@ Route::middleware(['auth', 'role:admin,mentor,verifikator,pimpinan'])->group(fun
         });
     });
 
-    // Modul Eksekutif: Pimpinan
-    Route::prefix('pimpinan')->group(function () {
+    // Modul Eksekutif: Pimpinan (Admin & Pimpinan)
+    Route::prefix('pimpinan')->middleware('role:admin,pimpinan')->group(function () {
         Route::name('pimpinan.')->group(function () {
             Route::livewire('/dashboard', PimpinanDashboard::class)->name('dashboard');
             Route::prefix('persetujuan')->group(function () {

@@ -316,13 +316,23 @@
                 {{-- Submit Button --}}
                 <button type="submit" class="btn-auth-primary w-100" wire:loading.attr="disabled">
                     <span wire:loading.remove>
-                        <i class="ri-user-add-line me-1"></i> Daftarkan Akun Peserta
+                        <i class="ri-user-add-line me-1"></i> Daftar Akun Peserta
                     </span>
                     <span wire:loading style="display: none;">
                         <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                         Mendaftarkan akun...
                     </span>
                 </button>
+
+                <div class="mt-32 center-border-horizontal text-center">
+                    <span class="bg-base z-1 px-4">atau</span>
+                </div>
+                <div class="mt-32 d-flex align-items-center gap-3">
+                    <button type="button" class="btn btn-secondary w-100">
+                        <i class="ri-google-line"></i>
+                        Buat Akun Dengan Google
+                    </button>
+                </div>
 
                 {{-- Footer Info --}}
                 <div class="text-center pt-16 mt-16 border-top">

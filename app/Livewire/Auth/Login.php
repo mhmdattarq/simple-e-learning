@@ -5,12 +5,13 @@ namespace App\Livewire\Auth;
 use App\Enums\Role;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Str;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 
 #[Layout('templates.layouts.auth')]
-#[Title('Masuk ke Portal - SIMPEL E-Learning BKPSDM Aceh Timur')]
 class Login extends Component
 {
     public string $identifier = '';
@@ -94,12 +95,26 @@ class Login extends Component
         // Jika angka saja -> NIP (18 digit ASN), selain itu -> Email
         $field = is_numeric($resolvedIdentifier) ? 'nip' : 'email';
 
+        $throttleKey = Str::transliterate(
+            Str::lower($resolvedIdentifier) . '|' . request()->ip()
+        );
+
+        if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
+            $seconds = RateLimiter::availableIn($throttleKey);
+            $this->errorMessage = "Terlalu banyak percobaan masuk. Silakan tunggu {$seconds} detik lagi.";
+            $this->addError('identifier', $this->errorMessage);
+            $this->addError('email', $this->errorMessage);
+
+            return;
+        }
+
         $credentials = [
             $field => $resolvedIdentifier,
             'password' => $this->password,
         ];
 
         if (Auth::attempt($credentials, $this->remember)) {
+            RateLimiter::clear($throttleKey);
             session()->regenerate();
 
             /** @var User $user */
@@ -114,7 +129,7 @@ class Login extends Component
                 session()->flash('alert-show', [
                     'type' => 'success',
                     'title' => 'Berhasil',
-                    'message' => 'berhasil login selamat datang '.$roleName,
+                    'message' => 'berhasil login selamat datang ' . $roleName,
                 ]);
 
                 return redirect()->intended(route('pimpinan.persetujuan.data'));
@@ -126,7 +141,7 @@ class Login extends Component
                 session()->flash('alert-show', [
                     'type' => 'success',
                     'title' => 'Berhasil',
-                    'message' => 'berhasil login selamat datang '.$roleName,
+                    'message' => 'berhasil login selamat datang ' . $roleName,
                 ]);
 
                 return redirect()->intended(route('admin.dashboard'));
@@ -134,6 +149,8 @@ class Login extends Component
 
             return redirect()->intended(route('landing'));
         }
+
+        RateLimiter::hit($throttleKey, 60);
 
         $this->errorMessage = 'Email/NIP atau kata sandi yang Anda masukkan salah.';
         $this->addError('identifier', $this->errorMessage);

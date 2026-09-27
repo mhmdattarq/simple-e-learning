@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Enums\CourseStatus;
+use App\Models\AuditLog;
 use App\Models\Course;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
@@ -65,12 +66,23 @@ class PimpinanRepo
 
             $userId = $approverId ?? auth()->id();
 
+            $oldStatus = $course->status->value;
+
             $course->update([
                 'status' => CourseStatus::Approved,
                 'approved_by' => $userId,
                 'approved_at' => now(),
                 'approval_notes' => $notes ?: 'Disetujui oleh Pimpinan.',
             ]);
+
+            AuditLog::log(
+                action: 'course.approved',
+                auditable: $course,
+                oldValues: ['status' => $oldStatus],
+                newValues: ['status' => CourseStatus::Approved->value, 'approved_by' => $userId],
+                notes: $notes ?: 'Disetujui oleh Pimpinan.',
+                userId: $userId
+            );
 
             return [
                 'success' => true,
@@ -104,10 +116,21 @@ class PimpinanRepo
                 ]);
             }
 
+            $oldStatus = $course->status->value;
+
             $course->update([
                 'status' => CourseStatus::Draft,
                 'approval_notes' => $notes,
             ]);
+
+            AuditLog::log(
+                action: 'course.rejected',
+                auditable: $course,
+                oldValues: ['status' => $oldStatus],
+                newValues: ['status' => CourseStatus::Draft->value],
+                notes: $notes,
+                userId: auth()->id()
+            );
 
             return [
                 'success' => true,

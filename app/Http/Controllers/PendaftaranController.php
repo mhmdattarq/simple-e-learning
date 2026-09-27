@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Enums\RegistrationStatus;
+use App\Enums\Role;
+use App\Models\AuditLog;
 use App\Repositories\PendaftaranRepo;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -56,8 +58,24 @@ class PendaftaranController extends Controller
      */
     public function exportRekap(Request $request): StreamedResponse
     {
+        $user = auth()->user();
+        if (! $user || ! in_array($user->role, [Role::Admin, Role::Verifikator], true)) {
+            abort(403, 'Akses Ditolak: Hanya Administrator dan Verifikator yang berhak mengunduh rekap berkas data pribadi ASN.');
+        }
+
         $courseId = $request->filled('course_id') ? (int) $request->get('course_id') : null;
         $status = $request->filled('status') ? $request->get('status') : null;
+
+        AuditLog::log(
+            action: 'data.exported',
+            notes: 'Unduh rekapitulasi data pendaftaran ASN (CSV)',
+            newValues: [
+                'course_id' => $courseId,
+                'status' => $status,
+                'exported_by' => $user->name,
+                'role' => $user->role->value,
+            ]
+        );
 
         $query = PendaftaranRepo::getDt($courseId);
         if ($status && $status !== 'all') {

@@ -19,12 +19,16 @@ class MateriController extends Controller
         $isImage = $file && str_starts_with($file->getMimeType() ?? '', 'image/');
         $maxKb = $isImage ? 2048 : 10240; // Gambar: 2MB, Dokumen: 10MB
         $maxLabel = $isImage ? '2 MB' : '10 MB';
+        $allowedMimes = $isImage
+            ? 'jpg,jpeg,png,webp,gif'
+            : 'pdf,doc,docx,ppt,pptx,xls,xlsx,txt,jpg,jpeg,png,webp,mp4,zip';
 
         $validator = Validator::make($request->all(), [
-            'file' => 'required|file|max:'.$maxKb,
+            'file' => 'required|file|mimes:'.$allowedMimes.'|max:'.$maxKb,
         ], [
             'file.required' => 'Berkas lampiran materi wajib dipilih.',
             'file.file' => 'Berkas yang diunggah tidak valid.',
+            'file.mimes' => 'Format berkas tidak didukung atau dilarang oleh kebijakan keamanan sistem.',
             'file.max' => 'Ukuran '.($isImage ? 'gambar' : 'dokumen').' melebihi batas maksimal (Maksimal '.$maxLabel.').',
         ]);
 

@@ -8,7 +8,6 @@ use Livewire\Attributes\Title;
 use Livewire\Component;
 
 #[Layout('templates.layouts.auth')]
-#[Title('Daftar Akun Peserta - SIMPEL E-Learning BKPSDM Aceh Timur')]
 class Register extends Component
 {
     /**

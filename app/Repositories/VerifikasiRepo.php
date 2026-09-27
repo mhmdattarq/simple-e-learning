@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Enums\RegistrationStatus;
+use App\Models\AuditLog;
 use App\Models\CourseUser;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
@@ -48,6 +49,7 @@ class VerifikasiRepo
         return DB::transaction(function () use ($id, $status, $notes, $verifierId) {
             $reg = CourseUser::lockForUpdate()->findOrFail($id);
 
+            $oldStatus = $reg->status instanceof RegistrationStatus ? $reg->status->value : (string) $reg->status;
             $statusEnum = is_string($status) ? RegistrationStatus::from($status) : $status;
 
             $reg->update([
@@ -56,6 +58,15 @@ class VerifikasiRepo
                 'verified_by' => $verifierId,
                 'verified_at' => now(),
             ]);
+
+            AuditLog::log(
+                action: 'registration.'.$statusEnum->value,
+                auditable: $reg,
+                oldValues: ['status' => $oldStatus],
+                newValues: ['status' => $statusEnum->value, 'verified_by' => $verifierId],
+                notes: $notes,
+                userId: $verifierId
+            );
 
             Log::info('Course registration verified', [
                 'course_user_id' => $reg->id,
