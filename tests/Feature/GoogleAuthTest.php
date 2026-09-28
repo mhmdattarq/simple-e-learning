@@ -39,7 +39,8 @@ test('new user logging in with google is automatically registered as peserta and
     $mockSocialiteUser->id = 'google-uid-1234567890';
     $mockSocialiteUser->name = 'Cut Putri Malahayati';
     $mockSocialiteUser->email = 'putri.malahayati@gmail.com';
-    $mockSocialiteUser->avatar = 'https://lh3.googleusercontent.com/a/avatar-sample.jpg';
+    $longAvatarUrl = 'https://lh3.googleusercontent.com/a-/'.str_repeat('ALV-UjW9NqHJL14EN5TZg0E-Iw7Zo2mdXunwnvgcXh6XTzFtjrVuD2X4xz0P7g4LsmKe57woeLMxROqoUHjhopN', 10);
+    $mockSocialiteUser->avatar = $longAvatarUrl;
 
     Socialite::shouldReceive('driver->user')
         ->once()
