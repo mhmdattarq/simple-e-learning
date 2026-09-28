@@ -66,7 +66,9 @@
     <!-- Remix Icon from admin -->
     <link rel="stylesheet" href="{{ asset('admin/assets/css/remixicon.css') }}" />
 
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <!-- App Custom CSS & JS (Classic Asset) -->
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <script src="{{ asset('js/app.js') }}"></script>
 
     <style>
         /* Custom Button SIMPEL E-Learning */

@@ -30,7 +30,9 @@
     <!-- main css -->
     <link rel="stylesheet" href="{{ asset('admin/assets/css/style.css') }}">
 
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <!-- App Custom CSS & JS (Classic Asset) -->
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <script src="{{ asset('js/app.js') }}"></script>
 
     @livewireStyles
     @stack('css')
