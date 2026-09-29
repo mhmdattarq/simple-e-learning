@@ -75,10 +75,10 @@
                         <i class="ri-award-line fs-4"></i>
                     </div>
                 </div>
-                <h3 class="fw-bold mb-1" style="color: #071a33; font-size: 28px;">18</h3>
+                <h3 class="fw-bold mb-1" style="color: #071a33; font-size: 28px;">{{ $publishedCoursesCount }}</h3>
                 <div class="d-flex align-items-center gap-1" style="color: #16845b; font-size: 12px; font-weight: 600;">
-                    <i class="ri-arrow-up-line"></i>
-                    <span>2 program baru bulan ini</span>
+                    <i class="ri-checkbox-circle-line"></i>
+                    <span>{{ $totalCoursesCount }} total kelas terdaftar</span>
                 </div>
             </div>
         </div>
@@ -93,47 +93,47 @@
                         <i class="ri-team-line fs-4"></i>
                     </div>
                 </div>
-                <h3 class="fw-bold mb-1" style="color: #071a33; font-size: 28px;">625</h3>
+                <h3 class="fw-bold mb-1" style="color: #071a33; font-size: 28px;">{{ $totalParticipantsCount }}</h3>
                 <div class="d-flex align-items-center gap-1" style="color: #16845b; font-size: 12px; font-weight: 600;">
-                    <i class="ri-arrow-up-line"></i>
-                    <span>12.4% dari bulan lalu</span>
+                    <i class="ri-user-follow-line"></i>
+                    <span>{{ $activeParticipantsCount }} peserta aktif belajar</span>
                 </div>
             </div>
         </div>
 
-        {{-- Stat 3: Jadwal Hari Ini --}}
+        {{-- Stat 3: Materi Pembelajaran --}}
         <div class="col">
             <div class="simpel-card p-20 h-100">
                 <div class="d-flex align-items-center justify-content-between mb-12">
-                    <span class="text-secondary-light fw-medium" style="font-size: 13px;">Jadwal Hari Ini</span>
+                    <span class="text-secondary-light fw-medium" style="font-size: 13px;">Materi Pembelajaran</span>
                     <div class="w-40-px h-40-px rounded-3 d-flex align-items-center justify-content-center"
                         style="background-color: #e9eff7; color: #0c3158;">
-                        <i class="ri-calendar-event-line fs-4"></i>
+                        <i class="ri-book-open-line fs-4"></i>
                     </div>
                 </div>
-                <h3 class="fw-bold mb-1" style="color: #071a33; font-size: 28px;">6</h3>
+                <h3 class="fw-bold mb-1" style="color: #071a33; font-size: 28px;">{{ $totalLessonsCount }}</h3>
                 <div class="d-flex align-items-center gap-1 text-primary-light"
                     style="font-size: 12px; font-weight: 600;">
-                    <i class="ri-time-line"></i>
-                    <span>3 sesi sedang berlangsung</span>
+                    <i class="ri-folders-line"></i>
+                    <span>Tersebar di {{ $totalChaptersCount }} bab/silabus</span>
                 </div>
             </div>
         </div>
 
-        {{-- Stat 4: Sertifikat Terbit --}}
+        {{-- Stat 4: Evaluasi Selesai --}}
         <div class="col">
             <div class="simpel-card p-20 h-100">
                 <div class="d-flex align-items-center justify-content-between mb-12">
-                    <span class="text-secondary-light fw-medium" style="font-size: 13px;">Sertifikat Terbit</span>
+                    <span class="text-secondary-light fw-medium" style="font-size: 13px;">Evaluasi Selesai</span>
                     <div class="w-40-px h-40-px rounded-3 d-flex align-items-center justify-content-center"
                         style="background-color: #fff2d4; color: #b37a05;">
-                        <i class="ri-medal-line fs-4"></i>
+                        <i class="ri-file-list-3-line fs-4"></i>
                     </div>
                 </div>
-                <h3 class="fw-bold mb-1" style="color: #071a33; font-size: 28px;">312</h3>
+                <h3 class="fw-bold mb-1" style="color: #071a33; font-size: 28px;">{{ $completedEvaluationsCount }}</h3>
                 <div class="d-flex align-items-center gap-1" style="color: #16845b; font-size: 12px; font-weight: 600;">
-                    <i class="ri-qr-code-line"></i>
-                    <span>100% dapat diverifikasi QR</span>
+                    <i class="ri-percent-line"></i>
+                    <span>{{ $passRate }}% tingkat kelulusan</span>
                 </div>
             </div>
         </div>
@@ -146,118 +146,87 @@
             <div class="simpel-card p-24 h-100">
                 <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-16">
                     <div>
-                        <h5 class="fw-bold text-dark mb-1 fs-6">Tren Peserta Terverifikasi</h5>
-                        <p class="text-muted mb-0 small">Perkembangan peserta diklat terverifikasi Januari – Juni
-                            2026</p>
+                        <h5 class="fw-bold text-dark mb-1 fs-6">Tren Pendaftaran Peserta</h5>
+                        <p class="text-muted mb-0 small">Perkembangan peserta diklat terdaftar 6 bulan terakhir</p>
                     </div>
                     <select class="form-select form-select-sm w-auto border"
                         style="font-size: 12px; border-radius: 8px;">
-                        <option selected>Semester I (Jan - Jun 2026)</option>
-                        <option>Tahun 2025</option>
+                        <option selected>Semester Berjalan ({{ now()->year }})</option>
                     </select>
                 </div>
 
                 {{-- CSS Interactive Bar Chart --}}
                 <div class="simpel-chart">
-                    <div class="simpel-bar-wrap">
-                        <div class="simpel-bar" style="height: 34%;" title="Januari: 34 Peserta"></div>
-                        <span>Jan</span>
-                    </div>
-                    <div class="simpel-bar-wrap">
-                        <div class="simpel-bar" style="height: 46%;" title="Februari: 46 Peserta"></div>
-                        <span>Feb</span>
-                    </div>
-                    <div class="simpel-bar-wrap">
-                        <div class="simpel-bar" style="height: 55%;" title="Maret: 55 Peserta"></div>
-                        <span>Mar</span>
-                    </div>
-                    <div class="simpel-bar-wrap">
-                        <div class="simpel-bar" style="height: 69%;" title="April: 69 Peserta"></div>
-                        <span>Apr</span>
-                    </div>
-                    <div class="simpel-bar-wrap">
-                        <div class="simpel-bar" style="height: 83%;" title="Mei: 83 Peserta"></div>
-                        <span>Mei</span>
-                    </div>
-                    <div class="simpel-bar-wrap">
-                        <div class="simpel-bar" style="height: 94%;" title="Juni: 94 Peserta"></div>
-                        <span class="fw-bold text-dark">Jun</span>
-                    </div>
+                    @foreach ($chartData as $month)
+                        <div class="simpel-bar-wrap">
+                            <div class="simpel-bar" style="height: {{ $month['height_percent'] }}%;"
+                                title="{{ $month['full'] }}: {{ $month['count'] }} Peserta"></div>
+                            <span
+                                class="{{ $month['is_current'] ? 'fw-bold text-dark' : '' }}">{{ $month['label'] }}</span>
+                        </div>
+                    @endforeach
                 </div>
 
                 <div class="d-flex flex-wrap align-items-center justify-content-between pt-16 mt-16 border-top gap-3">
                     <div class="d-flex align-items-center gap-2">
                         <span class="w-12-px h-12-px rounded-circle" style="background: #f3bc42;"></span>
                         <span class="small text-muted">Peserta Lulus Evaluasi: <strong
-                                class="text-dark">89%</strong></span>
+                                class="text-dark">{{ $passRate }}%</strong></span>
                     </div>
                     <div class="d-flex align-items-center gap-2">
                         <span class="w-12-px h-12-px rounded-circle" style="background: #0c3158;"></span>
-                        <span class="small text-muted">Rata-rata Kehadiran: <strong
-                                class="text-dark">94.2%</strong></span>
+                        <span class="small text-muted">Rata-rata Skor Kuis: <strong
+                                class="text-dark">{{ $avgQuizScore }}%</strong></span>
                     </div>
                 </div>
             </div>
         </div>
 
-        {{-- Agenda Terdekat --}}
+        {{-- Agenda / Program Kelas Terkini --}}
         <div class="col-lg-4">
             <div class="simpel-card p-24 h-100">
                 <div class="d-flex align-items-center justify-content-between mb-16">
                     <div>
-                        <h5 class="fw-bold text-dark mb-1 fs-6">Jadwal Terdekat</h5>
-                        <p class="text-muted mb-0 small">Agenda tiga hari ke depan</p>
+                        <h5 class="fw-bold text-dark mb-1 fs-6">Program Kelas Terbaru</h5>
+                        <p class="text-muted mb-0 small">Daftar kelas yang baru ditambahkan</p>
                     </div>
-                    <button class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1" style="font-size: 11px;">
+                    <a href="{{ route('kelas.data') }}"
+                        class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1" style="font-size: 11px;">
                         Lihat Semua
-                    </button>
+                    </a>
                 </div>
 
                 <div class="d-flex flex-column gap-3">
-                    {{-- Agenda 1 --}}
-                    <div class="d-flex align-items-center gap-3 p-12 rounded-3 border" style="background: #fdfefe;">
-                        <div class="text-center p-2 rounded-3" style="background: #edf3f9; min-width: 50px;">
-                            <strong class="d-block fw-bold text-dark fs-6" style="line-height: 1;">20</strong>
-                            <small class="text-uppercase text-muted"
-                                style="font-size: 10px; font-weight: 700;">SEP</small>
+                    @forelse ($recentCourses as $course)
+                        <div class="d-flex align-items-center gap-3 p-12 rounded-3 border"
+                            style="background: #fdfefe;">
+                            <div class="text-center p-2 rounded-3" style="background: #edf3f9; min-width: 50px;">
+                                <strong class="d-block fw-bold text-dark fs-6" style="line-height: 1;">
+                                    {{ $course->start_date ? $course->start_date->format('d') : $course->created_at->format('d') }}
+                                </strong>
+                                <small class="text-uppercase text-muted" style="font-size: 10px; font-weight: 700;">
+                                    {{ $course->start_date ? $course->start_date->translatedFormat('M') : $course->created_at->translatedFormat('M') }}
+                                </small>
+                            </div>
+                            <div class="flex-grow-1 text-truncate">
+                                <h6 class="mb-1 fw-bold text-dark fs-6 text-truncate"
+                                    style="font-size: 13px !important;" title="{{ $course->title }}">
+                                    {{ $course->title }}
+                                </h6>
+                                <p class="mb-0 text-muted small text-truncate" style="font-size: 11px;">
+                                    {{ $course->category?->name ?? 'Umum' }} · {{ $course->type ?? 'Mandiri' }}
+                                </p>
+                            </div>
+                            <span
+                                class="simpel-badge {{ $course->status?->value === 'published' ? 'simpel-badge-success' : 'simpel-badge-warn' }}">
+                                {{ $course->status?->label() ?? 'Aktif' }}
+                            </span>
                         </div>
-                        <div class="flex-grow-1">
-                            <h6 class="mb-1 fw-bold text-dark fs-6" style="font-size: 13px !important;">Manajemen
-                                Administrator</h6>
-                            <p class="mb-0 text-muted small" style="font-size: 11px;">08.00 WIB · Aula BKPSDM</p>
+                    @empty
+                        <div class="text-center py-4 text-muted small">
+                            Belum ada program kelas yang ditambahkan.
                         </div>
-                        <span class="simpel-badge simpel-badge-success">Siap</span>
-                    </div>
-
-                    {{-- Agenda 2 --}}
-                    <div class="d-flex align-items-center gap-3 p-12 rounded-3 border" style="background: #fdfefe;">
-                        <div class="text-center p-2 rounded-3" style="background: #edf3f9; min-width: 50px;">
-                            <strong class="d-block fw-bold text-dark fs-6" style="line-height: 1;">22</strong>
-                            <small class="text-uppercase text-muted"
-                                style="font-size: 10px; font-weight: 700;">SEP</small>
-                        </div>
-                        <div class="flex-grow-1">
-                            <h6 class="mb-1 fw-bold text-dark fs-6" style="font-size: 13px !important;">
-                                Pengelolaan Keuangan</h6>
-                            <p class="mb-0 text-muted small" style="font-size: 11px;">09.00 WIB · Ruang Rapat</p>
-                        </div>
-                        <span class="simpel-badge simpel-badge-warn">Persiapan</span>
-                    </div>
-
-                    {{-- Agenda 3 --}}
-                    <div class="d-flex align-items-center gap-3 p-12 rounded-3 border" style="background: #fdfefe;">
-                        <div class="text-center p-2 rounded-3" style="background: #edf3f9; min-width: 50px;">
-                            <strong class="d-block fw-bold text-dark fs-6" style="line-height: 1;">24</strong>
-                            <small class="text-uppercase text-muted"
-                                style="font-size: 10px; font-weight: 700;">SEP</small>
-                        </div>
-                        <div class="flex-grow-1">
-                            <h6 class="mb-1 fw-bold text-dark fs-6" style="font-size: 13px !important;">Digital
-                                Government</h6>
-                            <p class="mb-0 text-muted small" style="font-size: 11px;">08.30 WIB · Hybrid Sesi</p>
-                        </div>
-                        <span class="simpel-badge simpel-badge-success">Siap</span>
-                    </div>
+                    @endforelse
                 </div>
             </div>
         </div>
@@ -265,44 +234,51 @@
 
     {{-- Queue / Antrian Pemeriksaan (Progress Bars) --}}
     <div class="row row-cols-lg-3 row-cols-1 g-3 mb-24">
+        {{-- Antrian 1: Verifikasi Pendaftaran --}}
         <div class="col">
             <div class="queue-card">
                 <div class="d-flex align-items-center justify-content-between mb-1">
                     <strong class="text-dark fs-6" style="font-size: 14px;">Verifikasi Pendaftaran</strong>
-                    <span class="badge bg-warning text-dark fw-bold">72%</span>
+                    <span class="badge bg-warning text-dark fw-bold">{{ $registrationVerifyRate }}%</span>
                 </div>
-                <small class="text-muted d-block mb-3" style="font-size: 12px;">29 berkas menunggu pemeriksaan
-                    berkas</small>
+                <small class="text-muted d-block mb-3" style="font-size: 12px;">
+                    {{ $pendingRegistrationsCount }} berkas menunggu verifikasi berkas
+                </small>
                 <div class="queue-progress">
-                    <div class="queue-progress-bar" style="width: 72%;"></div>
+                    <div class="queue-progress-bar" style="width: {{ $registrationVerifyRate }}%;"></div>
                 </div>
             </div>
         </div>
 
+        {{-- Antrian 2: Kelengkapan Silabus & Modul --}}
         <div class="col">
             <div class="queue-card">
                 <div class="d-flex align-items-center justify-content-between mb-1">
-                    <strong class="text-dark fs-6" style="font-size: 14px;">Kelengkapan Jadwal</strong>
-                    <span class="badge bg-secondary text-white fw-bold">58%</span>
+                    <strong class="text-dark fs-6" style="font-size: 14px;">Kelengkapan Materi Kelas</strong>
+                    <span class="badge bg-secondary text-white fw-bold">{{ $syllabusCompletenessRate }}%</span>
                 </div>
-                <small class="text-muted d-block mb-3" style="font-size: 12px;">4 sesi belum menetapkan
-                    instruktur/mentor</small>
+                <small class="text-muted d-block mb-3" style="font-size: 12px;">
+                    {{ $coursesWithLessonsCount }} dari {{ $totalCoursesCount }} kelas telah dilengkapi modul materi
+                </small>
                 <div class="queue-progress">
-                    <div class="queue-progress-bar" style="width: 58%; background: #0c3158;"></div>
+                    <div class="queue-progress-bar"
+                        style="width: {{ $syllabusCompletenessRate }}%; background: #0c3158;"></div>
                 </div>
             </div>
         </div>
 
+        {{-- Antrian 3: Kelulusan Evaluasi Peserta --}}
         <div class="col">
             <div class="queue-card">
                 <div class="d-flex align-items-center justify-content-between mb-1">
-                    <strong class="text-dark fs-6" style="font-size: 14px;">Evaluasi Peserta</strong>
-                    <span class="badge bg-success text-white fw-bold">83%</span>
+                    <strong class="text-dark fs-6" style="font-size: 14px;">Tingkat Kelulusan Evaluasi</strong>
+                    <span class="badge bg-success text-white fw-bold">{{ $passRate }}%</span>
                 </div>
-                <small class="text-muted d-block mb-3" style="font-size: 12px;">83% kuesioner & kuis evaluasi
-                    terisi</small>
+                <small class="text-muted d-block mb-3" style="font-size: 12px;">
+                    {{ $completedEvaluationsCount }} evaluasi kuis telah disubmit oleh peserta
+                </small>
                 <div class="queue-progress">
-                    <div class="queue-progress-bar" style="width: 83%; background: #16845b;"></div>
+                    <div class="queue-progress-bar" style="width: {{ $passRate }}%; background: #16845b;"></div>
                 </div>
             </div>
         </div>
@@ -316,7 +292,7 @@
                 <p class="text-muted mb-0 small">Daftar calon peserta yang masuk dalam antrian verifikasi diklat
                 </p>
             </div>
-            <div class="d-flex align-items-center gap-2">
+            {{-- <div class="d-flex align-items-center gap-2">
                 <button class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1" style="font-size: 12px;">
                     Filter Status
                 </button>
@@ -324,7 +300,7 @@
                     style="background-color: #071a33; border-color: #071a33; font-size: 12px;">
                     Verifikasi Massal
                 </button>
-            </div>
+            </div> --}}
         </div>
 
         <div class="table-responsive">
@@ -341,109 +317,62 @@
                     </tr>
                 </thead>
                 <tbody style="font-size: 13px;">
-                    <tr>
-                        <td class="px-3 fw-bold text-dark">REG-260901-018</td>
-                        <td class="px-3">
-                            <div class="d-flex align-items-center gap-2">
-                                <div class="w-32-px h-32-px rounded-circle d-flex align-items-center justify-content-center fw-bold"
-                                    style="background: #edf2f8; color: #071a33; font-size: 12px;">
-                                    NA
-                                </div>
-                                <div>
-                                    <strong class="text-dark d-block">Nur Aini, S.STP</strong>
-                                    <small class="text-muted" style="font-size: 11px;">NIP: 19920314 201507 2
-                                        001</small>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="px-3">Sekretariat Daerah</td>
-                        <td class="px-3">Kelas Manajemen Administrator</td>
-                        <td class="px-3">
-                            <span class="simpel-badge simpel-badge-gold">Diajukan</span>
-                        </td>
-                        <td class="px-3 text-end">
-                            <button class="btn btn-sm btn-outline-primary rounded-pill px-3 py-1"
-                                style="font-size: 11px;">Periksa</button>
-                        </td>
-                    </tr>
+                    @forelse ($recentRegistrations as $reg)
+                        @php
+                            $user = $reg->user;
+                            $initials = '';
+                            if ($user?->name) {
+                                $words = explode(' ', trim($user->name));
+                                $initials = strtoupper(
+                                    substr($words[0], 0, 1) . (isset($words[1]) ? substr($words[1], 0, 1) : ''),
+                                );
+                            } else {
+                                $initials = 'PS';
+                            }
 
-                    <tr>
-                        <td class="px-3 fw-bold text-dark">REG-260901-019</td>
-                        <td class="px-3">
-                            <div class="d-flex align-items-center gap-2">
-                                <div class="w-32-px h-32-px rounded-circle d-flex align-items-center justify-content-center fw-bold"
-                                    style="background: #def4e9; color: #16845b; font-size: 12px;">
-                                    FZ
+                            $badgeClass = match ($reg->status?->value ?? (string) $reg->status) {
+                                'pending' => 'simpel-badge-gold',
+                                'verified', 'active', 'completed' => 'simpel-badge-success',
+                                'revision_required' => 'simpel-badge-warn',
+                                default => 'simpel-badge-navy',
+                            };
+                        @endphp
+                        <tr>
+                            <td class="px-3 fw-bold text-dark">
+                                {{ $reg->registration_number ?? 'REG-' . str_pad($reg->id, 5, '0', STR_PAD_LEFT) }}</td>
+                            <td class="px-3">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="w-32-px h-32-px rounded-circle d-flex align-items-center justify-content-center fw-bold"
+                                        style="background: #edf2f8; color: #071a33; font-size: 12px;">
+                                        {{ $initials }}
+                                    </div>
+                                    <div>
+                                        <strong class="text-dark d-block">{{ $user?->name ?? 'Peserta' }}</strong>
+                                        <small class="text-muted" style="font-size: 11px;">
+                                            {{ $user?->nip ? 'NIP: ' . $user->nip : $user?->email }}
+                                        </small>
+                                    </div>
                                 </div>
-                                <div>
-                                    <strong class="text-dark d-block">Fauzan, SE., M.Si</strong>
-                                    <small class="text-muted" style="font-size: 11px;">NIP: 19881105 201103 1
-                                        002</small>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="px-3">BPKD Aceh Timur</td>
-                        <td class="px-3">Pengelolaan Keuangan Daerah</td>
-                        <td class="px-3">
-                            <span class="simpel-badge simpel-badge-success">Diverifikasi</span>
-                        </td>
-                        <td class="px-3 text-end">
-                            <button class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1"
-                                style="font-size: 11px;">Detail</button>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td class="px-3 fw-bold text-dark">REG-260901-020</td>
-                        <td class="px-3">
-                            <div class="d-flex align-items-center gap-2">
-                                <div class="w-32-px h-32-px rounded-circle d-flex align-items-center justify-content-center fw-bold"
-                                    style="background: #fff2d4; color: #9a6700; font-size: 12px;">
-                                    RW
-                                </div>
-                                <div>
-                                    <strong class="text-dark d-block">Rahmawati, SKM</strong>
-                                    <small class="text-muted" style="font-size: 11px;">NIP: 19940621 201903 2
-                                        004</small>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="px-3">Dinas Kesehatan</td>
-                        <td class="px-3">Digital Government</td>
-                        <td class="px-3">
-                            <span class="simpel-badge simpel-badge-warn">Perlu Perbaikan</span>
-                        </td>
-                        <td class="px-3 text-end">
-                            <button class="btn btn-sm btn-outline-primary rounded-pill px-3 py-1"
-                                style="font-size: 11px;">Periksa</button>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td class="px-3 fw-bold text-dark">REG-260901-021</td>
-                        <td class="px-3">
-                            <div class="d-flex align-items-center gap-2">
-                                <div class="w-32-px h-32-px rounded-circle d-flex align-items-center justify-content-center fw-bold"
-                                    style="background: #edf2f8; color: #071a33; font-size: 12px;">
-                                    MR
-                                </div>
-                                <div>
-                                    <strong class="text-dark d-block">M. Ridwan, S.Pd</strong>
-                                    <small class="text-muted" style="font-size: 11px;">NIP: 19890412 201402 1
-                                        003</small>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="px-3">Dinas Pendidikan</td>
-                        <td class="px-3">Kelas Kepemimpinan</td>
-                        <td class="px-3">
-                            <span class="simpel-badge simpel-badge-gold">Menunggu</span>
-                        </td>
-                        <td class="px-3 text-end">
-                            <button class="btn btn-sm btn-outline-primary rounded-pill px-3 py-1"
-                                style="font-size: 11px;">Periksa</button>
-                        </td>
-                    </tr>
+                            </td>
+                            <td class="px-3">{{ $user?->address ?: 'Aceh Timur' }}</td>
+                            <td class="px-3">{{ $reg->course?->title ?? '-' }}</td>
+                            <td class="px-3">
+                                <span
+                                    class="simpel-badge {{ $badgeClass }}">{{ $reg->status?->label() ?? ucfirst((string) $reg->status) }}</span>
+                            </td>
+                            <td class="px-3 text-end">
+                                <a href="{{ route('kelas.data') }}"
+                                    class="btn btn-sm btn-outline-primary rounded-pill px-3 py-1"
+                                    style="font-size: 11px;">Periksa</a>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="6" class="text-center py-4 text-muted small">
+                                Belum ada data pendaftaran kelas terkini.
+                            </td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
@@ -471,7 +400,7 @@
                         tahap pendaftaran publik.
                     </p>
 
-                    <form>
+                    <form action="{{ route('kelas.create') }}" method="GET">
                         <div class="row g-3">
                             <div class="col-12">
                                 <label class="form-label fw-bold text-dark small">Nama Program Kelas</label>
@@ -482,9 +411,11 @@
                             <div class="col-md-6">
                                 <label class="form-label fw-bold text-dark small">Kategori Kelas</label>
                                 <select class="form-select rounded-3">
-                                    <option selected>Kepemimpinan</option>
-                                    <option>Teknis Fungsional</option>
-                                    <option>Sosial Kultural</option>
+                                    @forelse ($categories as $cat)
+                                        <option value="{{ $cat->id }}">{{ $cat->name }}</option>
+                                    @empty
+                                        <option selected>Teknis Fungsional</option>
+                                    @endforelse
                                 </select>
                             </div>
 
@@ -513,9 +444,9 @@
                     style="background-color: #f8f9fb; border-radius: 0 0 19px 19px;">
                     <button type="button" class="btn btn-outline-danger rounded-3 px-4"
                         data-bs-dismiss="modal">Batal</button>
-                    <button type="button" class="btn btn-simpel-gold px-4" data-bs-dismiss="modal">
-                        Simpan Draf Rencana
-                    </button>
+                    <a href="{{ route('kelas.create') }}" class="btn btn-simpel-gold px-4">
+                        Buat Kelas Sekarang
+                    </a>
                 </div>
             </div>
         </div>
