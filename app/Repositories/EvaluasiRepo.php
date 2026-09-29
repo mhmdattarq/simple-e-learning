@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Models\AuditLog;
 use App\Models\Course;
 use App\Models\Quiz;
 use App\Models\QuizAttempt;
@@ -171,6 +172,18 @@ class EvaluasiRepo
                 if (! $quiz) {
                     return false;
                 }
+
+                // Log aktivitas audit
+                AuditLog::log(
+                    action: 'quiz.deleted',
+                    auditable: $quiz,
+                    oldValues: [
+                        'title' => $quiz->title,
+                        'type' => $quiz->type,
+                        'course_id' => $quiz->course_id,
+                    ],
+                    notes: 'Admin menghapus evaluasi kuis: '.$quiz->title
+                );
 
                 // Hapus kuis (soft delete pada quiz)
                 $quiz->delete();

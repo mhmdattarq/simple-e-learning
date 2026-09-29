@@ -94,24 +94,33 @@
                                     {{-- Kuis Evaluasi Bab jika ada --}}
                                     @if ($chapter->quiz)
                                         @php
-                                            $chapLessonsAllDone = $chapter->lessons->isNotEmpty() && $chapter->lessons->every(fn($l) => in_array($l->id, $completedLessonIds));
+                                            $chapLessonsAllDone =
+                                                $chapter->lessons->isNotEmpty() &&
+                                                $chapter->lessons->every(
+                                                    fn($l) => in_array($l->id, $completedLessonIds),
+                                                );
                                             $quizAttempt = $chapter->quiz->attempts->first();
                                         @endphp
                                         <div class="mt-2 pt-2 border-top">
                                             @if ($quizAttempt)
                                                 <a href="{{ route('peserta.evaluasi.kerjakan', ['course_id' => $course->id, 'quiz_id' => $chapter->quiz->id]) }}"
-                                                    class="list-group-item d-flex align-items-center justify-content-between p-2 fs-8 rounded-2 border {{ $quizAttempt->is_passed ? 'bg-success-subtle text-success border-success-subtle' : 'bg-warning-subtle text-warning border-warning-subtle' }} text-decoration-none" wire:navigate>
+                                                    class="list-group-item d-flex align-items-center justify-content-between p-2 fs-8 rounded-2 border {{ $quizAttempt->is_passed ? 'bg-success-subtle text-success border-success-subtle' : 'bg-warning-subtle text-warning border-warning-subtle' }} text-decoration-none"
+                                                    wire:navigate>
                                                     <div class="d-flex align-items-center gap-2 overflow-hidden">
                                                         <i class="ri-checkbox-circle-fill flex-shrink-0"></i>
-                                                        <span class="text-truncate fw-semibold">{{ $chapter->quiz->title }}</span>
+                                                        <span
+                                                            class="text-truncate fw-semibold">{{ $chapter->quiz->title }}</span>
                                                     </div>
-                                                    <span class="badge {{ $quizAttempt->is_passed ? 'bg-success text-white' : 'bg-warning text-dark' }} fs-8">
-                                                        {{ number_format($quizAttempt->percentage, 0) }}% {{ $quizAttempt->is_passed ? 'Lulus' : 'Belum Lulus' }}
+                                                    <span
+                                                        class="badge {{ $quizAttempt->is_passed ? 'bg-success text-white' : 'bg-warning text-dark' }} fs-8">
+                                                        {{ number_format($quizAttempt->percentage, 0) }}%
+                                                        {{ $quizAttempt->is_passed ? 'Lulus' : 'Belum Lulus' }}
                                                     </span>
                                                 </a>
                                             @elseif ($chapLessonsAllDone)
                                                 <a href="{{ route('peserta.evaluasi.kerjakan', ['course_id' => $course->id, 'quiz_id' => $chapter->quiz->id]) }}"
-                                                    class="list-group-item list-group-item-action d-flex align-items-center justify-content-between p-2 fs-8 rounded-2 border border-primary bg-primary-subtle text-primary fw-bold text-decoration-none shadow-sm" wire:navigate>
+                                                    class="list-group-item list-group-item-action d-flex align-items-center justify-content-between p-2 fs-8 rounded-2 border border-primary bg-primary-subtle text-primary fw-bold text-decoration-none shadow-sm"
+                                                    wire:navigate>
                                                     <div class="d-flex align-items-center gap-2 overflow-hidden">
                                                         <i class="ri-file-list-3-line flex-shrink-0 fs-6"></i>
                                                         <span class="text-truncate">{{ $chapter->quiz->title }}</span>
@@ -125,7 +134,8 @@
                                                         <i class="ri-lock-line flex-shrink-0 text-secondary"></i>
                                                         <span class="text-truncate">{{ $chapter->quiz->title }}</span>
                                                     </div>
-                                                    <span class="badge bg-secondary-subtle text-secondary fs-8">Terkunci</span>
+                                                    <span
+                                                        class="badge bg-secondary-subtle text-secondary fs-8">Terkunci</span>
                                                 </div>
                                             @endif
                                         </div>
@@ -142,31 +152,39 @@
                             @if ($course->finalQuiz)
                                 @php
                                     $totalCourseLessons = $chapters->sum(fn($c) => $c->lessons->count());
-                                    $allLessonsDone = $totalCourseLessons > 0 && count($completedLessonIds) >= $totalCourseLessons;
+                                    $allLessonsDone =
+                                        $totalCourseLessons > 0 && count($completedLessonIds) >= $totalCourseLessons;
                                     $finalAttempt = $course->finalQuiz->getAttemptForUser(auth()->id());
                                 @endphp
                                 <div class="p-3 bg-light border-top">
-                                    <div class="px-1 py-1 text-secondary fw-bold fs-8 d-flex align-items-center gap-1 mb-2">
+                                    <div
+                                        class="px-1 py-1 text-secondary fw-bold fs-8 d-flex align-items-center gap-1 mb-2">
                                         <i class="ri-award-line text-warning"></i>
                                         <span>UJIAN KELULUSAN KELAS</span>
                                     </div>
                                     @if ($finalAttempt)
                                         <a href="{{ route('peserta.evaluasi.kerjakan', ['course_id' => $course->id, 'quiz_id' => $course->finalQuiz->id]) }}"
-                                            class="list-group-item d-flex align-items-center justify-content-between p-2 fs-8 rounded-2 border {{ $finalAttempt->is_passed ? 'bg-success-subtle text-success border-success-subtle' : 'bg-warning-subtle text-warning border-warning-subtle' }} text-decoration-none" wire:navigate>
+                                            class="list-group-item d-flex align-items-center justify-content-between p-2 fs-8 rounded-2 border {{ $finalAttempt->is_passed ? 'bg-success-subtle text-success border-success-subtle' : 'bg-warning-subtle text-warning border-warning-subtle' }} text-decoration-none"
+                                            wire:navigate>
                                             <div class="d-flex align-items-center gap-2 overflow-hidden">
                                                 <i class="ri-award-fill flex-shrink-0"></i>
-                                                <span class="text-truncate fw-semibold">{{ $course->finalQuiz->title }}</span>
+                                                <span
+                                                    class="text-truncate fw-semibold">{{ $course->finalQuiz->title }}</span>
                                             </div>
-                                            <span class="badge {{ $finalAttempt->is_passed ? 'bg-success text-white' : 'bg-warning text-dark' }} fs-8">
-                                                {{ number_format($finalAttempt->percentage, 0) }}% {{ $finalAttempt->is_passed ? 'Lulus' : 'Belum Lulus' }}
+                                            <span
+                                                class="badge {{ $finalAttempt->is_passed ? 'bg-success text-white' : 'bg-warning text-dark' }} fs-8">
+                                                {{ number_format($finalAttempt->percentage, 0) }}%
+                                                {{ $finalAttempt->is_passed ? 'Lulus' : 'Belum Lulus' }}
                                             </span>
                                         </a>
                                     @elseif ($allLessonsDone)
                                         <a href="{{ route('peserta.evaluasi.kerjakan', ['course_id' => $course->id, 'quiz_id' => $course->finalQuiz->id]) }}"
-                                            class="list-group-item list-group-item-action d-flex align-items-center justify-content-between p-2 fs-8 rounded-2 border border-warning bg-warning-subtle text-warning fw-bold text-decoration-none shadow-sm" wire:navigate>
+                                            class="list-group-item list-group-item-action d-flex align-items-center justify-content-between p-2 fs-8 rounded-2 border border-warning bg-warning-subtle text-warning fw-bold text-decoration-none shadow-sm"
+                                            wire:navigate>
                                             <div class="d-flex align-items-center gap-2 overflow-hidden">
                                                 <i class="ri-award-fill flex-shrink-0 text-warning fs-6"></i>
-                                                <span class="text-truncate text-dark">{{ $course->finalQuiz->title }}</span>
+                                                <span
+                                                    class="text-truncate text-dark">{{ $course->finalQuiz->title }}</span>
                                             </div>
                                             <span class="badge bg-warning text-dark fs-8">Ujian Akhir</span>
                                         </a>
@@ -193,7 +211,7 @@
                             $isCompleted = in_array($currentLesson->id, $completedLessonIds);
                         @endphp
 
-                        {{-- Viewer Materi Terbuka ala Dicoding --}}
+                        {{-- Viewer Materi Terbuka --}}
                         <div class="card border-0 shadow-sm radius-16 bg-white overflow-hidden mb-4 position-relative">
                             {{-- Header Materi --}}
                             <div class="p-24 border-bottom bg-white">
@@ -219,7 +237,7 @@
                                 <h3 class="fw-bold text-dark mb-1 fs-4">{{ $currentLesson->title }}</h3>
                             </div>
 
-                            {{-- Body Materi ala Dicoding --}}
+                            {{-- Body Materi --}}
                             <div class="card-body p-24 p-md-32">
                                 {{-- Video Player --}}
                                 @if ($currentLesson->content_type === 'video' && $currentLesson->video_url)
@@ -338,7 +356,7 @@
                                 @endif
                             </div>
 
-                            {{-- Footer Navigasi Dicoding: Sticky Bottom Bar agar tombol selalu mudah diakses jika artikel panjang --}}
+                            {{-- Footer Navigasi : Sticky Bottom Bar agar tombol selalu mudah diakses jika artikel panjang --}}
                             <div class="card-footer bg-white p-20 border-top d-flex align-items-center justify-content-between flex-wrap gap-3 sticky-bottom shadow-sm"
                                 style="bottom: 0; z-index: 5; background-color: #ffffff !important; border-top: 1px solid #e2e8f0;">
                                 {{-- Tombol Sebelumnya --}}
@@ -389,7 +407,7 @@
         </div>
     </section>
 
-    {{-- Modal Konfirmasi Selesai Bab ala Dicoding --}}
+    {{-- Modal Konfirmasi Selesai Bab --}}
     @if ($showCompleteModal)
         <div class="modal fade show d-block" tabindex="-1" style="background: rgba(15, 23, 42, 0.6); z-index: 1060;"
             role="dialog" aria-modal="true">

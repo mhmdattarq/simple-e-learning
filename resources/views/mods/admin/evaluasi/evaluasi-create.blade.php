@@ -114,8 +114,7 @@
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
         <div>
             <h5 class="fw-bold text-dark mb-1">Tambah Evaluasi &amp; Kuis</h5>
-            <p class="text-muted mb-0">Rancang kuis per bab atau ujian akhir kelas dengan bobot skor dinamis ala
-                Dicoding.</p>
+            <p class="text-muted mb-0">Rancang kuis per bab atau ujian akhir kelas dengan bobot skor dinamis.</p>
         </div>
     </div>
 
@@ -371,8 +370,10 @@
                                 <div class="d-flex align-items-center gap-2">
                                     {{-- Input Skor Soal (1 - 20) Strict Number Only --}}
                                     <div class="d-flex align-items-center gap-1">
-                                        <label class="text-xs text-muted mb-0 fw-semibold text-nowrap">Bobot Skor:</label>
-                                        <input type="number" min="1" max="20" step="1" inputmode="numeric"
+                                        <label class="text-xs text-muted mb-0 fw-semibold text-nowrap">Bobot
+                                            Skor:</label>
+                                        <input type="number" min="1" max="20" step="1"
+                                            inputmode="numeric"
                                             class="form-control form-control-sm text-center fw-bold @error("questions.{$qIndex}.score") is-invalid @enderror"
                                             style="width: 75px;"
                                             wire:model.live.number="questions.{{ $qIndex }}.score"

@@ -337,37 +337,31 @@
     </a>
 
 
-    <script src="{{ asset('landing/assets/js/jquery-3.6.0.min.js') }}"></script>
-    <script src="{{ asset('landing/assets/js/bootstrap.bundle.min.js') }}"></script>
-    <script src="{{ asset('landing/assets/js/jarallax.min.js') }}"></script>
-    <script src="{{ asset('landing/assets/js/jquery.ajaxchimp.min.js') }}"></script>
-    <script src="{{ asset('landing/assets/js/jquery.appear.min.js') }}"></script>
-    <script src="{{ asset('landing/assets/js/swiper.min.js') }}"></script>
-    <script src="{{ asset('landing/assets/js/jquery.magnific-popup.min.js') }}"></script>
-    <script src="{{ asset('landing/assets/js/jquery.validate.min.js') }}"></script>
-    <script src="{{ asset('landing/assets/js/odometer.min.js') }}"></script>
-    <script src="{{ asset('landing/assets/js/wNumb.min.js') }}"></script>
-    <script src="{{ asset('landing/assets/js/wow.js') }}"></script>
-    <script src="{{ asset('landing/assets/js/isotope.js') }}"></script>
-    <script src="{{ asset('landing/assets/js/owl.carousel.min.js') }}"></script>
-    <script src="{{ asset('landing/assets/js/jquery-ui.js') }}"></script>
-    <script src="{{ asset('landing/assets/js/jquery.nice-select.min.js') }}"></script>
-    <script src="{{ asset('landing/assets/js/marquee.min.js') }}"></script>
-    <script src="{{ asset('landing/assets/js/aos.js') }}"></script>
+    <script data-navigate-once src="{{ asset('landing/assets/js/jquery-3.6.0.min.js') }}"></script>
+    <script data-navigate-once src="{{ asset('landing/assets/js/bootstrap.bundle.min.js') }}"></script>
+    <script data-navigate-once src="{{ asset('landing/assets/js/jarallax.min.js') }}"></script>
+    <script data-navigate-once src="{{ asset('landing/assets/js/jquery.ajaxchimp.min.js') }}"></script>
+    <script data-navigate-once src="{{ asset('landing/assets/js/jquery.appear.min.js') }}"></script>
+    <script data-navigate-once src="{{ asset('landing/assets/js/swiper.min.js') }}"></script>
+    <script data-navigate-once src="{{ asset('landing/assets/js/jquery.magnific-popup.min.js') }}"></script>
+    <script data-navigate-once src="{{ asset('landing/assets/js/jquery.validate.min.js') }}"></script>
+    <script data-navigate-once src="{{ asset('landing/assets/js/odometer.min.js') }}"></script>
+    <script data-navigate-once src="{{ asset('landing/assets/js/wNumb.min.js') }}"></script>
+    <script data-navigate-once src="{{ asset('landing/assets/js/wow.js') }}"></script>
+    <script data-navigate-once src="{{ asset('landing/assets/js/isotope.js') }}"></script>
+    <script data-navigate-once src="{{ asset('landing/assets/js/owl.carousel.min.js') }}"></script>
+    <script data-navigate-once src="{{ asset('landing/assets/js/jquery-ui.js') }}"></script>
+    <script data-navigate-once src="{{ asset('landing/assets/js/jquery.nice-select.min.js') }}"></script>
+    <script data-navigate-once src="{{ asset('landing/assets/js/marquee.min.js') }}"></script>
+    <script data-navigate-once src="{{ asset('landing/assets/js/aos.js') }}"></script>
 
-
-
-
-    <script src="{{ asset('landing/assets/js/gsap/gsap.js') }}"></script>
-    <script src="{{ asset('landing/assets/js/gsap/ScrollTrigger.js') }}"></script>
-    <script src="{{ asset('landing/assets/js/gsap/SplitText.js') }}"></script>
-
-
-
+    <script data-navigate-once src="{{ asset('landing/assets/js/gsap/gsap.js') }}"></script>
+    <script data-navigate-once src="{{ asset('landing/assets/js/gsap/ScrollTrigger.js') }}"></script>
+    <script data-navigate-once src="{{ asset('landing/assets/js/gsap/SplitText.js') }}"></script>
 
     <!-- template js -->
-    <script src="{{ asset('landing/assets/js/script.js') }}"></script>
-    <script src="{{ asset('mine/script.js') }}"></script>
+    <script data-navigate-once src="{{ asset('landing/assets/js/script.js') }}"></script>
+    <script data-navigate-once src="{{ asset('mine/script.js') }}"></script>
     @livewireScripts
 </body>
 

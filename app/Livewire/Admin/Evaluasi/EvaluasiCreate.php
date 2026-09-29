@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Evaluasi;
 
+use App\Models\AuditLog;
 use App\Models\Chapter;
 use App\Models\Course;
 use App\Models\Quiz;
@@ -412,6 +413,19 @@ class EvaluasiCreate extends Component
                     ]);
                 }
             }
+
+            AuditLog::log(
+                action: 'quiz.created',
+                auditable: $quiz,
+                newValues: [
+                    'title' => $quiz->title,
+                    'type' => $quiz->type,
+                    'course_id' => $quiz->course_id,
+                    'total_score' => $quiz->total_score,
+                    'passing_score' => $quiz->passing_score,
+                ],
+                notes: 'Admin membuat evaluasi kuis baru: '.$quiz->title
+            );
         });
 
         session()->flash('alert-show', [

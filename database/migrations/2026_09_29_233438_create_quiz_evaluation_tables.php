@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // 1. Quizzes (Kuis Bab & Ujian Akhir Kelas ala Dicoding)
+        // 1. Quizzes
         Schema::create('quizzes', function (Blueprint $table) {
             $table->id();
             $table->foreignId('course_id')->constrained('courses')->cascadeOnDelete();

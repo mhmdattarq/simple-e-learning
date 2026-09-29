@@ -30,7 +30,7 @@ class Lesson extends Model
     }
 
     /**
-     * Peserta yang telah menuntaskan materi ini (Dicoding progress tracker).
+     * Peserta yang telah menuntaskan materi ini.
      */
     public function completedUsers(): BelongsToMany
     {

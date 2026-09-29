@@ -197,7 +197,7 @@
                         </div>
                     </div>
 
-                    {{-- Panduan Pengerjaan ala Dicoding --}}
+                    {{-- Panduan Pengerjaan --}}
                     <div class="border rounded-3 p-3 p-md-4 mb-4 bg-white">
                         <h6 class="fw-bold text-dark mb-3 fs-7">
                             <i class="ri-information-line text-primary me-1"></i> Ketentuan &amp; Tata Cara Evaluasi:
@@ -341,7 +341,8 @@
                                         </button>
                                     @else
                                         <button type="button" class="btn btn-success px-4 py-2 radius-8 fs-8 fw-bold"
-                                            wire:click="promptSubmit" data-bs-toggle="modal" data-bs-target="#modalDelete">
+                                            wire:click="promptSubmit" data-bs-toggle="modal"
+                                            data-bs-target="#modalDelete">
                                             <i class="ri-checkbox-circle-line me-1"></i> Selesaikan Evaluasi
                                         </button>
                                     @endif
@@ -349,7 +350,7 @@
                             </div>
                         </div>
 
-                        {{-- Kolom Kanan: Grid Navigator Nomor Soal ala Dicoding --}}
+                        {{-- Kolom Kanan: Grid Navigator Nomor Soal --}}
                         <div class="col-lg-4 col-12">
                             <div class="border rounded-3 p-3 bg-light">
                                 <div class="d-flex align-items-center justify-content-between mb-3">

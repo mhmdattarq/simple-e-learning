@@ -90,13 +90,6 @@
                                     style="max-width: 170px; font-size: 13px;">{{ $user->address ?: '(Belum diisi)' }}</span>
                             </div>
                         </div>
-
-                        <div class="mt-4 pt-2">
-                            <a href="{{ route('landing') }}#katalog-kelas"
-                                class="btn btn-outline-primary btn-sm w-100 rounded-pill">
-                                <i class="ri-book-open-line me-1"></i> Jelajahi Katalog Kelas
-                            </a>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -171,8 +164,7 @@
                             </div>
 
                             <div class="col-md-6">
-                                <label class="form-label text-xs fw-semibold text-secondary-dark mb-1"
-                                    for="user-phone">
+                                <label class="form-label text-xs fw-semibold text-secondary-dark mb-1" for="user-phone">
                                     No. Handphone / WhatsApp <span class="text-danger">*</span>
                                 </label>
                                 <div class="input-group">
@@ -243,7 +235,8 @@
                             <div class="col-12 mt-1">
                                 <small class="text-muted fs-8">
                                     <i class="ri-information-line me-1"></i>
-                                    Isi kata sandi di atas jika Anda ingin mengatur atau mengubah kata sandi untuk login manual dengan email (minimal 8 karakter).
+                                    Isi kata sandi di atas jika Anda ingin mengatur atau mengubah kata sandi untuk login
+                                    manual dengan email (minimal 8 karakter).
                                 </small>
                             </div>
                         </div>
@@ -314,7 +307,8 @@
                                                 </div>
                                             </td>
                                             <td class="text-center">
-                                                <div class="fw-bold text-dark fs-7">{{ $attempt->total_earned_score }} / {{ $attempt->total_possible_score }}</div>
+                                                <div class="fw-bold text-dark fs-7">{{ $attempt->total_earned_score }}
+                                                    / {{ $attempt->total_possible_score }}</div>
                                                 <span class="text-muted text-xxs">
                                                     ({{ number_format($attempt->percentage, 1) }}%)
                                                 </span>

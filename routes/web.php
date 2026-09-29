@@ -16,6 +16,8 @@ use App\Livewire\Admin\Kelas\KelasCreate;
 use App\Livewire\Admin\Kelas\KelasData;
 use App\Livewire\Admin\Kelas\KelasEdit;
 use App\Livewire\Admin\Materi\MateriDetail;
+use App\Livewire\Admin\Notifikasi\NotifikasiIndex;
+use App\Livewire\Admin\Profile\AdminProfileIndex;
 use App\Livewire\Auth\Login;
 use App\Livewire\Auth\Register;
 use App\Livewire\Auth\VerifyEmail;
@@ -70,6 +72,8 @@ Route::post('/logout', function () {
 // 5. Admin Panel (Super Admin)
 Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::livewire('/admin/dashboard', DashboardIndex::class)->name('admin.dashboard');
+    Route::livewire('/admin/notifikasi', NotifikasiIndex::class)->name('admin.notifikasi');
+    Route::livewire('/admin/profil', AdminProfileIndex::class)->name('admin.profil');
 
     // Modul: Kategori Kelas (Tahap 2)
     Route::prefix('kategori')->name('kategori.')->group(function () {

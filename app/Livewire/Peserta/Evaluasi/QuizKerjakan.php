@@ -199,7 +199,7 @@ class QuizKerjakan extends Component
     }
 
     /**
-     * Melompat ke nomor soal tertentu (Grid Navigasi ala Dicoding).
+     * Melompat ke nomor soal tertentu.
      */
     public function jumpToQuestion(int $index): void
     {

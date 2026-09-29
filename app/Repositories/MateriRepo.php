@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Models\AuditLog;
 use App\Models\Chapter;
 use App\Models\Lesson;
 use Illuminate\Database\Eloquent\Collection;
@@ -55,11 +56,20 @@ class MateriRepo
                 $data['order'] = $maxOrder + 1;
             }
 
-            return Chapter::create([
+            $chapter = Chapter::create([
                 'course_id' => $data['course_id'],
                 'title' => trim($data['title']),
                 'order' => (int) $data['order'],
             ]);
+
+            AuditLog::log(
+                action: 'chapter.created',
+                auditable: $chapter,
+                newValues: ['title' => $chapter->title, 'course_id' => $chapter->course_id],
+                notes: 'Admin menambahkan bab materi: '.$chapter->title
+            );
+
+            return $chapter;
         } catch (\Exception $e) {
             Log::error('Insert data bab kurikulum materi gagal', [
                 'data' => $data,
@@ -81,6 +91,13 @@ class MateriRepo
                 'title' => trim($data['title']),
                 'order' => (int) $data['order'],
             ]);
+
+            AuditLog::log(
+                action: 'chapter.updated',
+                auditable: $chapter,
+                newValues: ['title' => $chapter->title],
+                notes: 'Admin mengubah bab materi: '.$chapter->title
+            );
 
             return true;
         } catch (\Exception $e) {
@@ -109,6 +126,13 @@ class MateriRepo
                         Storage::disk('public')->delete($lesson->attachment_path);
                     }
                 }
+
+                AuditLog::log(
+                    action: 'chapter.deleted',
+                    auditable: $chapter,
+                    oldValues: ['title' => $chapter->title, 'course_id' => $chapter->course_id],
+                    notes: 'Admin menghapus bab materi: '.$chapter->title
+                );
 
                 $chapter->delete();
 
@@ -143,7 +167,7 @@ class MateriRepo
                 $data['order'] = $maxOrder + 1;
             }
 
-            return Lesson::create([
+            $lesson = Lesson::create([
                 'chapter_id' => $data['chapter_id'],
                 'title' => trim($data['title']),
                 'order' => (int) $data['order'],
@@ -154,6 +178,19 @@ class MateriRepo
                 'version' => ! empty($data['version']) ? trim($data['version']) : 'Versi 1.0',
                 'version_notes' => ! empty($data['version_notes']) ? trim($data['version_notes']) : null,
             ]);
+
+            AuditLog::log(
+                action: 'lesson.created',
+                auditable: $lesson,
+                newValues: [
+                    'title' => $lesson->title,
+                    'chapter_id' => $lesson->chapter_id,
+                    'content_type' => $lesson->content_type,
+                ],
+                notes: 'Admin menambahkan materi: '.$lesson->title
+            );
+
+            return $lesson;
         } catch (\Exception $e) {
             Log::error('Insert unit materi pembelajaran gagal', [
                 'data' => $data,
@@ -171,6 +208,12 @@ class MateriRepo
     {
         try {
             $lesson = Lesson::findOrFail($id);
+
+            $oldValues = [
+                'title' => $lesson->title,
+                'chapter_id' => $lesson->chapter_id,
+                'content_type' => $lesson->content_type,
+            ];
 
             // Bersihkan file lampiran lama jika ada file pengganti
             if (isset($data['attachment_path']) && $lesson->attachment_path && $data['attachment_path'] !== $lesson->attachment_path) {
@@ -191,6 +234,18 @@ class MateriRepo
                 'version_notes' => ! empty($data['version_notes']) ? trim($data['version_notes']) : null,
             ]);
 
+            AuditLog::log(
+                action: 'lesson.updated',
+                auditable: $lesson,
+                oldValues: $oldValues,
+                newValues: [
+                    'title' => $lesson->title,
+                    'chapter_id' => $lesson->chapter_id,
+                    'content_type' => $lesson->content_type,
+                ],
+                notes: 'Admin memperbarui materi: '.$lesson->title
+            );
+
             return true;
         } catch (\Exception $e) {
             Log::error('Update unit materi pembelajaran gagal', [
@@ -210,6 +265,13 @@ class MateriRepo
     {
         try {
             $lesson = Lesson::findOrFail($id);
+
+            AuditLog::log(
+                action: 'lesson.deleted',
+                auditable: $lesson,
+                oldValues: ['title' => $lesson->title, 'chapter_id' => $lesson->chapter_id],
+                notes: 'Admin menghapus materi: '.$lesson->title
+            );
 
             if ($lesson->attachment_path && Storage::disk('public')->exists($lesson->attachment_path)) {
                 Storage::disk('public')->delete($lesson->attachment_path);

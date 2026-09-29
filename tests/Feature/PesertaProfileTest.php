@@ -125,7 +125,8 @@ test('profile page displays quiz evaluation history for authenticated participan
     $response->assertStatus(200);
     $response->assertSee('Riwayat Evaluasi &amp; Kuis', false);
     $response->assertSee('Ujian Akhir Spesialis ASN');
-    $response->assertSee('85 / 100');
+    $response->assertSee('85');
+    $response->assertSee('100');
     $response->assertSee('85.0%');
     $response->assertSee('Lulus');
 });

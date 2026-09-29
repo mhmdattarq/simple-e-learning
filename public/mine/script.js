@@ -91,12 +91,13 @@ window.addEventListener("reloadDT", (param) => {
 });
 
 
-// 5. Lifecycle Livewire Navigation: Bersihkan state modal, dropdown, dan backdrop yatim
+// 5. Lifecycle Livewire Navigation: Bersihkan state modal, dropdown, dan sinkronisasi navigasi
 document.addEventListener("livewire:navigated", () => {
     if (typeof $ !== "undefined") {
         $(".modal-backdrop").remove();
         $("body")
             .removeClass("modal-open")
+            .removeClass("locked")
             .css("overflow", "")
             .css("padding-right", "");
 
@@ -105,6 +106,19 @@ document.addEventListener("livewire:navigated", () => {
         $('[data-bs-toggle="dropdown"].show')
             .removeClass("show")
             .attr("aria-expanded", "false");
+            
+        // Sinkronisasi sticky header & mobile nav jika ada
+        const mainMenu = document.querySelector(".main-header .main-menu");
+        const stickyContent = document.querySelector(".sticky-header__content");
+        if (mainMenu && stickyContent) {
+            stickyContent.innerHTML = mainMenu.innerHTML;
+        }
+
+        const mainMenuList = document.querySelector(".main-header .main-menu__list");
+        const mobileContainer = document.querySelector(".mobile-nav__container");
+        if (mainMenuList && mobileContainer) {
+            mobileContainer.innerHTML = mainMenuList.outerHTML;
+        }
     }
 });
 
@@ -116,5 +130,27 @@ if (typeof $ !== "undefined") {
             this.dispatchEvent(new Event("change", { bubbles: true }));
         }
     });
+
+    // Delegasi klik mobile nav toggler agar selalu responsif setelah navigasi SPA
+    $(document).on("click", ".mobile-nav__toggler", function (e) {
+        e.preventDefault();
+        $(".mobile-nav__wrapper").toggleClass("expanded");
+        $("body").toggleClass("locked");
+    });
+
+    // Delegasi klik bootstrap dropdown fallback jika listener native terlepas
+    $(document).on("click", '[data-bs-toggle="dropdown"]', function (e) {
+        // Abaikan jika sudah dikelola oleh Alpine (x-data)
+        if (this.closest('[x-data]')) {
+            return;
+        }
+        if (typeof bootstrap !== "undefined" && bootstrap.Dropdown) {
+            const dropdown = bootstrap.Dropdown.getOrCreateInstance(this);
+            if (!this.classList.contains("show")) {
+                dropdown.show();
+            }
+        }
+    });
 }
+
 

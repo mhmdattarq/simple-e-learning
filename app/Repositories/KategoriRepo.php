@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Models\AuditLog;
 use App\Models\Category;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Log;
@@ -40,11 +41,18 @@ class KategoriRepo
                 $slug = $originalSlug.'-'.$count++;
             }
 
-            Category::create([
+            $category = Category::create([
                 'name' => trim($data['name']),
                 'slug' => $slug,
                 'description' => ! empty($data['description']) ? trim($data['description']) : null,
             ]);
+
+            AuditLog::log(
+                action: 'category.created',
+                auditable: $category,
+                newValues: ['name' => $category->name, 'slug' => $category->slug],
+                notes: 'Admin menambahkan kategori kelas baru: '.$category->name
+            );
 
             return true;
         } catch (\Exception $e) {
@@ -65,6 +73,12 @@ class KategoriRepo
         try {
             $category = self::getById($id);
 
+            $oldValues = [
+                'name' => $category->name,
+                'slug' => $category->slug,
+                'description' => $category->description,
+            ];
+
             $slug = Str::slug($data['name']);
             $originalSlug = $slug;
             $count = 1;
@@ -72,11 +86,21 @@ class KategoriRepo
                 $slug = $originalSlug.'-'.$count++;
             }
 
-            $category->update([
+            $newValues = [
                 'name' => trim($data['name']),
                 'slug' => $slug,
                 'description' => ! empty($data['description']) ? trim($data['description']) : null,
-            ]);
+            ];
+
+            $category->update($newValues);
+
+            AuditLog::log(
+                action: 'category.updated',
+                auditable: $category,
+                oldValues: $oldValues,
+                newValues: $newValues,
+                notes: 'Admin memperbarui data kategori: '.$category->name
+            );
 
             return true;
         } catch (\Exception $e) {
@@ -106,6 +130,13 @@ class KategoriRepo
                     'message' => 'Kategori "'.$category->name.'" tidak dapat dihapus karena masih menaungi '.$category->courses_count.' kelas.',
                 ];
             }
+
+            AuditLog::log(
+                action: 'category.deleted',
+                auditable: $category,
+                oldValues: ['name' => $category->name],
+                notes: 'Admin menghapus kategori kelas: '.$category->name
+            );
 
             $category->delete();
 

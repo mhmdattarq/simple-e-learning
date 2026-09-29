@@ -1,9 +1,162 @@
 <?php
 
+use App\Models\AuditLog;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 new class extends Component {
+    public function getAuditLogsProperty(): Collection
+    {
+        if (!Auth::check()) {
+            return collect();
+        }
+
+        return AuditLog::where('user_id', Auth::id())->latest('id')->limit(5)->get();
+    }
+
+    public function getUnreadCountProperty(): int
+    {
+        if (!Auth::check()) {
+            return 0;
+        }
+
+        $lastReadId = (int) cache()->get('admin_read_audit_id_' . Auth::id(), 0);
+
+        return AuditLog::where('user_id', Auth::id())->where('id', '>', $lastReadId)->count();
+    }
+
+    public function markAsRead(): void
+    {
+        if (!Auth::check()) {
+            return;
+        }
+
+        $latestLog = AuditLog::where('user_id', Auth::id())->latest('id')->first();
+        if ($latestLog) {
+            cache()->put('admin_read_audit_id_' . Auth::id(), $latestLog->id, now()->addDays(30));
+        }
+    }
+
+    /**
+     * @return array{icon: string, bg: string, title: string, desc: string, time: string}
+     */
+    public function formatNotification(AuditLog $log): array
+    {
+        $action = $log->action;
+        $notes = $log->notes;
+        $time = $log->created_at ? $log->created_at->diffForHumans() : 'Baru saja';
+
+        $map = [
+            'category.created' => [
+                'icon' => 'ri-folder-add-line',
+                'bg' => 'bg-primary-subtle text-primary',
+                'title' => 'Kategori Ditambahkan',
+                'desc' => $log->new_values['name'] ?? ($notes ?? 'Menambahkan kategori baru'),
+            ],
+            'category.updated' => [
+                'icon' => 'ri-folder-settings-line',
+                'bg' => 'bg-info-subtle text-info',
+                'title' => 'Kategori Diperbarui',
+                'desc' => $log->new_values['name'] ?? ($notes ?? 'Memperbarui data kategori'),
+            ],
+            'category.deleted' => [
+                'icon' => 'ri-folder-reduce-line',
+                'bg' => 'bg-danger-subtle text-danger',
+                'title' => 'Kategori Dihapus',
+                'desc' => $log->old_values['name'] ?? ($notes ?? 'Menghapus data kategori'),
+            ],
+            'course.created' => [
+                'icon' => 'ri-book-read-line',
+                'bg' => 'bg-success-subtle text-success',
+                'title' => 'Kelas Baru Dibuat',
+                'desc' => $log->new_values['title'] ?? ($notes ?? 'Menambahkan kelas baru'),
+            ],
+            'course.updated' => [
+                'icon' => 'ri-edit-line',
+                'bg' => 'bg-info-subtle text-info',
+                'title' => 'Kelas Diperbarui',
+                'desc' => $log->new_values['title'] ?? ($notes ?? 'Memperbarui data kelas'),
+            ],
+            'course.deleted' => [
+                'icon' => 'ri-delete-bin-line',
+                'bg' => 'bg-danger-subtle text-danger',
+                'title' => 'Kelas Dihapus',
+                'desc' => $log->old_values['title'] ?? ($notes ?? 'Menghapus data kelas'),
+            ],
+            'course.submitted' => [
+                'icon' => 'ri-send-plane-fill',
+                'bg' => 'bg-warning-subtle text-warning',
+                'title' => 'Kelas Diajukan',
+                'desc' => $notes ?? 'Mengajukan persetujuan kelas ke pimpinan',
+            ],
+            'course.archived' => [
+                'icon' => 'ri-archive-line',
+                'bg' => 'bg-secondary-subtle text-secondary',
+                'title' => 'Kelas Diarsipkan',
+                'desc' => $notes ?? 'Mengarsipkan kelas',
+            ],
+            'chapter.created' => [
+                'icon' => 'ri-play-list-add-line',
+                'bg' => 'bg-primary-subtle text-primary',
+                'title' => 'Bab Materi Dibuat',
+                'desc' => $log->new_values['title'] ?? ($notes ?? 'Menambahkan bab kurikulum'),
+            ],
+            'chapter.updated' => [
+                'icon' => 'ri-pencil-line',
+                'bg' => 'bg-info-subtle text-info',
+                'title' => 'Bab Materi Diperbarui',
+                'desc' => $log->new_values['title'] ?? ($notes ?? 'Memperbarui bab kurikulum'),
+            ],
+            'chapter.deleted' => [
+                'icon' => 'ri-delete-bin-line',
+                'bg' => 'bg-danger-subtle text-danger',
+                'title' => 'Bab Materi Dihapus',
+                'desc' => $log->old_values['title'] ?? ($notes ?? 'Menghapus bab kurikulum'),
+            ],
+            'lesson.created' => [
+                'icon' => 'ri-file-add-line',
+                'bg' => 'bg-success-subtle text-success',
+                'title' => 'Materi Pelajaran Dibuat',
+                'desc' => $log->new_values['title'] ?? ($notes ?? 'Menambahkan materi pelajaran'),
+            ],
+            'lesson.updated' => [
+                'icon' => 'ri-file-edit-line',
+                'bg' => 'bg-info-subtle text-info',
+                'title' => 'Materi Pelajaran Diperbarui',
+                'desc' => $log->new_values['title'] ?? ($notes ?? 'Memperbarui materi pelajaran'),
+            ],
+            'lesson.deleted' => [
+                'icon' => 'ri-file-reduce-line',
+                'bg' => 'bg-danger-subtle text-danger',
+                'title' => 'Materi Pelajaran Dihapus',
+                'desc' => $log->old_values['title'] ?? ($notes ?? 'Menghapus materi pelajaran'),
+            ],
+            'quiz.created' => [
+                'icon' => 'ri-questionnaire-line',
+                'bg' => 'bg-warning-subtle text-warning',
+                'title' => 'Evaluasi Kuis Dibuat',
+                'desc' => $log->new_values['title'] ?? ($notes ?? 'Menambahkan evaluasi kuis'),
+            ],
+            'quiz.deleted' => [
+                'icon' => 'ri-delete-bin-line',
+                'bg' => 'bg-danger-subtle text-danger',
+                'title' => 'Evaluasi Kuis Dihapus',
+                'desc' => $log->old_values['title'] ?? ($notes ?? 'Menghapus evaluasi kuis'),
+            ],
+        ];
+
+        $data = $map[$action] ?? [
+            'icon' => 'ri-history-line',
+            'bg' => 'bg-primary-subtle text-primary',
+            'title' => 'Aktivitas: ' . str_replace('.', ' ', ucwords($action, '.')),
+            'desc' => $notes ?? 'Aktivitas sistem tersimpan',
+        ];
+        $data['time'] = $time;
+
+        return $data;
+    }
+
     public function logout()
     {
         Auth::logout();
@@ -28,69 +181,76 @@ new class extends Component {
             </div>
             <div class="col-auto">
                 <div class="d-flex flex-wrap align-items-center gap-3">
-                    {{-- Search --}}
-                    <form class="navbar-search d-none d-sm-block">
-                        <input type="text" name="search" placeholder="Cari kelas, peserta, berkas...">
-                        <i class="ri-search-line icon"></i>
-                    </form>
-
                     {{-- Notifikasi --}}
-                    <div class="dropdown position-relative" x-data="{ open: false }" @click.outside="open = false">
+                    <div class="dropdown position-relative" x-data="{ open: false }" @click.outside="open = false"
+                        wire:poll.60s>
                         <button
-                            class="has-indicator w-40-px h-40-px bg-neutral-100 rounded-circle d-flex justify-content-center align-items-center border-0"
+                            class="has-indicator w-40-px h-40-px bg-neutral-100 rounded-circle d-flex justify-content-center align-items-center border-0 position-relative"
                             type="button" @click="open = !open" :aria-expanded="open.toString()">
                             <i class="ri-notification-3-line icon text-xl text-primary-light"></i>
-                            <span
-                                class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"></span>
+                            @if ($this->unreadCount > 0)
+                                <span
+                                    class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"
+                                    style="width: 10px; height: 10px; margin-top: 6px; margin-left: -6px;">
+                                    <span class="visually-hidden">Notifikasi Baru</span>
+                                </span>
+                            @endif
                         </button>
                         <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0 shadow-lg" x-show="open"
                             x-cloak :class="{ 'show': open }"
-                            style="position: absolute; right: 0; left: auto !important; top: calc(100% + 8px); z-index: 1060; width: 320px; max-width: calc(100vw - 32px); border-radius: 14px; overflow: hidden; border: 1px solid #e2e8f0;">
+                            style="position: absolute; right: 0; left: auto !important; top: calc(100% + 8px); z-index: 1060; width: 340px; max-width: calc(100vw - 32px); border-radius: 14px; overflow: hidden; border: 1px solid #e2e8f0;">
                             <div class="py-12 px-16 border-bottom d-flex align-items-center justify-content-between"
                                 style="background-color: #071a33;">
-                                <h6 class="text-white fw-semibold mb-0 fs-6">Notifikasi SIMPEL</h6>
-                                <span class="badge bg-warning text-dark">3 Baru</span>
+                                <div class="d-flex align-items-center gap-2">
+                                    <h6 class="text-white fw-semibold mb-0 fs-6">Aktivitas Saya</h6>
+                                    @if ($this->unreadCount > 0)
+                                        <span class="badge bg-warning text-dark">{{ $this->unreadCount }} Baru</span>
+                                    @else
+                                        <span class="badge bg-secondary text-white">{{ $this->auditLogs->count() }}
+                                            Aktivitas</span>
+                                    @endif
+                                </div>
+                                @if ($this->unreadCount > 0)
+                                    <button type="button" wire:click="markAsRead"
+                                        class="btn btn-link text-white-50 p-0 text-decoration-none fs-7 hover-text-white d-flex align-items-center gap-1"
+                                        title="Tandai semua sudah dibaca">
+                                        <i class="ri-check-double-line"></i> Dibaca
+                                    </button>
+                                @endif
                             </div>
-                            <div class="p-2">
-                                <a href="javascript:void(0)"
-                                    class="dropdown-item p-10 rounded d-flex gap-2 border-bottom">
-                                    <span
-                                        class="w-36-px h-36-px rounded-circle d-flex justify-content-center align-items-center bg-warning-subtle text-warning flex-shrink-0">
-                                        <i class="ri-user-add-fill"></i>
-                                    </span>
-                                    <div>
-                                        <p class="mb-0 fw-semibold text-xs text-dark">Pendaftaran Baru: Nur Aini</p>
-                                        <small class="text-muted" style="font-size: 11px;">Kelas Manajemen
-                                            Administrator · 5m lalu</small>
+                            <div class="p-2" style="max-height: 380px; overflow-y: auto;">
+                                @forelse ($this->auditLogs as $log)
+                                    @php
+                                        $notif = $this->formatNotification($log);
+                                    @endphp
+                                    <a href="{{ Route::has('admin.notifikasi') ? route('admin.notifikasi') : url('/admin/notifikasi') }}"
+                                        class="dropdown-item p-10 rounded d-flex gap-2 border-bottom align-items-start text-wrap">
+                                        <span
+                                            class="w-36-px h-36-px rounded-circle d-flex justify-content-center align-items-center {{ $notif['bg'] }} flex-shrink-0 mt-1">
+                                            <i class="{{ $notif['icon'] }} fs-5"></i>
+                                        </span>
+                                        <div class="flex-grow-1" style="min-width: 0;">
+                                            <p class="mb-0 fw-semibold text-xs text-dark text-truncate">
+                                                {{ $notif['title'] }}</p>
+                                            <p class="mb-0 text-secondary-light text-xs text-truncate"
+                                                style="font-size: 11px;">{{ $notif['desc'] }}</p>
+                                            <small class="text-muted d-block mt-1"
+                                                style="font-size: 10px;">{{ $notif['time'] }}</small>
+                                        </div>
+                                    </a>
+                                @empty
+                                    <div class="py-4 text-center text-muted">
+                                        <i
+                                            class="ri-notification-off-line text-2xl d-block mb-1 text-secondary-light"></i>
+                                        <span class="text-xs">Belum ada riwayat aktivitas terbaru</span>
                                     </div>
-                                </a>
-                                <a href="javascript:void(0)"
-                                    class="dropdown-item p-10 rounded d-flex gap-2 border-bottom">
-                                    <span
-                                        class="w-36-px h-36-px rounded-circle d-flex justify-content-center align-items-center bg-success-subtle text-success flex-shrink-0">
-                                        <i class="ri-checkbox-circle-fill"></i>
-                                    </span>
-                                    <div>
-                                        <p class="mb-0 fw-semibold text-xs text-dark">Verifikasi Selesai: Fauzan</p>
-                                        <small class="text-muted" style="font-size: 11px;">Berkas pendaftaran telah
-                                            disetujui · 1j lalu</small>
-                                    </div>
-                                </a>
-                                <a href="javascript:void(0)" class="dropdown-item p-10 rounded d-flex gap-2">
-                                    <span
-                                        class="w-36-px h-36-px rounded-circle d-flex justify-content-center align-items-center bg-info-subtle text-info flex-shrink-0">
-                                        <i class="ri-award-fill"></i>
-                                    </span>
-                                    <div>
-                                        <p class="mb-0 fw-semibold text-xs text-dark">Sertifikat Terbit: 12 Peserta</p>
-                                        <small class="text-muted" style="font-size: 11px;">Kelas Pengelolaan
-                                            Keuangan · 3j lalu</small>
-                                    </div>
-                                </a>
+                                @endforelse
                             </div>
-                            <div class="text-center py-2 border-top">
-                                <a href="javascript:void(0)" class="fw-semibold text-xs text-primary">Lihat Semua
-                                    Notifikasi</a>
+                            <div class="text-center py-2 border-top bg-light">
+                                <a href="{{ route('admin.notifikasi') }}" wire:navigate
+                                    class="fw-semibold text-xs text-primary d-inline-flex align-items-center gap-1">
+                                    Lihat Detail Notifikasi & Riwayat <i class="ri-arrow-right-s-line"></i>
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -132,7 +292,7 @@ new class extends Component {
                             <ul class="to-top-list list-unstyled p-2 m-0">
                                 <li>
                                     <a class="dropdown-item text-black px-12 py-8 hover-text-primary d-flex align-items-center gap-2 rounded"
-                                        href="javascript:void(0)">
+                                        href="{{ route('admin.profil') }}" wire:navigate>
                                         <i class="ri-user-line icon text-lg"></i>
                                         Profil Saya
                                     </a>
