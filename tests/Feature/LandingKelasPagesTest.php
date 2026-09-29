@@ -318,3 +318,77 @@ test('new category without courses appears in category filter dropdown on landin
         })
         ->assertSee('Kategori Baru Tanpa Kelas');
 });
+
+test('navbar active menu reflects current page and course context across index, detail, and materi', function () {
+    $category = Category::factory()->create();
+    $admin = User::factory()->admin()->create();
+    $user = User::factory()->peserta()->create();
+
+    $batchCourse = Course::factory()->create([
+        'title' => 'Kelas Batch Spesial ASN',
+        'type' => 'batch',
+        'status' => 'published',
+        'category_id' => $category->id,
+        'created_by' => $admin->id,
+    ]);
+
+    $permanentCourse = Course::factory()->create([
+        'title' => 'Kelas Permanen Spesial ASN',
+        'type' => 'permanent',
+        'status' => 'published',
+        'category_id' => $category->id,
+        'created_by' => $admin->id,
+    ]);
+
+    $paidCourse = Course::factory()->create([
+        'title' => 'Kelas Berbayar Spesial ASN',
+        'type' => 'paid',
+        'status' => 'published',
+        'category_id' => $category->id,
+        'created_by' => $admin->id,
+    ]);
+
+    // 1. Landing Beranda
+    $resHome = $this->get(route('landing'));
+    $resHome->assertStatus(200);
+    $resHome->assertSeeInOrder(['<li class="current"', 'Beranda']);
+
+    // 2. Kelas Batch Index, Detail, and Materi
+    $resBatchIndex = $this->get(route('landing.kelas.batch'));
+    $resBatchIndex->assertStatus(200);
+    $resBatchIndex->assertSeeInOrder(['<li class="current"', 'Kelas Batch']);
+
+    $resBatchDetail = $this->get(route('landing.kelas.detail', $batchCourse->id));
+    $resBatchDetail->assertStatus(200);
+    $resBatchDetail->assertSeeInOrder(['<li class="current"', 'Kelas Batch']);
+
+    $resBatchMateri = $this->actingAs($user)->get(route('peserta.materi', $batchCourse->id));
+    $resBatchMateri->assertStatus(200);
+    $resBatchMateri->assertSeeInOrder(['<li class="current"', 'Kelas Batch']);
+
+    // 3. Kelas Permanen Index, Detail, and Materi
+    $resPermIndex = $this->get(route('landing.kelas.permanen'));
+    $resPermIndex->assertStatus(200);
+    $resPermIndex->assertSeeInOrder(['<li class="current"', 'Kelas Permanen']);
+
+    $resPermDetail = $this->get(route('landing.kelas.detail', $permanentCourse->id));
+    $resPermDetail->assertStatus(200);
+    $resPermDetail->assertSeeInOrder(['<li class="current"', 'Kelas Permanen']);
+
+    $resPermMateri = $this->actingAs($user)->get(route('peserta.materi', $permanentCourse->id));
+    $resPermMateri->assertStatus(200);
+    $resPermMateri->assertSeeInOrder(['<li class="current"', 'Kelas Permanen']);
+
+    // 4. Kelas Berbayar Index, Detail, and Materi
+    $resPaidIndex = $this->get(route('landing.kelas.berbayar'));
+    $resPaidIndex->assertStatus(200);
+    $resPaidIndex->assertSeeInOrder(['<li class="current"', 'Kelas Berbayar']);
+
+    $resPaidDetail = $this->get(route('landing.kelas.detail', $paidCourse->id));
+    $resPaidDetail->assertStatus(200);
+    $resPaidDetail->assertSeeInOrder(['<li class="current"', 'Kelas Berbayar']);
+
+    $resPaidMateri = $this->actingAs($user)->get(route('peserta.materi', $paidCourse->id));
+    $resPaidMateri->assertStatus(200);
+    $resPaidMateri->assertSeeInOrder(['<li class="current"', 'Kelas Berbayar']);
+});

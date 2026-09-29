@@ -142,7 +142,7 @@
                                     <div class="position-absolute top-0 start-0 m-3 d-flex gap-2">
                                         @if ($course->isPermanent())
                                             <span class="badge bg-success text-white fw-bold fs-8 px-2_5 py-1">
-                                                <i class="ri-infinite-line me-1"></i>Mandiri 24/7
+                                                <i class="ri-infinity-line me-1"></i>Mandiri 24/7
                                             </span>
                                         @elseif ($course->isBatch())
                                             <span class="badge bg-primary text-white fw-bold fs-8 px-2_5 py-1">

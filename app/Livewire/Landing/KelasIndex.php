@@ -67,7 +67,7 @@ class KelasIndex extends Component
             ],
             'permanent' => [
                 'badge' => 'Belajar Mandiri (Self-Paced)',
-                'icon' => 'ri-infinite-line',
+                'icon' => 'ri-infinity-line',
                 'title_prefix' => 'Katalog',
                 'title_highlight' => 'Kelas Permanen',
                 'subtitle' => 'Kelas digital fleksibel tanpa batas waktu pendaftaran. Pelajari materi secara mandiri kapan saja untuk akselerasi kompetensi ASN.',

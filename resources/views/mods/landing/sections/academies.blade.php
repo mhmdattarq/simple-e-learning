@@ -101,7 +101,7 @@
                             <div class="d-flex align-items-center gap-2">
                                 <div class="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0"
                                     style="width: 44px; height: 44px; background: rgba(5, 150, 105, 0.08); color: #059669;">
-                                    <i class="ri-infinite-line fs-4"></i>
+                                    <i class="ri-infinity-line fs-4"></i>
                                 </div>
                                 <div>
                                     <div class="fw-extrabold text-navy" style="font-size: 22px; line-height: 1.1;">

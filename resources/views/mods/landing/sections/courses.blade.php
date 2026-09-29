@@ -60,7 +60,7 @@
                                     <div class="w-100 h-100 d-flex align-items-center justify-content-center text-white"
                                         style="background: linear-gradient(135deg, #071a33 0%, #0c3158 100%);">
                                         @if ($course->isPermanent())
-                                            <i class="ri-infinite-line display-4 text-gold"></i>
+                                            <i class="ri-infinity-line display-4 text-gold"></i>
                                         @elseif ($course->isPaid())
                                             <i class="ri-money-dollar-circle-line display-4 text-gold"></i>
                                         @else
@@ -76,7 +76,7 @@
                                         </span>
                                     @elseif ($course->isPermanent())
                                         <span class="badge bg-success text-white fw-bold fs-8 px-2_5 py-1">
-                                            <i class="ri-infinite-line me-1"></i>Permanen
+                                            <i class="ri-infinity-line me-1"></i>Permanen
                                         </span>
                                     @else
                                         <span class="badge bg-warning-subtle text-dark border border-warning fw-bold fs-8 px-2_5 py-1">
