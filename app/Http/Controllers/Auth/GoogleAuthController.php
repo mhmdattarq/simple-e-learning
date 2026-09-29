@@ -146,16 +146,12 @@ class GoogleAuthController extends Controller
             ]);
         }
 
-        // Jika user internal (Admin / Pimpinan / Mentor), arahkan ke dashboard manajemen
-        if ($user->isPimpinan()) {
-            return redirect()->intended(route('pimpinan.persetujuan.data'));
-        }
-
+        // Jika user internal (Admin), arahkan ke dashboard manajemen
         if ($user->hasAdminAccess()) {
             return redirect()->intended(route('admin.dashboard'));
         }
 
-        // Peserta baru atau lama diarahkan langsung ke Halaman Landing sesuai alur sistem
+        // Peserta diarahkan ke Halaman Landing
         return redirect()->route('landing');
     }
 }

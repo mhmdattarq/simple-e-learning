@@ -30,14 +30,6 @@ class Chapter extends Model
     }
 
     /**
-     * Sesi jadwal pelatihan yang menaungi bab materi ini (opsional).
-     */
-    public function schedule(): BelongsTo
-    {
-        return $this->belongsTo(CourseSchedule::class, 'schedule_id');
-    }
-
-    /**
      * Unit materi pembelajaran di dalam bab ini.
      */
     public function lessons(): HasMany

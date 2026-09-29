@@ -47,8 +47,8 @@
                     <div class="position-relative p-20 bg-light border-bottom">
                         <div class="d-flex align-items-center justify-content-between mb-2">
                             <span
-                                class="badge bg-secondary-subtle text-secondary px-2 py-1 radius-4 font-monospace fs-8">
-                                {{ $c->code }}
+                                class="badge bg-secondary-subtle text-secondary px-2 py-1 radius-4 fs-8">
+                                {{ $c->category?->name ?? 'Diklat' }}
                             </span>
                             @if ($c->isBatch())
                                 <span
@@ -109,26 +109,23 @@
                                 @endif
                             </div>
 
-                            {{-- Mentor Assignment Info --}}
+                            {{-- Chapters & Modules Info --}}
                             <div class="d-flex align-items-center gap-2 mb-3 fs-8 text-muted">
-                                <i class="ri-user-voice-line text-simple"></i>
+                                <i class="ri-book-read-line text-simple"></i>
                                 <span>
-                                    Mentor:
-                                    @php
-                                        $mentors = $c->schedules->pluck('mentor.name')->filter()->unique();
-                                    @endphp
-                                    <strong>{{ $mentors->isNotEmpty() ? $mentors->implode(', ') : 'Belum Ditugaskan' }}</strong>
+                                    Total Kurikulum:
+                                    <strong>{{ $c->chapters->count() }} Bab ({{ $c->chapters->sum(fn($ch) => $ch->lessons->count()) }} Modul)</strong>
                                 </span>
                             </div>
                         </div>
 
                         {{-- Action Button --}}
                         <div class="pt-10 border-top mt-2">
-                            <a href="{{ route('materi.sesi', $c->id) }}"
+                            <a href="{{ route('materi.detail', $c->id) }}"
                                 class="btn btn-sm btn-outline-primary w-100 d-inline-flex align-items-center justify-content-center gap-2 radius-8 py-2 font-weight-500 shadow-none"
                                 wire:navigate>
-                                <i class="ri-calendar-event-line fs-6"></i>
-                                <span>Kelola Sesi & Materi</span>
+                                <i class="ri-folders-line fs-6"></i>
+                                <span>Kelola Kurikulum & Materi</span>
                                 <i class="ri-arrow-right-line ms-auto"></i>
                             </a>
                         </div>

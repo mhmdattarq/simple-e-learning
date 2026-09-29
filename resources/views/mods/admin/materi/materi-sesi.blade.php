@@ -23,9 +23,6 @@
             <div class="row align-items-center g-3">
                 <div class="col-lg-8 col-12">
                     <div class="d-flex align-items-center gap-2 mb-2">
-                        @if ($course->code)
-                            <span class="badge bg-light text-secondary border font-monospace">{{ $course->code }}</span>
-                        @endif
                         @if ($course->category)
                             <span
                                 class="badge bg-info-subtle text-info border border-info-subtle">{{ $course->category->name }}</span>
@@ -36,12 +33,8 @@
                     </div>
                     <h5 class="fw-bold text-dark mb-2 fs-5">{{ $course->title }}</h5>
                     <div class="d-flex flex-wrap align-items-center gap-3 fs-8 text-muted">
-                        <span><i class="ri-map-pin-line text-danger me-1"></i>Metode:
-                            <strong>{{ ucfirst($course->method) }}</strong></span>
-                        @if ($course->location)
-                            <span><i class="ri-building-line text-primary me-1"></i>Lokasi:
-                                <strong>{{ $course->location }}</strong></span>
-                        @endif
+                        <span><i class="ri-price-tag-3-line text-primary me-1"></i>Biaya:
+                            <strong>{{ $course->isPaid() ? 'Rp ' . number_format($course->price, 0, ',', '.') : 'Gratis' }}</strong></span>
                         @if ($course->start_date && $course->end_date)
                             <span><i class="ri-calendar-line text-success me-1"></i>Periode:
                                 <strong>{{ $course->start_date->format('d/m/Y') }} -

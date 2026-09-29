@@ -47,21 +47,6 @@ class User extends Authenticatable
         return $this->role === Role::Admin;
     }
 
-    public function isMentor(): bool
-    {
-        return $this->role === Role::Mentor;
-    }
-
-    public function isVerifikator(): bool
-    {
-        return $this->role === Role::Verifikator;
-    }
-
-    public function isPimpinan(): bool
-    {
-        return $this->role === Role::Pimpinan;
-    }
-
     public function isPeserta(): bool
     {
         return $this->role === Role::Peserta;
@@ -102,21 +87,5 @@ class User extends Authenticatable
         return $this->belongsToMany(Course::class, 'course_user')
             ->withPivot(['id', 'registration_number', 'status', 'recommendation_letter_path', 'notes', 'enrolled_at'])
             ->withTimestamps();
-    }
-
-    /**
-     * Jadwal sesi yang diampu sebagai mentor.
-     */
-    public function mentoredSchedules(): HasMany
-    {
-        return $this->hasMany(CourseSchedule::class, 'mentor_id');
-    }
-
-    /**
-     * Data riwayat presensi yang diikuti oleh user.
-     */
-    public function attendances(): HasMany
-    {
-        return $this->hasMany(Attendance::class, 'user_id');
     }
 }

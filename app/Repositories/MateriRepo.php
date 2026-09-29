@@ -14,11 +14,10 @@ class MateriRepo
     /**
      * Mengambil struktur kurikulum lengkap (Bab dan Unit Materi) untuk suatu pelatihan.
      */
-    public static function getCurriculumByCourse(int $courseId, ?int $scheduleId = null): Collection
+    public static function getCurriculumByCourse(int $courseId): Collection
     {
         return Chapter::query()
             ->where('course_id', $courseId)
-            ->when($scheduleId, fn ($query) => $query->where('schedule_id', $scheduleId))
             ->with(['lessons' => function ($query) {
                 $query->orderBy('order', 'asc');
             }])

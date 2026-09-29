@@ -31,7 +31,7 @@
     <link rel="stylesheet" href="{{ asset('admin/assets/css/style.css') }}">
 
     <!-- App Custom CSS & JS (Classic Asset) -->
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}?v={{ filemtime(public_path('css/app.css')) }}">
     <script src="{{ asset('js/app.js') }}"></script>
 
     @livewireStyles
@@ -76,9 +76,9 @@
     <!-- Slick Slider js -->
     <script data-navigate-once src="{{ asset('admin/assets/js/lib/slick.min.js') }}"></script>
     <!-- main js -->
-    <script data-navigate-once src="{{ asset('admin/assets/js/app.js') }}"></script>
+    <script data-navigate-once src="{{ asset('admin/assets/js/app.js') }}?v={{ filemtime(public_path('admin/assets/js/app.js')) }}"></script>
     <!-- Skrip helper utilitas global aplikasi -->
-    <script data-navigate-once src="{{ asset('mine/script.js') }}"></script>
+    <script data-navigate-once src="{{ asset('mine/script.js') }}?v={{ filemtime(public_path('mine/script.js')) }}"></script>
 
     @livewireScripts
     @stack('js-stack')

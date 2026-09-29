@@ -17,17 +17,7 @@
                     <a href="{{ route('pelatihan.index') }}" class="btn btn-outline-light btn-sm radius-8 px-3 py-2 fs-8">
                         <i class="ri-arrow-left-line me-1"></i> Katalog Pelatihan
                     </a>
-                    @php
-                        $allAttended = $schedules->isNotEmpty() && $schedules->every(fn($s) => isset($attendances[$s->id]));
-                        $hasActiveUnattended = $schedules->contains(fn($s) => $s->isAttendanceActive() && !isset($attendances[$s->id]));
-                        $hasAttended = $attendances->isNotEmpty();
-                        $showPortalPresensi = (!$hasAttended && $schedules->isNotEmpty()) || $hasActiveUnattended;
-                    @endphp
-                    @if($showPortalPresensi && !$allAttended)
-                        <a href="{{ route('presensi.index') }}" class="btn btn-warning btn-sm text-dark fw-bold radius-8 px-3 py-2 fs-8">
-                            <i class="ri-qr-code-line me-1"></i> Portal Presensi
-                        </a>
-                    @endif
+
                 </div>
             </div>
         </div>
@@ -83,12 +73,7 @@
                                             </small>
                                         </div>
 
-                                        @if(!$isAttended)
-                                            <a href="{{ route('presensi.index', $sch->attendance_token ? ['token' => $sch->attendance_token] : []) }}"
-                                                class="btn btn-sm btn-warning text-dark fw-bold radius-8 fs-8 flex-shrink-0">
-                                                <i class="ri-qr-code-line me-1"></i> Absen
-                                            </a>
-                                        @endif
+
                                     </div>
 
                                     {{-- List Bab dan Konten Sesi --}}
@@ -216,9 +201,9 @@
                                     Anda diwajibkan untuk melakukan presensi kehadiran terlebih dahulu.
                                 </p>
                                 <div>
-                                    <a href="{{ route('presensi.index', $currentSchedule?->attendance_token ? ['token' => $currentSchedule->attendance_token] : []) }}"
+                                    <a href="javascript:void(0)"
                                         class="btn btn-warning fw-bold text-dark px-4 py-2 radius-10 shadow-sm">
-                                        <i class="ri-qr-code-line me-1"></i> Lakukan Absensi Sekarang
+                                        <i class="ri-lock-line me-1"></i> Materi Belum Tersedia
                                     </a>
                                 </div>
                             </div>

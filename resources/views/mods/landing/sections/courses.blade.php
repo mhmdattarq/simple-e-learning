@@ -50,30 +50,44 @@
                                     </span>
                                 </div>
                                 <div class="position-absolute bottom-0 end-0 m-3">
-                                    <span class="badge bg-dark bg-opacity-75 text-white fs-8">
-                                        <i class="ri-user-line me-1 text-gold"></i>Kuota: {{ $course->quota }} ASN
-                                    </span>
+                                    @if ($course->isPaid())
+                                        <span class="badge bg-gold text-dark fs-8 fw-bold">
+                                            Rp {{ number_format($course->price, 0, ',', '.') }}
+                                        </span>
+                                    @else
+                                        <span class="badge bg-dark bg-opacity-75 text-white fs-8">
+                                            Gratis
+                                        </span>
+                                    @endif
                                 </div>
                             </div>
 
                             <div class="p-4 d-flex flex-column flex-grow-1">
                                 <div class="d-flex align-items-center justify-content-between text-muted fs-8 mb-2">
-                                    <span class="badge bg-light text-navy border border-simpel font-monospace">{{ $course->code }}</span>
+                                    <span class="badge bg-light text-navy border border-simpel">{{ $course->category?->name ?? 'Pelatihan' }}</span>
                                     <span class="text-success fw-bold"><i class="ri-checkbox-circle-line me-1"></i>Pendaftaran Terbuka</span>
                                 </div>
                                 <h5 class="fw-bold text-navy mb-2 line-clamp-2">
                                     {{ $course->title }}
                                 </h5>
                                 <p class="text-muted fs-7 mb-4 flex-grow-1 line-clamp-2">
-                                    {{ $course->description ?: 'Program pelatihan kompetensi aparatur yang diselenggarakan oleh BKPSDM Kabupaten Aceh Timur.' }}
+                                    {{ $course->category?->description ?: 'Program pelatihan kompetensi aparatur yang diselenggarakan oleh BKPSDM Kabupaten Aceh Timur.' }}
                                 </p>
 
                                 <div class="pt-3 border-top border-simpel d-flex align-items-center justify-content-between mt-auto">
                                     <div>
-                                        <small class="text-muted d-block fs-8">Metode Program</small>
-                                        <span class="fw-extrabold text-navy fs-7 text-uppercase">{{ $course->method }}</span>
+                                        <small class="text-muted d-block fs-8">Tipe Kelas</small>
+                                        <span class="fw-extrabold text-navy fs-7">
+                                            @if ($course->isPaid())
+                                                Berbayar
+                                            @elseif ($course->isPermanent())
+                                                Permanen
+                                            @else
+                                                Batch
+                                            @endif
+                                        </span>
                                     </div>
-                                    <a href="{{ route('pelatihan.daftar', $course->id) }}" class="btn-simpel-cta-gold py-2 px-3 fs-7">
+                                    <a href="{{ route('pelatihan.index') }}" class="btn-simpel-cta-gold py-2 px-3 fs-7">
                                         <span>Daftar Pelatihan</span>
                                         <i class="ri-arrow-right-line ms-1"></i>
                                     </a>

@@ -57,9 +57,6 @@
                                         {{-- Middle: Info --}}
                                         <div class="col">
                                             <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
-                                                <span class="badge bg-light text-navy border border-simpel font-monospace fs-8 px-2 py-1">
-                                                    {{ $course->code }}
-                                                </span>
                                                 <span class="badge bg-navy text-white fw-bold fs-8 px-2_5 py-1">
                                                     {{ $course->category?->name ?? 'Diklat ASN' }}
                                                 </span>
@@ -69,20 +66,16 @@
                                             </div>
                                             <h5 class="fw-bold text-navy mb-1">{{ $course->title }}</h5>
                                             <p class="text-muted fs-8 mb-2 line-clamp-2">
-                                                {{ $course->description ?: 'Program pelatihan kompetensi aparatur yang diselenggarakan oleh BKPSDM Kabupaten Aceh Timur.' }}
+                                                {{ $course->category?->description ?: 'Program pelatihan kompetensi aparatur yang diselenggarakan oleh BKPSDM Kabupaten Aceh Timur.' }}
                                             </p>
                                             <div class="d-flex flex-wrap align-items-center gap-3 text-muted fs-8">
                                                 <span class="d-flex align-items-center gap-1">
-                                                    <i class="ri-broadcast-line text-gold"></i>
-                                                    Metode: <strong class="text-navy text-uppercase">{{ $course->method }}</strong>
-                                                </span>
-                                                <span class="d-flex align-items-center gap-1">
-                                                    <i class="ri-user-line text-gold"></i>
-                                                    Kuota: <strong class="text-navy">{{ $course->quota }} ASN</strong>
+                                                    <i class="ri-price-tag-3-line text-gold"></i>
+                                                    Biaya: <strong class="text-navy">{{ $course->isPaid() ? 'Rp ' . number_format($course->price, 0, ',', '.') : 'Gratis' }}</strong>
                                                 </span>
                                                 <span class="d-flex align-items-center gap-1">
                                                     <i class="ri-award-line text-gold"></i>
-                                                    <strong class="text-success">100% Beasiswa Pemerintah</strong>
+                                                    <strong class="text-success">{{ $course->isPaid() ? 'Bersertifikat Resmi' : '100% Beasiswa Pemerintah' }}</strong>
                                                 </span>
                                             </div>
                                         </div>
@@ -110,48 +103,12 @@
                                                 }
                                             @endphp
 
-                                            @if(!auth()->check() || !$reg)
-                                                {{-- Belum Mendaftar / Guest --}}
-                                                <a href="{{ route('pelatihan.daftar', $course->id) }}"
-                                                    class="btn-simpel-cta-gold">
-                                                    <span>Daftar Pelatihan</span>
-                                                    <i class="ri-arrow-right-line"></i>
-                                                </a>
-                                            @elseif($regStatus === 'pending')
-                                                {{-- Sudah Daftar, Menunggu Verifikasi --}}
-                                                <button type="button" class="btn btn-secondary radius-10 px-3 py-2 fs-7 fw-semibold d-inline-flex align-items-center gap-2" disabled>
-                                                    <i class="ri-time-line text-warning"></i>
-                                                    <span>Menunggu Verifikasi</span>
-                                                </button>
-                                            @elseif($regStatus === 'rejected')
-                                                {{-- Pendaftaran Ditolak --}}
-                                                <button type="button" class="btn btn-outline-danger radius-10 px-3 py-2 fs-7 fw-semibold d-inline-flex align-items-center gap-2" disabled>
-                                                    <i class="ri-close-circle-line"></i>
-                                                    <span>Pendaftaran Ditolak</span>
-                                                </button>
-                                            @elseif($activeOpenSchedule)
-                                                {{-- Sesi Sedang Dibuka Presensinya --}}
-                                                <a href="{{ route('presensi.index', $activeOpenSchedule->attendance_token ? ['token' => $activeOpenSchedule->attendance_token] : []) }}"
-                                                    class="btn btn-warning fw-bold text-dark radius-10 px-3 py-2 fs-7 d-inline-flex align-items-center gap-2 shadow-sm">
-                                                    <i class="ri-qr-code-line"></i>
-                                                    <span>Absen Sesi</span>
-                                                </a>
-                                            @elseif($courseSchedules->isNotEmpty() && !$hasAttendedAny)
-                                                {{-- Belum Pernah Absen di Sesi Apapun --}}
-                                                <a href="{{ route('presensi.index', $nextUnattendedSchedule?->attendance_token ? ['token' => $nextUnattendedSchedule->attendance_token] : []) }}"
-                                                    class="btn btn-warning fw-bold text-dark radius-10 px-3 py-2 fs-7 d-inline-flex align-items-center gap-2 shadow-sm">
-                                                    <i class="ri-qr-code-line"></i>
-                                                    <span>Absen Sesi</span>
-                                                </a>
-                                            @else
-                                                {{-- Sudah Absen / Terverifikasi: Akses Materi Pembelajaran --}}
                                                 <a href="{{ route('peserta.materi', $course->id) }}"
                                                     class="btn btn-success fw-bold text-white radius-10 px-3 py-2 fs-7 d-inline-flex align-items-center gap-2 shadow-sm">
                                                     <i class="ri-book-open-line"></i>
                                                     <span>Akses Materi</span>
                                                     <i class="ri-arrow-right-line"></i>
                                                 </a>
-                                            @endif
                                         </div>
                                     </div>
                                 </div>

@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\CourseStatus;
 use App\Livewire\Admin\Materi\MateriData;
 use App\Livewire\Admin\Materi\MateriDetail;
 use App\Models\Category;
@@ -20,31 +21,26 @@ beforeEach(function () {
     $this->category = Category::first();
 
     $this->admin = User::factory()->admin()->create();
-    $this->mentor = User::factory()->mentor()->create();
     $this->peserta = User::factory()->peserta()->create();
 
     // Permanent course (Curriculum always open)
     $this->permanentCourse = Course::create([
-        'code' => 'TIK-2026-PERM',
+        'slug' => 'digital-leadership-ai-untuk-asn',
         'title' => 'Digital Leadership & AI untuk ASN',
         'category_id' => $this->category->id,
         'type' => 'permanent',
-        'method' => 'daring',
-        'quota' => 50,
         'status' => 'published',
         'created_by' => $this->admin->id,
     ]);
 
     // Batch course that has started (Curriculum frozen)
     $this->frozenBatchCourse = Course::create([
-        'code' => 'TIK-2026-BATCH-FROZEN',
+        'slug' => 'manajemen-perubahan-asn-angkatan-i',
         'title' => 'Manajemen Perubahan ASN Angkatan I',
         'category_id' => $this->category->id,
         'type' => 'batch',
         'start_date' => now()->subDays(3)->toDateString(),
         'end_date' => now()->addDays(7)->toDateString(),
-        'method' => 'hybrid',
-        'quota' => 30,
         'status' => 'published',
         'created_by' => $this->admin->id,
     ]);
@@ -436,4 +432,27 @@ test('switching between silabus and editor resets validation error bag completel
         ->call('closeEditor')
         ->call('openCreateLesson', $chapter->id)
         ->assertHasNoErrors();
+});
+
+test('admin can publish draft course directly from materi detail curriculum page', function () {
+    $draftCourse = Course::create([
+        'title' => 'Pelatihan Draft Belum Terbit',
+        'category_id' => $this->category->id,
+        'type' => 'permanent',
+        'status' => CourseStatus::Draft,
+        'created_by' => $this->admin->id,
+    ]);
+
+    expect($draftCourse->isDraft())->toBeTrue();
+
+    Livewire::actingAs($this->admin)
+        ->test(MateriDetail::class, ['id' => $draftCourse->id])
+        ->assertSee('Terbitkan Kelas')
+        ->assertSee(route('kelas.data'))
+        ->assertSee(route('kelas.edit', $draftCourse->id))
+        ->call('publishCourse')
+        ->assertDispatched('alert-show');
+
+    expect($draftCourse->fresh()->status)->toBe(CourseStatus::Published);
+    expect($draftCourse->fresh()->isPublished())->toBeTrue();
 });

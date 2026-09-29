@@ -5,13 +5,7 @@
             <span class="text-uppercase fw-bold text-xs" style="color: #b37a05; letter-spacing: 1.5px;">Sistem
                 Manajemen Pelatihan</span>
             <h4 class="fw-bold mb-0 text-dark">
-                @if(auth()->user()?->isMentor())
-                    Beranda Mentor / Pengampu
-                @elseif(auth()->user()?->isVerifikator())
-                    Beranda Verifikator Berkas
-                @else
-                    Beranda Administrator
-                @endif
+                Beranda Administrator
             </h4>
         </div>
         <div class="d-flex align-items-center gap-2">
@@ -54,7 +48,7 @@
                 <div class="flow-n">
                     <i class="ri-checkbox-circle-fill text-sm"></i>
                 </div>
-                <span>1. Perencanaan</span>
+                <span>1. Kelola Kelas</span>
             </div>
             <div class="flow-card done">
                 <div class="flow-n">
@@ -485,9 +479,8 @@
                     style="background-color: #071a33; border-radius: 19px 19px 0 0;">
                     <div>
                         <span class="text-uppercase fw-bold text-xs"
-                            style="color: #f3bc42; letter-spacing: 1.5px;">Formulir Perencanaan</span>
-                        <h5 class="modal-title fw-bold text-white mb-0" id="modalRencanaPelatihanLabel">Rencana
-                            Pelatihan Baru</h5>
+                            style="color: #f3bc42; letter-spacing: 1.5px;">Formulir Kelas</span>
+                        <h5 class="modal-title fw-bold text-white mb-0" id="modalRencanaPelatihanLabel">Kelas Pelatihan Baru</h5>
                     </div>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
                         aria-label="Close"></button>

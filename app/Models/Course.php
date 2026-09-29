@@ -25,7 +25,7 @@ class Course extends Model
             'registration_open_at' => 'datetime',
             'registration_close_at' => 'datetime',
             'approved_at' => 'datetime',
-            'quota' => 'integer',
+            'price' => 'decimal:2',
         ];
     }
 
@@ -72,14 +72,6 @@ class Course extends Model
     }
 
     /**
-     * Jadwal sesi pelatihan (Tahap 4: Penjadwalan).
-     */
-    public function schedules(): HasMany
-    {
-        return $this->hasMany(CourseSchedule::class, 'course_id');
-    }
-
-    /**
      * Struktur bab silabus kurikulum (Tahap 6: Ruang Belajar).
      */
     public function chapters(): HasMany
@@ -112,6 +104,14 @@ class Course extends Model
     }
 
     /**
+     * Check if course is paid (berbayar).
+     */
+    public function isPaid(): bool
+    {
+        return $this->type === 'paid' || $this->type === 'berbayar';
+    }
+
+    /**
      * Check if curriculum is frozen (Batch rule: locked once active/started).
      */
     public function isCurriculumFrozen(): bool
@@ -121,5 +121,21 @@ class Course extends Model
         }
 
         return false;
+    }
+
+    /**
+     * Check if course is in draft status.
+     */
+    public function isDraft(): bool
+    {
+        return $this->status === CourseStatus::Draft;
+    }
+
+    /**
+     * Check if course is published.
+     */
+    public function isPublished(): bool
+    {
+        return $this->status === CourseStatus::Published;
     }
 }

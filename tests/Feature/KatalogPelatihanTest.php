@@ -25,7 +25,6 @@ test('halaman katalog pelatihan menampilkan kursus yang berstatus published', fu
         'type' => 'permanent',
         'category_id' => $category->id,
         'created_by' => $admin->id,
-        'quota' => 45,
     ]);
 
     $courseBatch = Course::factory()->create([
@@ -34,7 +33,6 @@ test('halaman katalog pelatihan menampilkan kursus yang berstatus published', fu
         'type' => 'batch',
         'category_id' => $category->id,
         'created_by' => $admin->id,
-        'quota' => 30,
     ]);
 
     $response = $this->get(route('pelatihan.index'));
@@ -45,8 +43,8 @@ test('halaman katalog pelatihan menampilkan kursus yang berstatus published', fu
     $response->assertSee('Pelatihan Fungsional');
     $response->assertSee('Mandiri 24/7');
     $response->assertSee('Batch Terjadwal');
-    $response->assertSee(route('pelatihan.daftar', $coursePermanent->id));
-    $response->assertSee(route('pelatihan.daftar', $courseBatch->id));
+    $response->assertSee(route('peserta.materi', $coursePermanent->id));
+    $response->assertSee(route('peserta.materi', $courseBatch->id));
 });
 
 test('halaman katalog pelatihan tidak menampilkan kursus yang berstatus draft', function () {

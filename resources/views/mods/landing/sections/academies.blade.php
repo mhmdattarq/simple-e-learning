@@ -81,7 +81,7 @@
 
                                 {{-- CTA --}}
                                 <div class="pt-3 border-top border-simpel mt-auto">
-                                    <a href="{{ route('pelatihan.daftar', $jadwal->id) }}"
+                                    <a href="{{ route('pelatihan.index') }}"
                                         class="btn-simpel-cta-gold w-100">
                                         <span>Daftar Pelatihan Ini</span>
                                         <i class="ri-arrow-right-line"></i>

@@ -75,21 +75,17 @@
                                                     @endif
                                                 </span>
                                                 <span class="d-flex align-items-center gap-1">
-                                                    <i class="ri-user-line text-gold"></i>
-                                                    Kuota: {{ $jadwal->quota }} peserta
-                                                </span>
-                                                <span class="d-flex align-items-center gap-1">
-                                                    <i class="ri-broadcast-line text-gold"></i>
-                                                    {{ strtoupper($jadwal->method) }}
+                                                    <i class="ri-price-tag-3-line text-gold"></i>
+                                                    {{ $jadwal->isPaid() ? 'Rp ' . number_format($jadwal->price, 0, ',', '.') : 'Gratis' }}
                                                 </span>
                                             </div>
                                         </div>
 
                                         {{-- Right: CTA Button --}}
                                         <div class="col-auto">
-                                            <a href="{{ route('pelatihan.daftar', $jadwal->id) }}"
+                                            <a href="{{ route('pelatihan.index') }}"
                                                 class="btn-simpel-cta-gold">
-                                                <span>Daftar Pelatihan</span>
+                                                <span>Lihat Pelatihan</span>
                                                 <i class="ri-arrow-right-line"></i>
                                             </a>
                                         </div>

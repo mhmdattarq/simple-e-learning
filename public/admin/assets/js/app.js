@@ -1,20 +1,6 @@
 (function ($) {
   'use strict';
 
-  // sidebar submenu collapsible js
-  $(".sidebar-menu .dropdown").on("click", function(){
-    var item = $(this);
-    item.siblings(".dropdown").children(".sidebar-submenu").slideUp();
-
-    item.siblings(".dropdown").removeClass("dropdown-open");
-
-    item.siblings(".dropdown").removeClass("open");
-
-    item.children(".sidebar-submenu").slideToggle();
-
-    item.toggleClass("dropdown-open");
-  });
-
   // sidebar toggle with delegation
   $(document).on("click", ".sidebar-toggle", function(){
     $(this).toggleClass("active");
