@@ -152,7 +152,7 @@
                     <i class="ri-lock-2-fill fs-4"></i>
                 </div>
                 <div>
-                    <h6 class="fw-bold text-warning-emphasis mb-1 fs-6">Curriculum Freeze Aktif (Aturan Batch Dicoding)
+                    <h6 class="fw-bold text-warning-emphasis mb-1 fs-6">Curriculum Freeze Aktif
                     </h6>
                     <p class="mb-0 fs-8 text-muted">
                         Kelas tipe Batch ini telah dimulai pada
@@ -184,7 +184,7 @@
             </div>
         @endif
 
-        {{-- Silabus Tree / Accordion per Bab ala Dicoding --}}
+        {{-- Silabus Tree / Accordion per Bab --}}
         <div class="row g-4 align-items-stretch">
             <div class="col-lg-8 d-flex flex-column">
                 <div class="card border-0 shadow-sm radius-12 flex-grow-1">
@@ -461,7 +461,7 @@
                                 </div>
                             </div>
 
-                            {{-- Simulasi Tombol Selesai ala Dicoding --}}
+                            {{-- Simulasi Tombol Selesai --}}
                             <div class="mt-24 pt-16 border-top d-flex align-items-center justify-content-between">
                                 <span class="text-muted fs-8">
                                     <i class="ri-lock-line me-1"></i> Materi berikutnya terkunci hingga materi ini

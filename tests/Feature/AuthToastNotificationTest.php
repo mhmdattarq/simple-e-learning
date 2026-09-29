@@ -55,12 +55,9 @@ test('peserta manual login flashes reusable toast alert-show and renders on land
 test('peserta manual registration flashes reusable toast alert-show and renders on login page', function () {
     Livewire::test(Register::class)
         ->set('form.name', 'Zulkifli, S.Kom')
-        ->set('form.nip', '199506102020011002')
         ->set('form.email', 'zulkifli@acehtimurkab.go.id')
         ->set('form.phone_number', '081234567800')
-        ->set('form.opd_agency', 'Dinas Komunikasi dan Informatika')
-        ->set('form.position', 'Pranata Komputer Ahli Pertama')
-        ->set('form.rank_class', 'Penata Muda / III.a')
+        ->set('form.address', 'Jl. Banda Aceh - Medan No. 45, Idi Rayeuk')
         ->set('form.password', 'Password123!')
         ->set('form.password_confirmation', 'Password123!')
         ->call('register')

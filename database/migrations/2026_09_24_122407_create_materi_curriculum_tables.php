@@ -35,7 +35,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        // 3. Lesson User (Pencatatan Progres Pembelajaran Siswa ala Dicoding)
+        // 3. Lesson User
         Schema::create('lesson_user', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();

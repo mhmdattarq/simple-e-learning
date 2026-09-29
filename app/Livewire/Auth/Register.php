@@ -10,18 +10,15 @@ use Livewire\Component;
 class Register extends Component
 {
     /**
-     * State form registrasi peserta ASN.
+     * State form registrasi peserta.
      *
      * @var array<string, string>
      */
     public array $form = [
         'name' => '',
-        'nip' => '',
         'email' => '',
         'phone_number' => '',
-        'opd_agency' => '',
-        'position' => '',
-        'rank_class' => '',
+        'address' => '',
         'password' => '',
         'password_confirmation' => '',
     ];
@@ -33,12 +30,9 @@ class Register extends Component
     {
         return [
             'form.name' => 'required|string|max:255',
-            'form.nip' => 'required|numeric|digits:18|unique:users,nip',
             'form.email' => 'required|email|max:255|unique:users,email',
             'form.phone_number' => 'required|string|max:20',
-            'form.opd_agency' => 'required|string|max:255',
-            'form.position' => 'required|string|max:255',
-            'form.rank_class' => 'required|string|max:100',
+            'form.address' => 'required|string|max:1000',
             'form.password' => 'required|string|min:6|confirmed',
         ];
     }
@@ -50,17 +44,11 @@ class Register extends Component
     {
         return [
             'form.name.required' => 'Nama lengkap wajib diisi.',
-            'form.nip.required' => 'NIP wajib diisi.',
-            'form.nip.numeric' => 'NIP harus berupa angka.',
-            'form.nip.digits' => 'NIP harus tepat 18 digit.',
-            'form.nip.unique' => 'NIP ini sudah terdaftar dalam sistem.',
             'form.email.required' => 'Alamat email wajib diisi.',
             'form.email.email' => 'Format email tidak valid.',
             'form.email.unique' => 'Email ini sudah terdaftar dalam sistem.',
-            'form.phone_number.required' => 'Nomor telepon/WhatsApp wajib diisi.',
-            'form.opd_agency.required' => 'Instansi/OPD wajib diisi.',
-            'form.position.required' => 'Jabatan wajib diisi.',
-            'form.rank_class.required' => 'Pangkat / Golongan wajib dipilih.',
+            'form.phone_number.required' => 'Nomor HP / WhatsApp wajib diisi.',
+            'form.address.required' => 'Alamat domisili wajib diisi.',
             'form.password.required' => 'Kata sandi wajib diisi.',
             'form.password.min' => 'Kata sandi minimal 6 karakter.',
             'form.password.confirmed' => 'Konfirmasi kata sandi tidak cocok.',
@@ -77,7 +65,7 @@ class Register extends Component
         $user = AuthRepo::registerPeserta($this->form);
 
         if (! $user) {
-            $this->addError('form.nip', 'Terjadi kesalahan sistem saat mendaftarkan akun. Silakan coba kembali.');
+            $this->addError('form.email', 'Terjadi kesalahan sistem saat mendaftarkan akun. Silakan coba kembali.');
 
             return;
         }

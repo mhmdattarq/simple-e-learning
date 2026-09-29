@@ -24,14 +24,11 @@ class AuthRepo
             return DB::transaction(function () use ($data) {
                 $user = User::create([
                     'name' => trim($data['name']),
-                    'nip' => trim($data['nip']),
                     'email' => Str::lower(trim($data['email'])),
+                    'phone_number' => trim($data['phone_number']),
+                    'address' => trim($data['address']),
                     'password' => Hash::make($data['password']),
                     'role' => Role::Peserta,
-                    'phone_number' => $data['phone_number'] ?? null,
-                    'opd_agency' => $data['opd_agency'] ?? null,
-                    'position' => $data['position'] ?? null,
-                    'rank_class' => $data['rank_class'] ?? null,
                     'email_verified_at' => null,
                 ]);
 
@@ -47,12 +44,12 @@ class AuthRepo
                     auditable: $user,
                     oldValues: null,
                     newValues: [
-                        'nip' => $user->nip,
                         'email' => $user->email,
                         'name' => $user->name,
-                        'opd_agency' => $user->opd_agency,
+                        'phone_number' => $user->phone_number,
+                        'address' => $user->address,
                     ],
-                    notes: 'Pendaftaran mandiri akun peserta ASN (menunggu verifikasi email).'
+                    notes: 'Pendaftaran mandiri akun peserta (menunggu verifikasi email).'
                 );
 
                 return $user;
@@ -61,8 +58,8 @@ class AuthRepo
             Log::error('Pendaftaran akun peserta gagal', [
                 'data' => [
                     'name' => $data['name'] ?? null,
-                    'nip' => $data['nip'] ?? null,
                     'email' => $data['email'] ?? null,
+                    'phone_number' => $data['phone_number'] ?? null,
                 ],
                 'error' => $e->getMessage(),
             ]);

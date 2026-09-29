@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Enums\CourseStatus;
+use App\Models\AuditLog;
 use App\Models\Category;
 use App\Models\Course;
 use Illuminate\Database\Eloquent\Builder;
@@ -47,7 +48,16 @@ class KelasRepo
                 $data['slug'] = $slug;
             }
 
-            return Course::create($data);
+            $course = Course::create($data);
+
+            AuditLog::log(
+                action: 'course.created',
+                auditable: $course,
+                newValues: ['title' => $course->title, 'type' => $course->type, 'status' => $course->status],
+                notes: 'Admin membuat kelas baru: '.$course->title
+            );
+
+            return $course;
         } catch (\Exception $e) {
             Log::error('Insert data kelas gagal', [
                 'data' => $data,
@@ -65,6 +75,13 @@ class KelasRepo
     {
         try {
             $course = self::getById($id);
+
+            $oldValues = [
+                'title' => $course->title,
+                'type' => $course->type,
+                'status' => $course->status,
+                'category_id' => $course->category_id,
+            ];
 
             if (! empty($data['title']) && empty($data['slug'])) {
                 $slug = Str::slug($data['title']);
@@ -86,6 +103,19 @@ class KelasRepo
             }
 
             $course->update($data);
+
+            AuditLog::log(
+                action: 'course.updated',
+                auditable: $course,
+                oldValues: $oldValues,
+                newValues: [
+                    'title' => $course->title,
+                    'type' => $course->type,
+                    'status' => $course->status,
+                    'category_id' => $course->category_id,
+                ],
+                notes: 'Admin memperbarui kelas: '.$course->title
+            );
 
             return true;
         } catch (\Exception $e) {
@@ -122,6 +152,13 @@ class KelasRepo
                 return false;
             }
 
+            AuditLog::log(
+                action: 'course.deleted',
+                auditable: $course,
+                oldValues: ['title' => $course->title, 'type' => $course->type],
+                notes: 'Admin menghapus kelas: '.$course->title
+            );
+
             foreach ($course->chapters as $chapter) {
                 $chapter->lessons()->delete();
                 $chapter->delete();
@@ -152,6 +189,12 @@ class KelasRepo
             }
             $course->update(['status' => CourseStatus::Submitted]);
 
+            AuditLog::log(
+                action: 'course.submitted',
+                auditable: $course,
+                notes: 'Admin mengajukan kelas ke pimpinan: '.$course->title
+            );
+
             return true;
         } catch (\Exception $e) {
             Log::error('Ajukan kelas ke pimpinan gagal', [
@@ -171,6 +214,12 @@ class KelasRepo
         try {
             $course = self::getById($id);
             $course->update(['status' => CourseStatus::Archived]);
+
+            AuditLog::log(
+                action: 'course.archived',
+                auditable: $course,
+                notes: 'Admin mengarsipkan kelas: '.$course->title
+            );
 
             return true;
         } catch (\Exception $e) {

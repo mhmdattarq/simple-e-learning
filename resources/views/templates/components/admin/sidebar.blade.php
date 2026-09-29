@@ -14,7 +14,7 @@ new class extends Component {
         </button>
         <div class="brand-container">
             <a href="{{ route('admin.dashboard') }}" class="brand text-decoration-none">
-                <div class="seal">S</div>
+                <img src="{{ asset('mine/logo_aceh_timur.webp') }}" alt="Logo SIMPEL BKPSDM" style="width: 44px; height: 44px; object-fit: contain; flex-shrink: 0;">
                 <div>
                     <strong>SIMPEL</strong>
                     <small>BKPSDM Aceh Timur</small>
@@ -22,22 +22,77 @@ new class extends Component {
             </a>
         </div>
         <div class="sidebar-menu-area">
-            <ul class="sidebar-menu" id="sidebar-menu"
-                x-data="{
-                    activeDropdown: '{{ request()->routeIs('kategori.*') ? 'kategori' : (request()->routeIs(['kelas.*', 'materi.*']) ? 'kelas' : (request()->routeIs('evaluasi.*') ? 'evaluasi' : '')) }}',
-                    toggle(name) {
-                        this.activeDropdown = (this.activeDropdown === name) ? '' : name;
-                    },
-                    init() {
-                        document.addEventListener('livewire:navigated', () => {
-                            const path = window.location.pathname;
-                            if (path.includes('/kategori')) this.activeDropdown = 'kategori';
-                            else if (path.includes('/kelas') || path.includes('/materi')) this.activeDropdown = 'kelas';
-                            else if (path.includes('/evaluasi')) this.activeDropdown = 'evaluasi';
-                            else this.activeDropdown = '';
-                        });
+            <ul class="sidebar-menu" id="sidebar-menu" x-data="{
+                activeDropdown: '{{ request()->routeIs('kategori.*') ? 'kategori' : (request()->routeIs(['kelas.*', 'materi.*']) ? 'kelas' : (request()->routeIs('evaluasi.*') ? 'evaluasi' : '')) }}',
+                currentModule: '{{ request()->routeIs('kategori.*') ? 'kategori' : (request()->routeIs(['kelas.*', 'materi.*']) ? 'kelas' : (request()->routeIs('evaluasi.*') ? 'evaluasi' : '')) }}',
+                toggle(name) {
+                    this.activeDropdown = (this.activeDropdown === name) ? '' : name;
+                },
+                init() {
+                    this.syncActive();
+                    document.addEventListener('livewire:navigated', () => {
+                        this.syncActive();
+                    });
+                },
+                syncActive() {
+                    const path = window.location.pathname;
+                    if (path.includes('/kategori')) {
+                        this.activeDropdown = 'kategori';
+                        this.currentModule = 'kategori';
+                    } else if (path.includes('/kelas') || path.includes('/materi')) {
+                        this.activeDropdown = 'kelas';
+                        this.currentModule = 'kelas';
+                    } else if (path.includes('/evaluasi')) {
+                        this.activeDropdown = 'evaluasi';
+                        this.currentModule = 'evaluasi';
+                    } else {
+                        this.activeDropdown = '';
+                        this.currentModule = '';
                     }
-                }">
+            
+                    // Sync active-page class on submenu items when wire:navigate runs
+                    const submenuLinks = document.querySelectorAll('.sidebar-menu .sidebar-submenu li a');
+                    submenuLinks.forEach(link => {
+                        const li = link.closest('li');
+                        const href = link.getAttribute('href');
+                        if (!href || !li) return;
+            
+                        let isCurrent = false;
+                        try {
+                            const linkUrl = new URL(href, window.location.origin);
+                            const linkPath = linkUrl.pathname;
+            
+                            if (linkPath === path) {
+                                isCurrent = true;
+                            } else if (linkPath.includes('/evaluasi/data') && path.includes('/evaluasi/detail')) {
+                                isCurrent = true;
+                            } else if (linkPath.includes('/kelas/data') && (path.includes('/materi') || path.includes('/kelas/edit'))) {
+                                isCurrent = true;
+                            } else if (linkPath.includes('/kategori/data') && path.includes('/kategori/edit')) {
+                                isCurrent = true;
+                            }
+                        } catch (e) {}
+            
+                        if (isCurrent) {
+                            li.classList.add('active-page');
+                            link.classList.add('active-page');
+                        } else {
+                            li.classList.remove('active-page');
+                            link.classList.remove('active-page');
+                        }
+                    });
+            
+                    // Sync top-level nav-item (e.g. Beranda)
+                    const berandaLink = document.querySelector('.sidebar-menu > li.nav-item > a');
+                    if (berandaLink) {
+                        if (path === '/' || path.includes('/admin/dashboard') || path === '/dashboard') {
+                            berandaLink.classList.add('active-page');
+                        } else {
+                            berandaLink.classList.remove('active-page');
+                        }
+                    }
+                }
+            }">
                 <li class="sidebar-menu-group-title">MENU UTAMA</li>
 
                 {{-- Beranda --}}
@@ -53,7 +108,7 @@ new class extends Component {
                 <li class="dropdown {{ request()->routeIs('kategori.*') ? 'open is-active-module' : '' }}"
                     :class="{
                         'open': activeDropdown === 'kategori',
-                        'is-active-module': {{ request()->routeIs('kategori.*') ? 'true' : 'false' }}
+                        'is-active-module': currentModule === 'kategori'
                     }">
                     <a href="javascript:void(0)" @click.prevent.stop="toggle('kategori')" title="Kategori Kelas">
                         <i class="ri-folder-3-line menu-icon"></i>
@@ -65,7 +120,8 @@ new class extends Component {
                                 <i class="ri-circle-fill circle-icon"></i> <span>Tambah Kategori</span>
                             </a>
                         </li>
-                        <li class="{{ request()->routeIs('kategori.data') ? 'active-page' : '' }}">
+                        <li
+                            class="{{ request()->routeIs('kategori.data') || request()->routeIs('kategori.edit') ? 'active-page' : '' }}">
                             <a href="{{ route('kategori.data') }}" wire:navigate>
                                 <i class="ri-circle-fill circle-icon"></i> <span>Data Kategori</span>
                             </a>
@@ -77,7 +133,7 @@ new class extends Component {
                 <li class="dropdown {{ request()->routeIs(['kelas.*', 'materi.*']) ? 'open is-active-module' : '' }}"
                     :class="{
                         'open': activeDropdown === 'kelas',
-                        'is-active-module': {{ request()->routeIs(['kelas.*', 'materi.*']) ? 'true' : 'false' }}
+                        'is-active-module': currentModule === 'kelas'
                     }">
                     <a href="javascript:void(0)" @click.prevent.stop="toggle('kelas')" title="Kelas">
                         <i class="ri-file-list-3-line menu-icon"></i>
@@ -89,7 +145,8 @@ new class extends Component {
                                 <i class="ri-circle-fill circle-icon"></i> <span>Tambah Kelas</span>
                             </a>
                         </li>
-                        <li class="{{ (request()->routeIs('kelas.data') || request()->routeIs('materi.*')) ? 'active-page' : '' }}">
+                        <li
+                            class="{{ request()->routeIs('kelas.data') || request()->routeIs('materi.*') || request()->routeIs('kelas.edit') ? 'active-page' : '' }}">
                             <a href="{{ route('kelas.data') }}" wire:navigate>
                                 <i class="ri-circle-fill circle-icon"></i> <span>Data Kelas</span>
                             </a>
@@ -101,20 +158,21 @@ new class extends Component {
                 <li class="dropdown {{ request()->routeIs('evaluasi.*') ? 'open is-active-module' : '' }}"
                     :class="{
                         'open': activeDropdown === 'evaluasi',
-                        'is-active-module': {{ request()->routeIs('evaluasi.*') ? 'true' : 'false' }}
+                        'is-active-module': currentModule === 'evaluasi'
                     }">
                     <a href="javascript:void(0)" @click.prevent.stop="toggle('evaluasi')" title="Evaluasi & Kuis">
                         <i class="ri-star-smile-line menu-icon"></i>
                         <span>Evaluasi &amp; Kuis</span>
                     </a>
                     <ul class="sidebar-submenu">
-                        <li>
-                            <a href="javascript:void(0)">
+                        <li class="{{ request()->routeIs('evaluasi.create') ? 'active-page' : '' }}">
+                            <a href="{{ route('evaluasi.create') }}" wire:navigate>
                                 <i class="ri-circle-fill circle-icon"></i> <span>Tambah Evaluasi &amp; Kuis</span>
                             </a>
                         </li>
-                        <li>
-                            <a href="javascript:void(0)">
+                        <li
+                            class="{{ request()->routeIs('evaluasi.data') || request()->routeIs('evaluasi.detail*') ? 'active-page' : '' }}">
+                            <a href="{{ route('evaluasi.data') }}" wire:navigate>
                                 <i class="ri-circle-fill circle-icon"></i> <span>Data Evaluasi &amp; Kuis</span>
                             </a>
                         </li>
@@ -136,7 +194,7 @@ new class extends Component {
            ========================================================= */
 
         /* Top-level menu items */
-        .sidebar-menu > li > a {
+        .sidebar-menu>li>a {
             color: #cfdaea !important;
             border-radius: 10px !important;
             margin: 1px 4px !important;
@@ -154,7 +212,7 @@ new class extends Component {
             cursor: pointer !important;
         }
 
-        .sidebar-menu > li > a .menu-icon {
+        .sidebar-menu>li>a .menu-icon {
             font-size: 18px !important;
             flex-shrink: 0 !important;
             color: #8da2c0 !important;
@@ -164,61 +222,61 @@ new class extends Component {
         }
 
         /* Active Page (e.g. Beranda) */
-        .sidebar-menu > li > a.active-page,
-        .sidebar-menu > li.active-page > a {
+        .sidebar-menu>li>a.active-page,
+        .sidebar-menu>li.active-page>a {
             background: #f3bc42 !important;
             color: #071a33 !important;
             font-weight: 700 !important;
         }
 
-        .sidebar-menu > li > a.active-page .menu-icon,
-        .sidebar-menu > li.active-page > a .menu-icon {
+        .sidebar-menu>li>a.active-page .menu-icon,
+        .sidebar-menu>li.active-page>a .menu-icon {
             color: #071a33 !important;
         }
 
         /* Active Module Parent (Solid Simple-Gold when on that module's page) */
-        .sidebar-menu > li.dropdown.is-active-module > a {
+        .sidebar-menu>li.dropdown.is-active-module>a {
             background-color: #f3bc42 !important;
             background: #f3bc42 !important;
             color: #071a33 !important;
             font-weight: 700 !important;
         }
 
-        .sidebar-menu > li.dropdown.is-active-module > a .menu-icon,
-        .sidebar-menu > li.dropdown.is-active-module > a::after {
+        .sidebar-menu>li.dropdown.is-active-module>a .menu-icon,
+        .sidebar-menu>li.dropdown.is-active-module>a::after {
             color: #071a33 !important;
         }
 
         /* Dropdown Parent when merely Open (Browsing, not active module page) */
-        .sidebar-menu > li.dropdown.open:not(.is-active-module) > a {
+        .sidebar-menu>li.dropdown.open:not(.is-active-module)>a {
             background: rgba(243, 188, 66, 0.14) !important;
             color: #f3bc42 !important;
             font-weight: 600 !important;
         }
 
-        .sidebar-menu > li.dropdown.open:not(.is-active-module) > a .menu-icon,
-        .sidebar-menu > li.dropdown.open:not(.is-active-module) > a::after {
+        .sidebar-menu>li.dropdown.open:not(.is-active-module)>a .menu-icon,
+        .sidebar-menu>li.dropdown.open:not(.is-active-module)>a::after {
             color: #f3bc42 !important;
         }
 
         /* Arrow indicator rotation when open */
-        .sidebar-menu > li.dropdown.open > a::after {
+        .sidebar-menu>li.dropdown.open>a::after {
             transform: translateY(-50%) rotate(90deg) !important;
         }
 
-        .sidebar-menu > li.dropdown > a::after {
+        .sidebar-menu>li.dropdown>a::after {
             color: #8da2c0 !important;
             transition: transform 0.2s ease, color 0.2s ease !important;
         }
 
         /* Top-level hover */
-        .sidebar-menu > li > a:hover {
+        .sidebar-menu>li>a:hover {
             background: rgba(243, 188, 66, 0.12) !important;
             color: #f3bc42 !important;
         }
 
-        .sidebar-menu > li > a:hover .menu-icon,
-        .sidebar-menu > li > a:hover::after {
+        .sidebar-menu>li>a:hover .menu-icon,
+        .sidebar-menu>li>a:hover::after {
             color: #f3bc42 !important;
         }
 
@@ -240,7 +298,7 @@ new class extends Component {
             transition: max-height 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease, margin 0.2s ease, padding 0.2s ease, visibility 0.25s !important;
         }
 
-        .sidebar-menu li.dropdown.open > .sidebar-submenu {
+        .sidebar-menu li.dropdown.open>.sidebar-submenu {
             max-height: 250px !important;
             opacity: 1 !important;
             visibility: visible !important;
@@ -280,9 +338,9 @@ new class extends Component {
         }
 
         /* Submenu Active Link (Subtle pill, no giant button) */
-        .sidebar-menu .sidebar-submenu li.active-page > a,
-        .sidebar-menu .sidebar-submenu li > a.active,
-        .sidebar-menu .sidebar-submenu li > a.active-page {
+        .sidebar-menu .sidebar-submenu li.active-page>a,
+        .sidebar-menu .sidebar-submenu li>a.active,
+        .sidebar-menu .sidebar-submenu li>a.active-page {
             color: #f3bc42 !important;
             background: rgba(243, 188, 66, 0.16) !important;
             font-weight: 600 !important;
@@ -308,14 +366,13 @@ new class extends Component {
 
         .sidebar-menu .sidebar-submenu li a:hover i.circle-icon,
         .sidebar-menu .sidebar-submenu li a:hover .circle-icon,
-        .sidebar-menu .sidebar-submenu li.active-page > a i.circle-icon,
-        .sidebar-menu .sidebar-submenu li.active-page > a .circle-icon,
-        .sidebar-menu .sidebar-submenu li > a.active i.circle-icon,
-        .sidebar-menu .sidebar-submenu li > a.active .circle-icon,
-        .sidebar-menu .sidebar-submenu li > a.active-page i.circle-icon,
-        .sidebar-menu .sidebar-submenu li > a.active-page .circle-icon {
+        .sidebar-menu .sidebar-submenu li.active-page>a i.circle-icon,
+        .sidebar-menu .sidebar-submenu li.active-page>a .circle-icon,
+        .sidebar-menu .sidebar-submenu li>a.active i.circle-icon,
+        .sidebar-menu .sidebar-submenu li>a.active .circle-icon,
+        .sidebar-menu .sidebar-submenu li>a.active-page i.circle-icon,
+        .sidebar-menu .sidebar-submenu li>a.active-page .circle-icon {
             color: #f3bc42 !important;
         }
     </style>
 </div>
-

@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Course extends Model
@@ -77,6 +78,30 @@ class Course extends Model
     public function lessons(): HasManyThrough
     {
         return $this->hasManyThrough(Lesson::class, Chapter::class);
+    }
+
+    /**
+     * All quizzes in this course.
+     */
+    public function quizzes(): HasMany
+    {
+        return $this->hasMany(Quiz::class, 'course_id');
+    }
+
+    /**
+     * Chapter quizzes in this course.
+     */
+    public function chapterQuizzes(): HasMany
+    {
+        return $this->hasMany(Quiz::class, 'course_id')->where('type', 'chapter');
+    }
+
+    /**
+     * Final quiz in this course.
+     */
+    public function finalQuiz(): HasOne
+    {
+        return $this->hasOne(Quiz::class, 'course_id')->where('type', 'final');
     }
 
     /**

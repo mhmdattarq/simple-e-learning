@@ -1,10 +1,14 @@
 <?php
 
 use App\Http\Controllers\Auth\GoogleAuthController;
+use App\Http\Controllers\EvaluasiController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\KelasController;
 use App\Http\Controllers\MateriController;
 use App\Livewire\Admin\Dashboard\DashboardIndex;
+use App\Livewire\Admin\Evaluasi\EvaluasiCreate;
+use App\Livewire\Admin\Evaluasi\EvaluasiData;
+use App\Livewire\Admin\Evaluasi\EvaluasiDetail;
 use App\Livewire\Admin\Kategori\KategoriCreate;
 use App\Livewire\Admin\Kategori\KategoriData;
 use App\Livewire\Admin\Kategori\KategoriEdit;
@@ -12,13 +16,17 @@ use App\Livewire\Admin\Kelas\KelasCreate;
 use App\Livewire\Admin\Kelas\KelasData;
 use App\Livewire\Admin\Kelas\KelasEdit;
 use App\Livewire\Admin\Materi\MateriDetail;
+use App\Livewire\Admin\Notifikasi\NotifikasiIndex;
+use App\Livewire\Admin\Profile\AdminProfileIndex;
 use App\Livewire\Auth\Login;
 use App\Livewire\Auth\Register;
 use App\Livewire\Auth\VerifyEmail;
 use App\Livewire\Landing\JadwalIndex;
 use App\Livewire\Landing\KelasDetail;
 use App\Livewire\Landing\KelasIndex;
+use App\Livewire\Landing\KontakIndex;
 use App\Livewire\Landing\LandingIndex;
+use App\Livewire\Peserta\Evaluasi\QuizKerjakan;
 use App\Livewire\Peserta\Materi\MateriBelajar;
 use App\Livewire\Peserta\Profile\ProfileIndex;
 use Illuminate\Support\Facades\Auth;
@@ -30,10 +38,13 @@ Route::livewire('/kelas-batch', KelasIndex::class)->name('landing.kelas.batch');
 Route::livewire('/kelas-permanen', KelasIndex::class)->name('landing.kelas.permanen');
 Route::livewire('/kelas-berbayar', KelasIndex::class)->name('landing.kelas.berbayar');
 Route::livewire('/jadwal', JadwalIndex::class)->name('jadwal');
+Route::livewire('/kontak', KontakIndex::class)->name('kontak');
+Route::redirect('/contact', '/kontak');
 Route::livewire('/kelas', KelasIndex::class)->name('pelatihan.index');
 Route::livewire('/kelas/{id}', KelasDetail::class)->whereNumber('id')->name('landing.kelas.detail');
 Route::redirect('/pelatihan', '/kelas');
 Route::get('/pelatihan/{id}', fn ($id) => redirect()->route('landing.kelas.detail', $id));
+Route::get('/favicon.ico', fn () => response()->file(public_path('favicon.ico')));
 
 // 2. Authentication (Guest)
 Route::middleware('guest')->group(function () {
@@ -49,6 +60,8 @@ Route::middleware('auth')->group(function () {
     Route::livewire('/profil', ProfileIndex::class)->name('peserta.profil');
     Route::livewire('/kelas/{id}/materi', MateriBelajar::class)->name('peserta.materi');
     Route::get('/pelatihan/{id}/materi', fn ($id) => redirect()->route('peserta.materi', $id));
+    Route::livewire('/kelas/{course_id}/evaluasi/{quiz_id}', QuizKerjakan::class)->name('peserta.evaluasi.kerjakan');
+    Route::livewire('/evaluasi/kerjakan/{quiz_id}', QuizKerjakan::class)->name('peserta.evaluasi.show');
 });
 
 // 4. Logout (Authenticated)
@@ -63,6 +76,8 @@ Route::post('/logout', function () {
 // 5. Admin Panel (Super Admin)
 Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::livewire('/admin/dashboard', DashboardIndex::class)->name('admin.dashboard');
+    Route::livewire('/admin/notifikasi', NotifikasiIndex::class)->name('admin.notifikasi');
+    Route::livewire('/admin/profil', AdminProfileIndex::class)->name('admin.profil');
 
     // Modul: Kategori Kelas (Tahap 2)
     Route::prefix('kategori')->name('kategori.')->group(function () {
@@ -96,5 +111,14 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
             return redirect()->route('materi.detail', $params);
         })->name('editor');
+    });
+
+    // Modul: Evaluasi & Kuis (Tahap Evaluasi)
+    Route::prefix('evaluasi')->name('evaluasi.')->group(function () {
+        Route::get('/datatable', [EvaluasiController::class, 'dataDt'])->name('dt');
+        Route::get('/detail/{course_id}/datatable', [EvaluasiController::class, 'attemptsDt'])->name('detail.dt');
+        Route::livewire('/data', EvaluasiData::class)->name('data');
+        Route::livewire('/create', EvaluasiCreate::class)->name('create');
+        Route::livewire('/detail/{course_id}', EvaluasiDetail::class)->name('detail');
     });
 });

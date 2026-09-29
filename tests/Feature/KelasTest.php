@@ -256,7 +256,6 @@ test('header user profile dropdown and logout form render on beranda, data, crea
         $response = $this->actingAs($admin)->get($url);
         $response->assertOk();
         $response->assertSee('Profil Saya');
-        $response->assertSee('Pengaturan Akun');
         $response->assertSee('Keluar');
         $response->assertSee(route('logout'));
     }

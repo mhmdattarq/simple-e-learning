@@ -5,15 +5,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{{ $title ?? config('app.name') }}</title>
-    <!-- favicons Icons -->
-    {{-- <link rel="apple-touch-icon" sizes="180x180"
-        href="{{ asset('landing/assets/images/favicons/apple-touch-icon.png') }}" />
-    <link rel="icon" type="image/png" sizes="32x32"
-        href="{{ asset('landing/assets/images/favicons/favicon-32x32.png') }}" />
-    <link rel="icon" type="image/png" sizes="16x16"
-        href="{{ asset('landing/assets/images/favicons/favicon-16x16.png') }}" />
-    <link rel="manifest" href="{{ asset('landing/assets/images/favicons/site.webmanifest') }}" />
-    <meta name="description" content="fistudy HTML 5 Template " /> --}}
+    <!-- Favicon Icons -->
+    <link rel="icon" type="image/webp" href="{{ asset('mine/logo_aceh_timur.webp') }}" />
+    <link rel="shortcut icon" href="{{ asset('favicon.ico') }}" />
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('apple-touch-icon.png') }}" />
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon-32x32.png') }}" />
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('favicon-16x16.png') }}" />
 
     <!-- fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -281,7 +278,7 @@
 
             <div class="logo-box">
                 <a href="{{ route('landing') }}" class="brand text-decoration-none">
-                    <div class="seal">S</div>
+                    <img src="{{ asset('mine/logo_aceh_timur.webp') }}" alt="Logo SIMPEL BKPSDM" style="width: 44px; height: 44px; object-fit: contain; flex-shrink: 0;">
                     <div>
                         <strong class="text-white">SIMPEL</strong>
                         <small class="text-white-50">BKPSDM Aceh Timur</small>
@@ -337,37 +334,31 @@
     </a>
 
 
-    <script src="{{ asset('landing/assets/js/jquery-3.6.0.min.js') }}"></script>
-    <script src="{{ asset('landing/assets/js/bootstrap.bundle.min.js') }}"></script>
-    <script src="{{ asset('landing/assets/js/jarallax.min.js') }}"></script>
-    <script src="{{ asset('landing/assets/js/jquery.ajaxchimp.min.js') }}"></script>
-    <script src="{{ asset('landing/assets/js/jquery.appear.min.js') }}"></script>
-    <script src="{{ asset('landing/assets/js/swiper.min.js') }}"></script>
-    <script src="{{ asset('landing/assets/js/jquery.magnific-popup.min.js') }}"></script>
-    <script src="{{ asset('landing/assets/js/jquery.validate.min.js') }}"></script>
-    <script src="{{ asset('landing/assets/js/odometer.min.js') }}"></script>
-    <script src="{{ asset('landing/assets/js/wNumb.min.js') }}"></script>
-    <script src="{{ asset('landing/assets/js/wow.js') }}"></script>
-    <script src="{{ asset('landing/assets/js/isotope.js') }}"></script>
-    <script src="{{ asset('landing/assets/js/owl.carousel.min.js') }}"></script>
-    <script src="{{ asset('landing/assets/js/jquery-ui.js') }}"></script>
-    <script src="{{ asset('landing/assets/js/jquery.nice-select.min.js') }}"></script>
-    <script src="{{ asset('landing/assets/js/marquee.min.js') }}"></script>
-    <script src="{{ asset('landing/assets/js/aos.js') }}"></script>
+    <script data-navigate-once src="{{ asset('landing/assets/js/jquery-3.6.0.min.js') }}"></script>
+    <script data-navigate-once src="{{ asset('landing/assets/js/bootstrap.bundle.min.js') }}"></script>
+    <script data-navigate-once src="{{ asset('landing/assets/js/jarallax.min.js') }}"></script>
+    <script data-navigate-once src="{{ asset('landing/assets/js/jquery.ajaxchimp.min.js') }}"></script>
+    <script data-navigate-once src="{{ asset('landing/assets/js/jquery.appear.min.js') }}"></script>
+    <script data-navigate-once src="{{ asset('landing/assets/js/swiper.min.js') }}"></script>
+    <script data-navigate-once src="{{ asset('landing/assets/js/jquery.magnific-popup.min.js') }}"></script>
+    <script data-navigate-once src="{{ asset('landing/assets/js/jquery.validate.min.js') }}"></script>
+    <script data-navigate-once src="{{ asset('landing/assets/js/odometer.min.js') }}"></script>
+    <script data-navigate-once src="{{ asset('landing/assets/js/wNumb.min.js') }}"></script>
+    <script data-navigate-once src="{{ asset('landing/assets/js/wow.js') }}"></script>
+    <script data-navigate-once src="{{ asset('landing/assets/js/isotope.js') }}"></script>
+    <script data-navigate-once src="{{ asset('landing/assets/js/owl.carousel.min.js') }}"></script>
+    <script data-navigate-once src="{{ asset('landing/assets/js/jquery-ui.js') }}"></script>
+    <script data-navigate-once src="{{ asset('landing/assets/js/jquery.nice-select.min.js') }}"></script>
+    <script data-navigate-once src="{{ asset('landing/assets/js/marquee.min.js') }}"></script>
+    <script data-navigate-once src="{{ asset('landing/assets/js/aos.js') }}"></script>
 
-
-
-
-    <script src="{{ asset('landing/assets/js/gsap/gsap.js') }}"></script>
-    <script src="{{ asset('landing/assets/js/gsap/ScrollTrigger.js') }}"></script>
-    <script src="{{ asset('landing/assets/js/gsap/SplitText.js') }}"></script>
-
-
-
+    <script data-navigate-once src="{{ asset('landing/assets/js/gsap/gsap.js') }}"></script>
+    <script data-navigate-once src="{{ asset('landing/assets/js/gsap/ScrollTrigger.js') }}"></script>
+    <script data-navigate-once src="{{ asset('landing/assets/js/gsap/SplitText.js') }}"></script>
 
     <!-- template js -->
-    <script src="{{ asset('landing/assets/js/script.js') }}"></script>
-    <script src="{{ asset('mine/script.js') }}"></script>
+    <script data-navigate-once src="{{ asset('landing/assets/js/script.js') }}"></script>
+    <script data-navigate-once src="{{ asset('mine/script.js') }}"></script>
     @livewireScripts
 </body>
 

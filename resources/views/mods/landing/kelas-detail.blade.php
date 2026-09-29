@@ -15,7 +15,7 @@
                             {{ Str::limit($course->title, 40) }}</li>
                     </ol>
                 </nav>
-                <a href="{{ $backUrl }}" class="btn-simpel-outline-light fs-8 py-2 px-3">
+                <a href="{{ $backUrl }}" class="btn-simpel-outline-light">
                     <i class="ri-arrow-left-line me-1"></i>
                     <span>Kembali ke Katalog</span>
                 </a>
@@ -72,7 +72,9 @@
                                 @if ($course->isPermanent())
                                     Akses Kapan Saja (24/7)
                                 @elseif ($course->start_date && $course->end_date)
-                                    {{ $course->start_date->format('H:i') !== '00:00' ? $course->start_date->format('d M Y, H:i') : $course->start_date->format('d M') }} - {{ $course->end_date->format('H:i') !== '00:00' ? $course->end_date->format('d M Y, H:i \W\I\B') : $course->end_date->format('d M Y') }}
+                                    {{ $course->start_date->format('H:i') !== '00:00' ? $course->start_date->format('d M Y, H:i') : $course->start_date->format('d M') }}
+                                    -
+                                    {{ $course->end_date->format('H:i') !== '00:00' ? $course->end_date->format('d M Y, H:i \W\I\B') : $course->end_date->format('d M Y') }}
                                 @else
                                     Sesuai Jadwal Diklat
                                 @endif
@@ -272,7 +274,8 @@
                                             @if ($course->isPermanent())
                                                 Mandiri 24/7
                                             @elseif ($course->start_date && $course->end_date)
-                                                {{ $course->start_date->format('H:i') !== '00:00' ? $course->start_date->format('d M Y, H:i') : $course->start_date->format('d M') }} -
+                                                {{ $course->start_date->format('H:i') !== '00:00' ? $course->start_date->format('d M Y, H:i') : $course->start_date->format('d M') }}
+                                                -
                                                 {{ $course->end_date->format('H:i') !== '00:00' ? $course->end_date->format('d M Y, H:i \W\I\B') : $course->end_date->format('d M Y') }}
                                             @else
                                                 Terjadwal

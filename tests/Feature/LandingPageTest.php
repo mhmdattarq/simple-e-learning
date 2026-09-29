@@ -26,7 +26,7 @@ test('landing page can be accessed successfully and displays core sections', fun
     $response->assertSee('Kelas Berbayar');
     $response->assertSee('SIMPEL');
     $response->assertSee('BKPSDM Aceh Timur');
-    $response->assertSee('Menu Utama');
+    $response->assertSee('Beranda');
     $response->assertDontSee('E-Sertifikat Digital & Integrasi SIASN BKN');
     $response->assertDontSee('(0646) 7000-111');
 });
@@ -61,7 +61,7 @@ test('guest sees masuk and daftar buttons on landing navbar', function () {
 test('authenticated peserta sees user profile dropdown and does not see masuk and daftar buttons', function () {
     $peserta = User::factory()->peserta()->create([
         'name' => 'Cut Nyak Dien',
-        'nip' => '199501012020012001',
+        'phone_number' => '081234567890',
     ]);
 
     $response = $this->actingAs($peserta)->get('/');
@@ -69,7 +69,7 @@ test('authenticated peserta sees user profile dropdown and does not see masuk an
     $response->assertStatus(200);
     $response->assertSee('Cut Nyak Dien');
     $response->assertSee('Peserta');
-    $response->assertSee('199501012020012001');
+    $response->assertSee('081234567890');
     $response->assertSee('Profil Saya');
     $response->assertSee('Keluar');
     $response->assertDontSee('class="thm-btn">Masuk</a>', false);
@@ -79,7 +79,7 @@ test('authenticated peserta sees user profile dropdown and does not see masuk an
         ->test('landing.navbar')
         ->assertSee('Cut Nyak Dien')
         ->assertSee('Peserta')
-        ->assertSee('199501012020012001')
+        ->assertSee('081234567890')
         ->assertSee('Keluar')
         ->assertDontSee('class="thm-btn">Masuk</a>', false);
 });

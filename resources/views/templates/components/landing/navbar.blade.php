@@ -67,7 +67,7 @@ new class extends Component {
         }
 
         // 5. Kontak
-        if (request()->is('kontak*')) {
+        if (request()->routeIs('kontak') || request()->is('kontak*') || request()->is('contact*')) {
             return 'kontak';
         }
 
@@ -89,7 +89,7 @@ new class extends Component {
                         <div class="main-menu__left">
                             <div class="main-menu__logo">
                                 <a href="{{ route('landing') }}" class="brand text-decoration-none">
-                                    <div class="seal">S</div>
+                                    <img src="{{ asset('mine/logo_aceh_timur.webp') }}" alt="Logo SIMPEL BKPSDM" style="width: 44px; height: 44px; object-fit: contain; flex-shrink: 0;">
                                     <div>
                                         <strong>SIMPEL</strong>
                                         <small>BKPSDM Aceh Timur</small>
@@ -114,12 +114,13 @@ new class extends Component {
                                     <a href="{{ route('landing.kelas.berbayar') }}">Kelas Berbayar</a>
                                 </li>
                                 <li class="{{ $activeMenu === 'kontak' ? 'current' : '' }}">
-                                    <a href="javascript:void(0)" title="Segera Hadir">Kontak</a>
+                                    <a href="{{ route('kontak') }}">Kontak</a>
                                 </li>
                             </ul>
                         </div>
                         <div class="main-menu__right">
-                            <div class="main-menu__search-cart-box">
+                            {{-- Search Box (Disembunyikan sementara) --}}
+                            <div class="main-menu__search-cart-box d-none" style="display: none !important;">
                                 <div class="main-menu__search-box">
                                     <a href="#" class="main-menu__search searcher-toggler-box icon-search"></a>
                                 </div>
@@ -134,10 +135,13 @@ new class extends Component {
                                     </div>
                                 </div>
                             @else
-                                <div class="dropdown">
+                                <div class="dropdown position-relative" x-data="{ open: false }" @click.outside="open = false">
                                     <button
                                         class="d-flex align-items-center gap-2 border-0 bg-transparent p-0 text-decoration-none"
-                                        type="button" data-bs-toggle="dropdown" aria-expanded="false"
+                                        type="button"
+                                        @click="open = !open"
+                                        :aria-expanded="open.toString()"
+                                        data-bs-toggle="dropdown" aria-expanded="false"
                                         style="cursor: pointer;">
                                         @if (auth()->user()?->avatar_url)
                                             <img src="{{ auth()->user()->avatar_url }}" alt="{{ auth()->user()->name }}" class="rounded-circle shadow-sm"
@@ -154,31 +158,34 @@ new class extends Component {
                                             <small class="text-secondary d-flex align-items-center gap-1"
                                                 style="font-size: 11px;">
                                                 {{ auth()->user()?->role?->label() ?? 'Peserta' }}
-                                                @if (! auth()->user()?->isAsnProfileComplete())
+                                                @if (! auth()->user()?->isProfileComplete())
                                                     <span class="badge rounded-pill bg-warning text-dark p-0 px-1" style="font-size: 9px;">!</span>
                                                 @endif
                                             </small>
                                         </div>
                                         <i class="ri-arrow-down-s-line text-secondary d-none d-lg-block"
+                                            :style="open ? 'transform: rotate(180deg); transition: transform 0.2s;' : 'transition: transform 0.2s;'"
                                             style="font-size: 18px;"></i>
                                     </button>
                                     <div class="dropdown-menu dropdown-menu-end shadow border-0 p-0"
-                                        style="min-width: 260px; border-radius: 12px; overflow: hidden; margin-top: 10px; z-index: 1050;">
+                                        x-show="open" x-cloak
+                                        :class="{ 'show': open }"
+                                        style="min-width: 260px; border-radius: 12px; overflow: hidden; margin-top: 10px; z-index: 1050; position: absolute; right: 0; left: auto !important; top: 100%;">
                                         <div class="py-3 px-3" style="background: #071a33; color: #fff;">
                                             <h6 class="text-white fw-semibold mb-1"
                                                 style="font-size: 14px; line-height: 1.3;">{{ auth()->user()->name }}</h6>
                                             <div class="d-flex align-items-center gap-1 flex-wrap">
                                                 <span class="badge"
                                                     style="background: #f3bc42; color: #071a33; font-weight: 700; font-size: 11px;">{{ auth()->user()?->role?->label() ?? 'Peserta' }}</span>
-                                                @if (auth()->user()->nip)
+                                                @if (auth()->user()->phone_number)
                                                     <small class="text-white-50 font-monospace" style="font-size: 11px;">·
-                                                        {{ auth()->user()->nip }}</small>
+                                                        {{ auth()->user()->phone_number }}</small>
                                                 @endif
                                             </div>
-                                            @if (! auth()->user()?->isAsnProfileComplete())
+                                            @if (! auth()->user()?->isProfileComplete())
                                                 <div class="mt-2 pt-2 border-top border-white border-opacity-10">
                                                     <a href="{{ route('peserta.profil') }}" class="badge bg-warning text-dark text-decoration-none d-inline-flex align-items-center gap-1 w-100 py-1_5 justify-content-center" style="font-size: 10.5px;">
-                                                        <i class="ri-alert-fill"></i> Lengkapi Data ASN Anda
+                                                        <i class="ri-alert-fill"></i> Lengkapi Profil Anda
                                                     </a>
                                                 </div>
                                             @endif
@@ -199,16 +206,9 @@ new class extends Component {
                                                     href="{{ route('peserta.profil') }}" style="font-size: 13.5px;">
                                                     <i class="ri-user-line text-primary" style="font-size: 16px;"></i>
                                                     Profil Saya
-                                                    @if (! auth()->user()?->isAsnProfileComplete())
+                                                    @if (! auth()->user()?->isProfileComplete())
                                                         <span class="badge bg-warning text-dark ms-auto" style="font-size: 10px;">Lengkapi</span>
                                                     @endif
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a class="dropdown-item px-3 py-2 text-dark d-flex align-items-center gap-2 rounded"
-                                                    href="javascript:void(0)" style="font-size: 13.5px;">
-                                                    <i class="ri-settings-3-line text-muted" style="font-size: 16px;"></i>
-                                                    Pengaturan Akun
                                                 </a>
                                             </li>
                                             <li>
