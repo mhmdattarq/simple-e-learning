@@ -293,3 +293,28 @@ test('tombol aksi kelas mengarahkan pengguna login langsung ke ruang materi', fu
         ->assertSee(route('landing.kelas.detail', $paidCourse->id))
         ->assertSee('Lihat Detail');
 });
+
+test('new category without courses appears in category filter dropdown on landing pages', function () {
+    $newCategory = Category::factory()->create([
+        'name' => 'Kategori Baru Tanpa Kelas',
+        'slug' => 'kategori-baru-tanpa-kelas',
+    ]);
+
+    Livewire::test(KelasIndex::class, ['type' => 'batch'])
+        ->assertViewHas('categories', function ($categories) use ($newCategory) {
+            return $categories->contains('id', $newCategory->id);
+        })
+        ->assertSee('Kategori Baru Tanpa Kelas');
+
+    Livewire::test(KelasIndex::class, ['type' => 'permanent'])
+        ->assertViewHas('categories', function ($categories) use ($newCategory) {
+            return $categories->contains('id', $newCategory->id);
+        })
+        ->assertSee('Kategori Baru Tanpa Kelas');
+
+    Livewire::test(KelasIndex::class, ['type' => 'paid'])
+        ->assertViewHas('categories', function ($categories) use ($newCategory) {
+            return $categories->contains('id', $newCategory->id);
+        })
+        ->assertSee('Kategori Baru Tanpa Kelas');
+});

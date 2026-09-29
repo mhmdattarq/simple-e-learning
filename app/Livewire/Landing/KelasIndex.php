@@ -102,17 +102,7 @@ class KelasIndex extends Component
         $userRegistrations = collect();
 
         if ($tablesExist) {
-            $catQuery = Category::query();
-            if ($this->type === 'batch') {
-                $catQuery->whereHas('courses', fn ($q) => $q->where('status', 'published')->where('type', 'batch'));
-            } elseif ($this->type === 'permanent') {
-                $catQuery->whereHas('courses', fn ($q) => $q->where('status', 'published')->where('type', 'permanent'));
-            } elseif ($this->type === 'paid') {
-                $catQuery->whereHas('courses', fn ($q) => $q->where('status', 'published')->whereIn('type', ['paid', 'berbayar']));
-            } else {
-                $catQuery->whereHas('courses', fn ($q) => $q->where('status', 'published'));
-            }
-            $categories = $catQuery->orderBy('name')->get();
+            $categories = Category::orderBy('name')->get();
 
             $query = Course::with(['category', 'chapters.lessons'])
                 ->withCount(['chapters', 'lessons', 'registrations'])
