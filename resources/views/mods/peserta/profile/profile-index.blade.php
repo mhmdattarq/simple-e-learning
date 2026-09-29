@@ -2,7 +2,7 @@
     <div class="container py-lg-4 py-2">
         {{-- Breadcrumb & Back --}}
         <div class="d-flex align-items-center justify-content-between mb-4">
-            <a href="{{ route('landing') }}" class="btn btn-outline-secondary btn-sm rounded-pill px-3 fw-semibold"
+            <a href="{{ route('landing') }}" class="btn btn-outline-danger btn-sm rounded-pill px-3 fw-semibold"
                 wire:navigate>
                 <i class="ri-arrow-left-line me-1"></i> Kembali ke Beranda
             </a>
@@ -16,7 +16,7 @@
         <div class="row g-4 justify-content-center">
             {{-- Kolom Kiri: Ringkasan Pengguna & Status Profil --}}
             <div class="col-lg-4 col-md-5">
-                <div class="card border-0 shadow-sm rounded-4 overflow-hidden sticky-top" style="top: 90px;">
+                <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
                     <div class="p-4 text-center text-white"
                         style="background: linear-gradient(135deg, #071a33 0%, #0c3158 100%);">
                         @if ($avatarUrl)
@@ -53,13 +53,15 @@
                                 <div
                                     class="alert alert-success py-2 px-3 radius-8 text-xs mb-0 d-flex align-items-center gap-2 border-0 bg-success-50 text-success-700">
                                     <i class="ri-checkbox-circle-fill fs-6 flex-shrink-0"></i>
-                                    <span>Data profil Anda telah lengkap dan memenuhi syarat untuk mendaftar kelas.</span>
+                                    <span>Data profil Anda telah lengkap dan memenuhi syarat untuk mendaftar
+                                        kelas.</span>
                                 </div>
                             @else
                                 <div class="alert alert-warning py-2 px-3 radius-8 text-xs mb-0 d-flex align-items-center gap-2 border-0 bg-warning-50 text-warning-800"
                                     style="background-color: #fefce8; border: 1px solid #fef08a !important; color: #854d0e;">
                                     <i class="ri-error-warning-fill fs-6 flex-shrink-0 text-warning"></i>
-                                    <span>Mohon lengkapi <strong>Nomor HP dan Alamat</strong> Anda agar akun terdata secara lengkap.</span>
+                                    <span>Mohon lengkapi <strong>Nomor HP dan Alamat</strong> Anda agar akun terdata
+                                        secara lengkap.</span>
                                 </div>
                             @endif
                         </div>
@@ -69,19 +71,23 @@
                         <div class="vstack gap-2 fs-7 text-secondary">
                             <div class="d-flex justify-content-between">
                                 <span class="text-muted"><i class="ri-user-line me-1 text-primary"></i>Nama:</span>
-                                <strong class="text-dark text-truncate" style="max-width: 170px;">{{ $user->name ?: '(Belum diisi)' }}</strong>
+                                <strong class="text-dark text-truncate"
+                                    style="max-width: 170px;">{{ $user->name ?: '(Belum diisi)' }}</strong>
                             </div>
                             <div class="d-flex justify-content-between">
                                 <span class="text-muted"><i class="ri-mail-line me-1 text-primary"></i>Email:</span>
-                                <strong class="text-dark text-truncate" style="max-width: 170px;">{{ $user->email }}</strong>
+                                <strong class="text-dark text-truncate"
+                                    style="max-width: 170px;">{{ $user->email }}</strong>
                             </div>
                             <div class="d-flex justify-content-between">
                                 <span class="text-muted"><i class="ri-phone-line me-1 text-primary"></i>No. HP:</span>
-                                <strong class="text-dark font-monospace">{{ $user->phone_number ?: '(Belum diisi)' }}</strong>
+                                <strong
+                                    class="text-dark font-monospace">{{ $user->phone_number ?: '(Belum diisi)' }}</strong>
                             </div>
                             <div class="d-flex justify-content-between align-items-start">
                                 <span class="text-muted"><i class="ri-map-pin-line me-1 text-primary"></i>Alamat:</span>
-                                <span class="text-dark text-end fw-semibold" style="max-width: 170px; font-size: 13px;">{{ $user->address ?: '(Belum diisi)' }}</span>
+                                <span class="text-dark text-end fw-semibold"
+                                    style="max-width: 170px; font-size: 13px;">{{ $user->address ?: '(Belum diisi)' }}</span>
                             </div>
                         </div>
 
@@ -101,7 +107,8 @@
                     <div class="d-flex align-items-center justify-content-between mb-4 pb-3 border-bottom">
                         <div>
                             <h4 class="fw-bold text-dark mb-1">Data Profil Peserta</h4>
-                            <p class="text-muted fs-7 mb-0">Pastikan data profil Anda selalu valid dan dapat dihubungi.</p>
+                            <p class="text-muted fs-7 mb-0">Pastikan data profil Anda selalu valid dan dapat dihubungi.
+                            </p>
                         </div>
                     </div>
 
@@ -187,7 +194,8 @@
                                     Alamat Lengkap <span class="text-danger">*</span>
                                 </label>
                                 <div class="input-group">
-                                    <span class="input-group-text bg-light text-muted border-end-0 align-items-start pt-2">
+                                    <span
+                                        class="input-group-text bg-light text-muted border-end-0 align-items-start pt-2">
                                         <i class="ri-map-pin-line"></i>
                                     </span>
                                     <textarea id="user-address" wire:model="form.address" rows="3"
@@ -198,13 +206,49 @@
                                     <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
                                 @enderror
                             </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label text-xs fw-semibold text-secondary-dark mb-1"
+                                    for="user-password">
+                                    Kata Sandi Baru <span class="text-muted fw-normal fs-8">(Opsional)</span>
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light text-muted border-end-0">
+                                        <i class="ri-lock-line"></i>
+                                    </span>
+                                    <input type="password" id="user-password" wire:model="form.password"
+                                        class="form-control @error('form.password') is-invalid @enderror"
+                                        placeholder="Kosongkan jika tidak diubah" autocomplete="new-password">
+                                </div>
+                                @error('form.password')
+                                    <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label text-xs fw-semibold text-secondary-dark mb-1"
+                                    for="user-password-confirmation">
+                                    Ulangi Kata Sandi Baru <span class="text-muted fw-normal fs-8">(Opsional)</span>
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light text-muted border-end-0">
+                                        <i class="ri-lock-line"></i>
+                                    </span>
+                                    <input type="password" id="user-password-confirmation"
+                                        wire:model="form.password_confirmation" class="form-control"
+                                        placeholder="Ketik ulang kata sandi baru" autocomplete="new-password">
+                                </div>
+                            </div>
+
+                            <div class="col-12 mt-1">
+                                <small class="text-muted fs-8">
+                                    <i class="ri-information-line me-1"></i>
+                                    Isi kata sandi di atas jika Anda ingin mengatur atau mengubah kata sandi untuk login manual dengan email (minimal 8 karakter).
+                                </small>
+                            </div>
                         </div>
 
                         <div class="d-flex align-items-center justify-content-end gap-2 pt-3 border-top">
-                            <a href="{{ route('landing') }}" class="btn btn-outline-danger px-4 rounded-pill"
-                                wire:navigate>
-                                Batal
-                            </a>
                             <button type="submit" class="btn btn-primary px-4 rounded-pill fw-semibold shadow-sm"
                                 wire:loading.attr="disabled">
                                 <span wire:loading.remove wire:target="save">
@@ -254,7 +298,7 @@
                                                     {{ $attempt->quiz?->title ?? 'Evaluasi Kuis' }}
                                                 </div>
                                                 <div
-                                                     class="text-muted text-xxs d-flex align-items-center gap-1 flex-wrap">
+                                                    class="text-muted text-xxs d-flex align-items-center gap-1 flex-wrap">
                                                     <span>{{ $attempt->quiz?->course?->title ?? '-' }}</span>
                                                     @if ($attempt->quiz?->isFinalQuiz())
                                                         <span
@@ -270,9 +314,7 @@
                                                 </div>
                                             </td>
                                             <td class="text-center">
-                                                <div class="fw-bold text-dark fs-7">
-                                                    {{ $attempt->total_earned_score }} / {{ $attempt->total_possible_score }}
-                                                </div>
+                                                <div class="fw-bold text-dark fs-7">{{ $attempt->total_earned_score }} / {{ $attempt->total_possible_score }}</div>
                                                 <span class="text-muted text-xxs">
                                                     ({{ number_format($attempt->percentage, 1) }}%)
                                                 </span>

@@ -38,17 +38,13 @@ new class extends Component {
                     <div class="dropdown position-relative" x-data="{ open: false }" @click.outside="open = false">
                         <button
                             class="has-indicator w-40-px h-40-px bg-neutral-100 rounded-circle d-flex justify-content-center align-items-center border-0"
-                            type="button"
-                            @click="open = !open"
-                            :aria-expanded="open.toString()">
+                            type="button" @click="open = !open" :aria-expanded="open.toString()">
                             <i class="ri-notification-3-line icon text-xl text-primary-light"></i>
                             <span
                                 class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"></span>
                         </button>
-                        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0 shadow-lg"
-                            x-show="open"
-                            x-cloak
-                            :class="{ 'show': open }"
+                        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0 shadow-lg" x-show="open"
+                            x-cloak :class="{ 'show': open }"
                             style="position: absolute; right: 0; left: auto !important; top: calc(100% + 8px); z-index: 1060; width: 320px; max-width: calc(100vw - 32px); border-radius: 14px; overflow: hidden; border: 1px solid #e2e8f0;">
                             <div class="py-12 px-16 border-bottom d-flex align-items-center justify-content-between"
                                 style="background-color: #071a33;">
@@ -101,33 +97,35 @@ new class extends Component {
 
                     {{-- User Profile --}}
                     <div class="dropdown position-relative" x-data="{ open: false }" @click.outside="open = false">
-                        <button class="d-flex align-items-center gap-2 border-0 bg-transparent p-0"
-                            type="button"
-                            @click="open = !open"
-                            :aria-expanded="open.toString()">
+                        <button class="d-flex align-items-center gap-2 border-0 bg-transparent p-0" type="button"
+                            @click="open = !open" :aria-expanded="open.toString()">
                             <div class="seal sidebar-brand-seal"
                                 style="width: 38px !important; height: 38px !important; font-size: 15px !important; border-radius: 10px !important;">
                                 {{ auth()->user() ? strtoupper(substr(auth()->user()->name, 0, 2)) : 'MS' }}
                             </div>
                             <div class="d-none d-lg-flex flex-column text-start">
-                                <span class="fw-bold text-dark fs-6" style="line-height: 1.2;">{{ auth()->user()->name ?? 'Administrator' }}</span>
-                                <small class="text-secondary-light" style="font-size: 11px;">{{ auth()->user()?->role?->label() ?? 'Admin Diklat' }}</small>
+                                <span class="fw-bold text-dark fs-6"
+                                    style="line-height: 1.2;">{{ auth()->user()->name ?? 'Administrator' }}</span>
+                                <small class="text-secondary-light"
+                                    style="font-size: 11px;">{{ auth()->user()?->role?->label() ?? 'Admin Diklat' }}</small>
                             </div>
                             <i class="ri-arrow-down-s-line text-secondary-light d-none d-lg-block"
-                                :style="open ? 'transform: rotate(180deg); transition: transform 0.2s;' : 'transition: transform 0.2s;'"></i>
+                                :style="open ? 'transform: rotate(180deg); transition: transform 0.2s;' :
+                                    'transition: transform 0.2s;'"></i>
                         </button>
-                        <div class="dropdown-menu dropdown-menu-end shadow-lg p-0"
-                            x-show="open"
-                            x-cloak
+                        <div class="dropdown-menu dropdown-menu-end shadow-lg p-0" x-show="open" x-cloak
                             :class="{ 'show': open }"
                             style="position: absolute; right: 0; left: auto !important; top: calc(100% + 8px); z-index: 1060; min-width: 250px; max-width: calc(100vw - 32px); border-radius: 14px; overflow: hidden; border: 1px solid #e2e8f0;">
                             <div class="py-16 px-16" style="background: #071a33; color: #fff;">
-                                <h6 class="text-white fw-semibold mb-1" style="font-size: 14px; line-height: 1.3; word-break: break-word;">{{ auth()->user()->name ?? 'Administrator' }}</h6>
+                                <h6 class="text-white fw-semibold mb-1"
+                                    style="font-size: 14px; line-height: 1.3; word-break: break-word;">
+                                    {{ auth()->user()->name ?? 'Administrator' }}</h6>
                                 <div class="d-flex align-items-center gap-1 flex-wrap">
                                     <span class="badge"
                                         style="background: #f3bc42; color: #071a33; font-weight: 700; font-size: 11px;">{{ auth()->user()?->role?->label() ?? 'Admin Diklat' }}</span>
                                     @if (auth()->user()?->nip)
-                                        <small class="text-white-50" style="font-size: 11px;">· {{ auth()->user()->nip }}</small>
+                                        <small class="text-white-50" style="font-size: 11px;">·
+                                            {{ auth()->user()->nip }}</small>
                                     @endif
                                 </div>
                             </div>
@@ -137,13 +135,6 @@ new class extends Component {
                                         href="javascript:void(0)">
                                         <i class="ri-user-line icon text-lg"></i>
                                         Profil Saya
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item text-black px-12 py-8 hover-text-primary d-flex align-items-center gap-2 rounded"
-                                        href="javascript:void(0)">
-                                        <i class="ri-settings-3-line icon text-lg"></i>
-                                        Pengaturan Akun
                                     </a>
                                 </li>
                                 <li>

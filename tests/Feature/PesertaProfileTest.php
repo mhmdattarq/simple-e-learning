@@ -1,5 +1,6 @@
 <?php
 
+use App\Livewire\Auth\Login;
 use App\Livewire\Peserta\Profile\ProfileIndex;
 use App\Models\AuditLog;
 use App\Models\Category;
@@ -9,6 +10,7 @@ use App\Models\QuizAttempt;
 use App\Models\User;
 use Database\Seeders\CategorySeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Hash;
 use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
@@ -126,4 +128,94 @@ test('profile page displays quiz evaluation history for authenticated participan
     $response->assertSee('85 / 100');
     $response->assertSee('85.0%');
     $response->assertSee('Lulus');
+});
+
+test('user can set password from profile and subsequently login with email and new password', function () {
+    $user = User::factory()->peserta()->create([
+        'name' => 'Peserta Google',
+        'email' => 'peserta.google@gmail.com',
+        'google_id' => 'google-999',
+        'phone_number' => '081234567890',
+        'address' => 'Banda Aceh',
+        'password' => Hash::make(Str::random(32)),
+    ]);
+
+    Livewire::actingAs($user)
+        ->test(ProfileIndex::class)
+        ->set('form.name', 'Peserta Google')
+        ->set('form.phone_number', '081234567890')
+        ->set('form.address', 'Banda Aceh')
+        ->set('form.password', 'passwordbaru123')
+        ->set('form.password_confirmation', 'passwordbaru123')
+        ->call('save')
+        ->assertHasNoErrors()
+        ->assertSee('Profil Anda berhasil disimpan dan diperbarui.');
+
+    $user->refresh();
+    expect(Hash::check('passwordbaru123', $user->password))->toBeTrue();
+
+    // Logout and verify manual login works with new password
+    auth()->logout();
+    $this->assertGuest();
+
+    Livewire::test(Login::class)
+        ->set('identifier', 'peserta.google@gmail.com')
+        ->set('password', 'passwordbaru123')
+        ->call('authenticate')
+        ->assertRedirect(route('landing'));
+
+    $this->assertAuthenticatedAs($user);
+});
+
+test('user can update profile without changing existing password when password field is empty', function () {
+    $user = User::factory()->peserta()->create([
+        'name' => 'Nama Lama',
+        'email' => 'peserta@gmail.com',
+        'phone_number' => '081234567890',
+        'address' => 'Banda Aceh',
+        'password' => Hash::make('passwordlama123'),
+    ]);
+
+    Livewire::actingAs($user)
+        ->test(ProfileIndex::class)
+        ->set('form.name', 'Nama Baru')
+        ->set('form.phone_number', '081234567890')
+        ->set('form.address', 'Langsa')
+        ->set('form.password', '')
+        ->set('form.password_confirmation', '')
+        ->call('save')
+        ->assertHasNoErrors();
+
+    $user->refresh();
+    expect($user->name)->toBe('Nama Baru');
+    expect($user->address)->toBe('Langsa');
+    expect(Hash::check('passwordlama123', $user->password))->toBeTrue();
+});
+
+test('profile password validation enforces min 8 chars and matching confirmation', function () {
+    $user = User::factory()->peserta()->create();
+
+    // 1. Less than 8 characters
+    Livewire::actingAs($user)
+        ->test(ProfileIndex::class)
+        ->set('form.name', $user->name)
+        ->set('form.phone_number', '081234567890')
+        ->set('form.address', 'Alamat')
+        ->set('form.password', '12345')
+        ->set('form.password_confirmation', '12345')
+        ->call('save')
+        ->assertHasErrors(['form.password'])
+        ->assertSee('Kata sandi baru minimal 8 karakter.');
+
+    // 2. Mismatched confirmation
+    Livewire::actingAs($user)
+        ->test(ProfileIndex::class)
+        ->set('form.name', $user->name)
+        ->set('form.phone_number', '081234567890')
+        ->set('form.address', 'Alamat')
+        ->set('form.password', 'password123')
+        ->set('form.password_confirmation', 'different123')
+        ->call('save')
+        ->assertHasErrors(['form.password'])
+        ->assertSee('Konfirmasi kata sandi baru tidak cocok.');
 });
