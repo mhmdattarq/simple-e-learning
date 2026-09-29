@@ -25,12 +25,9 @@ beforeEach(function () {
 test('participant registration sends activation email, creates secure verification token, and logs audit', function () {
     Livewire::test(Register::class)
         ->set('form.name', 'Teuku Ryan, S.STP')
-        ->set('form.nip', '199304122019011003')
         ->set('form.email', 'teuku.ryan@acehtimurkab.go.id')
         ->set('form.phone_number', '081234567891')
-        ->set('form.opd_agency', 'Badan Pengelolaan Keuangan Daerah')
-        ->set('form.position', 'Analis Keuangan')
-        ->set('form.rank_class', 'Penata Muda - III/a')
+        ->set('form.address', 'Jl. Merdeka No. 10, Idi Rayeuk')
         ->set('form.password', 'Rahasia123!')
         ->set('form.password_confirmation', 'Rahasia123!')
         ->call('register')

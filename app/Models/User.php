@@ -62,13 +62,23 @@ class User extends Authenticatable
         return ! empty($this->google_id);
     }
 
+    /**
+     * Cek apakah data profil pengguna sudah lengkap (nama, email, phone_number, address).
+     */
+    public function isProfileComplete(): bool
+    {
+        return ! empty($this->name)
+            && ! empty($this->email)
+            && ! empty($this->phone_number)
+            && ! empty($this->address);
+    }
+
+    /**
+     * Alias untuk kompatibilitas selama proses refactor.
+     */
     public function isAsnProfileComplete(): bool
     {
-        return ! empty($this->nip)
-            && strlen(trim((string) $this->nip)) === 18
-            && ! empty($this->opd_agency)
-            && ! empty($this->position)
-            && ! empty($this->rank_class);
+        return $this->isProfileComplete();
     }
 
     /**

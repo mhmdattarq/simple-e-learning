@@ -28,12 +28,9 @@ class UserFactory extends Factory
         return [
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
-            'nip' => fake()->unique()->numerify('19##########01####'),
-            'role' => Role::Peserta,
-            'opd_agency' => 'BKPSDM Kabupaten Aceh Timur',
-            'position' => 'Staf Pelaksana',
-            'rank_class' => 'Penata Muda (III/a)',
             'phone_number' => '08'.fake()->numerify('##########'),
+            'address' => fake()->address(),
+            'role' => Role::Peserta,
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
@@ -47,7 +44,6 @@ class UserFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'role' => Role::Admin,
-            'position' => 'Administrator Kelas (Super Admin)',
         ]);
     }
 
@@ -58,7 +54,6 @@ class UserFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'role' => Role::Peserta,
-            'position' => 'Peserta Kelas',
         ]);
     }
 

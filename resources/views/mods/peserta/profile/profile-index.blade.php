@@ -9,7 +9,7 @@
             <span
                 class="badge {{ $isComplete ? 'bg-success text-white' : 'bg-warning text-dark' }} fw-bold px-3 py-1_5 rounded-pill fs-8">
                 <i class="{{ $isComplete ? 'ri-shield-check-line' : 'ri-alert-line' }} me-1"></i>
-                {{ $isComplete ? 'Profil ASN Lengkap' : 'Profil ASN Belum Lengkap' }}
+                {{ $isComplete ? 'Profil Lengkap' : 'Profil Belum Lengkap' }}
             </span>
         </div>
 
@@ -48,20 +48,18 @@
 
                     <div class="p-4 bg-white">
                         <div class="mb-3">
-                            <span class="text-xs text-muted d-block mb-1">Status Kepegawaian</span>
+                            <span class="text-xs text-muted d-block mb-1">Status Profil Akun</span>
                             @if ($isComplete)
                                 <div
                                     class="alert alert-success py-2 px-3 radius-8 text-xs mb-0 d-flex align-items-center gap-2 border-0 bg-success-50 text-success-700">
                                     <i class="ri-checkbox-circle-fill fs-6 flex-shrink-0"></i>
-                                    <span>Data kepegawaian Anda telah lengkap dan memenuhi syarat untuk mendaftar
-                                        kelas.</span>
+                                    <span>Data profil Anda telah lengkap dan memenuhi syarat untuk mendaftar kelas.</span>
                                 </div>
                             @else
                                 <div class="alert alert-warning py-2 px-3 radius-8 text-xs mb-0 d-flex align-items-center gap-2 border-0 bg-warning-50 text-warning-800"
                                     style="background-color: #fefce8; border: 1px solid #fef08a !important; color: #854d0e;">
                                     <i class="ri-error-warning-fill fs-6 flex-shrink-0 text-warning"></i>
-                                    <span>Mohon lengkapi <strong>NIP, Instansi, Jabatan, dan Pangkat</strong> agar Anda
-                                        dapat mendaftar sesi kelas resmi ASN.</span>
+                                    <span>Mohon lengkapi <strong>Nomor HP dan Alamat</strong> Anda agar akun terdata secara lengkap.</span>
                                 </div>
                             @endif
                         </div>
@@ -70,26 +68,20 @@
 
                         <div class="vstack gap-2 fs-7 text-secondary">
                             <div class="d-flex justify-content-between">
-                                <span class="text-muted"><i
-                                        class="ri-fingerprint-line me-1 text-primary"></i>NIP:</span>
-                                <strong class="text-dark font-monospace">{{ $user->nip ?: '(Belum diisi)' }}</strong>
+                                <span class="text-muted"><i class="ri-user-line me-1 text-primary"></i>Nama:</span>
+                                <strong class="text-dark text-truncate" style="max-width: 170px;">{{ $user->name ?: '(Belum diisi)' }}</strong>
                             </div>
                             <div class="d-flex justify-content-between">
-                                <span class="text-muted"><i
-                                        class="ri-building-line me-1 text-primary"></i>Instansi:</span>
-                                <strong class="text-dark text-truncate"
-                                    style="max-width: 170px;">{{ $user->opd_agency ?: '(Belum diisi)' }}</strong>
+                                <span class="text-muted"><i class="ri-mail-line me-1 text-primary"></i>Email:</span>
+                                <strong class="text-dark text-truncate" style="max-width: 170px;">{{ $user->email }}</strong>
                             </div>
                             <div class="d-flex justify-content-between">
-                                <span class="text-muted"><i
-                                        class="ri-briefcase-line me-1 text-primary"></i>Jabatan:</span>
-                                <strong class="text-dark text-truncate"
-                                    style="max-width: 170px;">{{ $user->position ?: '(Belum diisi)' }}</strong>
+                                <span class="text-muted"><i class="ri-phone-line me-1 text-primary"></i>No. HP:</span>
+                                <strong class="text-dark font-monospace">{{ $user->phone_number ?: '(Belum diisi)' }}</strong>
                             </div>
-                            <div class="d-flex justify-content-between">
-                                <span class="text-muted"><i class="ri-medal-line me-1 text-primary"></i>Pangkat:</span>
-                                <strong class="text-dark text-truncate"
-                                    style="max-width: 170px;">{{ $user->rank_class ?: '(Belum diisi)' }}</strong>
+                            <div class="d-flex justify-content-between align-items-start">
+                                <span class="text-muted"><i class="ri-map-pin-line me-1 text-primary"></i>Alamat:</span>
+                                <span class="text-dark text-end fw-semibold" style="max-width: 170px; font-size: 13px;">{{ $user->address ?: '(Belum diisi)' }}</span>
                             </div>
                         </div>
 
@@ -103,14 +95,13 @@
                 </div>
             </div>
 
-            {{-- Kolom Kanan: Form Edit Profil ASN --}}
+            {{-- Kolom Kanan: Form Edit Profil Peserta --}}
             <div class="col-lg-8 col-md-7">
                 <div class="card border-0 shadow-sm rounded-4 p-4 p-lg-5 bg-white">
                     <div class="d-flex align-items-center justify-content-between mb-4 pb-3 border-bottom">
                         <div>
-                            <h4 class="fw-bold text-dark mb-1">Data Kepegawaian ASN</h4>
-                            <p class="text-muted fs-7 mb-0">Pastikan data yang Anda masukkan sesuai dengan basis data
-                                BKN / SIASN Aceh Timur.</p>
+                            <h4 class="fw-bold text-dark mb-1">Data Profil Peserta</h4>
+                            <p class="text-muted fs-7 mb-0">Pastikan data profil Anda selalu valid dan dapat dihubungi.</p>
                         </div>
                     </div>
 
@@ -119,8 +110,7 @@
                             style="background-color: #fffbeb !important; border: 1px solid #fef08a !important; color: #854d0e;">
                             <i class="ri-error-warning-fill fs-4 flex-shrink-0 text-warning mt-1"></i>
                             <div>
-                                <h6 class="fw-bold mb-1" style="color: #854d0e;">Lengkapi Profil ASN Terlebih Dahulu
-                                </h6>
+                                <h6 class="fw-bold mb-1" style="color: #854d0e;">Lengkapi Profil Terlebih Dahulu</h6>
                                 <p class="mb-0 fs-7" style="color: #713f12;">{{ session('warning') }}</p>
                             </div>
                         </div>
@@ -135,7 +125,6 @@
                     @endif
 
                     <form wire:submit="save">
-                        {{-- SECTION 1: DATA IDENTITAS --}}
                         <div class="row g-3 mb-4">
                             <div class="col-12">
                                 <label class="form-label text-xs fw-semibold text-secondary-dark mb-1">
@@ -159,7 +148,7 @@
 
                             <div class="col-md-6">
                                 <label class="form-label text-xs fw-semibold text-secondary-dark mb-1" for="user-name">
-                                    Nama Lengkap & Gelar <span class="text-danger">*</span>
+                                    Nama Lengkap <span class="text-danger">*</span>
                                 </label>
                                 <div class="input-group">
                                     <span class="input-group-text bg-light text-muted border-end-0">
@@ -167,7 +156,7 @@
                                     </span>
                                     <input type="text" id="user-name" wire:model="form.name"
                                         class="form-control @error('form.name') is-invalid @enderror"
-                                        placeholder="Nama lengkap beserta gelar">
+                                        placeholder="Nama lengkap Anda">
                                 </div>
                                 @error('form.name')
                                     <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
@@ -175,26 +164,9 @@
                             </div>
 
                             <div class="col-md-6">
-                                <label class="form-label text-xs fw-semibold text-secondary-dark mb-1" for="user-nip">
-                                    NIP (18 Digit Angka) <span class="text-danger">*</span>
-                                </label>
-                                <div class="input-group">
-                                    <span class="input-group-text bg-light text-muted border-end-0">
-                                        <i class="ri-fingerprint-line"></i>
-                                    </span>
-                                    <input type="text" id="user-nip" wire:model="form.nip"
-                                        class="form-control font-monospace @error('form.nip') is-invalid @enderror"
-                                        placeholder="199205052018011005" maxlength="18" inputmode="numeric">
-                                </div>
-                                @error('form.nip')
-                                    <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="col-md-6">
                                 <label class="form-label text-xs fw-semibold text-secondary-dark mb-1"
                                     for="user-phone">
-                                    No. WhatsApp Aktif <span class="text-danger">*</span>
+                                    No. Handphone / WhatsApp <span class="text-danger">*</span>
                                 </label>
                                 <div class="input-group">
                                     <span class="input-group-text bg-light text-muted border-end-0">
@@ -202,111 +174,27 @@
                                     </span>
                                     <input type="tel" id="user-phone" wire:model="form.phone_number"
                                         class="form-control @error('form.phone_number') is-invalid @enderror"
-                                        placeholder="08xxxxxxxxxx">
+                                        placeholder="Contoh: 081234567890">
                                 </div>
                                 @error('form.phone_number')
                                     <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
                                 @enderror
                             </div>
 
-                            <div class="col-md-6">
-                                <label class="form-label text-xs fw-semibold text-secondary-dark mb-1" for="user-opd">
-                                    Instansi / OPD Asal <span class="text-danger">*</span>
-                                </label>
-                                <div class="input-group">
-                                    <span class="input-group-text bg-light text-muted border-end-0">
-                                        <i class="ri-building-line"></i>
-                                    </span>
-                                    <input type="text" id="user-opd" wire:model="form.opd_agency"
-                                        list="opd-suggestions"
-                                        class="form-control @error('form.opd_agency') is-invalid @enderror"
-                                        placeholder="Nama Dinas / Badan / Kantor">
-                                    <datalist id="opd-suggestions">
-                                        <option value="Sekretariat Daerah Kabupaten Aceh Timur"></option>
-                                        <option value="Badan Kepegawaian dan Pengembangan SDM"></option>
-                                        <option value="Badan Perencanaan Pembangunan Daerah"></option>
-                                        <option value="Badan Pengelolaan Keuangan Daerah"></option>
-                                        <option value="Dinas Pendidikan dan Kebudayaan"></option>
-                                        <option value="Dinas Kesehatan"></option>
-                                        <option value="Dinas Komunikasi dan Informatika"></option>
-                                        <option value="Inspektorat Daerah"></option>
-                                        <option value="RSUD dr. Zubir Mahmud"></option>
-                                    </datalist>
-                                </div>
-                                @error('form.opd_agency')
-                                    <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="col-md-6">
+                            <div class="col-12">
                                 <label class="form-label text-xs fw-semibold text-secondary-dark mb-1"
-                                    for="user-position">
-                                    Jabatan Saat Ini <span class="text-danger">*</span>
+                                    for="user-address">
+                                    Alamat Lengkap <span class="text-danger">*</span>
                                 </label>
                                 <div class="input-group">
-                                    <span class="input-group-text bg-light text-muted border-end-0">
-                                        <i class="ri-briefcase-line"></i>
+                                    <span class="input-group-text bg-light text-muted border-end-0 align-items-start pt-2">
+                                        <i class="ri-map-pin-line"></i>
                                     </span>
-                                    <input type="text" id="user-position" wire:model="form.position"
-                                        class="form-control @error('form.position') is-invalid @enderror"
-                                        placeholder="Contoh: Analis Kebijakan Ahli Pertama">
+                                    <textarea id="user-address" wire:model="form.address" rows="3"
+                                        class="form-control @error('form.address') is-invalid @enderror"
+                                        placeholder="Masukkan alamat domisili atau tempat tinggal lengkap"></textarea>
                                 </div>
-                                @error('form.position')
-                                    <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="col-md-6">
-                                <label class="form-label text-xs fw-semibold text-secondary-dark mb-1"
-                                    for="user-rank">
-                                    Pangkat / Golongan <span class="text-danger">*</span>
-                                </label>
-                                <div class="input-group">
-                                    <span class="input-group-text bg-light text-muted border-end-0">
-                                        <i class="ri-medal-line"></i>
-                                    </span>
-                                    <select id="user-rank" wire:model="form.rank_class"
-                                        class="form-select @error('form.rank_class') is-invalid @enderror">
-                                        <option value="">-- Pilih Pangkat/Golongan --</option>
-                                        <optgroup label="Golongan IV (Pembina)">
-                                            <option value="Pembina Utama - IV/e">Pembina Utama - IV/e</option>
-                                            <option value="Pembina Utama Madya - IV/d">Pembina Utama Madya - IV/d
-                                            </option>
-                                            <option value="Pembina Utama Muda - IV/c">Pembina Utama Muda - IV/c
-                                            </option>
-                                            <option value="Pembina Tingkat I - IV/b">Pembina Tingkat I - IV/b</option>
-                                            <option value="Pembina - IV/a">Pembina - IV/a</option>
-                                        </optgroup>
-                                        <optgroup label="Golongan III (Penata)">
-                                            <option value="Penata Tingkat I - III/d">Penata Tingkat I - III/d</option>
-                                            <option value="Penata - III/c">Penata - III/c</option>
-                                            <option value="Penata Muda Tingkat I - III/b">Penata Muda Tingkat I - III/b
-                                            </option>
-                                            <option value="Penata Muda - III/a">Penata Muda - III/a</option>
-                                        </optgroup>
-                                        <optgroup label="Golongan II (Pengatur)">
-                                            <option value="Pengatur Tingkat I - II/d">Pengatur Tingkat I - II/d
-                                            </option>
-                                            <option value="Pengatur - II/c">Pengatur - II/c</option>
-                                            <option value="Pengatur Muda Tingkat I - II/b">Pengatur Muda Tingkat I -
-                                                II/b</option>
-                                            <option value="Pengatur Muda - II/a">Pengatur Muda - II/a</option>
-                                        </optgroup>
-                                        <optgroup label="Golongan I (Juru)">
-                                            <option value="Juru Tingkat I - I/d">Juru Tingkat I - I/d</option>
-                                            <option value="Juru - I/c">Juru - I/c</option>
-                                            <option value="Juru Muda Tingkat I - I/b">Juru Muda Tingkat I - I/b
-                                            </option>
-                                            <option value="Juru Muda - I/a">Juru Muda - I/a</option>
-                                        </optgroup>
-                                        <optgroup label="Lainnya">
-                                            <option value="PPPK">Pegawai Pemerintah dengan Perjanjian Kerja (PPPK)
-                                            </option>
-                                            <option value="PPNPN">Pegawai Non-PNS / PPNPN</option>
-                                        </optgroup>
-                                    </select>
-                                </div>
-                                @error('form.rank_class')
+                                @error('form.address')
                                     <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
                                 @enderror
                             </div>
@@ -331,7 +219,7 @@
                     </form>
                 </div>
 
-                {{-- Riwayat Evaluasi & Kuis ASN --}}
+                {{-- Riwayat Evaluasi & Kuis --}}
                 <div class="card border-0 shadow-sm rounded-4 p-4 p-lg-5 bg-white mt-4">
                     <div
                         class="d-flex align-items-center justify-content-between mb-4 pb-3 border-bottom flex-wrap gap-2">
@@ -366,7 +254,7 @@
                                                     {{ $attempt->quiz?->title ?? 'Evaluasi Kuis' }}
                                                 </div>
                                                 <div
-                                                    class="text-muted text-xxs d-flex align-items-center gap-1 flex-wrap">
+                                                     class="text-muted text-xxs d-flex align-items-center gap-1 flex-wrap">
                                                     <span>{{ $attempt->quiz?->course?->title ?? '-' }}</span>
                                                     @if ($attempt->quiz?->isFinalQuiz())
                                                         <span

@@ -154,7 +154,7 @@ new class extends Component {
                                             <small class="text-secondary d-flex align-items-center gap-1"
                                                 style="font-size: 11px;">
                                                 {{ auth()->user()?->role?->label() ?? 'Peserta' }}
-                                                @if (! auth()->user()?->isAsnProfileComplete())
+                                                @if (! auth()->user()?->isProfileComplete())
                                                     <span class="badge rounded-pill bg-warning text-dark p-0 px-1" style="font-size: 9px;">!</span>
                                                 @endif
                                             </small>
@@ -170,15 +170,15 @@ new class extends Component {
                                             <div class="d-flex align-items-center gap-1 flex-wrap">
                                                 <span class="badge"
                                                     style="background: #f3bc42; color: #071a33; font-weight: 700; font-size: 11px;">{{ auth()->user()?->role?->label() ?? 'Peserta' }}</span>
-                                                @if (auth()->user()->nip)
+                                                @if (auth()->user()->phone_number)
                                                     <small class="text-white-50 font-monospace" style="font-size: 11px;">·
-                                                        {{ auth()->user()->nip }}</small>
+                                                        {{ auth()->user()->phone_number }}</small>
                                                 @endif
                                             </div>
-                                            @if (! auth()->user()?->isAsnProfileComplete())
+                                            @if (! auth()->user()?->isProfileComplete())
                                                 <div class="mt-2 pt-2 border-top border-white border-opacity-10">
                                                     <a href="{{ route('peserta.profil') }}" class="badge bg-warning text-dark text-decoration-none d-inline-flex align-items-center gap-1 w-100 py-1_5 justify-content-center" style="font-size: 10.5px;">
-                                                        <i class="ri-alert-fill"></i> Lengkapi Data ASN Anda
+                                                        <i class="ri-alert-fill"></i> Lengkapi Profil Anda
                                                     </a>
                                                 </div>
                                             @endif
@@ -199,7 +199,7 @@ new class extends Component {
                                                     href="{{ route('peserta.profil') }}" style="font-size: 13.5px;">
                                                     <i class="ri-user-line text-primary" style="font-size: 16px;"></i>
                                                     Profil Saya
-                                                    @if (! auth()->user()?->isAsnProfileComplete())
+                                                    @if (! auth()->user()?->isProfileComplete())
                                                         <span class="badge bg-warning text-dark ms-auto" style="font-size: 10px;">Lengkapi</span>
                                                     @endif
                                                 </a>

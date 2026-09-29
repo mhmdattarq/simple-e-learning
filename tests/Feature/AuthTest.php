@@ -45,15 +45,14 @@ test('admin can login using email and is redirected to admin dashboard with welc
     expect(auth()->user()->isAdmin())->toBeTrue();
 });
 
-test('peserta can login using 18 digit nip and is redirected to landing page with welcome toast', function () {
+test('peserta can login using email and is redirected to landing page with welcome toast', function () {
     $peserta = User::factory()->peserta()->create([
-        'nip' => '199205052018011005',
         'email' => 'peserta@simpel.go.id',
         'password' => bcrypt('password123'),
     ]);
 
     Livewire::test(Login::class)
-        ->set('identifier', '199205052018011005')
+        ->set('identifier', 'peserta@simpel.go.id')
         ->set('password', 'password123')
         ->call('authenticate')
         ->assertRedirect(route('landing'))
@@ -126,26 +125,20 @@ test('register page can be accessed by guest and shows registration fields', fun
     $response = $this->get(route('register'));
 
     $response->assertStatus(200);
-    $response->assertSee('Pendaftaran Peserta / Siswa');
-    $response->assertSee('Identitas Kepegawaian');
-    $response->assertSee('NIP (18 Digit)');
+    $response->assertSee('Pendaftaran Peserta');
     $response->assertSee('Nama Lengkap');
-    $response->assertSee('Instansi / OPD Asal');
-    $response->assertSee('Jabatan Saat Ini');
-    $response->assertSee('Pangkat / Golongan');
-    $response->assertSee('Kontak');
+    $response->assertSee('Alamat Email');
+    $response->assertSee('No. Handphone / WhatsApp');
+    $response->assertSee('Alamat Lengkap');
     $response->assertSee('Daftar Akun Peserta');
 });
 
 test('guest user can register successfully as peserta with valid data', function () {
     Livewire::test(Register::class)
-        ->set('form.name', 'Fauzan Akbar, S.STP')
-        ->set('form.nip', '199508172020121002')
+        ->set('form.name', 'Fauzan Akbar')
         ->set('form.email', 'fauzan@acehtimurkab.go.id')
         ->set('form.phone_number', '081234567890')
-        ->set('form.opd_agency', 'Badan Kepegawaian dan Pengembangan SDM')
-        ->set('form.position', 'Pranata Komputer Ahli Pertama')
-        ->set('form.rank_class', 'Penata Muda - III/a')
+        ->set('form.address', 'Jl. Medan - B. Aceh No. 12, Idi Rayeuk')
         ->set('form.password', 'rahasia123')
         ->set('form.password_confirmation', 'rahasia123')
         ->call('register')
@@ -153,63 +146,50 @@ test('guest user can register successfully as peserta with valid data', function
         ->assertRedirect(route('login'));
 
     $this->assertDatabaseHas('users', [
-        'name' => 'Fauzan Akbar, S.STP',
-        'nip' => '199508172020121002',
+        'name' => 'Fauzan Akbar',
         'email' => 'fauzan@acehtimurkab.go.id',
         'role' => Role::Peserta->value,
         'phone_number' => '081234567890',
-        'opd_agency' => 'Badan Kepegawaian dan Pengembangan SDM',
-        'position' => 'Pranata Komputer Ahli Pertama',
-        'rank_class' => 'Penata Muda - III/a',
+        'address' => 'Jl. Medan - B. Aceh No. 12, Idi Rayeuk',
     ]);
 
-    $createdUser = User::where('nip', '199508172020121002')->first();
+    $createdUser = User::where('email', 'fauzan@acehtimurkab.go.id')->first();
     expect($createdUser->isPeserta())->toBeTrue();
     expect(Hash::check('rahasia123', $createdUser->password))->toBeTrue();
 });
 
-test('registration validates required fields and 18 digits numeric nip', function () {
+test('registration validates required fields', function () {
     Livewire::test(Register::class)
         ->set('form.name', '')
-        ->set('form.nip', '12345') // Less than 18 digits
         ->set('form.email', 'bukan-email')
         ->set('form.phone_number', '')
-        ->set('form.opd_agency', '')
-        ->set('form.position', '')
-        ->set('form.rank_class', '')
+        ->set('form.address', '')
         ->set('form.password', '123') // Less than 6 chars
         ->set('form.password_confirmation', '456') // Mismatched
         ->call('register')
         ->assertHasErrors([
             'form.name',
-            'form.nip',
             'form.email',
             'form.phone_number',
-            'form.opd_agency',
-            'form.position',
-            'form.rank_class',
+            'form.address',
             'form.password',
         ]);
 });
 
-test('registration fails when nip or email already exists in database', function () {
+test('registration fails when email already exists in database', function () {
     User::factory()->create([
-        'nip' => '199001012015011001',
         'email' => 'existing@simpel.go.id',
     ]);
 
     Livewire::test(Register::class)
         ->set('form.name', 'Peserta Baru')
-        ->set('form.nip', '199001012015011001') // Duplicate NIP
         ->set('form.email', 'existing@simpel.go.id') // Duplicate Email
         ->set('form.phone_number', '081299998888')
-        ->set('form.opd_agency', 'Dinas Pendidikan')
-        ->set('form.position', 'Guru Ahli Pertama')
-        ->set('form.rank_class', 'Penata Muda - III/a')
+        ->set('form.address', 'Idi Rayeuk')
         ->set('form.password', 'password123')
         ->set('form.password_confirmation', 'password123')
         ->call('register')
-        ->assertHasErrors(['form.nip', 'form.email']);
+        ->assertHasErrors(['form.email']);
 });
 
 test('authenticated user is redirected away from register page by guest middleware', function () {

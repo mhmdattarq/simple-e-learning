@@ -25,47 +25,41 @@ test('guest cannot access peserta profile page and is redirected to login', func
 test('authenticated google user can access profile page and see incomplete status warning', function () {
     $user = User::factory()->peserta()->create([
         'google_id' => 'google-12345',
-        'nip' => null,
-        'opd_agency' => null,
-        'position' => null,
-        'rank_class' => null,
+        'phone_number' => null,
+        'address' => null,
     ]);
 
-    expect($user->isAsnProfileComplete())->toBeFalse();
+    expect($user->isProfileComplete())->toBeFalse();
 
     $response = $this->actingAs($user)->get(route('peserta.profil'));
     $response->assertStatus(200);
-    $response->assertSee('Profil ASN Belum Lengkap');
-    $response->assertSee('Data Kepegawaian ASN');
+    $response->assertSee('Profil Belum Lengkap');
+    $response->assertSee('Data Profil Peserta');
     $response->assertSee('Google Linked');
 });
 
-test('user can update and complete their asn profile with audit logging', function () {
+test('user can update and complete their profile with audit logging', function () {
     $user = User::factory()->peserta()->create([
         'name' => 'Fauzan Akbar',
         'email' => 'fauzan@gmail.com',
-        'nip' => null,
-        'opd_agency' => null,
-        'position' => null,
-        'rank_class' => null,
+        'phone_number' => null,
+        'address' => null,
     ]);
 
     Livewire::actingAs($user)
         ->test(ProfileIndex::class)
-        ->set('form.name', 'Fauzan Akbar, S.STP')
-        ->set('form.nip', '199508172020121002')
+        ->set('form.name', 'Fauzan Akbar, S.Kom')
         ->set('form.phone_number', '081234567890')
-        ->set('form.opd_agency', 'Badan Kepegawaian dan Pengembangan SDM')
-        ->set('form.position', 'Pranata Komputer Ahli Pertama')
-        ->set('form.rank_class', 'Penata Muda - III/a')
+        ->set('form.address', 'Jl. Medan - B. Aceh No. 12, Idi Rayeuk')
         ->call('save')
         ->assertHasNoErrors()
-        ->assertSee('Profil kepegawaian ASN Anda berhasil disimpan dan diperbarui.');
+        ->assertSee('Profil Anda berhasil disimpan dan diperbarui.');
 
     $user->refresh();
-    expect($user->isAsnProfileComplete())->toBeTrue();
-    expect($user->nip)->toBe('199508172020121002');
-    expect($user->opd_agency)->toBe('Badan Kepegawaian dan Pengembangan SDM');
+    expect($user->isProfileComplete())->toBeTrue();
+    expect($user->name)->toBe('Fauzan Akbar, S.Kom');
+    expect($user->phone_number)->toBe('081234567890');
+    expect($user->address)->toBe('Jl. Medan - B. Aceh No. 12, Idi Rayeuk');
 
     // Audit log recorded
     $audit = AuditLog::where('action', 'user.profile_updated')
@@ -73,43 +67,36 @@ test('user can update and complete their asn profile with audit logging', functi
         ->first();
 
     expect($audit)->not->toBeNull();
-    expect($audit->new_values['nip'])->toBe('199508172020121002');
+    expect($audit->new_values['phone_number'])->toBe('081234567890');
+    expect($audit->new_values['address'])->toBe('Jl. Medan - B. Aceh No. 12, Idi Rayeuk');
 });
 
-test('profile validation rejects non-18 digit nip and duplicate nip', function () {
-    $existingUser = User::factory()->peserta()->create([
-        'nip' => '199001012015011001',
-    ]);
-
+test('profile validation requires name, phone number, and address', function () {
     $currentUser = User::factory()->peserta()->create([
-        'nip' => null,
+        'phone_number' => null,
+        'address' => null,
     ]);
 
-    // 1. Invalid nip length
     Livewire::actingAs($currentUser)
         ->test(ProfileIndex::class)
-        ->set('form.nip', '12345')
+        ->set('form.name', '')
+        ->set('form.phone_number', '')
+        ->set('form.address', '')
         ->call('save')
-        ->assertHasErrors(['form.nip']);
-
-    // 2. Duplicate nip belonging to another user
-    Livewire::actingAs($currentUser)
-        ->test(ProfileIndex::class)
-        ->set('form.nip', '199001012015011001')
-        ->call('save')
-        ->assertHasErrors(['form.nip']);
+        ->assertHasErrors(['form.name', 'form.phone_number', 'form.address']);
 });
 
 test('navbar renders profile link and completion indicator for authenticated user', function () {
     $incompleteUser = User::factory()->peserta()->create([
-        'nip' => null,
+        'phone_number' => null,
+        'address' => null,
     ]);
 
     $response = $this->actingAs($incompleteUser)->get(route('landing'));
     $response->assertStatus(200);
     $response->assertSee(route('peserta.profil'));
     $response->assertSee('Profil Saya');
-    $response->assertSee('Lengkapi Data ASN Anda');
+    $response->assertSee('Lengkapi Profil Anda');
 });
 
 test('profile page displays quiz evaluation history for authenticated participant', function () {
