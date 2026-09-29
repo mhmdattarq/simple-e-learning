@@ -11,8 +11,9 @@ test('halaman katalog pelatihan dapat diakses oleh publik', function () {
     $response = $this->get(route('pelatihan.index'));
 
     $response->assertStatus(200);
-    $response->assertSee('Katalog Pelatihan');
-    $response->assertSee('Program Diklat ASN');
+    $response->assertSee('Katalog');
+    $response->assertSee('Kelas');
+    $response->assertSee('Program Kelas ASN');
 });
 
 test('halaman katalog pelatihan menampilkan kursus yang berstatus published', function () {
@@ -25,7 +26,6 @@ test('halaman katalog pelatihan menampilkan kursus yang berstatus published', fu
         'type' => 'permanent',
         'category_id' => $category->id,
         'created_by' => $admin->id,
-        'quota' => 45,
     ]);
 
     $courseBatch = Course::factory()->create([
@@ -34,7 +34,6 @@ test('halaman katalog pelatihan menampilkan kursus yang berstatus published', fu
         'type' => 'batch',
         'category_id' => $category->id,
         'created_by' => $admin->id,
-        'quota' => 30,
     ]);
 
     $response = $this->get(route('pelatihan.index'));
@@ -45,8 +44,9 @@ test('halaman katalog pelatihan menampilkan kursus yang berstatus published', fu
     $response->assertSee('Pelatihan Fungsional');
     $response->assertSee('Mandiri 24/7');
     $response->assertSee('Batch Terjadwal');
-    $response->assertSee(route('pelatihan.daftar', $coursePermanent->id));
-    $response->assertSee(route('pelatihan.daftar', $courseBatch->id));
+    $response->assertSee(route('landing.kelas.detail', $coursePermanent->id));
+    $response->assertSee(route('landing.kelas.detail', $courseBatch->id));
+    $response->assertSee('Lihat Detail');
 });
 
 test('halaman katalog pelatihan tidak menampilkan kursus yang berstatus draft', function () {
@@ -70,7 +70,7 @@ test('halaman katalog pelatihan menampilkan empty state jika tidak ada kursus pu
     $response = $this->get(route('pelatihan.index'));
 
     $response->assertStatus(200);
-    $response->assertSee('Belum Ada Program Pelatihan');
+    $response->assertSee('Belum Ada');
     $response->assertSee('Kembali ke Beranda');
 });
 
@@ -78,5 +78,5 @@ test('menu navbar katalog pelatihan aktif ketika berada di halaman katalog pelat
     $response = $this->get(route('pelatihan.index'));
 
     $response->assertStatus(200);
-    $response->assertSee('Katalog Pelatihan');
+    $response->assertSee('Katalog');
 });

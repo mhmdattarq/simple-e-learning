@@ -5,9 +5,6 @@ namespace App\Enums;
 enum Role: string
 {
     case Admin = 'admin';
-    case Mentor = 'mentor';
-    case Verifikator = 'verifikator';
-    case Pimpinan = 'pimpinan';
     case Peserta = 'peserta';
 
     /**
@@ -16,11 +13,8 @@ enum Role: string
     public function label(): string
     {
         return match ($this) {
-            self::Admin => 'Admin Diklat',
-            self::Mentor => 'Mentor / Widyaiswara',
-            self::Verifikator => 'Verifikator Berkas',
-            self::Pimpinan => 'Pimpinan / Eksekutif',
-            self::Peserta => 'Peserta / Siswa ASN',
+            self::Admin => 'Administrator (Super Admin)',
+            self::Peserta => 'Peserta Kelas',
         };
     }
 
@@ -29,6 +23,6 @@ enum Role: string
      */
     public function hasAdminAccess(): bool
     {
-        return in_array($this, [self::Admin, self::Mentor, self::Verifikator, self::Pimpinan], true);
+        return $this === self::Admin;
     }
 }

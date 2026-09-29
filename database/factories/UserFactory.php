@@ -47,40 +47,7 @@ class UserFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'role' => Role::Admin,
-            'position' => 'Administrator Diklat BKPSDM',
-        ]);
-    }
-
-    /**
-     * Mentor role state.
-     */
-    public function mentor(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'role' => Role::Mentor,
-            'position' => 'Widyaiswara Ahli Madya',
-        ]);
-    }
-
-    /**
-     * Verifikator role state.
-     */
-    public function verifikator(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'role' => Role::Verifikator,
-            'position' => 'Petugas Verifikator Berkas',
-        ]);
-    }
-
-    /**
-     * Pimpinan role state.
-     */
-    public function pimpinan(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'role' => Role::Pimpinan,
-            'position' => 'Kepala BKPSDM Aceh Timur',
+            'position' => 'Administrator Kelas (Super Admin)',
         ]);
     }
 
@@ -91,7 +58,7 @@ class UserFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'role' => Role::Peserta,
-            'position' => 'Peserta Pelatihan ASN',
+            'position' => 'Peserta Kelas',
         ]);
     }
 

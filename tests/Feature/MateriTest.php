@@ -1,6 +1,6 @@
 <?php
 
-use App\Livewire\Admin\Materi\MateriData;
+use App\Enums\CourseStatus;
 use App\Livewire\Admin\Materi\MateriDetail;
 use App\Models\Category;
 use App\Models\Chapter;
@@ -20,31 +20,26 @@ beforeEach(function () {
     $this->category = Category::first();
 
     $this->admin = User::factory()->admin()->create();
-    $this->mentor = User::factory()->mentor()->create();
     $this->peserta = User::factory()->peserta()->create();
 
     // Permanent course (Curriculum always open)
     $this->permanentCourse = Course::create([
-        'code' => 'TIK-2026-PERM',
+        'slug' => 'digital-leadership-ai-untuk-asn',
         'title' => 'Digital Leadership & AI untuk ASN',
         'category_id' => $this->category->id,
         'type' => 'permanent',
-        'method' => 'daring',
-        'quota' => 50,
         'status' => 'published',
         'created_by' => $this->admin->id,
     ]);
 
     // Batch course that has started (Curriculum frozen)
     $this->frozenBatchCourse = Course::create([
-        'code' => 'TIK-2026-BATCH-FROZEN',
+        'slug' => 'manajemen-perubahan-asn-angkatan-i',
         'title' => 'Manajemen Perubahan ASN Angkatan I',
         'category_id' => $this->category->id,
         'type' => 'batch',
         'start_date' => now()->subDays(3)->toDateString(),
         'end_date' => now()->addDays(7)->toDateString(),
-        'method' => 'hybrid',
-        'quota' => 30,
         'status' => 'published',
         'created_by' => $this->admin->id,
     ]);
@@ -52,27 +47,15 @@ beforeEach(function () {
 
 test('unauthorized users cannot access materi routes', function () {
     // Guest redirected to login
-    $this->get(route('materi.data'))->assertRedirect(route('login'));
     $this->get(route('materi.detail', $this->permanentCourse->id))->assertRedirect(route('login'));
     $this->get(route('materi.editor', $this->permanentCourse->id))->assertRedirect(route('login'));
 
     // Peserta gets 403 Forbidden
-    $this->actingAs($this->peserta)->get(route('materi.data'))->assertStatus(403);
     $this->actingAs($this->peserta)->get(route('materi.detail', $this->permanentCourse->id))->assertStatus(403);
     $this->actingAs($this->peserta)->get(route('materi.editor', $this->permanentCourse->id))->assertStatus(403);
 });
 
-test('admin can access materi catalog and curriculum detail', function () {
-    $this->actingAs($this->admin)->get(route('materi.data'))
-        ->assertOk()
-        ->assertSee('Tahap 6: Ruang Materi')
-        ->assertSee('Digital Leadership');
-
-    Livewire::actingAs($this->admin)
-        ->test(MateriData::class)
-        ->assertOk()
-        ->assertSee('Digital Leadership');
-
+test('admin can access curriculum detail', function () {
     $this->actingAs($this->admin)->get(route('materi.detail', $this->permanentCourse->id))
         ->assertOk()
         ->assertSee('Digital Leadership')
@@ -126,7 +109,7 @@ test('admin can add, edit, and delete chapter on open curriculum course', functi
     $component->call('deleteChapter', $chapter->id)
         ->assertDispatched('alert-show');
 
-    $this->assertDatabaseMissing('chapters', [
+    $this->assertSoftDeleted('chapters', [
         'id' => $chapter->id,
     ]);
 });
@@ -178,7 +161,7 @@ test('admin can edit and delete lesson in database', function () {
         ->call('deleteLesson', $chapter->id, $lesson->id)
         ->assertDispatched('alert-show');
 
-    $this->assertDatabaseMissing('lessons', [
+    $this->assertSoftDeleted('lessons', [
         'id' => $lesson->id,
     ]);
 });
@@ -304,13 +287,13 @@ test('chapter and lesson deletion via reusable modal hooks', function () {
         ->assertDispatched('closeModal')
         ->assertDispatched('alert-show');
 
-    $this->assertDatabaseMissing('lessons', ['id' => $lesson->id]);
+    $this->assertSoftDeleted('lessons', ['id' => $lesson->id]);
 
     $component->dispatch('MateriDetail-deleteChapter', ['id' => $chapter->id])
         ->assertDispatched('closeModal')
         ->assertDispatched('alert-show');
 
-    $this->assertDatabaseMissing('chapters', ['id' => $chapter->id]);
+    $this->assertSoftDeleted('chapters', ['id' => $chapter->id]);
 });
 
 test('admin can switch to inline editor, create lesson and return to silabus without page reload', function () {
@@ -436,4 +419,25 @@ test('switching between silabus and editor resets validation error bag completel
         ->call('closeEditor')
         ->call('openCreateLesson', $chapter->id)
         ->assertHasNoErrors();
+});
+
+test('admin can publish draft course method in materi detail curriculum page', function () {
+    $draftCourse = Course::create([
+        'title' => 'Pelatihan Draft Belum Terbit',
+        'category_id' => $this->category->id,
+        'type' => 'permanent',
+        'status' => CourseStatus::Draft,
+        'created_by' => $this->admin->id,
+    ]);
+
+    expect($draftCourse->isDraft())->toBeTrue();
+
+    Livewire::actingAs($this->admin)
+        ->test(MateriDetail::class, ['id' => $draftCourse->id])
+        ->assertSee(route('kelas.data'))
+        ->call('publishCourse')
+        ->assertDispatched('alert-show');
+
+    expect($draftCourse->fresh()->status)->toBe(CourseStatus::Published);
+    expect($draftCourse->fresh()->isPublished())->toBeTrue();
 });

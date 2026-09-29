@@ -45,13 +45,13 @@
                             @if ($isComplete)
                                 <div class="alert alert-success py-2 px-3 radius-8 text-xs mb-0 d-flex align-items-center gap-2 border-0 bg-success-50 text-success-700">
                                     <i class="ri-checkbox-circle-fill fs-6 flex-shrink-0"></i>
-                                    <span>Data kepegawaian Anda telah lengkap dan memenuhi syarat untuk mendaftar pelatihan.</span>
+                                    <span>Data kepegawaian Anda telah lengkap dan memenuhi syarat untuk mendaftar kelas.</span>
                                 </div>
                             @else
                                 <div class="alert alert-warning py-2 px-3 radius-8 text-xs mb-0 d-flex align-items-center gap-2 border-0 bg-warning-50 text-warning-800"
                                     style="background-color: #fefce8; border: 1px solid #fef08a !important; color: #854d0e;">
                                     <i class="ri-error-warning-fill fs-6 flex-shrink-0 text-warning"></i>
-                                    <span>Mohon lengkapi <strong>NIP, Instansi, Jabatan, dan Pangkat</strong> agar Anda dapat mendaftar sesi pelatihan resmi ASN.</span>
+                                    <span>Mohon lengkapi <strong>NIP, Instansi, Jabatan, dan Pangkat</strong> agar Anda dapat mendaftar sesi kelas resmi ASN.</span>
                                 </div>
                             @endif
                         </div>
@@ -78,8 +78,8 @@
                         </div>
 
                         <div class="mt-4 pt-2">
-                            <a href="{{ route('pelatihan.index') }}" class="btn btn-outline-primary btn-sm w-100 rounded-pill" wire:navigate>
-                                <i class="ri-book-open-line me-1"></i> Jelajahi Katalog Pelatihan
+                            <a href="{{ route('landing') }}#katalog-kelas" class="btn btn-outline-primary btn-sm w-100 rounded-pill">
+                                <i class="ri-book-open-line me-1"></i> Jelajahi Katalog Kelas
                             </a>
                         </div>
                     </div>

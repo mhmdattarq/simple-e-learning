@@ -23,18 +23,13 @@ class CourseFactory extends Factory
         $endDate = $startDate ? fake()->dateTimeBetween($startDate, '+4 months') : null;
 
         return [
-            'code' => 'PLT-'.fake()->year().'-'.fake()->unique()->numberBetween(100, 999),
+            'slug' => fake()->unique()->slug(),
             'title' => fake()->sentence(5),
+            'description' => null,
             'category_id' => null,
             'type' => $type,
             'start_date' => $startDate,
             'end_date' => $endDate,
-            'method' => fake()->randomElement(['online', 'offline', 'hybrid']),
-            'location' => fake()->city(),
-            'quota' => fake()->numberBetween(20, 60),
-            'target_audience' => fake()->sentence(4),
-            'budget_source' => 'APBK TA '.fake()->year(),
-            'description' => fake()->paragraph(),
             'thumbnail' => null,
             'tor_file' => null,
             'status' => 'draft',

@@ -11,11 +11,11 @@
                         </span>
                     </div>
                     <h1 class="display-6 fw-extrabold text-white mb-3">
-                        Jadwal Pelatihan <span class="text-gold">ASN</span>
+                        Jadwal Kelas <span class="text-gold">ASN</span>
                     </h1>
                     <p class="text-white-80 fs-6 mb-0 pe-lg-4">
-                        Daftar program pelatihan batch yang sedang dan akan diselenggarakan oleh BKPSDM Kabupaten Aceh
-                        Timur. Pilih pelatihan yang sesuai dan daftarkan diri Anda sebelum kuota habis.
+                        Daftar program kelas batch yang sedang dan akan diselenggarakan oleh BKPSDM Kabupaten Aceh
+                        Timur. Pilih kelas yang sesuai dan daftarkan diri Anda sebelum kuota habis.
                     </p>
                 </div>
                 <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
@@ -69,27 +69,29 @@
                                                 <span class="d-flex align-items-center gap-1">
                                                     <i class="ri-calendar-line text-gold"></i>
                                                     {{ $jadwal->start_date->translatedFormat('d F Y') }}
+                                                    @if ($jadwal->start_date->format('H:i') !== '00:00')
+                                                        {{ $jadwal->start_date->format('H:i') }}
+                                                    @endif
                                                     @if ($jadwal->end_date)
                                                         &nbsp;&ndash;&nbsp;
                                                         {{ $jadwal->end_date->translatedFormat('d F Y') }}
+                                                        @if ($jadwal->end_date->format('H:i') !== '00:00')
+                                                            {{ $jadwal->end_date->format('H:i') }} WIB
+                                                        @endif
                                                     @endif
                                                 </span>
                                                 <span class="d-flex align-items-center gap-1">
-                                                    <i class="ri-user-line text-gold"></i>
-                                                    Kuota: {{ $jadwal->quota }} peserta
-                                                </span>
-                                                <span class="d-flex align-items-center gap-1">
-                                                    <i class="ri-broadcast-line text-gold"></i>
-                                                    {{ strtoupper($jadwal->method) }}
+                                                    <i class="ri-price-tag-3-line text-gold"></i>
+                                                    {{ $jadwal->isPaid() ? 'Rp ' . number_format($jadwal->price, 0, ',', '.') : 'Gratis' }}
                                                 </span>
                                             </div>
                                         </div>
 
                                         {{-- Right: CTA Button --}}
                                         <div class="col-auto">
-                                            <a href="{{ route('pelatihan.daftar', $jadwal->id) }}"
+                                            <a href="{{ route('landing.kelas.batch') }}"
                                                 class="btn-simpel-cta-gold">
-                                                <span>Daftar Pelatihan</span>
+                                                <span>Lihat Kelas</span>
                                                 <i class="ri-arrow-right-line"></i>
                                             </a>
                                         </div>
@@ -104,7 +106,7 @@
                 <div
                     class="mt-4 p-3 rounded-3 bg-white border border-simpel d-flex align-items-center gap-2 text-muted fs-8 wow fadeInUp">
                     <i class="ri-information-line text-gold fs-5 flex-shrink-0"></i>
-                    <span>Pendaftaran memerlukan akun ASN yang terverifikasi. Pastikan Anda sudah
+                    <span>Pendaftaran memerlukan akun peserta. Pastikan Anda sudah
                         <a href="{{ route('register') }}"
                             class="text-navy fw-semibold text-decoration-none hover-gold">membuat akun</a>
                         sebelum mendaftar.</span>
@@ -116,15 +118,15 @@
                     <div class="mb-4">
                         <i class="ri-calendar-2-line text-gold" style="font-size: 72px; opacity: 0.4;"></i>
                     </div>
-                    <h4 class="fw-bold text-navy mb-2">Belum Ada Jadwal Pelatihan</h4>
+                    <h4 class="fw-bold text-navy mb-2">Belum Ada Jadwal Kelas</h4>
                     <p class="text-muted fs-6 mb-4 max-w-500 mx-auto">
-                        Jadwal batch pelatihan akan segera diumumkan. Pantau terus halaman ini atau
-                        kunjungi katalog pelatihan mandiri yang bisa diakses kapan saja.
+                        Jadwal batch kelas akan segera diumumkan. Pantau terus halaman ini atau
+                        kunjungi katalog kelas yang bisa diakses kapan saja.
                     </p>
-                    <a href="{{ route('landing') }}#pelatihan"
+                    <a href="{{ route('landing') }}#katalog-kelas"
                         class="btn-simpel-cta-gold">
                         <i class="ri-book-open-line"></i>
-                        <span>Lihat Katalog Pelatihan</span>
+                        <span>Lihat Katalog Kelas</span>
                     </a>
                 </div>
             @endif

@@ -223,10 +223,10 @@ new class extends Component {
                     </h5>
 
                     {{-- Message with soft highlight box --}}
-                    <div class="simpel-modal-msg-box text-start">
-                        <p class="simpel-modal-msg">
-                            {{ $data['msg'] ?? 'Apakah Anda yakin ingin menghapus data ini? Tindakan ini tidak dapat dibatalkan.' }}
-                        </p>
+                    <div class="simpel-modal-msg-box text-start {{ $data['msgBoxClass'] ?? '' }}">
+                        <div class="simpel-modal-msg">
+                            {!! nl2br(e($data['msg'] ?? 'Apakah Anda yakin ingin menghapus data ini? Tindakan ini tidak dapat dibatalkan.')) !!}
+                        </div>
                     </div>
 
                     {{-- Action Buttons (50/50 Balanced) --}}
@@ -265,7 +265,7 @@ new class extends Component {
                             <h5 class="simpel-modal-title mb-1">
                                 {{ !empty($chapterForm['id']) ? 'Edit Bab Kurikulum' : 'Tambah Bab Baru' }}
                             </h5>
-                            <p class="text-muted fs-8 mb-0">Tentukan nomor urut dan judul bab dalam kurikulum pelatihan.
+                            <p class="text-muted fs-8 mb-0">Tentukan nomor urut dan judul bab dalam kurikulum kelas.
                             </p>
                         </div>
                     </div>

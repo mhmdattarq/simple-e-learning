@@ -15,15 +15,15 @@ class CategorySeeder extends Seeder
     {
         $categories = [
             [
-                'name' => 'Pelatihan Kepemimpinan',
+                'name' => 'Kelas Kepemimpinan',
                 'description' => 'Program penguatan kepemimpinan transformasional dan manajerial ASN BKPSDM Aceh Timur.',
             ],
             [
-                'name' => 'Pelatihan Teknis',
+                'name' => 'Kelas Teknis',
                 'description' => 'Peningkatan keahlian teknis operasional, digitalisasi, dan tata kelola instansi pemerintah.',
             ],
             [
-                'name' => 'Pelatihan Fungsional',
+                'name' => 'Kelas Fungsional',
                 'description' => 'Pengembangan kompetensi profesional jabatan fungsional ASN sesuai regulasi kepegawaian.',
             ],
         ];

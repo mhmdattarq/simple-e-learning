@@ -22,7 +22,7 @@ new class extends Component {
                 <div class="d-flex flex-wrap align-items-center gap-3">
                     <div class="d-none d-md-flex align-items-center gap-2">
                         <span class="text-simple-gold medium d-none d-lg-inline">Sistem Informasi Manajemen
-                            Pelatihan</span>
+                            Pembelajaran</span>
                     </div>
                 </div>
             </div>
@@ -30,7 +30,7 @@ new class extends Component {
                 <div class="d-flex flex-wrap align-items-center gap-3">
                     {{-- Search --}}
                     <form class="navbar-search d-none d-sm-block">
-                        <input type="text" name="search" placeholder="Cari pelatihan, peserta, berkas...">
+                        <input type="text" name="search" placeholder="Cari kelas, peserta, berkas...">
                         <i class="ri-search-line icon"></i>
                     </form>
 
@@ -64,7 +64,7 @@ new class extends Component {
                                     </span>
                                     <div>
                                         <p class="mb-0 fw-semibold text-xs text-dark">Pendaftaran Baru: Nur Aini</p>
-                                        <small class="text-muted" style="font-size: 11px;">Pelatihan Manajemen
+                                        <small class="text-muted" style="font-size: 11px;">Kelas Manajemen
                                             Administrator · 5m lalu</small>
                                     </div>
                                 </a>
@@ -87,7 +87,7 @@ new class extends Component {
                                     </span>
                                     <div>
                                         <p class="mb-0 fw-semibold text-xs text-dark">Sertifikat Terbit: 12 Peserta</p>
-                                        <small class="text-muted" style="font-size: 11px;">Pelatihan Pengelolaan
+                                        <small class="text-muted" style="font-size: 11px;">Kelas Pengelolaan
                                             Keuangan · 3j lalu</small>
                                     </div>
                                 </a>

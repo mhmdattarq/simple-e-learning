@@ -2,10 +2,10 @@
 
 namespace App\Livewire\Peserta\Materi;
 
-use App\Models\Attendance;
+use App\Enums\CourseStatus;
+use App\Enums\RegistrationStatus;
 use App\Models\Chapter;
 use App\Models\Course;
-use App\Models\CourseSchedule;
 use App\Models\CourseUser;
 use App\Models\Lesson;
 use Illuminate\Support\Facades\Auth;
@@ -26,8 +26,6 @@ class MateriBelajar extends Component
     #[Url(as: 'lesson')]
     public ?int $selectedLessonId = null;
 
-    public ?int $selectedScheduleId = null;
-
     public function mount(int $id): void
     {
         $this->courseId = $id;
@@ -35,19 +33,30 @@ class MateriBelajar extends Component
 
         $user = Auth::user();
 
-        // Otorisasi: Verifikasi peserta atau staff internal
-        $isEnrolledVerified = CourseUser::where('user_id', $user->id)
-            ->where('course_id', $this->courseId)
-            ->whereIn('status', ['verified', 'active', 'completed'])
-            ->exists();
-
-        $hasAdminAccess = $user->hasAdminAccess() || $user->isMentor();
-
-        if (! $isEnrolledVerified && ! $hasAdminAccess) {
-            abort(403, 'Akses materi hanya untuk peserta terverifikasi pada pelatihan ini.');
+        if ($this->course->status !== CourseStatus::Published && ! $user->hasAdminAccess()) {
+            abort(404, 'Kelas tidak ditemukan atau belum dipublikasikan.');
         }
 
-        // Auto-select initial unlocked lesson if none selected
+        // Auto-enroll peserta yang login agar riwayat & progres belajar tercatat
+        $enrollment = CourseUser::firstOrCreate(
+            [
+                'user_id' => $user->id,
+                'course_id' => $this->courseId,
+            ],
+            [
+                'status' => 'active',
+                'enrolled_at' => now(),
+            ]
+        );
+
+        if ($enrollment->status === RegistrationStatus::Pending) {
+            $enrollment->update([
+                'status' => 'active',
+                'enrolled_at' => $enrollment->enrolled_at ?? now(),
+            ]);
+        }
+
+        // Auto-select initial lesson if none selected
         if (! $this->selectedLessonId) {
             $this->selectFirstAvailableLesson();
         }
@@ -58,16 +67,6 @@ class MateriBelajar extends Component
     public function selectFirstAvailableLesson(): void
     {
         $user = Auth::user();
-        $schedules = CourseSchedule::where('course_id', $this->courseId)
-            ->where('status', '!=', 'cancelled')
-            ->orderBy('session_date', 'asc')
-            ->orderBy('start_time', 'asc')
-            ->get();
-
-        $attendedScheduleIds = Attendance::where('user_id', $user->id)
-            ->whereIn('schedule_id', $schedules->pluck('id'))
-            ->pluck('schedule_id')
-            ->toArray();
 
         $completedLessonIds = DB::table('lesson_user')
             ->where('user_id', $user->id)
@@ -75,63 +74,25 @@ class MateriBelajar extends Component
             ->pluck('lesson_id')
             ->toArray();
 
-        // Cari materi pertama yang belum selesai, atau materi pertama yang bisa diakses
-        $firstAccessibleLessonId = null;
-        $firstAccessibleScheduleId = null;
+        $chapters = Chapter::with(['lessons' => fn ($q) => $q->orderBy('order', 'asc')])
+            ->where('course_id', $this->courseId)
+            ->orderBy('order', 'asc')
+            ->get();
 
-        foreach ($schedules as $sch) {
-            if (in_array($sch->id, $attendedScheduleIds) || $user->hasAdminAccess()) {
-                $lessons = Lesson::whereHas('chapter', function ($q) use ($sch) {
-                    $q->where('schedule_id', $sch->id);
-                })
-                    ->join('chapters', 'chapters.id', '=', 'lessons.chapter_id')
-                    ->orderBy('chapters.order', 'asc')
-                    ->orderBy('lessons.order', 'asc')
-                    ->select('lessons.*')
-                    ->get();
+        foreach ($chapters as $chapter) {
+            foreach ($chapter->lessons as $lesson) {
+                if (! in_array($lesson->id, $completedLessonIds)) {
+                    $this->selectedLessonId = $lesson->id;
 
-                foreach ($lessons as $lesson) {
-                    if (! $firstAccessibleLessonId) {
-                        $firstAccessibleLessonId = $lesson->id;
-                        $firstAccessibleScheduleId = $sch->id;
-                    }
-                    // Jika belum selesai, inilah materi aktif peserta saat ini!
-                    if (! in_array($lesson->id, $completedLessonIds)) {
-                        $this->selectedLessonId = $lesson->id;
-                        $this->selectedScheduleId = $sch->id;
-
-                        return;
-                    }
+                    return;
                 }
             }
         }
 
-        // Jika tidak ada di sesi, cek materi umum kursus
-        $generalLessons = Lesson::whereHas('chapter', function ($q) {
-            $q->where('course_id', $this->courseId)->whereNull('schedule_id');
-        })
-            ->join('chapters', 'chapters.id', '=', 'lessons.chapter_id')
-            ->orderBy('chapters.order', 'asc')
-            ->orderBy('lessons.order', 'asc')
-            ->select('lessons.*')
-            ->get();
-
-        foreach ($generalLessons as $lesson) {
-            if (! $firstAccessibleLessonId) {
-                $firstAccessibleLessonId = $lesson->id;
-                $firstAccessibleScheduleId = null;
-            }
-            if (! in_array($lesson->id, $completedLessonIds)) {
-                $this->selectedLessonId = $lesson->id;
-                $this->selectedScheduleId = null;
-
-                return;
-            }
-        }
-
-        if ($firstAccessibleLessonId) {
-            $this->selectedLessonId = $firstAccessibleLessonId;
-            $this->selectedScheduleId = $firstAccessibleScheduleId;
+        // All completed: go to first lesson
+        $first = $chapters->first()?->lessons->first();
+        if ($first) {
+            $this->selectedLessonId = $first->id;
         }
     }
 
@@ -143,25 +104,8 @@ class MateriBelajar extends Component
         }
 
         $user = Auth::user();
-        $scheduleId = $lesson->chapter?->schedule_id;
 
-        // Validasi apakah sesi materi ini sudah diabsen
-        if ($scheduleId && ! $user->hasAdminAccess()) {
-            $hasAttended = Attendance::where('user_id', $user->id)
-                ->where('schedule_id', $scheduleId)
-                ->exists();
-
-            if (! $hasAttended) {
-                $this->dispatch('show-toast', [
-                    'type' => 'warning',
-                    'message' => 'Sesi materi ini masih terkunci. Anda harus melakukan presensi terlebih dahulu.',
-                ]);
-
-                return;
-            }
-        }
-
-        // Validasi sekuensial: Peserta tidak boleh lompat ke materi yang masih terkunci
+        // Sequential lock: peserta cannot skip ahead
         if (! $user->hasAdminAccess() && ! $this->isLessonAccessible($lessonId)) {
             $this->dispatch('show-toast', [
                 'type' => 'warning',
@@ -172,7 +116,6 @@ class MateriBelajar extends Component
         }
 
         $this->selectedLessonId = $lessonId;
-        $this->selectedScheduleId = $scheduleId;
         $this->showCompleteModal = false;
     }
 
@@ -194,7 +137,6 @@ class MateriBelajar extends Component
             if ($item->id === $lessonId) {
                 return true;
             }
-            // Jika ada materi sebelumnya yang belum selesai, maka materi setelahnya terkunci
             if (! in_array($item->id, $completedLessonIds)) {
                 return false;
             }
@@ -204,44 +146,18 @@ class MateriBelajar extends Component
     }
 
     /**
-     * Mengambil seluruh materi dalam urutan linier sesuai hierarki sesi & bab.
+     * Mengambil seluruh materi dalam urutan linier sesuai hierarki bab.
      */
     protected function getAllLinearLessons(): array
     {
-        $schedules = CourseSchedule::where('course_id', $this->courseId)
-            ->where('status', '!=', 'cancelled')
-            ->orderBy('session_date', 'asc')
-            ->orderBy('start_time', 'asc')
-            ->get();
-
-        $allLessons = [];
-
-        foreach ($schedules as $sch) {
-            $chapters = Chapter::with(['lessons' => function ($q) {
-                $q->orderBy('order', 'asc')->orderBy('id', 'asc');
-            }])
-                ->where('schedule_id', $sch->id)
-                ->orderBy('order', 'asc')
-                ->orderBy('id', 'asc')
-                ->get();
-
-            foreach ($chapters as $chapter) {
-                foreach ($chapter->lessons as $lesson) {
-                    $allLessons[] = $lesson;
-                }
-            }
-        }
-
-        $generalChapters = Chapter::with(['lessons' => function ($q) {
-            $q->orderBy('order', 'asc')->orderBy('id', 'asc');
-        }])
+        $chapters = Chapter::with(['lessons' => fn ($q) => $q->orderBy('order', 'asc')->orderBy('id', 'asc')])
             ->where('course_id', $this->courseId)
-            ->whereNull('schedule_id')
             ->orderBy('order', 'asc')
             ->orderBy('id', 'asc')
             ->get();
 
-        foreach ($generalChapters as $chapter) {
+        $allLessons = [];
+        foreach ($chapters as $chapter) {
             foreach ($chapter->lessons as $lesson) {
                 $allLessons[] = $lesson;
             }
@@ -289,9 +205,7 @@ class MateriBelajar extends Component
         $currentIndex = $chapterLessons->search(fn ($l) => $l->id === $currentLesson->id);
 
         if ($currentIndex !== false && $currentIndex < $chapterLessons->count() - 1) {
-            // Tandai materi saat ini selesai terlebih dahulu agar sekuensial
             $this->markLessonComplete($currentLesson->id);
-
             $nextLesson = $chapterLessons[$currentIndex + 1];
             $this->selectLesson($nextLesson->id);
         }
@@ -343,7 +257,7 @@ class MateriBelajar extends Component
 
         $this->showCompleteModal = false;
 
-        // Cari bab berikutnya dalam urutan linier
+        // Cari bab berikutnya
         $allLessons = $this->getAllLinearLessons();
         $nextLesson = null;
         $foundCurrentChapter = false;
@@ -369,7 +283,7 @@ class MateriBelajar extends Component
         } else {
             $this->dispatch('show-toast', [
                 'type' => 'success',
-                'message' => 'Selamat! Anda telah menyelesaikan seluruh bab materi ini.',
+                'message' => 'Selamat! Anda telah menyelesaikan seluruh materi kelas ini.',
             ]);
         }
     }
@@ -414,23 +328,10 @@ class MateriBelajar extends Component
     {
         $user = Auth::user();
 
-        $schedules = CourseSchedule::with(['mentor', 'chapters.lessons'])
+        $chapters = Chapter::with(['lessons' => fn ($q) => $q->orderBy('order', 'asc')])
             ->where('course_id', $this->courseId)
-            ->where('status', '!=', 'cancelled')
-            ->orderBy('session_date', 'asc')
-            ->orderBy('start_time', 'asc')
-            ->get();
-
-        $generalChapters = Chapter::with('lessons')
-            ->where('course_id', $this->courseId)
-            ->whereNull('schedule_id')
             ->orderBy('order', 'asc')
             ->get();
-
-        $attendances = Attendance::where('user_id', $user->id)
-            ->whereIn('schedule_id', $schedules->pluck('id'))
-            ->get()
-            ->keyBy('schedule_id');
 
         $completedLessonIds = DB::table('lesson_user')
             ->where('user_id', $user->id)
@@ -440,16 +341,14 @@ class MateriBelajar extends Component
 
         $currentLesson = null;
         $currentChapter = null;
-        $currentSchedule = null;
         $isFirstLesson = true;
         $isLastInChapter = false;
         $hasNextChapter = false;
 
         if ($this->selectedLessonId) {
-            $currentLesson = Lesson::with('chapter.schedule')->find($this->selectedLessonId);
+            $currentLesson = Lesson::with('chapter')->find($this->selectedLessonId);
             if ($currentLesson) {
                 $currentChapter = $currentLesson->chapter;
-                $currentSchedule = $currentChapter?->schedule;
 
                 $allLinear = $this->getAllLinearLessons();
                 $linearIndex = null;
@@ -467,7 +366,6 @@ class MateriBelajar extends Component
                     $lastLessonInChap = $chapterLessons->last();
                     $isLastInChapter = ($lastLessonInChap && $lastLessonInChap->id === $currentLesson->id);
 
-                    // Periksa apakah ada bab selanjutnya
                     if ($linearIndex !== null) {
                         for ($i = $linearIndex + 1; $i < count($allLinear); $i++) {
                             if ($allLinear[$i]->chapter_id !== $currentChapter->id) {
@@ -481,13 +379,10 @@ class MateriBelajar extends Component
         }
 
         return view('mods.peserta.materi.materi-belajar', compact(
-            'schedules',
-            'generalChapters',
-            'attendances',
+            'chapters',
             'completedLessonIds',
             'currentLesson',
             'currentChapter',
-            'currentSchedule',
             'isFirstLesson',
             'isLastInChapter',
             'hasNextChapter'

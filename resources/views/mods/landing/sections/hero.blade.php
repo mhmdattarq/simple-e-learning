@@ -19,20 +19,20 @@
 
                 {{-- Subtitle --}}
                 <p class="text-white-80 fs-6 mb-4 pe-lg-4 lh-base">
-                    Platform beasiswa pelatihan digital terintegrasi <strong>SIMPEL E-Learning</strong> untuk aparatur
+                    Platform pembelajaran digital terintegrasi <strong>SIMPEL E-Learning</strong> untuk aparatur
                     sipil negara. Dilengkapi kurikulum berstandar nasional, mentoring pakar, dan e-sertifikat kompetensi
                     resmi terhubung ke SIASN BKN.
                 </p>
 
                 {{-- Action CTA Buttons using SIMPEL Button System --}}
                 <div class="d-flex flex-wrap align-items-center gap-3 mb-4">
-                    <a href="#pelatihan" class="btn-simpel-cta-gold fs-6" style="padding: 13px 26px; border-radius: 12px;">
-                        <span>Daftar Pelatihan</span>
+                    <a href="#katalog-kelas" class="btn-simpel-cta-gold fs-6" style="padding: 13px 26px; border-radius: 12px;">
+                        <span>Jelajahi Kelas</span>
                         <i class="ri-arrow-right-line"></i>
                     </a>
-                    <a href="{{ route('jadwal') }}" class="btn-simpel-outline-light fs-6" style="padding: 13px 24px; border-radius: 12px;">
-                        <i class="ri-calendar-event-line fs-5"></i>
-                        <span>Lihat Jadwal Pelatihan</span>
+                    <a href="#jenis-kelas" class="btn-simpel-outline-light fs-6" style="padding: 13px 24px; border-radius: 12px;">
+                        <i class="ri-layout-grid-line fs-5"></i>
+                        <span>Daftar Jenis Kelas</span>
                     </a>
                 </div>
 
@@ -40,11 +40,11 @@
                 <div class="row g-3 pt-3 border-top border-white-10 text-white">
                     <div class="col-4">
                         <h4 class="mb-0 fw-extrabold text-gold">{{ $totalPublishedCourses > 0 ? $totalPublishedCourses.'+' : '—' }}</h4>
-                        <small class="text-white-70 fs-8">Tema Pelatihan SPBE</small>
+                        <small class="text-white-70 fs-8">Tema Kelas SPBE</small>
                     </div>
                     <div class="col-4 border-start border-white-15 ps-3">
                         <h4 class="mb-0 fw-extrabold text-gold">{{ $totalApprovedParticipants > 0 ? $totalApprovedParticipants.'+' : '100%' }}</h4>
-                        <small class="text-white-70 fs-8">Beasiswa Pemerintah</small>
+                        <small class="text-white-70 fs-8">Program Resmi BKPSDM</small>
                     </div>
                     <div class="col-4 border-start border-white-15 ps-3">
                         <h4 class="mb-0 fw-extrabold text-gold">SIASN</h4>
@@ -70,9 +70,9 @@
                                     <small class="text-white-60 fs-8"><i class="ri-time-line me-1"></i>40 JP</small>
                                 </div>
                                 <h6 class="fw-bold text-white mb-1">Government Transformation Academy</h6>
-                                <p class="text-white-70 fs-8 mb-2 lh-sm">Pelatihan arsitektur SPBE, tata kelola data
+                                <p class="text-white-70 fs-8 mb-2 lh-sm">Pembelajaran arsitektur SPBE, tata kelola data
                                     pemerintahan, dan rekayasa layanan terpadu.</p>
-                                <a href="#pelatihan"
+                                <a href="#katalog-kelas"
                                     class="text-gold text-decoration-none fs-8 fw-semibold d-inline-flex align-items-center gap-1 hover-gold">
                                     <span>Lihat Kuota & Silabus</span>
                                     <i class="ri-arrow-right-line"></i>
@@ -98,7 +98,7 @@
                                 <h6 class="fw-bold text-white mb-1">Cybersecurity & CSIRT Instansi</h6>
                                 <p class="text-white-70 fs-8 mb-2 lh-sm">Pengamanan infrastruktur kritis instansi
                                     pemerintah, ISO 27001, dan mitigasi insiden siber.</p>
-                                <a href="#pelatihan"
+                                <a href="#katalog-kelas"
                                     class="text-gold text-decoration-none fs-8 fw-semibold d-inline-flex align-items-center gap-1 hover-gold">
                                     <span>Lihat Kuota & Silabus</span>
                                     <i class="ri-arrow-right-line"></i>

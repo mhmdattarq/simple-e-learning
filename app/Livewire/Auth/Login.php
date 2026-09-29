@@ -226,10 +226,6 @@ class Login extends Component
                 'message' => 'berhasil login selamat datang '.$roleName,
             ]);
 
-            if ($user->isPimpinan()) {
-                return redirect()->intended(route('pimpinan.persetujuan.data'));
-            }
-
             if ($user->hasAdminAccess()) {
                 return redirect()->intended(route('admin.dashboard'));
             }

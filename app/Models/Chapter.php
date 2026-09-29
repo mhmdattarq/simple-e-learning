@@ -6,35 +6,27 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Chapter extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $guarded = [];
 
     protected function casts(): array
     {
         return [
-            'schedule_id' => 'integer',
             'order' => 'integer',
         ];
     }
 
     /**
-     * Pelatihan / Kursus pemilik bab ini.
+     * Kelas / Kursus pemilik bab ini.
      */
     public function course(): BelongsTo
     {
         return $this->belongsTo(Course::class, 'course_id');
-    }
-
-    /**
-     * Sesi jadwal pelatihan yang menaungi bab materi ini (opsional).
-     */
-    public function schedule(): BelongsTo
-    {
-        return $this->belongsTo(CourseSchedule::class, 'schedule_id');
     }
 
     /**

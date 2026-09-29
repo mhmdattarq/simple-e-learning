@@ -3,11 +3,11 @@
     <div class="auth-hero-pane d-lg-flex d-none">
         <div class="auth-hero-inner">
             <h1 class="auth-hero-title">
-                Pendaftaran Akun Peserta Pelatihan ASN
+                Pendaftaran Akun Peserta Pembelajaran ASN
             </h1>
 
             <p class="auth-hero-subtitle">
-                Bergabunglah dengan platform SIMPEL BKPSDM Kabupaten Aceh Timur untuk mengakses pelatihan mandiri,
+                Bergabunglah dengan platform SIMPEL BKPSDM Kabupaten Aceh Timur untuk mengakses pembelajaran kelas mandiri,
                 sertifikasi resmi, dan pengembangan kompetensi aparatur.
             </p>
 
@@ -27,7 +27,7 @@
                     </span>
                     <span class="auth-pill-item">
                         <i class="ri-book-open-line"></i>
-                        Katalog Pelatihan Terbuka
+                        Katalog Kelas Terbuka
                     </span>
                     <span class="auth-pill-item">
                         <i class="ri-shield-keyhole-line"></i>
@@ -64,7 +64,7 @@
             <div class="mb-20">
                 <h4 class="auth-clean-title">Pendaftaran Peserta / Siswa</h4>
                 <p class="auth-clean-desc mb-0">Lengkapi formulir di bawah ini untuk mendaftarkan akun peserta
-                    pelatihan.</p>
+                    pembelajaran.</p>
             </div>
 
             @if ($errors->has('form.nip') && str_contains($errors->first('form.nip'), 'kesalahan sistem'))

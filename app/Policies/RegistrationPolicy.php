@@ -10,21 +10,20 @@ class RegistrationPolicy
 {
     /**
      * Determine whether the user can view any registrations.
-     * Admin, Verifikator, Pimpinan can view the registration list.
      */
     public function viewAny(User $user): bool
     {
-        return in_array($user->role, [Role::Admin, Role::Verifikator, Role::Pimpinan], true);
+        return $user->role === Role::Admin;
     }
 
     /**
      * Determine whether the user can view the registration detail.
-     * - Internal roles can view all registrations.
+     * - Admin can view all registrations.
      * - Peserta can only view their own registration.
      */
     public function view(User $user, CourseUser $registration): bool
     {
-        if (in_array($user->role, [Role::Admin, Role::Verifikator, Role::Pimpinan], true)) {
+        if ($user->role === Role::Admin) {
             return true;
         }
 
@@ -36,7 +35,7 @@ class RegistrationPolicy
      */
     public function verify(User $user, CourseUser $registration): bool
     {
-        return in_array($user->role, [Role::Admin, Role::Verifikator], true);
+        return $user->role === Role::Admin;
     }
 
     /**

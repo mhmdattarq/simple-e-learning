@@ -38,69 +38,17 @@ new class extends Component {
                                 <li class="{{ request()->routeIs('landing') ? 'current' : '' }}">
                                     <a href="{{ route('landing') }}">Beranda</a>
                                 </li>
-                                <li class="{{ request()->routeIs('jadwal') ? 'current' : '' }}">
-                                    <a href="{{ route('jadwal') }}">Jadwal</a>
+                                <li class="{{ request()->routeIs('landing.kelas.batch') ? 'current' : '' }}">
+                                    <a href="{{ route('landing.kelas.batch') }}">Kelas Batch</a>
                                 </li>
-                                <li class="{{ request()->routeIs('pelatihan.index') ? 'current' : '' }}">
-                                    <a href="{{ route('pelatihan.index') }}">Katalog Pelatihan</a>
+                                <li class="{{ request()->routeIs('landing.kelas.permanen') ? 'current' : '' }}">
+                                    <a href="{{ route('landing.kelas.permanen') }}">Kelas Permanen</a>
                                 </li>
-                                <li class="{{ request()->is('alur-pendaftaran*') ? 'current' : '' }}">
-                                    <a href="#">Alur Pendaftaran</a>
+                                <li class="{{ request()->routeIs('landing.kelas.berbayar') ? 'current' : '' }}">
+                                    <a href="{{ route('landing.kelas.berbayar') }}">Kelas Berbayar</a>
                                 </li>
-                                {{-- <li>
-                                    <a href="about.html">About</a>
-                                </li> --}}
-                                {{-- <li class="dropdown">
-                                    <a href="#">Jadwal</a>
-                                    <ul class="shadow-box">
-                                        <li><a href="instructor.html">Instructors</a></li>
-                                        <li><a href="instructor-carousel.html">Instructor Carousel</a></li>
-                                        <li><a href="instructor-details.html">Instructor Details</a></li>
-                                        <li><a href="events.html">Events</a></li>
-                                        <li><a href="events-carousel.html">Event Carousel</a></li>
-                                        <li><a href="event-details.html">Event Details</a></li>
-                                        <li><a href="become-a-teacher.html">Become A Teacher</a></li>
-                                        <li><a href="testimonials.html">Testimonials</a></li>
-                                        <li><a href="testimonials-carousel.html">Testimonial Carousel</a></li>
-                                        <li><a href="pricing.html">Pricing</a></li>
-                                        <li><a href="gallery.html">Gallery</a></li>
-                                        <li><a href="faq.html">FAQs</a></li>
-                                        <li><a href="404.html">404 Error</a></li>
-                                        <li><a href="coming-soon.html">Coming Soon</a></li>
-                                    </ul>
-                                </li>
-                                <li class="dropdown">
-                                    <a href="#">Course</a>
-                                    <ul class="shadow-box">
-                                        <li><a href="course.html">Course</a></li>
-                                        <li><a href="course-carousel.html">Course Carousel</a></li>
-                                        <li><a href="course-list.html">Course List</a></li>
-                                        <li><a href="course-details.html">Course Details</a></li>
-                                    </ul>
-                                </li>
-                                <li class="dropdown">
-                                    <a href="#">Shop</a>
-                                    <ul class="shadow-box">
-                                        <li><a href="products.html">Products</a></li>
-                                        <li><a href="product-details.html">Product Details</a></li>
-                                        <li><a href="cart.html">Cart</a></li>
-                                        <li><a href="checkout.html">Checkout</a></li>
-                                        <li><a href="wishlist.html">Wishlist</a></li>
-                                        <li><a href="sign-up.html">Sign Up</a></li>
-                                        <li><a href="login.html">Login</a></li>
-                                    </ul>
-                                </li>
-                                <li class="dropdown">
-                                    <a href="#">Blog</a>
-                                    <ul class="shadow-box">
-                                        <li><a href="blog.html">Blog</a></li>
-                                        <li><a href="blog-carousel.html">Blog Carousel</a></li>
-                                        <li><a href="blog-list.html">Blog List</a></li>
-                                        <li><a href="blog-details.html">Blog Details</a></li>
-                                    </ul>
-                                </li> --}}
                                 <li class="{{ request()->is('kontak*') ? 'current' : '' }}">
-                                    <a href="#">Kontak</a>
+                                    <a href="javascript:void(0)" title="Segera Hadir">Kontak</a>
                                 </li>
                             </ul>
                         </div>
@@ -188,13 +136,6 @@ new class extends Component {
                                                     @if (! auth()->user()?->isAsnProfileComplete())
                                                         <span class="badge bg-warning text-dark ms-auto" style="font-size: 10px;">Lengkapi</span>
                                                     @endif
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a class="dropdown-item px-3 py-2 text-dark d-flex align-items-center gap-2 rounded"
-                                                    href="{{ route('presensi.index') }}" style="font-size: 13.5px;">
-                                                    <i class="ri-qr-code-line text-success" style="font-size: 16px;"></i>
-                                                    Presensi Pelatihan
                                                 </a>
                                             </li>
                                             <li>

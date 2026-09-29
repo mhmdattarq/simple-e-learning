@@ -83,11 +83,17 @@
     {{-- Header & Breadcrumb (Unified Frame ala DataTables Server-Side) --}}
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-20">
         <div>
-            <div class="d-flex align-items-center gap-2 mb-1">
-                <span class="badge bg-secondary-subtle text-secondary px-2 py-1 radius-4 font-monospace fs-8">
-                    {{ $course->code }}
+            <div class="d-flex flex-wrap align-items-center gap-2 mb-1">
+                <span class="badge bg-secondary-subtle text-secondary px-2 py-1 radius-4 fs-8">
+                    {{ $course->category?->name ?? 'Kelas' }}
                 </span>
-                @if ($course->isBatch())
+                @if ($course->isPaid())
+                    <span
+                        class="badge bg-warning-subtle text-warning border border-warning-subtle px-2 py-1 radius-4 fs-8">
+                        <i class="ri-money-dollar-circle-line me-1"></i>Berbayar (Rp
+                        {{ number_format($course->price, 0, ',', '.') }})
+                    </span>
+                @elseif ($course->isBatch())
                     <span
                         class="badge bg-warning-subtle text-warning border border-warning-subtle px-2 py-1 radius-4 fs-8">
                         <i class="ri-calendar-line me-1"></i>Batch (Angkatan)
@@ -97,26 +103,20 @@
                         <i class="ri-infinity-line me-1"></i>Permanen (Self-Paced)
                     </span>
                 @endif
-                @if ($schedule)
-                    <span
-                        class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1 radius-4 fs-8">
-                        <i class="ri-calendar-event-line me-1"></i>Sesi: {{ $schedule->session_title }}
-                    </span>
-                @endif
+
+                {{-- Status Badge --}}
+                <span class="badge {{ $course->status->badgeClass() }} px-2 py-1 radius-4 fs-8">
+                    <i class="{{ $course->status->icon() }} me-1"></i>{{ $course->status->label() }}
+                </span>
             </div>
             <h5 class="fw-bold text-dark mb-0">
-                @if ($schedule)
-                    {{ $schedule->session_title }}
-                    <small class="text-muted fs-7 d-block fw-normal">{{ $course->title }}</small>
-                @else
-                    {{ $course->title }}
-                @endif
+                {{ $course->title }}
             </h5>
         </div>
 
-        <div class="d-flex align-items-center gap-2">
+        <div class="d-flex flex-wrap align-items-center gap-2">
             @if ($viewMode === 'editor')
-                <button type="button" wire:click="closeEditor" class="btn btn-danger d-flex align-items-center">
+                <button type="button" wire:click="closeEditor" class="btn btn-danger d-flex align-items-center gap-1">
                     <i class="ri-arrow-left-line"></i> Kembali
                 </button>
             @else
@@ -126,12 +126,12 @@
                         <i class="ri-lock-2-line me-1"></i> Curriculum Frozen (Terkunci)
                     </span>
                 @else
-                    <a href="{{ $schedule ? route('materi.sesi', $course->id) : route('materi.data') }}"
-                        class="btn btn-danger d-flex align-items-center" wire:navigate>
-                        <i class="ri-arrow-left-line"></i> Kembali
+                    <a href="{{ route('kelas.data') }}" class="btn btn-danger d-flex align-items-center gap-1"
+                        wire:navigate>
+                        <i class="ri-arrow-left-line"></i> <span>Kembali</span>
                     </a>
                     <button type="button" wire:click="openCreateChapter"
-                        class="btn btn-simple-gold d-flex align-items-center shadow-none">
+                        class="btn btn-simple-gold d-flex align-items-center gap-1 shadow-none">
                         <i class="ri-add-line fs-6"></i>
                         <span>Tambah Bab Baru</span>
                     </button>
@@ -155,7 +155,7 @@
                     <h6 class="fw-bold text-warning-emphasis mb-1 fs-6">Curriculum Freeze Aktif (Aturan Batch Dicoding)
                     </h6>
                     <p class="mb-0 fs-8 text-muted">
-                        Pelatihan tipe Batch ini telah dimulai pada
+                        Kelas tipe Batch ini telah dimulai pada
                         <strong>{{ $course->start_date?->format('d M Y') }}</strong>.
                         Sesuai standar mutu pembelajaran sekuensial, struktur kurikulum (tambah/edit/hapus bab dan
                         materi)
@@ -337,7 +337,7 @@
                                 <div class="p-40 text-center my-auto">
                                     <i class="ri-book-2-line text-muted display-4 mb-2"></i>
                                     <h6 class="fw-bold text-dark mb-1">Kurikulum Belum Memiliki Bab</h6>
-                                    <p class="text-muted fs-8 mb-3">Mulai buat struktur kurikulum pelatihan dengan
+                                    <p class="text-muted fs-8 mb-3">Mulai buat struktur kurikulum kelas dengan
                                         menambahkan Bab
                                         pertama.</p>
                                     @if (!$isFrozen)
@@ -360,7 +360,7 @@
                 <div class="card border-0 shadow-sm radius-12 flex-grow-1">
                     <div class="card-header bg-white p-16 border-bottom">
                         <h6 class="fw-bold text-dark mb-0 fs-7">
-                            <i class="ri-information-line text-simple me-1"></i> Ringkasan Silabus Pelatihan
+                            <i class="ri-information-line text-simple me-1"></i> Ringkasan Silabus Kelas
                         </h6>
                     </div>
                     <div class="card-body p-16">
@@ -377,8 +377,9 @@
                                 </span>
                             </li>
                             <li class="d-flex justify-content-between py-1 border-bottom">
-                                <span class="text-muted">Metode Pelaksanaan:</span>
-                                <strong class="text-dark text-capitalize">{{ $course->method ?? 'Daring' }}</strong>
+                                <span class="text-muted">Biaya Kelas:</span>
+                                <strong
+                                    class="text-dark">{{ $course->isPaid() ? 'Rp ' . number_format($course->price, 0, ',', '.') : 'Gratis' }}</strong>
                             </li>
                             <li class="d-flex justify-content-between py-1 border-bottom">
                                 <span class="text-muted">Total Bab:</span>
@@ -392,12 +393,8 @@
                                 <strong class="text-dark">{{ $totalLessons }} Modul</strong>
                             </li>
                             <li class="d-flex justify-content-between py-1">
-                                <span class="text-muted">Widyaiswara / Mentor:</span>
-                                @php
-                                    $mentors = $course->schedules->pluck('mentor.name')->filter()->unique();
-                                @endphp
-                                <strong
-                                    class="text-dark">{{ $mentors->isNotEmpty() ? $mentors->implode(', ') : 'Belum Ditugaskan' }}</strong>
+                                <span class="text-muted">Kategori:</span>
+                                <strong class="text-dark">{{ $course->category?->name ?? '-' }}</strong>
                             </li>
                         </ul>
                     </div>

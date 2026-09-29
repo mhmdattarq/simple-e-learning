@@ -2,12 +2,11 @@
 
 namespace App\Livewire\Admin\Materi;
 
+use App\Enums\CourseStatus;
 use App\Models\Chapter;
 use App\Models\Course;
-use App\Models\CourseSchedule;
 use App\Models\Lesson;
 use App\Repositories\MateriRepo;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Url;
@@ -19,16 +18,7 @@ class MateriDetail extends Component
 
     public ?Course $course = null;
 
-    #[Url(as: 'schedule_id')]
-    public ?int $scheduleId = null;
-
-    public ?CourseSchedule $schedule = null;
-
     public bool $isFrozen = false;
-
-    public bool $isAdmin = true;
-
-    public bool $isMentor = false;
 
     // Interactive curriculum state for UI
     public array $chapters = [];
@@ -69,41 +59,13 @@ class MateriDetail extends Component
         'version' => 'Versi 1.0',
     ];
 
-    public function mount(int $id, ?int $schedule_id = null): void
+    public function mount(int $id): void
     {
         $this->courseId = $id;
-        if ($schedule_id) {
-            $this->scheduleId = $schedule_id;
-        }
 
-        $this->course = Course::with(['category', 'schedules.mentor'])->findOrFail($id);
+        $this->course = Course::with(['category'])->findOrFail($id);
 
-        if ($this->scheduleId) {
-            $this->schedule = CourseSchedule::with('mentor')
-                ->where('course_id', $this->courseId)
-                ->find($this->scheduleId);
-        }
-
-        $user = Auth::user();
-        $this->isAdmin = $user ? $user->isAdmin() : false;
-        $this->isMentor = $user ? $user->isMentor() : false;
-
-        // Otorisasi: Mentor hanya berhak jika mengajar pada sesi atau pelatihan ini
-        if ($this->isMentor && ! $this->isAdmin) {
-            if ($this->scheduleId) {
-                $teaches = CourseSchedule::where('id', $this->scheduleId)
-                    ->where('mentor_id', $user?->id)
-                    ->exists();
-                abort_if(! $teaches, 403, 'Akses ditolak: Anda bukan mentor pengampu sesi ini.');
-            } else {
-                $teaches = CourseSchedule::where('course_id', $this->courseId)
-                    ->where('mentor_id', $user?->id)
-                    ->exists();
-                abort_if(! $teaches, 403, 'Akses ditolak: Anda tidak ditugaskan pada pelatihan ini.');
-            }
-        }
-
-        // Check Batch Freeze rule ala Dicoding
+        // Check Batch Freeze rule
         $this->isFrozen = $this->course->isCurriculumFrozen();
 
         // Load kurikulum nyata dari database
@@ -116,11 +78,9 @@ class MateriDetail extends Component
             } elseif ($this->editorChapterId) {
                 $this->openCreateLesson($this->editorChapterId);
             } else {
-                $query = Chapter::where('course_id', $this->courseId);
-                if ($this->scheduleId) {
-                    $query->where('schedule_id', $this->scheduleId);
-                }
-                $firstChapter = $query->orderBy('order', 'asc')->first();
+                $firstChapter = Chapter::where('course_id', $this->courseId)
+                    ->orderBy('order', 'asc')
+                    ->first();
                 if ($firstChapter) {
                     $this->openCreateLesson($firstChapter->id);
                 } else {
@@ -135,7 +95,7 @@ class MateriDetail extends Component
      */
     public function loadCurriculum(): void
     {
-        $curriculum = MateriRepo::getCurriculumByCourse($this->courseId, $this->scheduleId);
+        $curriculum = MateriRepo::getCurriculumByCourse($this->courseId);
 
         $this->chapters = $curriculum->map(function ($chapter) {
             return [
@@ -168,7 +128,7 @@ class MateriDetail extends Component
             $this->dispatch('alert-show', data: [
                 'type' => 'warning',
                 'title' => 'Kurikulum Terkunci',
-                'message' => 'Struktur bab tidak dapat ditambahkan karena pelatihan tipe Batch sedang aktif berjalan.',
+                'message' => 'Struktur bab tidak dapat ditambahkan karena kelas tipe Batch sedang aktif berjalan.',
             ]);
 
             return;
@@ -197,7 +157,7 @@ class MateriDetail extends Component
             $this->dispatch('alert-show', data: [
                 'type' => 'warning',
                 'title' => 'Kurikulum Terkunci',
-                'message' => 'Struktur bab tidak dapat diedit karena pelatihan tipe Batch sedang aktif berjalan.',
+                'message' => 'Struktur bab tidak dapat diedit karena kelas tipe Batch sedang aktif berjalan.',
             ]);
 
             return;
@@ -258,7 +218,6 @@ class MateriDetail extends Component
             // Create via Repository
             $created = MateriRepo::createChapter([
                 'course_id' => $this->courseId,
-                'schedule_id' => $this->scheduleId,
                 'title' => $this->chapterForm['title'],
                 'order' => $this->chapterForm['order'],
             ]);
@@ -290,7 +249,7 @@ class MateriDetail extends Component
             $this->dispatch('alert-show', data: [
                 'type' => 'warning',
                 'title' => 'Kurikulum Terkunci',
-                'message' => 'Struktur bab tidak dapat dihapus karena pelatihan tipe Batch sedang aktif berjalan.',
+                'message' => 'Struktur bab tidak dapat dihapus karena kelas tipe Batch sedang aktif berjalan.',
             ]);
 
             return;
@@ -314,7 +273,7 @@ class MateriDetail extends Component
             $this->dispatch('alert-show', data: [
                 'type' => 'warning',
                 'title' => 'Kurikulum Terkunci',
-                'message' => 'Struktur bab tidak dapat dihapus karena pelatihan tipe Batch sedang aktif berjalan.',
+                'message' => 'Struktur bab tidak dapat dihapus karena kelas tipe Batch sedang aktif berjalan.',
             ]);
 
             return;
@@ -351,7 +310,7 @@ class MateriDetail extends Component
             $this->dispatch('alert-show', data: [
                 'type' => 'warning',
                 'title' => 'Kurikulum Terkunci',
-                'message' => 'Materi tidak dapat dihapus karena pelatihan tipe Batch sedang aktif berjalan.',
+                'message' => 'Materi tidak dapat dihapus karena kelas tipe Batch sedang aktif berjalan.',
             ]);
 
             return;
@@ -375,7 +334,7 @@ class MateriDetail extends Component
             $this->dispatch('alert-show', data: [
                 'type' => 'warning',
                 'title' => 'Kurikulum Terkunci',
-                'message' => 'Materi tidak dapat dihapus karena pelatihan tipe Batch sedang aktif berjalan.',
+                'message' => 'Materi tidak dapat dihapus karena kelas tipe Batch sedang aktif berjalan.',
             ]);
 
             return;
@@ -462,7 +421,7 @@ class MateriDetail extends Component
             $this->dispatch('alert-show', data: [
                 'type' => 'warning',
                 'title' => 'Kurikulum Terkunci',
-                'message' => 'Struktur bab tidak dapat ditambahkan materi karena pelatihan tipe Batch sedang aktif berjalan.',
+                'message' => 'Struktur bab tidak dapat ditambahkan materi karena kelas tipe Batch sedang aktif berjalan.',
             ]);
 
             return;
@@ -470,17 +429,14 @@ class MateriDetail extends Component
 
         $chapter = Chapter::where('course_id', $this->courseId)->find($chapterId);
         if (! $chapter) {
-            $query = Chapter::where('course_id', $this->courseId);
-            if ($this->scheduleId) {
-                $query->where('schedule_id', $this->scheduleId);
-            }
-            $chapter = $query->orderBy('order', 'asc')->first();
+            $chapter = Chapter::where('course_id', $this->courseId)
+                ->orderBy('order', 'asc')
+                ->first();
         }
 
         if (! $chapter) {
             $chapter = MateriRepo::createChapter([
                 'course_id' => $this->courseId,
-                'schedule_id' => $this->scheduleId,
                 'title' => 'Bab 1: Pendahuluan & Materi Umum',
                 'order' => 1,
             ]);
@@ -516,7 +472,7 @@ class MateriDetail extends Component
             $this->dispatch('alert-show', data: [
                 'type' => 'warning',
                 'title' => 'Kurikulum Terkunci',
-                'message' => 'Materi tidak dapat diedit karena pelatihan tipe Batch sedang aktif berjalan.',
+                'message' => 'Materi tidak dapat diedit karena kelas tipe Batch sedang aktif berjalan.',
             ]);
 
             return;
@@ -576,7 +532,7 @@ class MateriDetail extends Component
             $this->dispatch('alert-show', data: [
                 'type' => 'warning',
                 'title' => 'Kurikulum Terkunci',
-                'message' => 'Pelatihan tipe Batch sedang aktif berjalan, materi tidak dapat disimpan atau diubah.',
+                'message' => 'Kelas tipe Batch sedang aktif berjalan, materi tidak dapat disimpan atau diubah.',
             ]);
 
             return;
@@ -638,6 +594,25 @@ class MateriDetail extends Component
                 'type' => 'danger',
                 'title' => 'Gagal',
                 'message' => 'Terjadi kesalahan sistem saat menyimpan materi pembelajaran.',
+            ]);
+        }
+    }
+
+    /**
+     * Terbitkan kelas agar dapat diakses oleh peserta.
+     */
+    public function publishCourse(): void
+    {
+        if ($this->course && $this->course->isDraft()) {
+            $this->course->update([
+                'status' => CourseStatus::Published,
+            ]);
+            $this->course->refresh();
+
+            $this->dispatch('alert-show', data: [
+                'type' => 'success',
+                'title' => 'Kelas Diterbitkan',
+                'message' => 'Kelas "'.$this->course->title.'" kini telah resmi dibuka untuk peserta.',
             ]);
         }
     }

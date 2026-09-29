@@ -25,12 +25,12 @@ new class extends Component {
                             </a>
                         </div>
                         <p class="site-footer__text">
-                            Sistem Informasi Manajemen Pelatihan Elektronik (SIMPEL) ASN<br>
+                            Sistem Informasi Manajemen Pembelajaran Elektronik (SIMPEL) ASN<br>
                             BKPSDM Pemerintah Kabupaten Aceh Timur.
                         </p>
                     </div>
                     <div class="site-footer__contact-box wow fadeInRight" data-wow-delay="100ms">
-                        <a href="#pelatihan">Daftar Pelatihan</a>
+                        <a href="{{ route('landing') }}#katalog-kelas">Katalog Kelas</a>
                     </div>
                 </div>
             </div>
@@ -88,16 +88,16 @@ new class extends Component {
                                                     <a href="{{ route('landing') }}"><span class="icon-plus"></span> Beranda</a>
                                                 </li>
                                                 <li>
-                                                    <a href="#akademi"><span class="icon-plus"></span> Akademi</a>
+                                                    <a href="{{ route('landing.kelas.batch') }}"><span class="icon-plus"></span> Kelas Batch</a>
                                                 </li>
                                                 <li>
-                                                    <a href="#pelatihan"><span class="icon-plus"></span> Katalog Pelatihan</a>
+                                                    <a href="{{ route('landing.kelas.permanen') }}"><span class="icon-plus"></span> Kelas Permanen</a>
                                                 </li>
                                                 <li>
-                                                    <a href="#alur-pendaftaran"><span class="icon-plus"></span> Alur Pendaftaran</a>
+                                                    <a href="{{ route('landing.kelas.berbayar') }}"><span class="icon-plus"></span> Kelas Berbayar</a>
                                                 </li>
                                                 <li>
-                                                    <a href="#"><span class="icon-plus"></span> Kontak</a>
+                                                    <a href="{{ route('landing') }}#alur-pendaftaran"><span class="icon-plus"></span> Alur Pendaftaran</a>
                                                 </li>
                                                 <li>
                                                     <a href="{{ route('login') }}"><span class="icon-plus"></span> Masuk ke Akun</a>
@@ -133,8 +133,8 @@ new class extends Component {
 
                                 {{-- Newsletter Box --}}
                                 <div class="site-footer__newsletter-box mt-4">
-                                    <h4 class="site-footer__title mb-2">Informasi Pelatihan</h4>
-                                    <p class="text-white-70 fs-8 mb-3">Dapatkan notifikasi jadwal pembukaan batch diklat dan pembaruan beasiswa kedinasan.</p>
+                                    <h4 class="site-footer__title mb-2">Informasi Kelas</h4>
+                                    <p class="text-white-70 fs-8 mb-3">Dapatkan notifikasi jadwal pembukaan batch diklat dan pembaruan kelas kedinasan.</p>
                                     <form class="site-footer__newsletter-form" onsubmit="event.preventDefault();">
                                         <div class="site-footer__newsletter-input">
                                             <input type="email" placeholder="Masukkan Email Kedinasan">

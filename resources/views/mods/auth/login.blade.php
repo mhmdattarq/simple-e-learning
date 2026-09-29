@@ -3,7 +3,7 @@
     <div class="auth-hero-pane d-lg-flex d-none">
         <div class="auth-hero-inner">
             <h1 class="auth-hero-title">
-                Portal Pelatihan Mandiri Aparatur Sipil Negara
+                Portal Pembelajaran Mandiri Aparatur Sipil Negara
             </h1>
 
             <p class="auth-hero-subtitle">

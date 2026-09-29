@@ -13,6 +13,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (app()->environment('testing')) {
+            return;
+        }
+
         if (class_exists(UserSeeder::class)) {
             (new UserSeeder)->run();
 
@@ -26,45 +30,9 @@ return new class extends Migration
                 'nip' => '198501012010011001',
                 'role' => Role::Admin,
                 'opd_agency' => 'BKPSDM Kabupaten Aceh Timur',
-                'position' => 'Administrator Diklat',
+                'position' => 'Administrator Diklat (Super Admin)',
                 'rank_class' => 'Penata Tk. I (III/d)',
                 'phone_number' => '081269001001',
-                'password' => Hash::make('password'),
-                'email_verified_at' => now(),
-            ],
-            [
-                'name' => 'Dr. Fauzan, M.Pd',
-                'email' => 'mentor@simpel.go.id',
-                'nip' => '198002022005011002',
-                'role' => Role::Mentor,
-                'opd_agency' => 'BKPSDM Kabupaten Aceh Timur',
-                'position' => 'Widyaiswara Ahli Madya',
-                'rank_class' => 'Pembina (IV/a)',
-                'phone_number' => '081269002002',
-                'password' => Hash::make('password'),
-                'email_verified_at' => now(),
-            ],
-            [
-                'name' => 'Nur Aini, S.Kom',
-                'email' => 'verifikator@simpel.go.id',
-                'nip' => '198703032011012003',
-                'role' => Role::Verifikator,
-                'opd_agency' => 'BKPSDM Kabupaten Aceh Timur',
-                'position' => 'Petugas Verifikasi Berkas',
-                'rank_class' => 'Penata Muda Tk. I (III/b)',
-                'phone_number' => '081269003003',
-                'password' => Hash::make('password'),
-                'email_verified_at' => now(),
-            ],
-            [
-                'name' => 'Teuku Dedi Iskandar, S.STP, M.SP',
-                'email' => 'pimpinan@simpel.go.id',
-                'nip' => '197504041999031004',
-                'role' => Role::Pimpinan,
-                'opd_agency' => 'BKPSDM Kabupaten Aceh Timur',
-                'position' => 'Kepala BKPSDM Aceh Timur',
-                'rank_class' => 'Pembina Utama Muda (IV/c)',
-                'phone_number' => '081269004004',
                 'password' => Hash::make('password'),
                 'email_verified_at' => now(),
             ],
@@ -97,9 +65,6 @@ return new class extends Migration
     {
         User::whereIn('email', [
             'admin@simpel.go.id',
-            'mentor@simpel.go.id',
-            'verifikator@simpel.go.id',
-            'pimpinan@simpel.go.id',
             'peserta@simpel.go.id',
         ])->delete();
     }

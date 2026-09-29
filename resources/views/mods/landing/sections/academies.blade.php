@@ -1,110 +1,210 @@
-{{-- Section 2: Quick Info Jadwal Pelatihan Terbaru (maks 3 card) --}}
-<section class="py-5 bg-white border-bottom border-simpel" id="akademi">
+{{-- Section 2: Daftar Jenis Kelas (3 Card Interaktif dengan Style Penjadwalan) --}}
+<section class="py-5 bg-white border-bottom border-simpel" id="jenis-kelas">
     <div class="container py-lg-4 py-2">
 
         {{-- Section Header --}}
         <div class="row align-items-end justify-content-between mb-4 g-3 wow fadeInUp" data-wow-delay="100ms">
-            <div class="col-lg-7">
+            <div class="col-lg-8">
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <span class="badge bg-gold text-navy fw-bold fs-8 px-3 py-1_5">
+                        <i class="ri-layout-grid-line me-1"></i>Kategori Program
+                    </span>
+                </div>
                 <h2 class="fw-extrabold text-navy display-6 mb-2">
-                    Jadwal Pelatihan <span class="text-gold">Terdekat</span>
+                    Daftar Jenis <span class="text-gold">Kelas</span>
                 </h2>
                 <p class="text-muted fs-6 mb-0">
-                    Program pelatihan batch yang segera diselenggarakan. Daftar sekarang sebelum kuota habis.
+                    Pilih skema kelas yang sesuai dengan kebutuhan pengembangan kompetensi Anda: Kelas Berjadwal (Batch), Pembelajaran Mandiri (Permanen), atau Program Sertifikasi Lanjutan (Berbayar).
                 </p>
             </div>
-            <div class="col-lg-5 text-lg-end">
-                <a href="{{ route('jadwal') }}" class="btn-simpel-outline-navy">
-                    <i class="ri-calendar-2-line"></i>
-                    <span>Lihat Semua Jadwal</span>
-                    <i class="ri-arrow-right-line"></i>
+            <div class="col-lg-4 text-lg-end">
+                <a href="#katalog-kelas" class="btn-simpel-outline-navy">
+                    <i class="ri-book-open-line"></i>
+                    <span>Lihat Semua Katalog</span>
+                    <i class="ri-arrow-down-line"></i>
                 </a>
             </div>
         </div>
 
-        @if ($upcomingJadwals->isNotEmpty())
-            {{-- Jadwal Cards --}}
-            <div class="row g-4">
-                @foreach ($upcomingJadwals as $jadwal)
-                    <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="{{ $loop->index * 100 + 150 }}ms">
-                        <div
-                            class="card h-100 border border-simpel rounded-4 bg-white shadow-xs overflow-hidden simpel-academy-card position-relative">
+        {{-- 3 Jenis Kelas Cards --}}
+        <div class="row g-4">
+            {{-- Card 1: Kelas Batch --}}
+            <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="150ms">
+                <div class="card h-100 border border-simpel rounded-4 bg-white shadow-xs overflow-hidden simpel-academy-card position-relative d-flex flex-column">
+                    {{-- Top Color Bar --}}
+                    <div class="rounded-top-4"
+                        style="height: 4px; background: linear-gradient(90deg, #1e40af 0%, #3b82f6 100%);">
+                    </div>
 
-                            {{-- Top color bar --}}
-                            <div class="rounded-top-4"
-                                style="height: 4px; background: linear-gradient(90deg, var(--simpel-navy) 0%, var(--simpel-gold) 100%);">
-                            </div>
-
-                            <div class="p-4 d-flex flex-column h-100">
-                                {{-- Date Badge --}}
-                                <div class="d-flex align-items-center justify-content-between mb-3">
-                                    <div class="d-flex align-items-center gap-2">
-                                        <div class="rounded-2 d-flex align-items-center justify-content-center flex-shrink-0"
-                                            style="width: 40px; height: 40px; background: rgba(7,26,51,0.07);">
-                                            <i class="ri-calendar-event-line text-navy fs-5"></i>
-                                        </div>
-                                        <div>
-                                            <div class="fw-extrabold text-navy"
-                                                style="font-size: 20px; line-height: 1.1;">
-                                                {{ $jadwal->start_date->format('d') }}
-                                            </div>
-                                            <div class="fw-bold text-gold fs-8 text-uppercase">
-                                                {{ $jadwal->start_date->translatedFormat('M Y') }}
-                                            </div>
-                                        </div>
+                    <div class="p-4 d-flex flex-column h-100">
+                        {{-- Icon & Status Badge --}}
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0"
+                                    style="width: 44px; height: 44px; background: rgba(30, 64, 175, 0.08); color: #1e40af;">
+                                    <i class="ri-calendar-event-line fs-4"></i>
+                                </div>
+                                <div>
+                                    <div class="fw-extrabold text-navy" style="font-size: 22px; line-height: 1.1;">
+                                        {{ $batchCoursesCount ?? 0 }}
+                                        <span class="fs-8 fw-semibold text-muted">Kelas Aktif</span>
                                     </div>
-                                    <span class="badge bg-gold text-navy rounded-pill fw-bold fs-8">
-                                        Batch Terjadwal
-                                    </span>
-                                </div>
-
-                                {{-- Category --}}
-                                <span class="badge bg-navy-soft text-navy fw-medium fs-8 mb-2 align-self-start"
-                                    style="background: rgba(7,26,51,0.07); color: var(--simpel-navy);">
-                                    {{ $jadwal->category?->name ?? 'Diklat ASN' }}
-                                </span>
-
-                                {{-- Title --}}
-                                <h5 class="fw-bold text-navy mb-3 flex-grow-1 lh-sm" style="font-size: 15px;">
-                                    {{ $jadwal->title }}
-                                </h5>
-
-                                {{-- Period --}}
-                                <div class="d-flex align-items-center gap-1 text-muted fs-8 mb-4">
-                                    <i class="ri-time-line text-gold"></i>
-                                    <span>
-                                        {{ $jadwal->start_date->translatedFormat('d M Y') }}
-                                        @if ($jadwal->end_date)
-                                            &ndash; {{ $jadwal->end_date->translatedFormat('d M Y') }}
-                                        @endif
-                                    </span>
-                                </div>
-
-                                {{-- CTA --}}
-                                <div class="pt-3 border-top border-simpel mt-auto">
-                                    <a href="{{ route('pelatihan.daftar', $jadwal->id) }}"
-                                        class="btn-simpel-cta-gold w-100">
-                                        <span>Daftar Pelatihan Ini</span>
-                                        <i class="ri-arrow-right-line"></i>
-                                    </a>
+                                    <small class="text-muted" style="font-size: 11px;">Jadwal Berkala</small>
                                 </div>
                             </div>
+                            <span class="badge bg-primary text-white rounded-pill fw-bold fs-8">
+                                Batch Terjadwal
+                            </span>
+                        </div>
+
+                        {{-- Tag --}}
+                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle fw-medium fs-8 mb-2 align-self-start">
+                            <i class="ri-calendar-check-line me-1"></i>Periode & Kuota Berkala
+                        </span>
+
+                        {{-- Title & Description --}}
+                        <h5 class="fw-bold text-navy mb-2 lh-sm" style="font-size: 17px;">
+                            Kelas Batch
+                        </h5>
+                        <p class="text-muted fs-7 mb-3 flex-grow-1">
+                            Program kelas kedinasan berjadwal dengan kuota dan periode registrasi berkala untuk aparatur sipil negara.
+                        </p>
+
+                        {{-- Highlight Feature --}}
+                        <div class="d-flex align-items-center gap-2 text-muted fs-8 mb-4">
+                            <i class="ri-checkbox-circle-fill text-success fs-6"></i>
+                            <span>Jadwal terstruktur & interaksi bimbingan</span>
+                        </div>
+
+                        {{-- Quick Action CTA --}}
+                        <div class="pt-3 border-top border-simpel mt-auto">
+                            <a href="{{ route('landing.kelas.batch') }}" class="btn-simpel-cta-gold w-100">
+                                <span>Jelajahi Kelas Batch</span>
+                                <i class="ri-arrow-right-line ms-1"></i>
+                            </a>
                         </div>
                     </div>
-                @endforeach
+                </div>
             </div>
-        @else
-            {{-- Empty State --}}
-            <div class="text-center py-5 wow fadeInUp">
-                <i class="ri-calendar-2-line text-gold mb-3 d-block" style="font-size: 52px; opacity: 0.35;"></i>
-                <h5 class="fw-bold text-navy mb-2">Belum Ada Jadwal Pelatihan</h5>
-                <p class="text-muted fs-7 mb-3">
-                    Jadwal batch akan segera diumumkan. Cek katalog pelatihan mandiri yang buka 24/7.
-                </p>
-                <a href="#pelatihan" class="text-navy fw-semibold text-decoration-none fs-7 hover-gold">
-                    Lihat Katalog Pelatihan &rarr;
-                </a>
+
+            {{-- Card 2: Kelas Permanen --}}
+            <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="250ms">
+                <div class="card h-100 border border-simpel rounded-4 bg-white shadow-xs overflow-hidden simpel-academy-card position-relative d-flex flex-column">
+                    {{-- Top Color Bar --}}
+                    <div class="rounded-top-4"
+                        style="height: 4px; background: linear-gradient(90deg, #059669 0%, #10b981 100%);">
+                    </div>
+
+                    <div class="p-4 d-flex flex-column h-100">
+                        {{-- Icon & Status Badge --}}
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0"
+                                    style="width: 44px; height: 44px; background: rgba(5, 150, 105, 0.08); color: #059669;">
+                                    <i class="ri-infinite-line fs-4"></i>
+                                </div>
+                                <div>
+                                    <div class="fw-extrabold text-navy" style="font-size: 22px; line-height: 1.1;">
+                                        {{ $permanentCoursesCount ?? 0 }}
+                                        <span class="fs-8 fw-semibold text-muted">Kelas Aktif</span>
+                                    </div>
+                                    <small class="text-muted" style="font-size: 11px;">Mandiri 24/7</small>
+                                </div>
+                            </div>
+                            <span class="badge bg-success text-white rounded-pill fw-bold fs-8">
+                                Self-Paced
+                            </span>
+                        </div>
+
+                        {{-- Tag --}}
+                        <span class="badge bg-success-subtle text-success border border-success-subtle fw-medium fs-8 mb-2 align-self-start">
+                            <i class="ri-time-line me-1"></i>Akses Fleksibel 24/7
+                        </span>
+
+                        {{-- Title & Description --}}
+                        <h5 class="fw-bold text-navy mb-2 lh-sm" style="font-size: 17px;">
+                            Kelas Permanen
+                        </h5>
+                        <p class="text-muted fs-7 mb-3 flex-grow-1">
+                            Kelas digital mandiri yang dapat diakses kapan saja dan di mana saja tanpa batasan jadwal atau tanggal berakhir.
+                        </p>
+
+                        {{-- Highlight Feature --}}
+                        <div class="d-flex align-items-center gap-2 text-muted fs-8 mb-4">
+                            <i class="ri-checkbox-circle-fill text-success fs-6"></i>
+                            <span>Belajar mandiri sesuai kecepatan sendiri</span>
+                        </div>
+
+                        {{-- Quick Action CTA --}}
+                        <div class="pt-3 border-top border-simpel mt-auto">
+                            <a href="{{ route('landing.kelas.permanen') }}" class="btn-simpel-cta-gold w-100">
+                                <span>Jelajahi Kelas Permanen</span>
+                                <i class="ri-arrow-right-line ms-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
-        @endif
+
+            {{-- Card 3: Kelas Berbayar --}}
+            <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="350ms">
+                <div class="card h-100 border border-simpel rounded-4 bg-white shadow-xs overflow-hidden simpel-academy-card position-relative d-flex flex-column">
+                    {{-- Top Color Bar --}}
+                    <div class="rounded-top-4"
+                        style="height: 4px; background: linear-gradient(90deg, #d97706 0%, #f59e0b 100%);">
+                    </div>
+
+                    <div class="p-4 d-flex flex-column h-100">
+                        {{-- Icon & Status Badge --}}
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0"
+                                    style="width: 44px; height: 44px; background: rgba(217, 119, 6, 0.08); color: #d97706;">
+                                    <i class="ri-money-dollar-circle-line fs-4"></i>
+                                </div>
+                                <div>
+                                    <div class="fw-extrabold text-navy" style="font-size: 22px; line-height: 1.1;">
+                                        {{ $paidCoursesCount ?? 0 }}
+                                        <span class="fs-8 fw-semibold text-muted">Kelas Aktif</span>
+                                    </div>
+                                    <small class="text-muted" style="font-size: 11px;">Sertifikasi Resmi</small>
+                                </div>
+                            </div>
+                            <span class="badge bg-warning-subtle text-dark border border-warning rounded-pill fw-bold fs-8">
+                                Spesialisasi
+                            </span>
+                        </div>
+
+                        {{-- Tag --}}
+                        <span class="badge bg-warning-subtle text-dark border border-warning fw-medium fs-8 mb-2 align-self-start">
+                            <i class="ri-award-line me-1"></i>Sertifikasi Profesi
+                        </span>
+
+                        {{-- Title & Description --}}
+                        <h5 class="fw-bold text-navy mb-2 lh-sm" style="font-size: 17px;">
+                            Kelas Berbayar
+                        </h5>
+                        <p class="text-muted fs-7 mb-3 flex-grow-1">
+                            Program sertifikasi keahlian khusus dan kelas profesi lanjutan yang diselenggarakan bersama mitra terakreditasi resmi.
+                        </p>
+
+                        {{-- Highlight Feature --}}
+                        <div class="d-flex align-items-center gap-2 text-muted fs-8 mb-4">
+                            <i class="ri-checkbox-circle-fill text-success fs-6"></i>
+                            <span>Kurikulum standar nasional & sertifikat resmi</span>
+                        </div>
+
+                        {{-- Quick Action CTA --}}
+                        <div class="pt-3 border-top border-simpel mt-auto">
+                            <a href="{{ route('landing.kelas.berbayar') }}" class="btn-simpel-cta-gold w-100">
+                                <span>Jelajahi Kelas Berbayar</span>
+                                <i class="ri-arrow-right-line ms-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
     </div>
 </section>

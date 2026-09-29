@@ -60,11 +60,10 @@ class CoursePolicy
 
     /**
      * Determine whether the user can approve or reject the course plan.
-     * Rule: Pimpinan (and Admin) can decide on submitted plans.
      */
     public function approve(User $user, Course $course): bool
     {
-        return in_array($user->role, [Role::Pimpinan, Role::Admin], true)
+        return $user->role === Role::Admin
             && $course->status === CourseStatus::Submitted;
     }
 }

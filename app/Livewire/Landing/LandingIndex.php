@@ -10,32 +10,56 @@ use Livewire\Attributes\Title;
 use Livewire\Component;
 
 #[Layout('templates.layouts.landing')]
-#[Title('SIMPEL E-Learning - Portal Pelatihan Digital ASN & Aparatur')]
+#[Title('SIMPEL E-Learning - Portal Kelas Digital ASN & Aparatur')]
 class LandingIndex extends Component
 {
     public string $searchQuery = '';
 
     public string $selectedCategory = 'all';
 
+    public string $selectedType = 'all';
+
     public function filterCategory(string $category): void
     {
         $this->selectedCategory = $category;
+    }
+
+    public function filterType(string $type): void
+    {
+        $this->selectedType = $type;
     }
 
     public function render()
     {
         $tablesExist = Schema::hasTable('courses');
 
+        $coursesQuery = Course::with('category')
+            ->where('status', 'published');
+
+        if ($this->selectedType !== 'all') {
+            $coursesQuery->where('type', $this->selectedType);
+        }
+
         $courses = $tablesExist
-            ? Course::with('category')
-                ->where('status', 'published')
-                ->latest('id')
-                ->take(3)
+            ? $coursesQuery->latest('id')
+                ->take(6)
                 ->get()
             : collect();
 
         $totalPublishedCourses = $tablesExist
             ? Course::where('status', 'published')->count()
+            : 0;
+
+        $batchCoursesCount = $tablesExist
+            ? Course::where('status', 'published')->where('type', 'batch')->count()
+            : 0;
+
+        $permanentCoursesCount = $tablesExist
+            ? Course::where('status', 'published')->where('type', 'permanent')->count()
+            : 0;
+
+        $paidCoursesCount = $tablesExist
+            ? Course::where('status', 'published')->where('type', 'paid')->count()
             : 0;
 
         $totalApprovedParticipants = $tablesExist && Schema::hasTable('course_user')
@@ -55,6 +79,9 @@ class LandingIndex extends Component
         return view('mods.landing.landing-index', compact(
             'courses',
             'totalPublishedCourses',
+            'batchCoursesCount',
+            'permanentCoursesCount',
+            'paidCoursesCount',
             'totalApprovedParticipants',
             'upcomingJadwals',
         ));

@@ -17,13 +17,13 @@ test('landing page can be accessed successfully and displays core sections', fun
     $response->assertSee('landing/assets/css/bootstrap.min.css');
     $response->assertSee('landing/assets/js/script.js');
     $response->assertSee('Akselerasi Kompetensi');
-    $response->assertSee('Jadwal Pelatihan');
-    $response->assertSee('Terdekat');
-    $response->assertSee('Katalog Pelatihan Digital Terbuka');
+    $response->assertSee('Daftar Jenis');
+    $response->assertSee('Kelas');
+    $response->assertSee('Katalog');
     $response->assertSee('Alur Mudah Pendaftaran');
-    $response->assertSee('Pelatihan Mandiri');
-    $response->assertSee('Batch Berkala');
-    $response->assertSee('Penugasan Khusus');
+    $response->assertSee('Kelas Batch');
+    $response->assertSee('Kelas Permanen');
+    $response->assertSee('Kelas Berbayar');
     $response->assertSee('SIMPEL');
     $response->assertSee('BKPSDM Aceh Timur');
     $response->assertSee('Menu Utama');
@@ -104,42 +104,28 @@ test('authenticated user can logout from landing navbar and is redirected to lan
         ->assertSee('class="thm-btn">Daftar</a>', false);
 });
 
-test('published courses appear in the catalog section on the landing page limited to 3 items', function () {
+test('published courses appear in the catalog section on the landing page limited to 6 items', function () {
     $category = Category::factory()->create(['name' => 'Transformasi Digital']);
     $admin = User::factory()->admin()->create();
 
-    // Kursus ke-4 yang dibuat lebih awal (ID lebih kecil)
+    // Kursus ke-7 yang dibuat lebih awal (ID lebih kecil)
     $courseOld = Course::factory()->create([
         'status' => 'published',
         'type' => 'permanent',
         'category_id' => $category->id,
         'created_by' => $admin->id,
-        'title' => 'Kursus Keempat Tidak Tampil Di Landing',
+        'title' => 'Kursus Ketujuh Tidak Tampil Di Landing',
     ]);
 
-    $course1 = Course::factory()->create([
-        'status' => 'published',
-        'type' => 'permanent',
-        'category_id' => $category->id,
-        'created_by' => $admin->id,
-        'title' => 'Kursus Unggulan 1',
-    ]);
-
-    $course2 = Course::factory()->create([
-        'status' => 'published',
-        'type' => 'permanent',
-        'category_id' => $category->id,
-        'created_by' => $admin->id,
-        'title' => 'Kursus Unggulan 2',
-    ]);
-
-    $course3 = Course::factory()->create([
-        'status' => 'published',
-        'type' => 'permanent',
-        'category_id' => $category->id,
-        'created_by' => $admin->id,
-        'title' => 'Kursus Unggulan 3',
-    ]);
+    for ($i = 1; $i <= 6; $i++) {
+        Course::factory()->create([
+            'status' => 'published',
+            'type' => 'permanent',
+            'category_id' => $category->id,
+            'created_by' => $admin->id,
+            'title' => 'Kursus Unggulan '.$i,
+        ]);
+    }
 
     Course::factory()->create([
         'status' => 'draft',
@@ -151,20 +137,18 @@ test('published courses appear in the catalog section on the landing page limite
 
     Livewire::test(LandingIndex::class)
         ->assertViewHas('courses', function ($courses) {
-            return $courses->count() === 3
+            return $courses->count() === 6
                 && $courses->contains('title', 'Kursus Unggulan 1')
-                && $courses->contains('title', 'Kursus Unggulan 2')
-                && $courses->contains('title', 'Kursus Unggulan 3')
-                && ! $courses->contains('title', 'Kursus Keempat Tidak Tampil Di Landing');
+                && $courses->contains('title', 'Kursus Unggulan 6')
+                && ! $courses->contains('title', 'Kursus Ketujuh Tidak Tampil Di Landing');
         });
 
     $response = $this->get('/');
 
     $response->assertStatus(200);
     $response->assertSee('Kursus Unggulan 1');
-    $response->assertSee('Kursus Unggulan 2');
-    $response->assertSee('Kursus Unggulan 3');
-    $response->assertDontSee('Kursus Keempat Tidak Tampil Di Landing');
+    $response->assertSee('Kursus Unggulan 6');
+    $response->assertDontSee('Kursus Ketujuh Tidak Tampil Di Landing');
     $response->assertDontSee('Draft Yang Tidak Tampil');
 });
 
@@ -193,67 +177,94 @@ test('landing page shows fallback placeholder when no published courses exist', 
     $response->assertSee('—');
 });
 
-test('quick info jadwal section on landing page displays maximum 3 upcoming batch courses and links to jadwal page', function () {
+test('daftar jenis kelas section on landing page displays 3 course types with dynamic counts and links', function () {
     $admin = User::factory()->admin()->create();
     $category = Category::factory()->create();
 
-    // Buat 4 batch course
     Course::factory()->create([
         'title' => 'Batch 1 Terdekat',
         'type' => 'batch',
         'status' => 'published',
-        'start_date' => now()->addDays(5)->format('Y-m-d'),
-        'end_date' => now()->addDays(10)->format('Y-m-d'),
         'category_id' => $category->id,
         'created_by' => $admin->id,
     ]);
 
     Course::factory()->create([
-        'title' => 'Batch 2 Terdekat',
-        'type' => 'batch',
+        'title' => 'Permanen 1',
+        'type' => 'permanent',
         'status' => 'published',
-        'start_date' => now()->addDays(15)->format('Y-m-d'),
-        'end_date' => now()->addDays(20)->format('Y-m-d'),
         'category_id' => $category->id,
         'created_by' => $admin->id,
     ]);
 
     Course::factory()->create([
-        'title' => 'Batch 3 Terdekat',
-        'type' => 'batch',
+        'title' => 'Berbayar 1',
+        'type' => 'paid',
         'status' => 'published',
-        'start_date' => now()->addDays(25)->format('Y-m-d'),
-        'end_date' => now()->addDays(30)->format('Y-m-d'),
-        'category_id' => $category->id,
-        'created_by' => $admin->id,
-    ]);
-
-    Course::factory()->create([
-        'title' => 'Batch 4 Lebih Jauh',
-        'type' => 'batch',
-        'status' => 'published',
-        'start_date' => now()->addDays(40)->format('Y-m-d'),
-        'end_date' => now()->addDays(45)->format('Y-m-d'),
         'category_id' => $category->id,
         'created_by' => $admin->id,
     ]);
 
     Livewire::test(LandingIndex::class)
-        ->assertViewHas('upcomingJadwals', function ($jadwals) {
-            return $jadwals->count() === 3
-                && $jadwals->contains('title', 'Batch 1 Terdekat')
-                && $jadwals->contains('title', 'Batch 2 Terdekat')
-                && $jadwals->contains('title', 'Batch 3 Terdekat')
-                && ! $jadwals->contains('title', 'Batch 4 Lebih Jauh');
-        });
+        ->assertViewHas('batchCoursesCount', 1)
+        ->assertViewHas('permanentCoursesCount', 1)
+        ->assertViewHas('paidCoursesCount', 1);
 
     $response = $this->get('/');
 
     $response->assertStatus(200);
-    $response->assertSee('Batch 1 Terdekat');
-    $response->assertSee('Batch 2 Terdekat');
-    $response->assertSee('Batch 3 Terdekat');
-    $response->assertSee(route('jadwal'));
-    $response->assertSee('Lihat Semua Jadwal');
-    $response->assertSee('Daftar Pelatihan Ini');
+    $response->assertSee('Daftar Jenis');
+    $response->assertSee('Kelas Batch');
+    $response->assertSee('Kelas Permanen');
+    $response->assertSee('Kelas Berbayar');
+    $response->assertSee(route('landing.kelas.batch'));
+    $response->assertSee(route('landing.kelas.permanen'));
+    $response->assertSee(route('landing.kelas.berbayar'));
+});
+
+test('landing page catalog allows filtering active courses by type', function () {
+    $admin = User::factory()->admin()->create();
+    $category = Category::factory()->create();
+
+    $batch = Course::factory()->create([
+        'title' => 'Batch Khusus Filter',
+        'type' => 'batch',
+        'status' => 'published',
+        'category_id' => $category->id,
+        'created_by' => $admin->id,
+    ]);
+
+    $permanent = Course::factory()->create([
+        'title' => 'Permanen Khusus Filter',
+        'type' => 'permanent',
+        'status' => 'published',
+        'category_id' => $category->id,
+        'created_by' => $admin->id,
+    ]);
+
+    Livewire::test(LandingIndex::class)
+        ->assertSet('selectedType', 'all')
+        ->assertViewHas('courses', function ($courses) {
+            return $courses->count() === 2;
+        })
+        ->call('filterType', 'batch')
+        ->assertSet('selectedType', 'batch')
+        ->assertViewHas('courses', function ($courses) use ($batch) {
+            return $courses->count() === 1 && $courses->contains('id', $batch->id);
+        })
+        ->call('filterType', 'permanent')
+        ->assertSet('selectedType', 'permanent')
+        ->assertViewHas('courses', function ($courses) use ($permanent) {
+            return $courses->count() === 1 && $courses->contains('id', $permanent->id);
+        })
+        ->call('filterType', 'paid')
+        ->assertSet('selectedType', 'paid')
+        ->assertViewHas('courses', function ($courses) {
+            return $courses->isEmpty();
+        })
+        ->call('filterType', 'all')
+        ->assertSet('selectedType', 'all')
+        ->assertViewHas('courses', function ($courses) {
+            return $courses->count() === 2;
+        });
 });

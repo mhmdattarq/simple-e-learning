@@ -6,6 +6,7 @@ use App\Enums\RegistrationStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Str;
 
 class CourseUser extends Model
 {
@@ -20,8 +21,16 @@ class CourseUser extends Model
         return [
             'status' => RegistrationStatus::class,
             'enrolled_at' => 'datetime',
-            'verified_at' => 'datetime',
         ];
+    }
+
+    protected static function booted(): void
+    {
+        static::creating(function (self $courseUser): void {
+            if (empty($courseUser->registration_number)) {
+                $courseUser->registration_number = 'REG-'.date('Ymd').'-'.strtoupper(Str::random(8));
+            }
+        });
     }
 
     /**
@@ -38,13 +47,5 @@ class CourseUser extends Model
     public function course(): BelongsTo
     {
         return $this->belongsTo(Course::class, 'course_id');
-    }
-
-    /**
-     * Verifikator who processed the application.
-     */
-    public function verifier(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'verified_by');
     }
 }
