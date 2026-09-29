@@ -33,15 +33,6 @@ return new class extends Migration
                 'password' => Hash::make('password'),
                 'email_verified_at' => now(),
             ],
-            [
-                'name' => 'Cut Mutia, S.Sos',
-                'email' => 'peserta@simpel.go.id',
-                'role' => Role::Peserta,
-                'phone_number' => '081269005005',
-                'address' => 'Jl. Medan - Banda Aceh Km. 370, Aceh Timur',
-                'password' => Hash::make('password'),
-                'email_verified_at' => now(),
-            ],
         ];
 
         foreach ($users as $userData) {
@@ -59,7 +50,6 @@ return new class extends Migration
     {
         User::whereIn('email', [
             'admin@simpel.go.id',
-            'peserta@simpel.go.id',
         ])->delete();
     }
 };

@@ -23,14 +23,6 @@ class UserSeeder extends Seeder
                 'address' => 'Jl. Merdeka No. 1, Idi Rayeuk, Aceh Timur',
                 'password' => Hash::make('password'),
             ],
-            [
-                'name' => 'Cut Mutia, S.Sos',
-                'email' => 'peserta@simpel.go.id',
-                'role' => Role::Peserta,
-                'phone_number' => '081269005005',
-                'address' => 'Jl. Medan - Banda Aceh Km. 370, Aceh Timur',
-                'password' => Hash::make('password'),
-            ],
         ];
 
         foreach ($users as $userData) {
