@@ -240,6 +240,20 @@
         #tableKelas button[data-bs-toggle="dropdown"] * {
             pointer-events: none;
         }
+
+        #tableKelas .btn-materi-action {
+            padding: 5px 12px;
+            font-size: 12px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.2s ease-in-out;
+        }
+
+        #tableKelas .btn-materi-action .badge-materi-count {
+            font-size: 10px;
+            padding: 2px 7px;
+            transition: all 0.2s ease-in-out;
+        }
     </style>
 @endpush
 
@@ -283,7 +297,7 @@
                             }
                         },
 
-                        // Kolom 1: Aksi Dropdown & Shortcut Kelola Materi
+                        // Kolom 1: Aksi Dropdown
                         {
                             data: null,
                             name: 'id',
@@ -292,46 +306,43 @@
                             className: 'text-center',
                             render: function(data, type, row) {
                                 let editUrl = "{{ route('kelas.edit', ':id') }}".replace(':id', row.id);
-                                let materiUrl = "{{ route('materi.detail', ':id') }}".replace(':id', row.id);
+                                let materiUrl = "{{ route('materi.detail', ':id') }}".replace(':id', row
+                                    .id);
                                 let identity = String(data.title || '').replace(/'/g, "\\'");
 
                                 let actions = `
-                                    <a class="dropdown-item d-flex align-items-center gap-2 py-2 px-3 rounded text-warning" href="${editUrl}" wire:navigate>
-                                        <i class="ri-edit-line"></i> Edit Kelas
-                                    </a>
-                                    <a class="dropdown-item d-flex align-items-center gap-2 py-2 px-3 rounded text-primary" href="${materiUrl}" wire:navigate>
-                                        <i class="ri-book-open-line"></i> Kelola Materi
-                                    </a>
-                                    <button type="button" class="dropdown-item text-danger d-flex align-items-center gap-2 py-2 px-3 rounded border-0 bg-transparent w-100 text-start"
-                                       data-bs-toggle="modal"
-                                       data-bs-target="#modalDelete"
-                                       wire:click="hookModalDelete(${data.id}, '${identity}')">
-                                        <i class="ri-delete-bin-line"></i> Hapus
-                                    </button>
+                                    <li>
+                                        <a class="dropdown-item d-flex align-items-center gap-2 py-2 px-3 rounded text-dark" href="${editUrl}" wire:navigate>
+                                            <i class="ri-edit-line text-warning fs-6"></i>
+                                            <span class="fw-medium">Edit Kelas</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <button type="button" class="dropdown-item text-danger d-flex align-items-center gap-2 py-2 px-3 rounded border-0 bg-transparent w-100 text-start"
+                                           data-bs-toggle="modal"
+                                           data-bs-target="#modalDelete"
+                                           wire:click="hookModalDelete(${data.id}, '${identity}')">
+                                            <i class="ri-delete-bin-line fs-6"></i>
+                                            <span class="fw-medium">Hapus Kelas</span>
+                                        </button>
+                                    </li>
                                 `;
 
                                 return `
-                                <div class="d-inline-flex align-items-center gap-1">
-                                    <a href="${materiUrl}" class="btn btn-sm btn-outline-primary d-inline-flex align-items-center"
-                                        title="Kelola Kurikulum & Materi"
-                                        style="padding: 4px 7px; font-size: 13px; border-radius: 6px;"
-                                        wire:navigate>
-                                        <i class="ri-book-open-line"></i>
-                                    </a>
-                                    <div class="dropdown">
-                                        <button type="button" class="btn btn-sm btn-light border text-dark"
-                                            data-bs-toggle="dropdown"
-                                            data-bs-display="static"
-                                            aria-expanded="false"
-                                            style="padding: 4px 8px; font-size: 12px; border-radius: 6px;">
-                                            <i class="ri-more-2-fill"></i>
-                                        </button>
-                                        <div class="dropdown-menu dropdown-menu-start shadow-sm border-0 p-2" style="border-radius: 10px; min-width: 175px;">
-                                            ${actions}
-                                        </div>
-                                    </div>
+                                <div class="dropdown">
+                                    <button type="button" class="btn btn-sm btn-light border text-muted d-inline-flex align-items-center justify-content-center"
+                                        data-bs-toggle="dropdown"
+                                        data-bs-display="static"
+                                        aria-expanded="false"
+                                        title="Opsi Aksi"
+                                        style="width: 32px; height: 32px; padding: 0; border-radius: 6px;">
+                                        <i class="ri-more-2-fill fs-5"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-start shadow-sm border-0 p-2" style="border-radius: 10px; min-width: 165px;">
+                                        ${actions}
+                                    </ul>
                                 </div>
-                            `;
+                                `;
                             }
                         },
 
@@ -346,20 +357,22 @@
                             }
                         },
 
-                        // Kolom 3: Nama Pelatihan, Tipe, & Indikator Kurikulum
+                        // Kolom 3: Nama Pelatihan & Tipe
                         {
                             data: 'title',
                             name: 'title',
                             orderable: true,
                             searchable: true,
                             render: function(data, type, row) {
-                                let materiUrl = "{{ route('materi.detail', ':id') }}".replace(':id', row.id);
+                                let materiUrl = "{{ route('materi.detail', ':id') }}".replace(':id', row
+                                    .id);
                                 let typeBadge = '';
                                 if (row.type === 'permanent') {
                                     typeBadge =
                                         '<span class="badge bg-success-subtle text-success" style="font-size: 10.5px;"><i class="ri-infinite-line me-1"></i>Permanen (Self-Paced)</span>';
                                 } else if (row.type === 'paid' || row.type === 'berbayar') {
-                                    let priceFormatted = row.price ? 'Rp ' + Number(row.price).toLocaleString('id-ID') : 'Rp 0';
+                                    let priceFormatted = row.price ? 'Rp ' + Number(row.price)
+                                        .toLocaleString('id-ID') : 'Rp 0';
                                     typeBadge =
                                         `<span class="badge bg-warning-subtle text-dark border border-warning" style="font-size: 10.5px;"><i class="ri-money-dollar-circle-line me-1"></i>Berbayar (${priceFormatted})</span>`;
                                 } else {
@@ -371,28 +384,13 @@
                                         `<span class="badge bg-primary-subtle text-primary" style="font-size: 10.5px;"><i class="ri-calendar-line me-1"></i>Batch${dates}</span>`;
                                 }
 
-                                let curriculumBadge = '';
-                                let chaptersCount = Number(row.chapters_count || 0);
-                                let lessonsCount = Number(row.lessons_count || 0);
-
-                                if (chaptersCount > 0) {
-                                    curriculumBadge = `<span class="badge bg-info-subtle text-info border border-info-subtle" style="font-size: 10.5px;">
-                                        <i class="ri-book-open-line me-1"></i>${chaptersCount} Bab &bull; ${lessonsCount} Materi
-                                    </span>`;
-                                } else {
-                                    curriculumBadge = `<span class="badge bg-secondary-subtle text-muted border border-secondary-subtle" style="font-size: 10.5px;">
-                                        <i class="ri-book-line me-1"></i>0 Bab (Belum ada materi)
-                                    </span>`;
-                                }
-
                                 return `
                                 <div>
-                                    <div class="fw-semibold text-dark mb-1" style="font-size: 13px; line-height: 1.4;">
-                                        <a href="${materiUrl}" class="text-dark text-decoration-none" wire:navigate>${data}</a>
+                                    <div class="fw-semibold text-dark mb-1" style="font-size: 13.5px; line-height: 1.4;">
+                                        <a href="${materiUrl}" class="text-dark text-decoration-none hover-text-primary" wire:navigate>${data}</a>
                                     </div>
                                     <div class="d-flex flex-wrap align-items-center gap-1">
                                         ${typeBadge}
-                                        ${curriculumBadge}
                                     </div>
                                 </div>
                             `;
@@ -411,7 +409,46 @@
                             }
                         },
 
-                        // Kolom 5: Status Diklat (7 PRD Lifecycle States)
+                        // Kolom 5: Kurikulum & Materi (Dedicated Column)
+                        {
+                            data: null,
+                            orderable: false,
+                            searchable: false,
+                            className: 'text-center',
+                            render: function(data, type, row) {
+                                let materiUrl = "{{ route('materi.detail', ':id') }}".replace(':id', row
+                                    .id);
+                                let chaptersCount = Number(row.chapters_count || 0);
+                                let lessonsCount = Number(row.lessons_count || 0);
+
+                                let subtext = '';
+                                if (chaptersCount > 0 || lessonsCount > 0) {
+                                    subtext = `<span class="text-muted" style="font-size: 11px;">
+                                        <i class="ri-folders-line me-1"></i>${chaptersCount} Bab &bull; ${lessonsCount} Pelajaran
+                                    </span>`;
+                                } else {
+                                    subtext = `<span class="text-muted fst-italic" style="font-size: 11px;">
+                                        Belum ada materi
+                                    </span>`;
+                                }
+
+                                return `
+                                <div class="d-flex flex-column align-items-center gap-1 py-1">
+                                    <a href="${materiUrl}" 
+                                       class="btn btn-sm btn-simple-gold btn-materi-action d-inline-flex align-items-center gap-2 fw-semibold text-nowrap shadow-sm"
+                                       title="Kelola Kurikulum & Materi Kelas"
+                                       wire:navigate>
+                                        <i class="ri-book-open-line fs-6"></i>
+                                        <span>Kelola Materi</span>
+                                        <span class="badge bg-dark text-white rounded-pill badge-materi-count">${lessonsCount}</span>
+                                    </a>
+                                    ${subtext}
+                                </div>
+                                `;
+                            }
+                        },
+
+                        // Kolom 6: Status Diklat (7 PRD Lifecycle States)
                         {
                             data: 'status',
                             name: 'status',

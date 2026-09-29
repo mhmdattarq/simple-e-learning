@@ -37,7 +37,6 @@ test('authorized internal roles can access kelas index page', function () {
     $response->assertStatus(200);
     $response->assertSee('Data Kelas');
     $response->assertSee('tableKelas');
-    $response->assertSee('Tambah Kelas Baru');
 
     Livewire::actingAs($admin)
         ->test(KelasData::class)

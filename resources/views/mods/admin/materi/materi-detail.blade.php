@@ -88,11 +88,14 @@
                     {{ $course->category?->name ?? 'Pelatihan' }}
                 </span>
                 @if ($course->isPaid())
-                    <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-2 py-1 radius-4 fs-8">
-                        <i class="ri-money-dollar-circle-line me-1"></i>Berbayar (Rp {{ number_format($course->price, 0, ',', '.') }})
+                    <span
+                        class="badge bg-warning-subtle text-warning border border-warning-subtle px-2 py-1 radius-4 fs-8">
+                        <i class="ri-money-dollar-circle-line me-1"></i>Berbayar (Rp
+                        {{ number_format($course->price, 0, ',', '.') }})
                     </span>
                 @elseif ($course->isBatch())
-                    <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-2 py-1 radius-4 fs-8">
+                    <span
+                        class="badge bg-warning-subtle text-warning border border-warning-subtle px-2 py-1 radius-4 fs-8">
                         <i class="ri-calendar-line me-1"></i>Batch (Angkatan)
                     </span>
                 @else
@@ -113,8 +116,8 @@
 
         <div class="d-flex flex-wrap align-items-center gap-2">
             @if ($viewMode === 'editor')
-                <button type="button" wire:click="closeEditor" class="btn btn-secondary d-flex align-items-center gap-1">
-                    <i class="ri-arrow-left-line"></i> Kembali ke Kurikulum
+                <button type="button" wire:click="closeEditor" class="btn btn-danger d-flex align-items-center gap-1">
+                    <i class="ri-arrow-left-line"></i> Kembali
                 </button>
             @else
                 @if ($isFrozen)
@@ -123,26 +126,15 @@
                         <i class="ri-lock-2-line me-1"></i> Curriculum Frozen (Terkunci)
                     </span>
                 @else
-                    <a href="{{ route('kelas.data') }}"
-                        class="btn btn-outline-secondary d-flex align-items-center gap-1" wire:navigate>
-                        <i class="ri-arrow-left-line"></i> <span>Data Kelas</span>
-                    </a>
-                    <a href="{{ route('kelas.edit', $course->id) }}"
-                        class="btn btn-outline-dark d-flex align-items-center gap-1" wire:navigate>
-                        <i class="ri-edit-line"></i> <span>Edit Info Kelas</span>
+                    <a href="{{ route('kelas.data') }}" class="btn btn-danger d-flex align-items-center gap-1"
+                        wire:navigate>
+                        <i class="ri-arrow-left-line"></i> <span>Kembali</span>
                     </a>
                     <button type="button" wire:click="openCreateChapter"
                         class="btn btn-simple-gold d-flex align-items-center gap-1 shadow-none">
                         <i class="ri-add-line fs-6"></i>
                         <span>Tambah Bab Baru</span>
                     </button>
-                    @if ($course->isDraft())
-                        <button type="button" wire:click="publishCourse"
-                            class="btn btn-success d-flex align-items-center gap-1 shadow-sm">
-                            <i class="ri-checkbox-circle-line"></i>
-                            <span>Terbitkan Kelas</span>
-                        </button>
-                    @endif
                 @endif
             @endif
         </div>
@@ -386,7 +378,8 @@
                             </li>
                             <li class="d-flex justify-content-between py-1 border-bottom">
                                 <span class="text-muted">Biaya Pelatihan:</span>
-                                <strong class="text-dark">{{ $course->isPaid() ? 'Rp ' . number_format($course->price, 0, ',', '.') : 'Gratis' }}</strong>
+                                <strong
+                                    class="text-dark">{{ $course->isPaid() ? 'Rp ' . number_format($course->price, 0, ',', '.') : 'Gratis' }}</strong>
                             </li>
                             <li class="d-flex justify-content-between py-1 border-bottom">
                                 <span class="text-muted">Total Bab:</span>

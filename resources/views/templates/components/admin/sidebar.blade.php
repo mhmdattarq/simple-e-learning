@@ -24,7 +24,7 @@ new class extends Component {
         <div class="sidebar-menu-area">
             <ul class="sidebar-menu" id="sidebar-menu"
                 x-data="{
-                    activeDropdown: '{{ request()->routeIs('kategori.*') ? 'kategori' : (request()->routeIs('kelas.*') ? 'kelas' : (request()->routeIs('materi.*') ? 'materi' : (request()->routeIs('evaluasi.*') ? 'evaluasi' : ''))) }}',
+                    activeDropdown: '{{ request()->routeIs('kategori.*') ? 'kategori' : (request()->routeIs(['kelas.*', 'materi.*']) ? 'kelas' : (request()->routeIs('evaluasi.*') ? 'evaluasi' : '')) }}',
                     toggle(name) {
                         this.activeDropdown = (this.activeDropdown === name) ? '' : name;
                     },
@@ -32,8 +32,7 @@ new class extends Component {
                         document.addEventListener('livewire:navigated', () => {
                             const path = window.location.pathname;
                             if (path.includes('/kategori')) this.activeDropdown = 'kategori';
-                            else if (path.includes('/kelas')) this.activeDropdown = 'kelas';
-                            else if (path.includes('/materi')) this.activeDropdown = 'materi';
+                            else if (path.includes('/kelas') || path.includes('/materi')) this.activeDropdown = 'kelas';
                             else if (path.includes('/evaluasi')) this.activeDropdown = 'evaluasi';
                             else this.activeDropdown = '';
                         });
@@ -75,10 +74,10 @@ new class extends Component {
                 </li>
 
                 {{-- Kelas --}}
-                <li class="dropdown {{ request()->routeIs('kelas.*') ? 'open is-active-module' : '' }}"
+                <li class="dropdown {{ request()->routeIs(['kelas.*', 'materi.*']) ? 'open is-active-module' : '' }}"
                     :class="{
                         'open': activeDropdown === 'kelas',
-                        'is-active-module': {{ request()->routeIs('kelas.*') ? 'true' : 'false' }}
+                        'is-active-module': {{ request()->routeIs(['kelas.*', 'materi.*']) ? 'true' : 'false' }}
                     }">
                     <a href="javascript:void(0)" @click.prevent.stop="toggle('kelas')" title="Kelas">
                         <i class="ri-file-list-3-line menu-icon"></i>
@@ -90,28 +89,9 @@ new class extends Component {
                                 <i class="ri-circle-fill circle-icon"></i> <span>Tambah Kelas</span>
                             </a>
                         </li>
-                        <li class="{{ request()->routeIs('kelas.data') ? 'active-page' : '' }}">
+                        <li class="{{ (request()->routeIs('kelas.data') || request()->routeIs('materi.*')) ? 'active-page' : '' }}">
                             <a href="{{ route('kelas.data') }}" wire:navigate>
                                 <i class="ri-circle-fill circle-icon"></i> <span>Data Kelas</span>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-
-                {{-- Ruang Materi --}}
-                <li class="dropdown {{ request()->routeIs('materi.*') ? 'open is-active-module' : '' }}"
-                    :class="{
-                        'open': activeDropdown === 'materi',
-                        'is-active-module': {{ request()->routeIs('materi.*') ? 'true' : 'false' }}
-                    }">
-                    <a href="javascript:void(0)" @click.prevent.stop="toggle('materi')" title="Ruang Materi">
-                        <i class="ri-book-read-line menu-icon"></i>
-                        <span>Ruang Materi</span>
-                    </a>
-                    <ul class="sidebar-submenu">
-                        <li class="{{ request()->routeIs('materi.data') ? 'active-page' : '' }}">
-                            <a href="{{ route('materi.data') }}" wire:navigate>
-                                <i class="ri-circle-fill circle-icon"></i> <span>Data Materi</span>
                             </a>
                         </li>
                     </ul>

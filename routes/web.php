@@ -11,7 +11,6 @@ use App\Livewire\Admin\Kategori\KategoriEdit;
 use App\Livewire\Admin\Kelas\KelasCreate;
 use App\Livewire\Admin\Kelas\KelasData;
 use App\Livewire\Admin\Kelas\KelasEdit;
-use App\Livewire\Admin\Materi\MateriData;
 use App\Livewire\Admin\Materi\MateriDetail;
 use App\Livewire\Auth\Login;
 use App\Livewire\Auth\Register;
@@ -73,10 +72,10 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::livewire('/edit/{id}', KelasEdit::class)->name('edit');
     });
 
-    // Modul: Ruang Materi
+    // Modul: Materi / Kurikulum Kelas
     Route::prefix('materi')->name('materi.')->group(function () {
         Route::post('/upload-media', [MateriController::class, 'uploadMedia'])->middleware('throttle:uploads')->name('upload-media');
-        Route::livewire('/data', MateriData::class)->name('data');
+        Route::redirect('/data', '/kelas/data');
         Route::livewire('/detail/{id}', MateriDetail::class)->name('detail');
         Route::get('/detail/{course_id}/editor/{lesson_id?}', function ($course_id, $lesson_id = null) {
             $params = ['id' => $course_id, 'view' => 'editor'];

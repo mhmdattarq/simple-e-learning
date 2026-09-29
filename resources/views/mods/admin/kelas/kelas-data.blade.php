@@ -5,12 +5,12 @@
             <h5 class="fw-bold text-dark mb-1">Data Kelas</h5>
             <p class="text-muted mb-0">Manajemen katalog seluruh kelas pelatihan (Batch, Permanen, dan Berbayar).</p>
         </div>
-        <div class="d-flex align-items-center gap-2">
+        {{-- <div class="d-flex align-items-center gap-2">
             <a href="{{ route('kelas.create') }}" class="btn btn-simple-gold" wire:navigate>
                 <i class="ri-add-line fs-5"></i>
                 <span>Tambah Kelas Baru</span>
             </a>
-        </div>
+        </div> --}}
     </div>
 
     {{-- Main Card with Table --}}
@@ -32,10 +32,11 @@
                             <th class="text-center" style="width: 40px;">
                                 <input class="form-check-input check-data-all" type="checkbox">
                             </th>
-                            <th class="text-center" style="width: 85px;">Aksi</th>
+                            <th class="text-center" style="width: 70px;">Aksi</th>
                             <th class="text-center" style="width: 50px;">No</th>
                             <th>Nama Kelas</th>
                             <th>Kategori</th>
+                            <th class="text-center" style="width: 170px;">Materi</th>
                             <th class="text-center" style="width: 110px;">Status</th>
                         </tr>
                         {{-- Thead Kedua: Filter pencarian spesifik per kolom tabel --}}
@@ -51,6 +52,7 @@
                                 <input type="text" class="form-control form-control-sm search-col-dt"
                                     placeholder="Cari kategori...">
                             </th>
+                            <th></th>
                             <th></th>
                         </tr>
                     </thead>

@@ -1,7 +1,6 @@
 <?php
 
 use App\Enums\CourseStatus;
-use App\Livewire\Admin\Materi\MateriData;
 use App\Livewire\Admin\Materi\MateriDetail;
 use App\Models\Category;
 use App\Models\Chapter;
@@ -48,27 +47,15 @@ beforeEach(function () {
 
 test('unauthorized users cannot access materi routes', function () {
     // Guest redirected to login
-    $this->get(route('materi.data'))->assertRedirect(route('login'));
     $this->get(route('materi.detail', $this->permanentCourse->id))->assertRedirect(route('login'));
     $this->get(route('materi.editor', $this->permanentCourse->id))->assertRedirect(route('login'));
 
     // Peserta gets 403 Forbidden
-    $this->actingAs($this->peserta)->get(route('materi.data'))->assertStatus(403);
     $this->actingAs($this->peserta)->get(route('materi.detail', $this->permanentCourse->id))->assertStatus(403);
     $this->actingAs($this->peserta)->get(route('materi.editor', $this->permanentCourse->id))->assertStatus(403);
 });
 
-test('admin can access materi catalog and curriculum detail', function () {
-    $this->actingAs($this->admin)->get(route('materi.data'))
-        ->assertOk()
-        ->assertSee('Tahap 6: Ruang Materi')
-        ->assertSee('Digital Leadership');
-
-    Livewire::actingAs($this->admin)
-        ->test(MateriData::class)
-        ->assertOk()
-        ->assertSee('Digital Leadership');
-
+test('admin can access curriculum detail', function () {
     $this->actingAs($this->admin)->get(route('materi.detail', $this->permanentCourse->id))
         ->assertOk()
         ->assertSee('Digital Leadership')
@@ -434,7 +421,7 @@ test('switching between silabus and editor resets validation error bag completel
         ->assertHasNoErrors();
 });
 
-test('admin can publish draft course directly from materi detail curriculum page', function () {
+test('admin can publish draft course method in materi detail curriculum page', function () {
     $draftCourse = Course::create([
         'title' => 'Pelatihan Draft Belum Terbit',
         'category_id' => $this->category->id,
@@ -447,9 +434,7 @@ test('admin can publish draft course directly from materi detail curriculum page
 
     Livewire::actingAs($this->admin)
         ->test(MateriDetail::class, ['id' => $draftCourse->id])
-        ->assertSee('Terbitkan Kelas')
         ->assertSee(route('kelas.data'))
-        ->assertSee(route('kelas.edit', $draftCourse->id))
         ->call('publishCourse')
         ->assertDispatched('alert-show');
 
