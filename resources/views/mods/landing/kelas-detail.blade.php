@@ -72,7 +72,7 @@
                                 @if ($course->isPermanent())
                                     Akses Kapan Saja (24/7)
                                 @elseif ($course->start_date && $course->end_date)
-                                    {{ $course->start_date->format('d M') }} - {{ $course->end_date->format('d M Y') }}
+                                    {{ $course->start_date->format('H:i') !== '00:00' ? $course->start_date->format('d M Y, H:i') : $course->start_date->format('d M') }} - {{ $course->end_date->format('H:i') !== '00:00' ? $course->end_date->format('d M Y, H:i \W\I\B') : $course->end_date->format('d M Y') }}
                                 @else
                                     Sesuai Jadwal Diklat
                                 @endif
@@ -272,8 +272,8 @@
                                             @if ($course->isPermanent())
                                                 Mandiri 24/7
                                             @elseif ($course->start_date && $course->end_date)
-                                                {{ $course->start_date->format('d M') }} -
-                                                {{ $course->end_date->format('d M Y') }}
+                                                {{ $course->start_date->format('H:i') !== '00:00' ? $course->start_date->format('d M Y, H:i') : $course->start_date->format('d M') }} -
+                                                {{ $course->end_date->format('H:i') !== '00:00' ? $course->end_date->format('d M Y, H:i \W\I\B') : $course->end_date->format('d M Y') }}
                                             @else
                                                 Terjadwal
                                             @endif

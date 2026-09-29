@@ -87,18 +87,26 @@ test('kelas create validates required fields and batch dates', function () {
     Livewire::actingAs($admin)
         ->test(KelasCreate::class)
         ->set('form.title', '')
+        ->set('form.category_id', '')
         ->set('form.category_name', '')
+        ->set('form.description', '')
         ->call('formSubmit')
         ->assertHasErrors([
             'form.title',
-            'form.category_name',
-        ]);
+            'form.category_id',
+            'form.description',
+        ])
+        ->assertSee('Nama kelas wajib diisi.')
+        ->assertSee('Kategori kelas wajib dipilih.')
+        ->assertSee('Deskripsi kelas wajib diisi.')
+        ->assertDontSee('The Kategori Kelas field is required when Kategori Kelas is not present.');
 
     // 2. Validates batch requires start_date and end_date
     Livewire::actingAs($admin)
         ->test(KelasCreate::class)
         ->set('form.title', 'Pelatihan Batch Kepemimpinan')
         ->set('form.category_name', 'Pelatihan Kepemimpinan')
+        ->set('form.description', 'Deskripsi kelas pelatihan batch kepemimpinan aparatur sipil negara.')
         ->set('form.type', 'batch')
         ->set('form.start_date', '')
         ->set('form.end_date', '')
@@ -115,6 +123,7 @@ test('kelas create successfully saves course into database and redirects', funct
         ->test(KelasCreate::class)
         ->set('form.title', 'Pelatihan Teknis Tata Naskah Dinas Elektronik')
         ->set('form.category_name', $category->name)
+        ->set('form.description', 'Deskripsi pelatihan teknis tata naskah dinas elektronik untuk ASN.')
         ->set('form.type', 'permanent')
         ->call('formSubmit')
         ->assertHasNoErrors()
@@ -132,6 +141,7 @@ test('kelas create successfully saves course into database and redirects', funct
         ->test(KelasCreate::class)
         ->set('form.title', 'Pelatihan Draf Dasar')
         ->set('form.category_name', $category->name)
+        ->set('form.description', 'Deskripsi pelatihan draf dasar kompetensi aparatur.')
         ->set('form.type', 'permanent')
         ->set('form.status', 'draft')
         ->call('formSubmit')
@@ -150,6 +160,7 @@ test('kelas edit mounts existing data and successfully updates course', function
 
     $course = Course::create([
         'title' => 'Pelatihan Fungsional Analis Kebijakan',
+        'description' => 'Deskripsi pelatihan fungsional analis kebijakan tingkat pertama.',
         'category_id' => $category->id,
         'type' => 'permanent',
         'status' => 'draft',
@@ -178,6 +189,7 @@ test('admin can edit and update courses with any status including published', fu
 
     $publishedCourse = Course::create([
         'title' => 'Pelatihan Sudah Dibuka',
+        'description' => 'Deskripsi pelatihan yang sudah dibuka untuk umum.',
         'category_id' => $category->id,
         'type' => 'permanent',
         'status' => CourseStatus::Published,
@@ -259,6 +271,7 @@ test('admin can create and save classes with paid, batch, and permanent types', 
         ->test(KelasCreate::class)
         ->set('form.title', 'Kelas Pemrograman Fullstack Web')
         ->set('form.category_id', $category->id)
+        ->set('form.description', 'Kelas pemrograman fullstack web modern dengan framework terpercaya.')
         ->set('form.type', 'paid')
         ->set('form.price', 350000)
         ->call('formSubmit')
@@ -272,13 +285,17 @@ test('admin can create and save classes with paid, batch, and permanent types', 
     ]);
 
     // 2. Batch Class with dates
+    $batchStart = now()->addDay()->format('Y-m-d\TH:i');
+    $batchEnd = now()->addDays(15)->format('Y-m-d\TH:i');
+
     Livewire::actingAs($admin)
         ->test(KelasCreate::class)
         ->set('form.title', 'Kelas Batch Kepemimpinan 2026')
         ->set('form.category_id', $category->id)
+        ->set('form.description', 'Kelas batch kepemimpinan bagi aparatur sipil negara di lingkungan pemda.')
         ->set('form.type', 'batch')
-        ->set('form.start_date', '2026-10-01')
-        ->set('form.end_date', '2026-10-15')
+        ->set('form.start_date', $batchStart)
+        ->set('form.end_date', $batchEnd)
         ->call('formSubmit')
         ->assertHasNoErrors()
         ->assertRedirect(route('materi.detail', 2));
@@ -324,6 +341,7 @@ test('kelas create auto-creates new category when user inputs a novel category n
         ->test(KelasCreate::class)
         ->set('form.title', 'Dasar Keamanan Siber Pemerintah')
         ->set('form.category_name', $novelCategoryName)
+        ->set('form.description', 'Materi dasar mengenai keamanan siber dan informasi rahasia dinas.')
         ->set('form.type', 'permanent')
         ->call('formSubmit')
         ->assertHasNoErrors()
@@ -345,6 +363,7 @@ test('kelas edit can update category name to a different category', function () 
 
     $course = Course::create([
         'title' => 'Pelatihan Ganti Kategori',
+        'description' => 'Deskripsi awal pelatihan sebelum kategori diubah.',
         'category_id' => $catA->id,
         'type' => 'permanent',
         'status' => 'draft',
@@ -379,13 +398,13 @@ test('kelas create validates title length', function () {
 test('kelas create validates file upload mime types', function () {
     $admin = User::factory()->admin()->create();
 
-    $invalidDoc = UploadedFile::fake()->create('kak.txt', 100, 'text/plain');
+    $invalidFile = UploadedFile::fake()->create('dokumen.txt', 100, 'text/plain');
 
     Livewire::actingAs($admin)
         ->test(KelasCreate::class)
-        ->set('torFile', $invalidDoc)
+        ->set('thumbnailFile', $invalidFile)
         ->call('formSubmit')
-        ->assertHasErrors(['torFile' => 'mimes']);
+        ->assertHasErrors(['thumbnailFile']);
 });
 
 test('kelas auto-generates slug from title and handles collisions', function () {
@@ -397,6 +416,7 @@ test('kelas auto-generates slug from title and handles collisions', function () 
         ->test(KelasCreate::class)
         ->set('form.title', 'Pelatihan Transformasi Digital')
         ->set('form.category_id', $category->id)
+        ->set('form.description', 'Pelatihan transformasi digital untuk unit layanan publik.')
         ->set('form.type', 'permanent')
         ->call('formSubmit')
         ->assertHasNoErrors();
@@ -410,6 +430,7 @@ test('kelas auto-generates slug from title and handles collisions', function () 
         ->test(KelasCreate::class)
         ->set('form.title', 'Pelatihan Transformasi Digital')
         ->set('form.category_id', $category->id)
+        ->set('form.description', 'Pelatihan transformasi digital untuk unit layanan publik batch kedua.')
         ->set('form.type', 'permanent')
         ->call('formSubmit')
         ->assertHasNoErrors();
@@ -429,10 +450,11 @@ test('kelas create wizard step-by-step navigation and validation works properly'
         ->assertSet('currentStep', 1)
         // 2. Fails step 1 validation when empty
         ->call('nextStep')
-        ->assertHasErrors(['form.title', 'form.category_id'])
+        ->assertHasErrors(['form.title', 'form.description', 'form.category_id'])
         ->assertSet('currentStep', 1)
         // 3. Fill step 1 and advance to step 2
         ->set('form.title', 'Pelatihan Kepemimpinan Pengawas 2026')
+        ->set('form.description', 'Program kepemimpinan pengawas aparatur terstruktur.')
         ->set('form.category_id', $category->id)
         ->call('nextStep')
         ->assertHasNoErrors()
@@ -451,8 +473,8 @@ test('kelas create wizard step-by-step navigation and validation works properly'
         ->call('nextStep')
         ->assertSet('currentStep', 2)
         // 7. Fill valid batch dates and advance to step 3
-        ->set('form.start_date', '2026-11-01')
-        ->set('form.end_date', '2026-11-15')
+        ->set('form.start_date', now()->addMonth()->format('Y-m-d\TH:i'))
+        ->set('form.end_date', now()->addMonth()->addDays(14)->format('Y-m-d\TH:i'))
         ->call('nextStep')
         ->assertHasNoErrors()
         ->assertSet('currentStep', 3)
@@ -478,10 +500,11 @@ test('kelas create wizard goToStep prevents skipping unvalidated steps but allow
         ->assertSet('currentStep', 1)
         // Cannot jump directly to step 3 without valid step 1 and 2
         ->call('goToStep', 3)
-        ->assertHasErrors(['form.title'])
+        ->assertHasErrors(['form.title', 'form.description'])
         ->assertSet('currentStep', 1)
         // Fill step 1 and step 2
         ->set('form.title', 'Pelatihan Transformasi Layanan Publik')
+        ->set('form.description', 'Deskripsi transformasi pelayanan publik prima untuk masyarakat.')
         ->set('form.category_id', $category->id)
         ->set('form.type', 'permanent')
         // Now can jump to step 3
@@ -757,4 +780,90 @@ test('admin dapat memperbarui deskripsi kelas pada form edit kelas', function ()
 
     $course->refresh();
     expect($course->description)->toBe('Deskripsi baru yang telah diperbarui');
+});
+
+test('kelas create validates batch start_date cannot be before today', function () {
+    $admin = User::factory()->admin()->create();
+
+    Livewire::actingAs($admin)
+        ->test(KelasCreate::class)
+        ->set('form.title', 'Kelas Batch Validasi Tanggal')
+        ->set('form.category_name', 'Kelas Teknis')
+        ->set('form.description', 'Deskripsi kelas batch validasi tanggal mulai sebelum hari ini.')
+        ->set('form.type', 'batch')
+        ->set('form.start_date', now()->subDay()->format('Y-m-d\TH:i'))
+        ->set('form.end_date', now()->addDays(2)->format('Y-m-d\TH:i'))
+        ->call('formSubmit')
+        ->assertHasErrors(['form.start_date' => 'after_or_equal']);
+});
+
+test('kelas create validates batch end_date must be strictly after start_date', function () {
+    $admin = User::factory()->admin()->create();
+    $sameDateTime = now()->addDays(2)->format('Y-m-d\TH:i');
+
+    // 1. Same datetime should fail
+    Livewire::actingAs($admin)
+        ->test(KelasCreate::class)
+        ->set('form.title', 'Kelas Batch Tanggal Sama')
+        ->set('form.category_name', 'Kelas Teknis')
+        ->set('form.description', 'Deskripsi kelas batch pengujian tanggal sama.')
+        ->set('form.type', 'batch')
+        ->set('form.start_date', $sameDateTime)
+        ->set('form.end_date', $sameDateTime)
+        ->call('formSubmit')
+        ->assertHasErrors(['form.end_date' => 'after']);
+
+    // 2. End date before start date should fail
+    Livewire::actingAs($admin)
+        ->test(KelasCreate::class)
+        ->set('form.title', 'Kelas Batch Tanggal Terbalik')
+        ->set('form.category_name', 'Kelas Teknis')
+        ->set('form.description', 'Deskripsi kelas batch pengujian tanggal terbalik.')
+        ->set('form.type', 'batch')
+        ->set('form.start_date', now()->addDays(5)->format('Y-m-d\TH:i'))
+        ->set('form.end_date', now()->addDays(2)->format('Y-m-d\TH:i'))
+        ->call('formSubmit')
+        ->assertHasErrors(['form.end_date' => 'after']);
+});
+
+test('kelas create successfully saves batch course with valid datetime', function () {
+    $admin = User::factory()->admin()->create();
+    $start = now()->addDay()->setHour(9)->setMinute(0)->format('Y-m-d\TH:i');
+    $end = now()->addDays(5)->setHour(17)->setMinute(0)->format('Y-m-d\TH:i');
+
+    Livewire::actingAs($admin)
+        ->test(KelasCreate::class)
+        ->set('form.title', 'Kelas Batch Datetime Sukses')
+        ->set('form.category_name', 'Kelas Teknis')
+        ->set('form.description', 'Deskripsi lengkap kelas batch datetime sukses terverifikasi.')
+        ->set('form.type', 'batch')
+        ->set('form.start_date', $start)
+        ->set('form.end_date', $end)
+        ->call('formSubmit', 'index')
+        ->assertHasNoErrors();
+
+    $created = Course::where('title', 'Kelas Batch Datetime Sukses')->first();
+    expect($created)->not->toBeNull();
+    expect($created->start_date)->not->toBeNull();
+    expect($created->end_date)->not->toBeNull();
+});
+
+test('kelas create validates description requirements and length constraints', function () {
+    $admin = User::factory()->admin()->create();
+
+    // 1. Required
+    Livewire::actingAs($admin)
+        ->test(KelasCreate::class)
+        ->set('form.description', '')
+        ->call('formSubmit')
+        ->assertHasErrors(['form.description' => 'required'])
+        ->assertSee('Deskripsi kelas wajib diisi.');
+
+    // 2. Min length 10
+    Livewire::actingAs($admin)
+        ->test(KelasCreate::class)
+        ->set('form.description', 'Pendek')
+        ->call('formSubmit')
+        ->assertHasErrors(['form.description' => 'min'])
+        ->assertSee('Deskripsi kelas minimal 10 karakter.');
 });

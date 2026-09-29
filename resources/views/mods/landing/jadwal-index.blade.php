@@ -69,9 +69,15 @@
                                                 <span class="d-flex align-items-center gap-1">
                                                     <i class="ri-calendar-line text-gold"></i>
                                                     {{ $jadwal->start_date->translatedFormat('d F Y') }}
+                                                    @if ($jadwal->start_date->format('H:i') !== '00:00')
+                                                        {{ $jadwal->start_date->format('H:i') }}
+                                                    @endif
                                                     @if ($jadwal->end_date)
                                                         &nbsp;&ndash;&nbsp;
                                                         {{ $jadwal->end_date->translatedFormat('d F Y') }}
+                                                        @if ($jadwal->end_date->format('H:i') !== '00:00')
+                                                            {{ $jadwal->end_date->format('H:i') }} WIB
+                                                        @endif
                                                     @endif
                                                 </span>
                                                 <span class="d-flex align-items-center gap-1">

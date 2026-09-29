@@ -25,6 +25,7 @@ class CourseFactory extends Factory
         return [
             'slug' => fake()->unique()->slug(),
             'title' => fake()->sentence(5),
+            'description' => null,
             'category_id' => null,
             'type' => $type,
             'start_date' => $startDate,

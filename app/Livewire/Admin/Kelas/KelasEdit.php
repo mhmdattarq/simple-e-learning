@@ -5,6 +5,7 @@ namespace App\Livewire\Admin\Kelas;
 use App\Models\Category;
 use App\Models\Course;
 use App\Repositories\KelasRepo;
+use Carbon\Carbon;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -22,8 +23,6 @@ class KelasEdit extends Component
 
     public $thumbnailFile = null;
 
-    public $torFile = null;
-
     public function mount($id): void
     {
         $this->id = (int) $id;
@@ -36,8 +35,8 @@ class KelasEdit extends Component
             'category_name' => $this->course->category?->name ?? '',
             'type' => $this->course->type,
             'price' => (float) ($this->course->price ?? 0),
-            'start_date' => $this->course->start_date ? $this->course->start_date->format('Y-m-d') : '',
-            'end_date' => $this->course->end_date ? $this->course->end_date->format('Y-m-d') : '',
+            'start_date' => $this->course->start_date ? $this->course->start_date->format('Y-m-d\TH:i') : '',
+            'end_date' => $this->course->end_date ? $this->course->end_date->format('Y-m-d\TH:i') : '',
             'status' => $this->course->status->value ?? (string) $this->course->status,
         ];
     }
@@ -46,6 +45,10 @@ class KelasEdit extends Component
     {
         if ($propertyName === 'form.type') {
             $this->resetErrorBag(['form.start_date', 'form.end_date', 'form.price']);
+        }
+
+        if ($propertyName === 'form.start_date' && ! empty($this->form['end_date'])) {
+            $this->validateOnly('form.end_date');
         }
 
         if ($propertyName === 'form.category_id' && ! empty($this->form['category_id'])) {
@@ -66,18 +69,17 @@ class KelasEdit extends Component
     {
         $rules = [
             'form.title' => 'required|string|min:3|max:255',
-            'form.description' => 'nullable|string|max:5000',
+            'form.description' => 'required|string|min:10|max:5000',
             'form.category_id' => 'required_without:form.category_name|nullable|exists:categories,id',
             'form.category_name' => 'required_without:form.category_id|nullable|string|max:100',
             'form.type' => 'required|in:permanent,batch,paid,berbayar',
             'form.status' => 'required|string',
             'thumbnailFile' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'torFile' => 'nullable|file|mimes:pdf|max:10240',
         ];
 
         if (($this->form['type'] ?? '') === 'batch') {
             $rules['form.start_date'] = 'required|date';
-            $rules['form.end_date'] = 'required|date|after_or_equal:form.start_date';
+            $rules['form.end_date'] = 'required|date|after:form.start_date';
         } else {
             $rules['form.start_date'] = 'nullable|date';
             $rules['form.end_date'] = 'nullable|date';
@@ -99,7 +101,14 @@ class KelasEdit extends Component
             'form.title.string' => 'Nama kelas harus berupa teks.',
             'form.title.min' => 'Nama kelas minimal 3 karakter.',
             'form.title.max' => 'Nama kelas maksimal 255 karakter.',
-            'form.category_id.exists' => 'Kategori yang dipilih tidak valid.',
+            'form.description.required' => 'Deskripsi kelas wajib diisi.',
+            'form.description.string' => 'Deskripsi kelas harus berupa teks.',
+            'form.description.min' => 'Deskripsi kelas minimal 10 karakter.',
+            'form.description.max' => 'Deskripsi kelas maksimal 5.000 karakter.',
+            'form.category_id.required' => 'Kategori kelas wajib dipilih.',
+            'form.category_id.required_without' => 'Kategori kelas wajib dipilih.',
+            'form.category_id.exists' => 'Kategori kelas yang dipilih tidak valid.',
+            'form.category_name.required_without' => 'Kategori kelas wajib dipilih.',
             'form.category_name.string' => 'Kategori kelas harus berupa teks.',
             'form.category_name.max' => 'Kategori kelas maksimal 100 karakter.',
             'form.type.required' => 'Jenis kelas wajib dipilih.',
@@ -107,17 +116,14 @@ class KelasEdit extends Component
             'form.price.required' => 'Biaya kelas wajib ditentukan untuk kelas berbayar.',
             'form.price.numeric' => 'Biaya kelas harus berupa angka.',
             'form.price.min' => 'Biaya kelas minimal Rp 0.',
-            'form.start_date.required' => 'Tanggal mulai wajib diisi untuk kelas bertipe Batch.',
-            'form.start_date.date' => 'Format tanggal mulai tidak valid.',
-            'form.end_date.required' => 'Tanggal selesai wajib diisi untuk kelas bertipe Batch.',
-            'form.end_date.date' => 'Format tanggal selesai tidak valid.',
-            'form.end_date.after_or_equal' => 'Tanggal selesai tidak boleh sebelum tanggal mulai.',
+            'form.start_date.required' => 'Tanggal & waktu mulai wajib diisi untuk kelas bertipe Batch.',
+            'form.start_date.date' => 'Format tanggal & waktu mulai tidak valid.',
+            'form.end_date.required' => 'Tanggal & waktu selesai wajib diisi untuk kelas bertipe Batch.',
+            'form.end_date.date' => 'Format tanggal & waktu selesai tidak valid.',
+            'form.end_date.after' => 'Tanggal & waktu selesai harus setelah tanggal & waktu mulai (tidak boleh sama atau lebih awal).',
             'thumbnailFile.image' => 'Berkas sampul harus berupa gambar.',
             'thumbnailFile.mimes' => 'Format sampul harus berupa berkas JPG, JPEG, atau PNG.',
             'thumbnailFile.max' => 'Ukuran berkas sampul maksimal 2 MB.',
-            'torFile.file' => 'Berkas KAK harus berupa file dokumen valid.',
-            'torFile.mimes' => 'Berkas KAK harus berupa dokumen PDF.',
-            'torFile.max' => 'Ukuran berkas KAK maksimal 10 MB.',
         ];
     }
 
@@ -128,10 +134,9 @@ class KelasEdit extends Component
         'form.category_name' => 'Kategori Kelas',
         'form.type' => 'Jenis Kelas',
         'form.price' => 'Biaya Kelas',
-        'form.start_date' => 'Tanggal Mulai',
-        'form.end_date' => 'Tanggal Selesai',
-        'thumbnailFile' => 'Poster Kelas',
-        'torFile' => 'Dokumen KAK / TOR',
+        'form.start_date' => 'Tanggal & Waktu Mulai',
+        'form.end_date' => 'Tanggal & Waktu Selesai',
+        'thumbnailFile' => 'Poster / Sampul Kelas',
     ];
 
     public function formSubmit()
@@ -152,24 +157,29 @@ class KelasEdit extends Component
         $isBatch = $this->form['type'] === 'batch';
         $isPaid = in_array($this->form['type'], ['paid', 'berbayar']);
 
+        $startDate = null;
+        $endDate = null;
+        if ($isBatch && ! empty($this->form['start_date'])) {
+            $startDate = Carbon::parse($this->form['start_date'])->format('Y-m-d H:i:s');
+        }
+        if ($isBatch && ! empty($this->form['end_date'])) {
+            $endDate = Carbon::parse($this->form['end_date'])->format('Y-m-d H:i:s');
+        }
+
         $payload = [
             'title' => trim($this->form['title']),
             'description' => ! empty($this->form['description']) ? trim($this->form['description']) : null,
             'category_id' => $resolvedCategoryId,
             'type' => $this->form['type'],
             'price' => $isPaid ? (float) ($this->form['price'] ?? 0) : 0,
-            'start_date' => $isBatch ? $this->form['start_date'] : null,
-            'end_date' => $isBatch ? $this->form['end_date'] : null,
+            'start_date' => $startDate,
+            'end_date' => $endDate,
             'status' => $this->form['status'] ?? 'published',
         ];
 
         // Store file uploads if present
         if ($this->thumbnailFile) {
             $payload['thumbnail'] = $this->thumbnailFile->store('courses/thumbnails', 'public');
-        }
-
-        if ($this->torFile) {
-            $payload['tor_file'] = $this->torFile->store('courses/tors', 'public');
         }
 
         $process = KelasRepo::update($this->id, $payload);

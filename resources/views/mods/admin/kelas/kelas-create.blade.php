@@ -114,7 +114,7 @@
                                     <span class="d-block text-xs text-muted text-uppercase fw-semibold"
                                         style="letter-spacing: 0.5px;">Langkah 3</span>
                                     <span
-                                        class="d-block fs-8 fw-bold {{ $currentStep === 3 ? 'text-dark' : 'text-muted' }}">Berkas
+                                        class="d-block fs-8 fw-bold {{ $currentStep === 3 ? 'text-dark' : 'text-muted' }}">Sampul
                                         & Status</span>
                                 </div>
                             </div>
@@ -145,7 +145,7 @@
                                     Nama Program Kelas <span class="text-danger">*</span>
                                 </label>
                                 <input type="text" class="form-control @error('form.title') is-invalid @enderror"
-                                    wire:model="form.title"
+                                    wire:model.blur="form.title"
                                     placeholder="Contoh: Manajemen Administrator Angkatan I">
                                 @error('form.title')
                                     <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
@@ -158,7 +158,7 @@
                                     Kategori Kelas <span class="text-danger">*</span>
                                 </label>
                                 <select class="form-select @error('form.category_id') is-invalid @enderror"
-                                    wire:model="form.category_id">
+                                    wire:model.live="form.category_id">
                                     <option value="">-- Pilih Kategori Kelas --</option>
                                     @foreach ($categories as $category)
                                         <option value="{{ $category->id }}">{{ $category->name }}</option>
@@ -172,16 +172,13 @@
                             {{-- Deskripsi Program Kelas --}}
                             <div class="col-12">
                                 <label class="form-label text-xs fw-semibold text-dark mb-1">
-                                    Deskripsi Kelas
+                                    Deskripsi Kelas <span class="text-danger">*</span>
                                 </label>
-                                <textarea class="form-control @error('form.description') is-invalid @enderror"
-                                    wire:model="form.description"
-                                    rows="4"
-                                    placeholder="Tuliskan deskripsi lengkap, tujuan pembelajaran, atau ringkasan kelas ini..."></textarea>
+                                <textarea class="form-control @error('form.description') is-invalid @enderror" wire:model.blur="form.description"
+                                    rows="4" placeholder="Tuliskan deskripsi lengkap, tujuan pembelajaran, atau ringkasan kelas ini..."></textarea>
                                 @error('form.description')
                                     <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
                                 @enderror
-                                <small class="text-muted d-block mt-1">Deskripsi ini akan ditampilkan pada halaman detail kelas dan ringkasannya pada kartu katalog.</small>
                             </div>
                         </div>
                     </div>
@@ -223,15 +220,18 @@
                                 @enderror
                             </div>
 
-                            {{-- Row (Khusus Tipe Batch): Tanggal Mulai & Selesai --}}
+                            {{-- Row (Khusus Tipe Batch): Tanggal & Jam Mulai & Selesai --}}
                             @if (($form['type'] ?? '') === 'batch')
                                 <div class="col-md-6" wire:key="field-start-date">
                                     <label class="form-label text-xs fw-semibold text-dark mb-1">
-                                        Tanggal Mulai <span class="text-danger">*</span>
+                                        Tanggal & Jam Mulai <span class="text-danger">*</span>
                                     </label>
-                                    <input id="input_start_date" type="date"
+                                    <input id="input_start_date" type="datetime-local"
                                         class="form-control @error('form.start_date') is-invalid @enderror"
                                         wire:model="form.start_date">
+                                    <div class="form-text text-xs text-muted mt-1">
+                                        Pilih tanggal dan jam mulai kelas batch (tidak boleh sebelum hari ini).
+                                    </div>
                                     @error('form.start_date')
                                         <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
                                     @enderror
@@ -239,11 +239,14 @@
 
                                 <div class="col-md-6" wire:key="field-end-date">
                                     <label class="form-label text-xs fw-semibold text-dark mb-1">
-                                        Tanggal Selesai <span class="text-danger">*</span>
+                                        Tanggal & Jam Selesai <span class="text-danger">*</span>
                                     </label>
-                                    <input id="input_end_date" type="date"
+                                    <input id="input_end_date" type="datetime-local"
                                         class="form-control @error('form.end_date') is-invalid @enderror"
                                         wire:model="form.end_date">
+                                    <div class="form-text text-xs text-muted mt-1">
+                                        Pilih tanggal dan jam selesai kelas batch (harus setelah waktu mulai).
+                                    </div>
                                     @error('form.end_date')
                                         <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
                                     @enderror
@@ -263,7 +266,7 @@
                                             wire:model="form.price" placeholder="Contoh: 150000">
                                     </div>
                                     <div class="form-text text-xs text-muted mt-1">Masukkan nominal biaya pendaftaran
-                                         kelas berbayar.</div>
+                                        kelas berbayar.</div>
                                     @error('form.price')
                                         <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
                                     @enderror
@@ -273,7 +276,7 @@
                     </div>
                 @endif
 
-                {{-- Langkah 3: Dokumen, Lampiran & Status Publikasi --}}
+                {{-- Langkah 3: Sampul Kelas & Status Publikasi --}}
                 @if ($currentStep === 3)
                     <div class="mb-32">
                         <div class="d-flex align-items-center gap-2 mb-20 pb-12 border-bottom"
@@ -281,7 +284,7 @@
                             <span
                                 class="badge rounded-circle d-inline-flex align-items-center justify-content-center fw-bold"
                                 style="width: 24px; height: 24px; font-size: 11.5px; background-color: #071a33; color: #f3bc42;">3</span>
-                            <h6 class="fw-bold mb-0 fs-6" style="color: #071a33;">Berkas Lampiran & Status Publikasi
+                            <h6 class="fw-bold mb-0 fs-6" style="color: #071a33;">Sampul Kelas & Status Publikasi
                             </h6>
                         </div>
                         <div class="row g-3">
@@ -305,29 +308,30 @@
                                 @enderror
                             </div>
 
-                            {{-- Poster Thumbnail --}}
-                            <div class="col-md-6">
+                            {{-- Poster Thumbnail (Single Upload) --}}
+                            <div class="col-12">
                                 <label class="form-label text-xs fw-semibold text-dark mb-1">
-                                    Poster Kelas (JPG/PNG) <span class="text-muted fw-normal">(Opsional)</span>
+                                    Poster / Sampul Thumbnail Kelas (JPG/PNG) <span
+                                        class="text-muted fw-normal">(Opsional)</span>
                                 </label>
                                 <div class="input-group">
                                     <span class="input-group-text bg-light text-muted"><i
                                             class="ri-image-line"></i></span>
                                     <input type="file"
                                         class="form-control @error('thumbnailFile') is-invalid @enderror"
-                                        wire:model="thumbnailFile" accept="image/jpeg,image/png">
+                                        wire:model="thumbnailFile" accept="image/jpeg,image/png,image/jpg">
                                 </div>
-                                <div class="form-text text-xs text-muted mt-1">Format gambar JPG atau PNG (maksimal 2
-                                    MB).</div>
+                                <div class="form-text text-xs text-muted mt-1">Format gambar JPG, JPEG, atau PNG
+                                    (maksimal 2 MB). Gambar ini digunakan sebagai sampul visual utama kelas.</div>
                                 @error('thumbnailFile')
                                     <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
                                 @enderror
 
                                 {{-- Preview Poster --}}
                                 @if ($thumbnailFile)
-                                    <div class="mt-2 p-2 border rounded-8 bg-light d-flex align-items-center gap-3">
+                                    <div class="mt-3 p-3 border rounded-8 bg-light d-flex align-items-center gap-3">
                                         <img src="{{ $thumbnailFile->temporaryUrl() }}" class="rounded-8 border"
-                                            style="height: 56px; width: 56px; object-fit: cover;"
+                                            style="height: 64px; width: 64px; object-fit: cover;"
                                             alt="Preview Poster">
                                         <div class="text-xs">
                                             <span class="fw-semibold text-dark d-block">Poster Baru Terpilih</span>
@@ -336,25 +340,6 @@
                                         </div>
                                     </div>
                                 @endif
-                            </div>
-
-                            {{-- Dokumen TOR / KAK --}}
-                            <div class="col-md-6">
-                                <label class="form-label text-xs fw-semibold text-dark mb-1">
-                                    Dokumen Kerangka Acuan Kerja / KAK (PDF) <span
-                                        class="text-muted fw-normal">(Opsional)</span>
-                                </label>
-                                <div class="input-group">
-                                    <span class="input-group-text bg-light text-muted"><i
-                                            class="ri-file-pdf-line"></i></span>
-                                    <input type="file" class="form-control @error('torFile') is-invalid @enderror"
-                                        wire:model="torFile" accept="application/pdf">
-                                </div>
-                                <div class="form-text text-xs text-muted mt-1">Format dokumen PDF resmi KAK/TOR
-                                    kegiatan (maksimal 10 MB).</div>
-                                @error('torFile')
-                                    <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
-                                @enderror
                             </div>
                         </div>
                     </div>
@@ -365,7 +350,7 @@
                     <div>
                         @if ($currentStep > 1)
                             <button type="button" wire:click="previousStep"
-                                class="btn btn-outline-secondary d-flex align-items-center gap-2 px-4">
+                                class="btn btn-outline-danger d-flex align-items-center gap-2">
                                 <i class="ri-arrow-left-line"></i>
                                 <span>Sebelumnya</span>
                             </button>
@@ -375,10 +360,10 @@
                     <div>
                         @if ($currentStep < $totalSteps)
                             <button type="button" wire:click="nextStep"
-                                class="btn btn-simple-gold d-flex align-items-center gap-2 px-4 shadow-sm"
+                                class="btn btn-simple-gold d-flex align-items-center gap-2 shadow-sm"
                                 wire:loading.attr="disabled">
                                 <span wire:loading.remove>
-                                    <span>Lanjut ke Langkah {{ $currentStep + 1 }}</span>
+                                    <span>Lanjut</span>
                                     <i class="ri-arrow-right-line ms-1"></i>
                                 </span>
                                 <span wire:loading style="display: none;">
@@ -387,7 +372,7 @@
                             </button>
                         @else
                             <button type="submit"
-                                class="btn btn-simpel-gold d-flex align-items-center gap-2 px-4 shadow-sm"
+                                class="btn btn-simpel-gold d-flex align-items-center gap-2 shadow-sm"
                                 wire:loading.attr="disabled">
                                 <span wire:loading.remove class="d-inline-flex align-items-center gap-2">
                                     <span>Simpan & Lanjut Kelola Materi</span>

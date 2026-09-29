@@ -21,8 +21,8 @@ class Course extends Model
     {
         return [
             'status' => CourseStatus::class,
-            'start_date' => 'date',
-            'end_date' => 'date',
+            'start_date' => 'datetime',
+            'end_date' => 'datetime',
             'registration_open_at' => 'datetime',
             'registration_close_at' => 'datetime',
             'price' => 'decimal:2',
