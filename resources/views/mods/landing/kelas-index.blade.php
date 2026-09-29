@@ -1,7 +1,6 @@
 <div>
     {{-- Header Banner --}}
-    <section class="py-5 text-white"
-        style="background: linear-gradient(135deg, #051427 0%, #071a33 50%, #0c3158 100%);">
+    <section class="py-5 text-white" style="background: linear-gradient(135deg, #051427 0%, #071a33 50%, #0c3158 100%);">
         <div class="container py-lg-3 py-2">
             <div class="row align-items-center">
                 <div class="col-lg-8 wow fadeInLeft" data-wow-delay="100ms">
@@ -40,12 +39,11 @@
                         <span class="input-group-text bg-transparent border-0 text-muted ps-3">
                             <i class="ri-search-line"></i>
                         </span>
-                        <input type="text"
-                            class="form-control bg-transparent border-0 shadow-none fs-7 py-2"
-                            placeholder="Cari nama kelas..."
-                            wire:model.live.debounce.300ms="search">
+                        <input type="text" class="form-control bg-transparent border-0 shadow-none fs-7 py-2"
+                            placeholder="Cari nama kelas..." wire:model.live.debounce.300ms="search">
                         @if ($search !== '')
-                            <button class="btn bg-transparent border-0 text-muted pe-3" type="button" wire:click="$set('search', '')">
+                            <button class="btn bg-transparent border-0 text-muted pe-3" type="button"
+                                wire:click="$set('search', '')">
                                 <i class="ri-close-line"></i>
                             </button>
                         @endif
@@ -55,7 +53,8 @@
                 {{-- Category Filter Dropdown --}}
                 <div class="col-md-5 col-lg-4 text-md-end">
                     <div class="dropdown d-inline-block w-100 w-md-auto">
-                        <button class="btn btn-outline-secondary dropdown-toggle w-100 border-simpel rounded-pill px-3 py-2 fs-7 text-navy fw-medium d-flex align-items-center justify-content-between gap-2 shadow-xs"
+                        <button
+                            class="btn btn-outline-secondary dropdown-toggle w-100 border-simpel rounded-pill px-3 py-2 fs-7 text-navy fw-medium d-flex align-items-center justify-content-between gap-2 shadow-xs"
                             type="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <span class="d-flex align-items-center gap-2">
                                 <i class="ri-filter-3-line text-gold"></i>
@@ -66,9 +65,11 @@
                                 @endif
                             </span>
                         </button>
-                        <ul class="dropdown-menu dropdown-menu-end shadow-sm border-simpel radius-10 p-2 mt-1 w-100" style="min-width: 220px; max-height: 280px; overflow-y: auto;">
+                        <ul class="dropdown-menu dropdown-menu-end shadow-sm border-simpel radius-10 p-2 mt-1 w-100"
+                            style="min-width: 220px; max-height: 280px; overflow-y: auto;">
                             <li>
-                                <button type="button" class="dropdown-item radius-8 fs-8 py-2 d-flex align-items-center justify-content-between {{ $selectedCategory === 'all' ? 'active bg-gold text-navy fw-bold' : '' }}"
+                                <button type="button"
+                                    class="dropdown-item radius-8 fs-8 py-2 d-flex align-items-center justify-content-between {{ $selectedCategory === 'all' ? 'active bg-gold text-navy fw-bold' : '' }}"
                                     wire:click="filterCategory('all')">
                                     <span>Semua Kategori</span>
                                     @if ($selectedCategory === 'all')
@@ -78,7 +79,8 @@
                             </li>
                             @foreach ($categories as $cat)
                                 <li>
-                                    <button type="button" class="dropdown-item radius-8 fs-8 py-2 d-flex align-items-center justify-content-between {{ $selectedCategory === $cat->slug ? 'active bg-gold text-navy fw-bold' : '' }}"
+                                    <button type="button"
+                                        class="dropdown-item radius-8 fs-8 py-2 d-flex align-items-center justify-content-between {{ $selectedCategory === $cat->slug ? 'active bg-gold text-navy fw-bold' : '' }}"
                                         wire:click="filterCategory('{{ $cat->slug }}')">
                                         <span>{{ $cat->name }}</span>
                                         @if ($selectedCategory === $cat->slug)
@@ -97,18 +99,21 @@
                 <div class="d-flex align-items-center gap-2 mt-3 pt-3 border-top border-simpel flex-wrap fs-8">
                     <span class="text-muted">Filter aktif:</span>
                     @if ($search !== '')
-                        <span class="badge bg-light text-navy border border-simpel py-1_5 px-2_5 rounded-pill d-inline-flex align-items-center gap-1">
+                        <span
+                            class="badge bg-light text-navy border border-simpel py-1_5 px-2_5 rounded-pill d-inline-flex align-items-center gap-1">
                             Pencarian: "{{ $search }}"
                             <i class="ri-close-line cursor-pointer" wire:click="$set('search', '')"></i>
                         </span>
                     @endif
                     @if ($selectedCategory !== 'all')
-                        <span class="badge bg-light text-navy border border-simpel py-1_5 px-2_5 rounded-pill d-inline-flex align-items-center gap-1">
+                        <span
+                            class="badge bg-light text-navy border border-simpel py-1_5 px-2_5 rounded-pill d-inline-flex align-items-center gap-1">
                             Kategori: {{ $categories->firstWhere('slug', $selectedCategory)?->name }}
                             <i class="ri-close-line cursor-pointer" wire:click="filterCategory('all')"></i>
                         </span>
                     @endif
-                    <button class="btn btn-link text-danger p-0 fs-8 text-decoration-none ms-auto" wire:click="resetFilter">
+                    <button class="btn btn-link text-danger p-0 fs-8 text-decoration-none ms-auto"
+                        wire:click="resetFilter">
                         <i class="ri-refresh-line me-1"></i>Reset Semua
                     </button>
                 </div>
@@ -125,13 +130,14 @@
                         @php
                             $isRegistered = isset($userRegistrations[$course->id]);
                         @endphp
-                        <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="{{ ($loop->index * 50) + 100 }}ms">
-                            <div class="card h-100 border border-simpel rounded-4 bg-white overflow-hidden shadow-xs simpel-course-card d-flex flex-column">
+                        <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="{{ $loop->index * 50 + 100 }}ms">
+                            <div
+                                class="card h-100 border border-simpel rounded-4 bg-white overflow-hidden shadow-xs simpel-course-card d-flex flex-column">
                                 {{-- Thumbnail & Badges --}}
                                 <div class="position-relative overflow-hidden" style="height: 190px;">
                                     @if ($course->thumbnail)
-                                        <img src="{{ asset('storage/'.$course->thumbnail) }}" alt="{{ $course->title }}"
-                                            class="w-100 h-100 object-fit-cover">
+                                        <img src="{{ asset('storage/' . $course->thumbnail) }}"
+                                            alt="{{ $course->title }}" class="w-100 h-100 object-fit-cover">
                                     @else
                                         <div class="w-100 h-100 d-flex align-items-center justify-content-center text-white"
                                             style="background: linear-gradient(135deg, #071a33 0%, #0c3158 100%);">
@@ -166,9 +172,11 @@
                                             @if ($course->isPermanent())
                                                 <i class="ri-time-line me-1"></i>Akses Fleksibel 24/7
                                             @elseif ($course->isPaid())
-                                                <i class="ri-price-tag-3-line me-1"></i>Rp {{ number_format($course->price, 0, ',', '.') }}
+                                                <i class="ri-price-tag-3-line me-1"></i>Rp
+                                                {{ number_format($course->price, 0, ',', '.') }}
                                             @else
-                                                <i class="ri-calendar-line me-1"></i>{{ $course->start_date ? $course->start_date->format('d M Y') : 'Sesuai Jadwal' }}
+                                                <i
+                                                    class="ri-calendar-line me-1"></i>{{ $course->start_date ? $course->start_date->format('d M Y') : 'Sesuai Jadwal' }}
                                             @endif
                                         </span>
                                     </div>
@@ -178,7 +186,8 @@
                                 <div class="p-4 d-flex flex-column flex-grow-1">
                                     <div class="d-flex align-items-center justify-content-between text-muted fs-8 mb-2">
                                         <span class="text-secondary">
-                                            <i class="ri-folders-line me-1"></i>{{ $course->chapters_count ?? 0 }} Bab &bull; {{ $course->lessons_count ?? 0 }} Materi
+                                            <i class="ri-folders-line me-1"></i>{{ $course->chapters_count ?? 0 }} Bab
+                                            &bull; {{ $course->lessons_count ?? 0 }} Materi
                                         </span>
                                         @if ($isRegistered)
                                             <span class="badge bg-success-subtle text-success fw-bold">
@@ -191,8 +200,10 @@
                                         @endif
                                     </div>
 
-                                    <h5 class="fw-bold text-navy mb-2 line-clamp-2" style="font-size: 16px; line-height: 1.4;">
-                                        <a href="{{ route('landing.kelas.detail', $course->id) }}" class="text-navy text-decoration-none hover-gold">
+                                    <h5 class="fw-bold text-navy mb-2 line-clamp-2"
+                                        style="font-size: 16px; line-height: 1.4;">
+                                        <a href="{{ route('landing.kelas.detail', $course->id) }}"
+                                            class="text-navy text-decoration-none hover-gold">
                                             {{ $course->title }}
                                         </a>
                                     </h5>
@@ -201,7 +212,8 @@
                                     </p>
 
                                     {{-- Footer Action --}}
-                                    <div class="pt-3 border-top border-simpel d-flex align-items-center justify-content-between mt-auto">
+                                    <div
+                                        class="pt-3 border-top border-simpel d-flex align-items-center justify-content-between mt-auto">
                                         <div>
                                             <small class="text-muted d-block" style="font-size: 11px;">
                                                 {{ $course->isPaid() ? 'Biaya Kelas' : ($course->isPermanent() ? 'Jadwal Akses' : 'Jadwal Diklat') }}
@@ -210,13 +222,15 @@
                                                 @if ($course->isPaid())
                                                     Rp {{ number_format($course->price, 0, ',', '.') }}
                                                 @elseif ($course->isPermanent())
-                                                    <span class="text-success"><i class="ri-checkbox-circle-line me-1"></i>Kapan Saja</span>
+                                                    <span class="text-success"><i
+                                                            class="ri-checkbox-circle-line me-1"></i>Kapan Saja</span>
                                                 @else
                                                     {{ $course->start_date ? $course->start_date->format('d M Y') : 'Sesuai Jadwal' }}
                                                 @endif
                                             </span>
                                         </div>
-                                        <a href="{{ route('landing.kelas.detail', $course->id) }}" class="btn-simpel-cta-gold py-2 px-3 fs-7">
+                                        <a href="{{ route('landing.kelas.detail', $course->id) }}"
+                                            class="btn-simpel-cta-gold py-2 px-3 fs-7">
                                             <span>Lihat Detail</span>
                                             <i class="ri-arrow-right-line ms-1"></i>
                                         </a>
@@ -244,7 +258,8 @@
                     </p>
                     <div>
                         @if ($search !== '' || $selectedCategory !== 'all')
-                            <button class="btn btn-outline-secondary radius-8 px-4 py-2 fs-7" wire:click="resetFilter">
+                            <button class="btn btn-outline-secondary radius-8 px-4 py-2 fs-7"
+                                wire:click="resetFilter">
                                 <i class="ri-refresh-line me-1"></i>Reset Pencarian
                             </button>
                         @else
