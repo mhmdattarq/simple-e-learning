@@ -219,7 +219,7 @@
     </div>
 
     {{-- Detail Modal --}}
-    @if ($this->selectedLog)
+    @if ($selectedLog)
         <div class="modal fade show d-block" tabindex="-1"
             style="background-color: rgba(7, 26, 51, 0.6); z-index: 1070;" role="dialog">
             <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -228,14 +228,14 @@
                         <div class="d-flex align-items-center gap-2">
                             <i class="ri-information-line fs-5 text-simple-gold"></i>
                             <h6 class="modal-title text-white fw-bold mb-0">Detail Riwayat Audit
-                                #{{ $this->selectedLog->id }}</h6>
+                                #{{ $selectedLog->id }}</h6>
                         </div>
                         <button type="button" wire:click="closeDetail" class="btn-close btn-close-white"
                             aria-label="Close"></button>
                     </div>
                     <div class="modal-body p-20" style="max-height: calc(85vh - 120px); overflow-y: auto;">
                         @php
-                            $selectedMeta = $this->formatAction($this->selectedLog->action);
+                            $selectedMeta = $this->formatAction($selectedLog->action);
                         @endphp
                         {{-- Meta Overview --}}
                         <div class="bg-light p-16 radius-12 border mb-20">
@@ -250,32 +250,32 @@
                                         <span class="fw-bold text-dark fs-7">{{ $selectedMeta['title'] }}</span>
                                     </div>
                                     <small class="text-muted font-monospace mt-1 d-block">Action:
-                                        {{ $this->selectedLog->action }}</small>
+                                        {{ $selectedLog->action }}</small>
                                 </div>
                                 <div class="col-md-6 col-12">
                                     <span class="text-muted text-xs d-block mb-1">Waktu Eksekusi</span>
                                     <div class="fw-semibold text-dark fs-7">
-                                        {{ $this->selectedLog->created_at ? $this->selectedLog->created_at->translatedFormat('l, d F Y - H:i:s') : '-' }}
+                                        {{ $selectedLog->created_at ? $selectedLog->created_at->translatedFormat('l, d F Y - H:i:s') : '-' }}
                                     </div>
                                     <small class="text-muted d-block">
-                                        ({{ $this->selectedLog->created_at ? $this->selectedLog->created_at->diffForHumans() : '-' }})
+                                        ({{ $selectedLog->created_at ? $selectedLog->created_at->diffForHumans() : '-' }})
                                     </small>
                                 </div>
                                 <div class="col-md-6 col-12">
                                     <span class="text-muted text-xs d-block mb-1">Pengguna Akun</span>
                                     <div class="fw-semibold text-dark fs-7">
-                                        {{ $this->selectedLog->user->name ?? 'Sistem' }}
+                                        {{ $selectedLog->user->name ?? 'Sistem' }}
                                     </div>
-                                    <small class="text-muted">{{ $this->selectedLog->user->email ?? '-' }}</small>
+                                    <small class="text-muted">{{ $selectedLog->user->email ?? '-' }}</small>
                                 </div>
                                 <div class="col-md-6 col-12">
                                     <span class="text-muted text-xs d-block mb-1">IP Address &amp; Perangkat</span>
                                     <div class="font-monospace text-dark fs-7">
-                                        {{ $this->selectedLog->ip_address ?: '127.0.0.1' }}
+                                        {{ $selectedLog->ip_address ?: '127.0.0.1' }}
                                     </div>
                                     <small class="text-muted text-truncate d-block" style="max-width: 300px;"
-                                        title="{{ $this->selectedLog->user_agent }}">
-                                        {{ $this->selectedLog->user_agent ?: 'Browser / API' }}
+                                        title="{{ $selectedLog->user_agent }}">
+                                        {{ $selectedLog->user_agent ?: 'Browser / API' }}
                                     </small>
                                 </div>
                             </div>
@@ -285,30 +285,30 @@
                         <div class="mb-20">
                             <h6 class="fw-bold text-dark fs-7 mb-2">Catatan Ringkasan Aktivitas:</h6>
                             <div class="p-12 radius-8 bg-neutral-100 border text-dark fs-7">
-                                {{ $this->selectedLog->notes ?: 'Tidak ada catatan naratif khusus.' }}
+                                {{ $selectedLog->notes ?: 'Tidak ada catatan naratif khusus.' }}
                             </div>
                         </div>
 
                         {{-- Data Perubahan (Old Values & New Values) --}}
                         <div class="row g-3">
-                            @if ($this->selectedLog->old_values)
-                                <div class="{{ $this->selectedLog->new_values ? 'col-md-6' : 'col-12' }}">
+                            @if ($selectedLog->old_values)
+                                <div class="{{ $selectedLog->new_values ? 'col-md-6' : 'col-12' }}">
                                     <div class="border rounded p-12 bg-white">
                                         <div class="fw-bold text-danger fs-7 mb-2 d-flex align-items-center gap-1">
                                             <i class="ri-arrow-left-down-line"></i> Nilai Sebelum (Old Values)
                                         </div>
-                                        <pre class="bg-light p-2 rounded text-xs mb-0 border" style="max-height: 250px; overflow-y: auto;"><code>{{ json_encode($this->selectedLog->old_values, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) }}</code></pre>
+                                        <pre class="bg-light p-2 rounded text-xs mb-0 border" style="max-height: 250px; overflow-y: auto;"><code>{{ json_encode($selectedLog->old_values, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) }}</code></pre>
                                     </div>
                                 </div>
                             @endif
 
-                            @if ($this->selectedLog->new_values)
-                                <div class="{{ $this->selectedLog->old_values ? 'col-md-6' : 'col-12' }}">
+                            @if ($selectedLog->new_values)
+                                <div class="{{ $selectedLog->old_values ? 'col-md-6' : 'col-12' }}">
                                     <div class="border rounded p-12 bg-white">
                                         <div class="fw-bold text-success fs-7 mb-2 d-flex align-items-center gap-1">
                                             <i class="ri-arrow-right-up-line"></i> Nilai Sesudah (New Values)
                                         </div>
-                                        <pre class="bg-light p-2 rounded text-xs mb-0 border" style="max-height: 250px; overflow-y: auto;"><code>{{ json_encode($this->selectedLog->new_values, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) }}</code></pre>
+                                        <pre class="bg-light p-2 rounded text-xs mb-0 border" style="max-height: 250px; overflow-y: auto;"><code>{{ json_encode($selectedLog->new_values, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) }}</code></pre>
                                     </div>
                                 </div>
                             @endif

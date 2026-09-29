@@ -67,7 +67,7 @@ new class extends Component {
         }
 
         // 5. Kontak
-        if (request()->is('kontak*')) {
+        if (request()->routeIs('kontak') || request()->is('kontak*') || request()->is('contact*')) {
             return 'kontak';
         }
 
@@ -89,7 +89,7 @@ new class extends Component {
                         <div class="main-menu__left">
                             <div class="main-menu__logo">
                                 <a href="{{ route('landing') }}" class="brand text-decoration-none">
-                                    <div class="seal">S</div>
+                                    <img src="{{ asset('mine/logo_aceh_timur.webp') }}" alt="Logo SIMPEL BKPSDM" style="width: 44px; height: 44px; object-fit: contain; flex-shrink: 0;">
                                     <div>
                                         <strong>SIMPEL</strong>
                                         <small>BKPSDM Aceh Timur</small>
@@ -114,12 +114,13 @@ new class extends Component {
                                     <a href="{{ route('landing.kelas.berbayar') }}">Kelas Berbayar</a>
                                 </li>
                                 <li class="{{ $activeMenu === 'kontak' ? 'current' : '' }}">
-                                    <a href="javascript:void(0)" title="Segera Hadir">Kontak</a>
+                                    <a href="{{ route('kontak') }}">Kontak</a>
                                 </li>
                             </ul>
                         </div>
                         <div class="main-menu__right">
-                            <div class="main-menu__search-cart-box">
+                            {{-- Search Box (Disembunyikan sementara) --}}
+                            <div class="main-menu__search-cart-box d-none" style="display: none !important;">
                                 <div class="main-menu__search-box">
                                     <a href="#" class="main-menu__search searcher-toggler-box icon-search"></a>
                                 </div>

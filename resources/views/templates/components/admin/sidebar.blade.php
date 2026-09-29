@@ -14,7 +14,7 @@ new class extends Component {
         </button>
         <div class="brand-container">
             <a href="{{ route('admin.dashboard') }}" class="brand text-decoration-none">
-                <div class="seal">S</div>
+                <img src="{{ asset('mine/logo_aceh_timur.webp') }}" alt="Logo SIMPEL BKPSDM" style="width: 44px; height: 44px; object-fit: contain; flex-shrink: 0;">
                 <div>
                     <strong>SIMPEL</strong>
                     <small>BKPSDM Aceh Timur</small>

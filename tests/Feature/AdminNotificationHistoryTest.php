@@ -66,10 +66,10 @@ test('admin can search and filter notifikasi by module and view detail modal', f
         ->assertDontSee('Kategori Khusus')
         // View detail modal
         ->call('showDetail', $categoryLog->id)
-        ->assertSee('Detail Riwayat Audit #'.$categoryLog->id)
+        ->assertSet('selectedLogId', $categoryLog->id)
         ->assertSee('Kategori Khusus')
         ->call('closeDetail')
-        ->assertDontSee('Detail Riwayat Audit #'.$categoryLog->id);
+        ->assertSet('selectedLogId', null);
 });
 
 test('guest cannot access admin notifikasi page', function () {

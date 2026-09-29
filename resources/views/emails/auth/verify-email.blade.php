@@ -135,7 +135,7 @@
     <div class="email-wrapper">
         <div class="email-card">
             <div class="email-header">
-                <div class="seal-logo">S</div>
+                <img src="{{ asset('mine/logo_aceh_timur.webp') }}" alt="Logo Aceh Timur" width="48" height="48" style="display: block; margin: 0 auto 12px; object-fit: contain;">
                 <h1 class="header-title">SIMPEL E-LEARNING</h1>
                 <p class="header-subtitle">Badan Kepegawaian dan Pengembangan SDM Kabupaten Aceh Timur</p>
             </div>

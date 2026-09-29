@@ -78,16 +78,6 @@ class NotifikasiIndex extends Component
         $this->selectedLogId = null;
     }
 
-    #[Computed]
-    public function selectedLog(): ?AuditLog
-    {
-        if (! $this->selectedLogId) {
-            return null;
-        }
-
-        return AuditLog::with('user')->find($this->selectedLogId);
-    }
-
     /**
      * @return array{total: int, today: int, this_week: int}
      */
@@ -258,6 +248,7 @@ class NotifikasiIndex extends Component
 
         return view('mods.admin.notifikasi.notifikasi-index', [
             'logs' => $logs,
+            'selectedLog' => $this->selectedLogId ? AuditLog::with('user')->find($this->selectedLogId) : null,
         ]);
     }
 }

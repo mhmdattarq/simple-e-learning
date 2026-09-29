@@ -13,7 +13,7 @@
 
             <div class="auth-preview-card">
                 <div class="auth-preview-card-head">
-                    <div class="auth-preview-seal">S</div>
+                    <img src="{{ asset('mine/logo_aceh_timur.webp') }}" alt="Logo SIMPEL BKPSDM" style="width: 38px; height: 38px; object-fit: contain; flex-shrink: 0;">
                     <div class="auth-preview-info">
                         <strong>SIMPEL E-Learning</strong>
                         <small>BKPSDM Kabupaten Aceh Timur</small>
@@ -48,7 +48,7 @@
             {{-- Top Brand & Back to Home --}}
             <div class="d-flex align-items-center justify-content-between mb-28">
                 <a href="{{ route('landing') }}" class="brand text-decoration-none">
-                    <div class="seal">S</div>
+                    <img src="{{ asset('mine/logo_aceh_timur.webp') }}" alt="Logo SIMPEL BKPSDM" style="width: 44px; height: 44px; object-fit: contain; flex-shrink: 0;">
                     <div>
                         <strong>SIMPEL</strong>
                         <small>BKPSDM Aceh Timur</small>

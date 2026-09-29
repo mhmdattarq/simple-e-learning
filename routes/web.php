@@ -24,6 +24,7 @@ use App\Livewire\Auth\VerifyEmail;
 use App\Livewire\Landing\JadwalIndex;
 use App\Livewire\Landing\KelasDetail;
 use App\Livewire\Landing\KelasIndex;
+use App\Livewire\Landing\KontakIndex;
 use App\Livewire\Landing\LandingIndex;
 use App\Livewire\Peserta\Evaluasi\QuizKerjakan;
 use App\Livewire\Peserta\Materi\MateriBelajar;
@@ -37,10 +38,13 @@ Route::livewire('/kelas-batch', KelasIndex::class)->name('landing.kelas.batch');
 Route::livewire('/kelas-permanen', KelasIndex::class)->name('landing.kelas.permanen');
 Route::livewire('/kelas-berbayar', KelasIndex::class)->name('landing.kelas.berbayar');
 Route::livewire('/jadwal', JadwalIndex::class)->name('jadwal');
+Route::livewire('/kontak', KontakIndex::class)->name('kontak');
+Route::redirect('/contact', '/kontak');
 Route::livewire('/kelas', KelasIndex::class)->name('pelatihan.index');
 Route::livewire('/kelas/{id}', KelasDetail::class)->whereNumber('id')->name('landing.kelas.detail');
 Route::redirect('/pelatihan', '/kelas');
 Route::get('/pelatihan/{id}', fn ($id) => redirect()->route('landing.kelas.detail', $id));
+Route::get('/favicon.ico', fn () => response()->file(public_path('favicon.ico')));
 
 // 2. Authentication (Guest)
 Route::middleware('guest')->group(function () {
