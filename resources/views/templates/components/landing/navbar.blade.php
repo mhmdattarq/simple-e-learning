@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Course;
+use Livewire\Attributes\Computed;
 use Livewire\Component;
 
 new class extends Component {
@@ -11,8 +13,72 @@ new class extends Component {
 
         return redirect()->route('landing');
     }
+
+    #[Computed]
+    public function activeMenu(): string
+    {
+        // 1. Direct class catalog routes
+        if (request()->routeIs('landing.kelas.batch') || request()->is('kelas-batch*') || request()->routeIs('jadwal') || request()->is('jadwal*')) {
+            return 'batch';
+        }
+
+        if (request()->routeIs('landing.kelas.permanen') || request()->is('kelas-permanen*')) {
+            return 'permanen';
+        }
+
+        if (request()->routeIs('landing.kelas.berbayar') || request()->is('kelas-berbayar*')) {
+            return 'berbayar';
+        }
+
+        // 2. Query param ?type=... (e.g. /kelas?type=batch)
+        $queryType = request()->query('type');
+        if ($queryType === 'batch') {
+            return 'batch';
+        }
+        if ($queryType === 'permanent') {
+            return 'permanen';
+        }
+        if (in_array($queryType, ['paid', 'berbayar'], true)) {
+            return 'berbayar';
+        }
+
+        // 3. Detail page (/kelas/{id}) or Materi page (/kelas/{id}/materi)
+        $courseId = request()->route('id');
+        if (! $courseId && request()->is('kelas/*') && is_numeric(request()->segment(2))) {
+            $courseId = request()->segment(2);
+        }
+
+        if ($courseId && is_numeric($courseId)) {
+            $type = Course::where('id', $courseId)->value('type');
+            if ($type === 'batch') {
+                return 'batch';
+            }
+            if ($type === 'permanent') {
+                return 'permanen';
+            }
+            if (in_array($type, ['paid', 'berbayar'], true)) {
+                return 'berbayar';
+            }
+        }
+
+        // 4. Beranda
+        if (request()->routeIs('landing') && ! request()->is('kelas*')) {
+            return 'beranda';
+        }
+
+        // 5. Kontak
+        if (request()->is('kontak*')) {
+            return 'kontak';
+        }
+
+        return '';
+    }
 };
 ?>
+
+@php
+    $activeMenu = $this->activeMenu;
+@endphp
 
 <div>
     <header class="main-header">
@@ -35,19 +101,19 @@ new class extends Component {
                         <div class="main-menu__main-menu-box">
                             <a href="#" class="mobile-nav__toggler"><i class="fa fa-bars"></i></a>
                             <ul class="main-menu__list">
-                                <li class="{{ request()->routeIs('landing') ? 'current' : '' }}">
+                                <li class="{{ $activeMenu === 'beranda' ? 'current' : '' }}">
                                     <a href="{{ route('landing') }}">Beranda</a>
                                 </li>
-                                <li class="{{ request()->routeIs('landing.kelas.batch') ? 'current' : '' }}">
+                                <li class="{{ $activeMenu === 'batch' ? 'current' : '' }}">
                                     <a href="{{ route('landing.kelas.batch') }}">Kelas Batch</a>
                                 </li>
-                                <li class="{{ request()->routeIs('landing.kelas.permanen') ? 'current' : '' }}">
+                                <li class="{{ $activeMenu === 'permanen' ? 'current' : '' }}">
                                     <a href="{{ route('landing.kelas.permanen') }}">Kelas Permanen</a>
                                 </li>
-                                <li class="{{ request()->routeIs('landing.kelas.berbayar') ? 'current' : '' }}">
+                                <li class="{{ $activeMenu === 'berbayar' ? 'current' : '' }}">
                                     <a href="{{ route('landing.kelas.berbayar') }}">Kelas Berbayar</a>
                                 </li>
-                                <li class="{{ request()->is('kontak*') ? 'current' : '' }}">
+                                <li class="{{ $activeMenu === 'kontak' ? 'current' : '' }}">
                                     <a href="javascript:void(0)" title="Segera Hadir">Kontak</a>
                                 </li>
                             </ul>

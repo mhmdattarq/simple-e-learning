@@ -26,7 +26,7 @@
                     <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
                         @if ($course->isPermanent())
                             <span class="badge bg-gold text-navy fw-bold fs-8 px-3 py-1_5">
-                                <i class="ri-infinite-line me-1"></i>Belajar Mandiri (Self-Paced)
+                                <i class="ri-infinity-line me-1"></i>Belajar Mandiri (Self-Paced)
                             </span>
                         @elseif ($course->isBatch())
                             <span class="badge bg-gold text-navy fw-bold fs-8 px-3 py-1_5">

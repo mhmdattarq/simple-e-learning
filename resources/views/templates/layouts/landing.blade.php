@@ -243,6 +243,11 @@
         .thm-btn[style*="#f3bc42"]:hover * {
             color: #ffffff !important;
         }
+
+        .mobile-nav__content .main-menu__list > li.current > a {
+            color: var(--fistudy-base, #f3bc42) !important;
+            font-weight: 700 !important;
+        }
     </style>
 
     @livewireStyles

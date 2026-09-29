@@ -407,7 +407,7 @@
                                 let typeBadge = '';
                                 if (row.type === 'permanent') {
                                     typeBadge =
-                                        '<span class="badge bg-success-subtle text-success" style="font-size: 10.5px;"><i class="ri-infinite-line me-1"></i>Permanen (Self-Paced)</span>';
+                                        '<span class="badge bg-success-subtle text-success" style="font-size: 10.5px;"><i class="ri-infinity-line me-1"></i>Permanen (Self-Paced)</span>';
                                 } else if (row.type === 'paid' || row.type === 'berbayar') {
                                     let priceFormatted = row.price ? 'Rp ' + Number(row.price)
                                         .toLocaleString('id-ID') : 'Rp 0';
