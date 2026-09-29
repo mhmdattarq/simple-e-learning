@@ -10,12 +10,12 @@
                     </span>
                     <h2 class="text-white fw-bold mb-1 fs-3">{{ $course->title }}</h2>
                     <p class="text-white-50 mb-0 fs-7">
-                        Akses silabus materi terstruktur berdasarkan kehadiran sesi pelatihan Anda.
+                        Akses seluruh modul dan silabus materi pembelajaran interaktif Anda.
                     </p>
                 </div>
                 <div class="d-flex align-items-center gap-2">
-                    <a href="{{ route('pelatihan.index') }}" class="btn btn-outline-light btn-sm radius-8 px-3 py-2 fs-8">
-                        <i class="ri-arrow-left-line me-1"></i> Katalog Pelatihan
+                    <a href="{{ route('landing') }}" class="btn btn-outline-light btn-sm radius-8 px-3 py-2 fs-8">
+                        <i class="ri-arrow-left-line me-1"></i> Kembali ke Beranda
                     </a>
 
                 </div>
@@ -47,129 +47,47 @@
                         </div>
 
                         <div class="card-body p-0" style="max-height: 75vh; overflow-y: auto;">
-                            {{-- Sesi-sesi Pelatihan --}}
-                            @forelse($schedules as $index => $sch)
-                                @php
-                                    $isAttended = isset($attendances[$sch->id]) || auth()->user()->hasAdminAccess();
-                                    $att = $attendances[$sch->id] ?? null;
-                                @endphp
-                                <div class="border-bottom {{ $isAttended ? 'bg-white' : 'bg-light bg-opacity-75' }}">
-                                    {{-- Header Sesi --}}
-                                    <div class="p-3 d-flex align-items-start justify-content-between gap-2 border-bottom border-light">
-                                        <div>
-                                            <div class="d-flex align-items-center gap-2 mb-1">
-                                                <span class="badge {{ $isAttended ? 'bg-success-subtle text-success border border-success-subtle' : 'bg-warning-subtle text-warning border border-warning-subtle' }} px-2 py-1 fs-8">
-                                                    @if($isAttended)
-                                                        <i class="ri-checkbox-circle-line me-1"></i> Hadir (Terbuka)
+                            @forelse($chapters as $chapter)
+                                <div class="border-bottom p-3">
+                                    <div class="px-1 py-1 text-secondary fw-bold fs-8 d-flex align-items-center gap-1 mb-2">
+                                        <i class="ri-folder-2-line text-primary"></i>
+                                        <span>{{ $chapter->title }}</span>
+                                    </div>
+                                    <div class="list-group list-group-flush rounded-3 overflow-hidden">
+                                        @foreach($chapter->lessons as $lesson)
+                                            @php
+                                                $isDone = in_array($lesson->id, $completedLessonIds);
+                                                $isSelected = $selectedLessonId === $lesson->id;
+                                            @endphp
+                                            <div wire:click="selectLesson({{ $lesson->id }})" role="button"
+                                                class="list-group-item list-group-item-action d-flex align-items-center justify-content-between p-2 fs-8 border-0 {{ $isSelected ? 'bg-primary text-white fw-bold shadow-sm' : ($isDone ? 'bg-light bg-opacity-50 text-dark' : 'text-dark') }}"
+                                                style="user-select: none;">
+                                                <div class="d-flex align-items-center gap-2 overflow-hidden text-start">
+                                                    @if($isDone)
+                                                        <i class="ri-checkbox-circle-fill text-success flex-shrink-0 {{ $isSelected ? 'text-white' : '' }}"></i>
                                                     @else
-                                                        <i class="ri-lock-line me-1"></i> Belum Absen (Terkunci)
+                                                        <i class="ri-play-circle-line flex-shrink-0 {{ $isSelected ? 'text-white' : 'text-primary' }}"></i>
                                                     @endif
-                                                </span>
-                                                <span class="text-muted fs-8">{{ $sch->session_date?->format('d/m/Y') }}</span>
-                                            </div>
-                                            <h6 class="fw-bold text-dark mb-1 fs-8">Sesi {{ $index + 1 }}: {{ $sch->session_title }}</h6>
-                                            <small class="text-muted d-block fs-8">
-                                                <i class="ri-user-voice-line me-1"></i> {{ $sch->mentor?->name ?? 'Tim Pengajar' }}
-                                            </small>
-                                        </div>
-
-
-                                    </div>
-
-                                    {{-- List Bab dan Konten Sesi --}}
-                                    <div class="p-2">
-                                        @if($sch->chapters->isEmpty())
-                                            <div class="text-muted fs-8 px-2 py-2 fst-italic">
-                                                Belum ada materi untuk sesi ini.
-                                            </div>
-                                        @else
-                                            @foreach($sch->chapters as $chapter)
-                                                <div class="mb-2">
-                                                    <div class="px-2 py-1 text-secondary fw-bold fs-8 d-flex align-items-center gap-1">
-                                                        <i class="ri-folder-2-line text-primary"></i>
-                                                        <span>{{ $chapter->title }}</span>
-                                                    </div>
-
-                                                    <div class="list-group list-group-flush rounded-3 overflow-hidden">
-                                                        @foreach($chapter->lessons as $lesson)
-                                                            @php
-                                                                $isDone = in_array($lesson->id, $completedLessonIds);
-                                                                $isSelected = $selectedLessonId === $lesson->id;
-                                                                $isAccessible = $isAttended && ($this->isLessonAccessible($lesson->id) || auth()->user()->hasAdminAccess());
-                                                            @endphp
-                                                            <div class="list-group-item d-flex align-items-center justify-content-between p-2 fs-8 border-0 {{ $isSelected ? 'bg-primary text-white fw-bold shadow-sm' : ($isAccessible ? ($isDone ? 'bg-light bg-opacity-50 text-dark' : 'text-dark') : 'opacity-50 bg-light text-muted') }}"
-                                                                style="user-select: none;">
-                                                                <div class="d-flex align-items-center gap-2 overflow-hidden text-start">
-                                                                    @if(!$isAttended || !$isAccessible)
-                                                                        <i class="ri-lock-2-line text-secondary flex-shrink-0"></i>
-                                                                    @elseif($isDone)
-                                                                        <i class="ri-checkbox-circle-fill text-success flex-shrink-0 {{ $isSelected ? 'text-white' : '' }}"></i>
-                                                                    @else
-                                                                        <i class="ri-play-circle-line flex-shrink-0 {{ $isSelected ? 'text-white' : 'text-primary' }}"></i>
-                                                                    @endif
-                                                                    <span class="text-truncate">{{ $lesson->title }}</span>
-                                                                </div>
-                                                                <div class="flex-shrink-0 ms-2">
-                                                                    @if($lesson->content_type === 'video')
-                                                                        <i class="ri-video-line {{ $isSelected ? 'text-white' : 'text-muted' }}"></i>
-                                                                    @elseif($lesson->content_type === 'document')
-                                                                        <i class="ri-file-pdf-line {{ $isSelected ? 'text-white' : 'text-muted' }}"></i>
-                                                                    @else
-                                                                        <i class="ri-article-line {{ $isSelected ? 'text-white' : 'text-muted' }}"></i>
-                                                                    @endif
-                                                                </div>
-                                                            </div>
-                                                        @endforeach
-                                                    </div>
+                                                    <span class="text-truncate">{{ $lesson->title }}</span>
                                                 </div>
-                                            @endforeach
-                                        @endif
-                                    </div>
-                                </div>
-                            @empty
-                                {{-- Jika belum ada jadwal sesi, tampilkan materi umum --}}
-                                @if($generalChapters->isNotEmpty())
-                                    <div class="p-3">
-                                        <div class="alert alert-info border-0 fs-8 mb-3">
-                                            Materi silabus umum pelatihan:
-                                        </div>
-                                        @foreach($generalChapters as $chapter)
-                                            <div class="mb-3">
-                                                <div class="px-2 py-1 text-secondary fw-bold fs-8 d-flex align-items-center gap-1">
-                                                    <i class="ri-folder-2-line text-primary"></i>
-                                                    <span>{{ $chapter->title }}</span>
-                                                </div>
-                                                <div class="list-group list-group-flush rounded-3">
-                                                    @foreach($chapter->lessons as $lesson)
-                                                        @php
-                                                            $isDone = in_array($lesson->id, $completedLessonIds);
-                                                            $isSelected = $selectedLessonId === $lesson->id;
-                                                            $isAccessible = $this->isLessonAccessible($lesson->id) || auth()->user()->hasAdminAccess();
-                                                        @endphp
-                                                        <div class="list-group-item d-flex align-items-center justify-content-between p-2 fs-8 border-0 {{ $isSelected ? 'bg-primary text-white fw-bold shadow-sm' : ($isAccessible ? ($isDone ? 'bg-light bg-opacity-50 text-dark' : 'text-dark') : 'opacity-50 bg-light text-muted') }}"
-                                                            style="user-select: none;">
-                                                            <div class="d-flex align-items-center gap-2 overflow-hidden text-start">
-                                                                @if(!$isAccessible)
-                                                                    <i class="ri-lock-2-line text-secondary flex-shrink-0"></i>
-                                                                @elseif($isDone)
-                                                                    <i class="ri-checkbox-circle-fill text-success flex-shrink-0 {{ $isSelected ? 'text-white' : '' }}"></i>
-                                                                @else
-                                                                    <i class="ri-play-circle-line flex-shrink-0 {{ $isSelected ? 'text-white' : 'text-primary' }}"></i>
-                                                                @endif
-                                                                <span class="text-truncate">{{ $lesson->title }}</span>
-                                                            </div>
-                                                        </div>
-                                                    @endforeach
+                                                <div class="flex-shrink-0 ms-2">
+                                                    @if($lesson->content_type === 'video')
+                                                        <i class="ri-video-line {{ $isSelected ? 'text-white' : 'text-muted' }}"></i>
+                                                    @elseif($lesson->content_type === 'document')
+                                                        <i class="ri-file-pdf-line {{ $isSelected ? 'text-white' : 'text-muted' }}"></i>
+                                                    @else
+                                                        <i class="ri-article-line {{ $isSelected ? 'text-white' : 'text-muted' }}"></i>
+                                                    @endif
                                                 </div>
                                             </div>
                                         @endforeach
                                     </div>
-                                @else
-                                    <div class="p-4 text-center text-muted fs-8">
-                                        <i class="ri-book-open-line fs-2 text-secondary mb-2 d-block"></i>
-                                        Belum ada jadwal sesi atau materi yang diunggah untuk pelatihan ini.
-                                    </div>
-                                @endif
+                                </div>
+                            @empty
+                                <div class="p-4 text-center text-muted fs-8">
+                                    <i class="ri-book-open-line fs-2 text-secondary mb-2 d-block"></i>
+                                    Belum ada materi yang diunggah untuk kelas ini.
+                                </div>
                             @endforelse
                         </div>
                     </div>
@@ -179,61 +97,30 @@
                 <div class="col-lg-8 col-12">
                     @if($currentLesson)
                         @php
-                            $isCurrentSessionAttended = true;
-                            if ($currentSchedule && !auth()->user()->hasAdminAccess()) {
-                                $isCurrentSessionAttended = isset($attendances[$currentSchedule->id]);
-                            }
                             $isCompleted = in_array($currentLesson->id, $completedLessonIds);
                         @endphp
 
-                        @if(!$isCurrentSessionAttended)
-                            {{-- Gating Alert: Materi Terkunci karena Belum Absen --}}
-                            <div class="card border-0 shadow-sm radius-16 bg-white p-5 text-center">
-                                <div class="mb-3">
-                                    <div class="rounded-circle bg-warning bg-opacity-10 text-warning d-inline-flex align-items-center justify-content-center"
-                                        style="width: 72px; height: 72px;">
-                                        <i class="ri-lock-2-fill fs-1"></i>
-                                    </div>
-                                </div>
-                                <h4 class="fw-bold text-dark mb-2">Materi Sesi Ini Masih Terkunci</h4>
-                                <p class="text-muted fs-7 mb-4 mx-auto" style="max-width: 520px;">
-                                    Untuk mengakses modul <strong>{{ $currentLesson->title }}</strong> pada <strong>{{ $currentSchedule?->session_title ?? 'Sesi Pelatihan' }}</strong>,
-                                    Anda diwajibkan untuk melakukan presensi kehadiran terlebih dahulu.
-                                </p>
-                                <div>
-                                    <a href="javascript:void(0)"
-                                        class="btn btn-warning fw-bold text-dark px-4 py-2 radius-10 shadow-sm">
-                                        <i class="ri-lock-line me-1"></i> Materi Belum Tersedia
-                                    </a>
-                                </div>
-                            </div>
-                        @else
-                            {{-- Viewer Materi Terbuka ala Dicoding --}}
-                            <div class="card border-0 shadow-sm radius-16 bg-white overflow-hidden mb-4 position-relative">
-                                {{-- Header Materi --}}
-                                <div class="p-24 border-bottom bg-white">
-                                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-2">
-                                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-1 fs-8 rounded-pill">
-                                            <i class="ri-folder-2-line me-1"></i> {{ $currentChapter?->title ?? 'Bab Pembelajaran' }}
-                                        </span>
-                                        <div class="d-flex align-items-center gap-2">
-                                            @if($isCompleted)
-                                                <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-1 fs-8 rounded-pill">
-                                                    <i class="ri-checkbox-circle-fill me-1"></i> Selesai Dipelajari
-                                                </span>
-                                            @endif
-                                            <span class="badge bg-secondary-subtle text-secondary px-3 py-1 fs-8 rounded-pill text-uppercase">
-                                                <i class="ri-file-info-line me-1"></i> {{ $currentLesson->content_type }}
+                        {{-- Viewer Materi Terbuka ala Dicoding --}}
+                        <div class="card border-0 shadow-sm radius-16 bg-white overflow-hidden mb-4 position-relative">
+                            {{-- Header Materi --}}
+                            <div class="p-24 border-bottom bg-white">
+                                <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-2">
+                                    <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-1 fs-8 rounded-pill">
+                                        <i class="ri-folder-2-line me-1"></i> {{ $currentChapter?->title ?? 'Bab Pembelajaran' }}
+                                    </span>
+                                    <div class="d-flex align-items-center gap-2">
+                                        @if($isCompleted)
+                                            <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-1 fs-8 rounded-pill">
+                                                <i class="ri-checkbox-circle-fill me-1"></i> Selesai Dipelajari
                                             </span>
-                                        </div>
+                                        @endif
+                                        <span class="badge bg-secondary-subtle text-secondary px-3 py-1 fs-8 rounded-pill text-uppercase">
+                                            <i class="ri-file-info-line me-1"></i> {{ $currentLesson->content_type }}
+                                        </span>
                                     </div>
-                                    <h3 class="fw-bold text-dark mb-1 fs-4">{{ $currentLesson->title }}</h3>
-                                    @if($currentSchedule)
-                                        <small class="text-muted d-block fs-8">
-                                            <i class="ri-calendar-check-line text-success me-1"></i> Terkait dengan: <strong>{{ $currentSchedule->session_title }}</strong>
-                                        </small>
-                                    @endif
                                 </div>
+                                <h3 class="fw-bold text-dark mb-1 fs-4">{{ $currentLesson->title }}</h3>
+                            </div>
 
                                 {{-- Body Materi ala Dicoding --}}
                                 <div class="card-body p-24 p-md-32">
@@ -367,7 +254,6 @@
                                     </div>
                                 </div>
                             </div>
-                        @endif
                     @else
                         {{-- Keadaan Belum Ada Materi Dipilih --}}
                         <div class="card border-0 shadow-sm radius-16 bg-white p-5 text-center">

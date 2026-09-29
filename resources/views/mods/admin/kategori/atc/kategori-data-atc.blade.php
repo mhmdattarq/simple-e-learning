@@ -221,10 +221,11 @@
                         },
 
 
-                        // Kolom 5: Deskripsi
+                        // Kolom 4: Deskripsi
                         {
                             data: 'description',
                             name: 'description',
+                            searchable: false,
                             render: function(data) {
                                 if (!data) {
                                     return '<span class="text-muted fst-italic fs-8">Tidak ada deskripsi</span>';

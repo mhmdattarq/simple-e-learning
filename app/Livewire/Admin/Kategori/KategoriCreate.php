@@ -23,7 +23,7 @@ class KategoriCreate extends Component
     {
         return [
             'form.name' => 'required|string|min:3|max:100|unique:categories,name',
-            'form.description' => 'nullable|string|max:1000',
+            'form.description' => 'required|string|min:5|max:1000',
         ];
     }
 
@@ -35,7 +35,9 @@ class KategoriCreate extends Component
             'form.name.min' => 'Nama kategori minimal 3 karakter.',
             'form.name.max' => 'Nama kategori maksimal 100 karakter.',
             'form.name.unique' => 'Nama kategori ini sudah terdaftar di sistem.',
+            'form.description.required' => 'Deskripsi kategori wajib diisi.',
             'form.description.string' => 'Deskripsi harus berupa teks.',
+            'form.description.min' => 'Deskripsi kategori minimal 5 karakter.',
             'form.description.max' => 'Deskripsi kategori maksimal 1.000 karakter.',
         ];
     }

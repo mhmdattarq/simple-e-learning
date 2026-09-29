@@ -97,24 +97,33 @@ test('admin can access kategori create page and submit valid data', function () 
     expect($created->description)->toBe('Pengembangan wawasan kebangsaan dan perekat persatuan ASN.');
 });
 
-test('kategori create validates required, min length, and unique name', function () {
+test('kategori create validates required, min length, unique name, and required description', function () {
     $existing = Category::first();
 
     Livewire::actingAs($this->admin)
         ->test(KategoriCreate::class)
         ->set('form.name', '')
+        ->set('form.description', '')
         ->call('formSubmit')
-        ->assertHasErrors(['form.name' => 'required']);
+        ->assertHasErrors([
+            'form.name' => 'required',
+            'form.description' => 'required',
+        ]);
 
     Livewire::actingAs($this->admin)
         ->test(KategoriCreate::class)
         ->set('form.name', 'AB')
+        ->set('form.description', 'ABC')
         ->call('formSubmit')
-        ->assertHasErrors(['form.name' => 'min']);
+        ->assertHasErrors([
+            'form.name' => 'min',
+            'form.description' => 'min',
+        ]);
 
     Livewire::actingAs($this->admin)
         ->test(KategoriCreate::class)
         ->set('form.name', $existing->name)
+        ->set('form.description', 'Deskripsi kategori valid')
         ->call('formSubmit')
         ->assertHasErrors(['form.name' => 'unique']);
 });

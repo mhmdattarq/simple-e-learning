@@ -58,7 +58,7 @@
                         {{-- Deskripsi Kategori --}}
                         <div class="col-12">
                             <label class="form-label text-xs fw-semibold text-dark mb-1">
-                                Deskripsi Kategori <span class="text-muted">(Opsional)</span>
+                                Deskripsi Kategori <span class="text-danger">*</span>
                             </label>
                             <textarea rows="4" class="form-control @error('form.description') is-invalid @enderror"
                                 wire:model.blur="form.description"

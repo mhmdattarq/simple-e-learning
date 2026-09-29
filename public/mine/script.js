@@ -107,3 +107,14 @@ document.addEventListener("livewire:navigated", () => {
             .attr("aria-expanded", "false");
     }
 });
+
+// 6. Bridge Event jQuery ke Livewire / Native DOM (misal niceSelect)
+if (typeof $ !== "undefined") {
+    $(document).on("change", "select", function (e) {
+        if (!e.originalEvent && typeof this.dispatchEvent === "function") {
+            this.dispatchEvent(new Event("input", { bubbles: true }));
+            this.dispatchEvent(new Event("change", { bubbles: true }));
+        }
+    });
+}
+

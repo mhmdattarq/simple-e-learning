@@ -78,8 +78,8 @@
                         </div>
 
                         <div class="mt-4 pt-2">
-                            <a href="{{ route('pelatihan.index') }}" class="btn btn-outline-primary btn-sm w-100 rounded-pill" wire:navigate>
-                                <i class="ri-book-open-line me-1"></i> Jelajahi Katalog Pelatihan
+                            <a href="{{ route('landing') }}#katalog-kelas" class="btn btn-outline-primary btn-sm w-100 rounded-pill">
+                                <i class="ri-book-open-line me-1"></i> Jelajahi Katalog Kelas
                             </a>
                         </div>
                     </div>

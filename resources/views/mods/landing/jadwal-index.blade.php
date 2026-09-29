@@ -85,7 +85,7 @@
                                         <div class="col-auto">
                                             <a href="{{ route('pelatihan.index') }}"
                                                 class="btn-simpel-cta-gold">
-                                                <span>Lihat Pelatihan</span>
+                                                <span>Lihat Kelas</span>
                                                 <i class="ri-arrow-right-line"></i>
                                             </a>
                                         </div>
@@ -100,7 +100,7 @@
                 <div
                     class="mt-4 p-3 rounded-3 bg-white border border-simpel d-flex align-items-center gap-2 text-muted fs-8 wow fadeInUp">
                     <i class="ri-information-line text-gold fs-5 flex-shrink-0"></i>
-                    <span>Pendaftaran memerlukan akun ASN yang terverifikasi. Pastikan Anda sudah
+                    <span>Pendaftaran memerlukan akun peserta. Pastikan Anda sudah
                         <a href="{{ route('register') }}"
                             class="text-navy fw-semibold text-decoration-none hover-gold">membuat akun</a>
                         sebelum mendaftar.</span>
@@ -115,12 +115,12 @@
                     <h4 class="fw-bold text-navy mb-2">Belum Ada Jadwal Pelatihan</h4>
                     <p class="text-muted fs-6 mb-4 max-w-500 mx-auto">
                         Jadwal batch pelatihan akan segera diumumkan. Pantau terus halaman ini atau
-                        kunjungi katalog pelatihan mandiri yang bisa diakses kapan saja.
+                        kunjungi katalog kelas yang bisa diakses kapan saja.
                     </p>
-                    <a href="{{ route('landing') }}#pelatihan"
+                    <a href="{{ route('landing') }}#katalog-kelas"
                         class="btn-simpel-cta-gold">
                         <i class="ri-book-open-line"></i>
-                        <span>Lihat Katalog Pelatihan</span>
+                        <span>Lihat Katalog Kelas</span>
                     </a>
                 </div>
             @endif

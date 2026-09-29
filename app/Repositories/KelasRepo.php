@@ -20,7 +20,7 @@ class KelasRepo
     {
         return Course::query()
             ->with(['category', 'creator'])
-            ->withCount(['chapters', 'lessons']);
+            ->withCount(['chapters', 'lessons', 'registrations']);
     }
 
     /**
@@ -100,19 +100,31 @@ class KelasRepo
     }
 
     /**
-     * Delete course and associated files.
+     * Check if a course can be deleted (only if no students are registered).
+     */
+    public static function canBeDeleted(Course $course): bool
+    {
+        return $course->registrations()->count() === 0;
+    }
+
+    /**
+     * Soft-delete course and cascade soft-delete chapters and lessons.
+     * Note: File assets are preserved on soft-delete to retain history and integrity.
      */
     public static function delete($id): bool
     {
         try {
             $course = self::getById($id);
 
-            if ($course->thumbnail) {
-                Storage::disk('public')->delete($course->thumbnail);
+            if (! self::canBeDeleted($course)) {
+                Log::warning('Hapus kelas ditolak karena sudah memiliki peserta terdaftar', ['id' => $id]);
+
+                return false;
             }
 
-            if ($course->tor_file) {
-                Storage::disk('public')->delete($course->tor_file);
+            foreach ($course->chapters as $chapter) {
+                $chapter->lessons()->delete();
+                $chapter->delete();
             }
 
             $course->delete();

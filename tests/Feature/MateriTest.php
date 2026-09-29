@@ -109,7 +109,7 @@ test('admin can add, edit, and delete chapter on open curriculum course', functi
     $component->call('deleteChapter', $chapter->id)
         ->assertDispatched('alert-show');
 
-    $this->assertDatabaseMissing('chapters', [
+    $this->assertSoftDeleted('chapters', [
         'id' => $chapter->id,
     ]);
 });
@@ -161,7 +161,7 @@ test('admin can edit and delete lesson in database', function () {
         ->call('deleteLesson', $chapter->id, $lesson->id)
         ->assertDispatched('alert-show');
 
-    $this->assertDatabaseMissing('lessons', [
+    $this->assertSoftDeleted('lessons', [
         'id' => $lesson->id,
     ]);
 });
@@ -287,13 +287,13 @@ test('chapter and lesson deletion via reusable modal hooks', function () {
         ->assertDispatched('closeModal')
         ->assertDispatched('alert-show');
 
-    $this->assertDatabaseMissing('lessons', ['id' => $lesson->id]);
+    $this->assertSoftDeleted('lessons', ['id' => $lesson->id]);
 
     $component->dispatch('MateriDetail-deleteChapter', ['id' => $chapter->id])
         ->assertDispatched('closeModal')
         ->assertDispatched('alert-show');
 
-    $this->assertDatabaseMissing('chapters', ['id' => $chapter->id]);
+    $this->assertSoftDeleted('chapters', ['id' => $chapter->id]);
 });
 
 test('admin can switch to inline editor, create lesson and return to silabus without page reload', function () {

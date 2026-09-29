@@ -85,7 +85,7 @@ class User extends Authenticatable
     public function enrolledCourses(): BelongsToMany
     {
         return $this->belongsToMany(Course::class, 'course_user')
-            ->withPivot(['id', 'registration_number', 'status', 'recommendation_letter_path', 'notes', 'enrolled_at'])
+            ->withPivot(['id', 'registration_number', 'status', 'notes', 'enrolled_at'])
             ->withTimestamps();
     }
 }

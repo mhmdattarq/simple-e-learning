@@ -26,13 +26,13 @@
 
                 {{-- Action CTA Buttons using SIMPEL Button System --}}
                 <div class="d-flex flex-wrap align-items-center gap-3 mb-4">
-                    <a href="#pelatihan" class="btn-simpel-cta-gold fs-6" style="padding: 13px 26px; border-radius: 12px;">
-                        <span>Daftar Pelatihan</span>
+                    <a href="#katalog-kelas" class="btn-simpel-cta-gold fs-6" style="padding: 13px 26px; border-radius: 12px;">
+                        <span>Jelajahi Kelas</span>
                         <i class="ri-arrow-right-line"></i>
                     </a>
-                    <a href="{{ route('jadwal') }}" class="btn-simpel-outline-light fs-6" style="padding: 13px 24px; border-radius: 12px;">
-                        <i class="ri-calendar-event-line fs-5"></i>
-                        <span>Lihat Jadwal Pelatihan</span>
+                    <a href="#jenis-kelas" class="btn-simpel-outline-light fs-6" style="padding: 13px 24px; border-radius: 12px;">
+                        <i class="ri-layout-grid-line fs-5"></i>
+                        <span>Daftar Jenis Kelas</span>
                     </a>
                 </div>
 
@@ -72,7 +72,7 @@
                                 <h6 class="fw-bold text-white mb-1">Government Transformation Academy</h6>
                                 <p class="text-white-70 fs-8 mb-2 lh-sm">Pelatihan arsitektur SPBE, tata kelola data
                                     pemerintahan, dan rekayasa layanan terpadu.</p>
-                                <a href="#pelatihan"
+                                <a href="#katalog-kelas"
                                     class="text-gold text-decoration-none fs-8 fw-semibold d-inline-flex align-items-center gap-1 hover-gold">
                                     <span>Lihat Kuota & Silabus</span>
                                     <i class="ri-arrow-right-line"></i>
@@ -98,7 +98,7 @@
                                 <h6 class="fw-bold text-white mb-1">Cybersecurity & CSIRT Instansi</h6>
                                 <p class="text-white-70 fs-8 mb-2 lh-sm">Pengamanan infrastruktur kritis instansi
                                     pemerintah, ISO 27001, dan mitigasi insiden siber.</p>
-                                <a href="#pelatihan"
+                                <a href="#katalog-kelas"
                                     class="text-gold text-decoration-none fs-8 fw-semibold d-inline-flex align-items-center gap-1 hover-gold">
                                     <span>Lihat Kuota & Silabus</span>
                                     <i class="ri-arrow-right-line"></i>

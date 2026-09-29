@@ -15,12 +15,6 @@
             <h5 class="fw-bold text-dark mb-1">Tambah Kelas Baru</h5>
             <p class="text-muted mb-0">Formulir penambahan data kelas pelatihan (Batch, Permanen, dan Berbayar).</p>
         </div>
-        <div>
-            <a href="{{ route('kelas.data') }}" class="btn btn-danger d-flex align-items-center" wire:navigate>
-                <i class="ri-arrow-left-line"></i>
-                <span>Kembali</span>
-            </a>
-        </div>
     </div>
 
     {{-- Main Form Card --}}

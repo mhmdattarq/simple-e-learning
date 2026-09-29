@@ -122,7 +122,8 @@
                                 @if (($form['type'] ?? '') === 'batch')
                                     <i class="ri-calendar-check-line me-1"></i>Berdasarkan jadwal gelombang.
                                 @elseif(in_array($form['type'] ?? '', ['paid', 'berbayar']))
-                                    <i class="ri-money-dollar-circle-line me-1"></i>Program berbayar dengan penetapan tarif biaya.
+                                    <i class="ri-money-dollar-circle-line me-1"></i>Program berbayar dengan penetapan
+                                    tarif biaya.
                                 @else
                                     <i class="ri-time-line me-1"></i>Akses mandiri (self-paced) sepanjang waktu.
                                 @endif
@@ -171,7 +172,8 @@
                                         class="form-control @error('form.price') is-invalid @enderror"
                                         wire:model="form.price" placeholder="Contoh: 150000">
                                 </div>
-                                <div class="form-text text-xs text-muted mt-1">Masukkan nominal biaya pendaftaran kelas berbayar.</div>
+                                <div class="form-text text-xs text-muted mt-1">Masukkan nominal biaya pendaftaran kelas
+                                    berbayar.</div>
                                 @error('form.price')
                                     <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
                                 @enderror
@@ -278,13 +280,6 @@
                             <span class="spinner-border spinner-border-sm"></span> Memperbarui...
                         </span>
                     </button>
-                    @if (($form['status'] ?? '') === 'draft')
-                        <button type="button" class="btn btn-outline-primary d-inline-flex align-items-center gap-1"
-                            wire:click="submitToLeader" wire:loading.attr="disabled"
-                            title="Simpan dan ajukan program pelatihan ke Pimpinan">
-                            <i class="ri-send-plane-line"></i> Ajukan ke Pimpinan
-                        </button>
-                    @endif
                 </div>
             </div>
         </div>

@@ -306,9 +306,11 @@
                             className: 'text-center',
                             render: function(data, type, row) {
                                 let editUrl = "{{ route('kelas.edit', ':id') }}".replace(':id', row.id);
-                                let materiUrl = "{{ route('materi.detail', ':id') }}".replace(':id', row
-                                    .id);
+                                let materiUrl = "{{ route('materi.detail', ':id') }}".replace(':id', row.id);
                                 let identity = String(data.title || '').replace(/'/g, "\\'");
+                                let regCount = Number(row.registrations_count || 0);
+                                let hasRegistrations = (regCount > 0);
+                                let isArchived = (row.status === 'archived');
 
                                 let actions = `
                                     <li>
@@ -317,16 +319,46 @@
                                             <span class="fw-medium">Edit Kelas</span>
                                         </a>
                                     </li>
-                                    <li>
-                                        <button type="button" class="dropdown-item text-danger d-flex align-items-center gap-2 py-2 px-3 rounded border-0 bg-transparent w-100 text-start"
-                                           data-bs-toggle="modal"
-                                           data-bs-target="#modalDelete"
-                                           wire:click="hookModalDelete(${data.id}, '${identity}')">
-                                            <i class="ri-delete-bin-line fs-6"></i>
-                                            <span class="fw-medium">Hapus Kelas</span>
-                                        </button>
-                                    </li>
                                 `;
+
+                                if (!isArchived) {
+                                    actions += `
+                                        <li>
+                                            <button type="button" class="dropdown-item text-secondary d-flex align-items-center gap-2 py-2 px-3 rounded border-0 bg-transparent w-100 text-start"
+                                                wire:click="archiveCourse(${data.id})"
+                                                title="Ubah status kelas menjadi Diarsipkan">
+                                                <i class="ri-archive-line text-warning fs-6"></i>
+                                                <span class="fw-medium">Arsipkan Kelas</span>
+                                            </button>
+                                        </li>
+                                    `;
+                                }
+
+                                if (hasRegistrations) {
+                                    actions += `
+                                        <li>
+                                            <button type="button" class="dropdown-item text-muted d-flex align-items-center gap-2 py-2 px-3 rounded border-0 bg-transparent w-100 text-start"
+                                                style="opacity: 0.55; cursor: not-allowed;"
+                                                disabled
+                                                title="Kelas tidak dapat dihapus karena sudah memiliki ${regCount} peserta terdaftar. Silakan gunakan opsi arsipkan kelas.">
+                                                <i class="ri-lock-line text-muted fs-6"></i>
+                                                <span class="fw-medium">Hapus (Terkunci)</span>
+                                            </button>
+                                        </li>
+                                    `;
+                                } else {
+                                    actions += `
+                                        <li>
+                                            <button type="button" class="dropdown-item text-danger d-flex align-items-center gap-2 py-2 px-3 rounded border-0 bg-transparent w-100 text-start"
+                                               data-bs-toggle="modal"
+                                               data-bs-target="#modalDelete"
+                                               wire:click="hookModalDelete(${data.id}, '${identity}')">
+                                                <i class="ri-delete-bin-line fs-6"></i>
+                                                <span class="fw-medium">Hapus Kelas</span>
+                                            </button>
+                                        </li>
+                                    `;
+                                }
 
                                 return `
                                 <div class="dropdown">
@@ -338,7 +370,7 @@
                                         style="width: 32px; height: 32px; padding: 0; border-radius: 6px;">
                                         <i class="ri-more-2-fill fs-5"></i>
                                     </button>
-                                    <ul class="dropdown-menu dropdown-menu-start shadow-sm border-0 p-2" style="border-radius: 10px; min-width: 165px;">
+                                    <ul class="dropdown-menu dropdown-menu-start shadow-sm border-0 p-2" style="border-radius: 10px; min-width: 175px;">
                                         ${actions}
                                     </ul>
                                 </div>
@@ -366,6 +398,12 @@
                             render: function(data, type, row) {
                                 let materiUrl = "{{ route('materi.detail', ':id') }}".replace(':id', row
                                     .id);
+                                let regCount = Number(row.registrations_count || 0);
+                                let regBadge = '';
+                                if (regCount > 0) {
+                                    regBadge = `<span class="badge bg-secondary-subtle text-secondary" style="font-size: 10.5px;"><i class="ri-user-line me-1"></i>${regCount} Peserta</span>`;
+                                }
+
                                 let typeBadge = '';
                                 if (row.type === 'permanent') {
                                     typeBadge =
@@ -391,6 +429,7 @@
                                     </div>
                                     <div class="d-flex flex-wrap align-items-center gap-1">
                                         ${typeBadge}
+                                        ${regBadge}
                                     </div>
                                 </div>
                             `;

@@ -9,10 +9,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Course extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $guarded = [];
 
@@ -24,7 +25,6 @@ class Course extends Model
             'end_date' => 'date',
             'registration_open_at' => 'datetime',
             'registration_close_at' => 'datetime',
-            'approved_at' => 'datetime',
             'price' => 'decimal:2',
         ];
     }
@@ -46,14 +46,6 @@ class Course extends Model
     }
 
     /**
-     * Approver / leader who approved this course.
-     */
-    public function approver(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'approved_by');
-    }
-
-    /**
      * Registrations (enrollments) for this course.
      */
     public function registrations(): HasMany
@@ -67,7 +59,7 @@ class Course extends Model
     public function participants(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'course_user')
-            ->withPivot(['id', 'registration_number', 'status', 'recommendation_letter_path', 'notes', 'enrolled_at'])
+            ->withPivot(['id', 'registration_number', 'status', 'notes', 'enrolled_at'])
             ->withTimestamps();
     }
 

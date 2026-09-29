@@ -2,6 +2,8 @@
 
 namespace App\Livewire\Peserta\Materi;
 
+use App\Enums\CourseStatus;
+use App\Enums\RegistrationStatus;
 use App\Models\Chapter;
 use App\Models\Course;
 use App\Models\CourseUser;
@@ -31,14 +33,27 @@ class MateriBelajar extends Component
 
         $user = Auth::user();
 
-        // Otorisasi: Peserta terverifikasi atau admin
-        $isEnrolledVerified = CourseUser::where('user_id', $user->id)
-            ->where('course_id', $this->courseId)
-            ->whereIn('status', ['verified', 'active', 'completed'])
-            ->exists();
+        if ($this->course->status !== CourseStatus::Published && ! $user->hasAdminAccess()) {
+            abort(404, 'Pelatihan tidak ditemukan atau belum dipublikasikan.');
+        }
 
-        if (! $isEnrolledVerified && ! $user->hasAdminAccess()) {
-            abort(403, 'Akses materi hanya untuk peserta terverifikasi pada pelatihan ini.');
+        // Auto-enroll peserta yang login agar riwayat & progres belajar tercatat
+        $enrollment = CourseUser::firstOrCreate(
+            [
+                'user_id' => $user->id,
+                'course_id' => $this->courseId,
+            ],
+            [
+                'status' => 'active',
+                'enrolled_at' => now(),
+            ]
+        );
+
+        if ($enrollment->status === RegistrationStatus::Pending) {
+            $enrollment->update([
+                'status' => 'active',
+                'enrolled_at' => $enrollment->enrolled_at ?? now(),
+            ]);
         }
 
         // Auto-select initial lesson if none selected

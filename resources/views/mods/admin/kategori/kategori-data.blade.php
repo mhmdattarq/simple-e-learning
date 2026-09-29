@@ -41,10 +41,7 @@
                                 <input type="text" class="form-control form-control-sm search-col-dt"
                                     placeholder="Cari nama kategori...">
                             </th>
-                            <th>
-                                <input type="text" class="form-control form-control-sm search-col-dt"
-                                    placeholder="Cari deskripsi...">
-                            </th>
+                            <th></th>
                             <th></th>
                         </tr>
                     </thead>

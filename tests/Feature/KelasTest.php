@@ -1,12 +1,17 @@
 <?php
 
 use App\Enums\CourseStatus;
+use App\Enums\RegistrationStatus;
 use App\Livewire\Admin\Kelas\KelasCreate;
 use App\Livewire\Admin\Kelas\KelasData;
 use App\Livewire\Admin\Kelas\KelasEdit;
 use App\Models\Category;
+use App\Models\Chapter;
 use App\Models\Course;
+use App\Models\CourseUser;
+use App\Models\Lesson;
 use App\Models\User;
+use App\Repositories\KelasRepo;
 use Database\Seeders\CategorySeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -211,7 +216,7 @@ test('kelas delete event deletes course from database and dispatches events', fu
         ->assertDispatched('alert-show')
         ->assertDispatched('reloadDT', data: 'dtTable');
 
-    $this->assertDatabaseMissing('courses', [
+    $this->assertSoftDeleted('courses', [
         'id' => $course->id,
     ]);
 });
@@ -489,4 +494,222 @@ test('kelas create wizard goToStep prevents skipping unvalidated steps but allow
         // Can jump back to step 2
         ->call('goToStep', 2)
         ->assertSet('currentStep', 2);
+});
+
+test('course with registered participants cannot be deleted via repo or livewire', function () {
+    $admin = User::factory()->admin()->create();
+    $participant = User::factory()->peserta()->create();
+    $category = Category::first();
+
+    $course = Course::create([
+        'title' => 'Pelatihan Terproteksi Peserta',
+        'category_id' => $category->id,
+        'type' => 'batch',
+        'status' => 'ongoing',
+    ]);
+
+    CourseUser::create([
+        'registration_number' => 'REG-TEST-001',
+        'course_id' => $course->id,
+        'user_id' => $participant->id,
+        'status' => RegistrationStatus::Active,
+    ]);
+
+    expect(KelasRepo::canBeDeleted($course))->toBeFalse();
+    expect(KelasRepo::delete($course->id))->toBeFalse();
+
+    $this->assertDatabaseHas('courses', [
+        'id' => $course->id,
+        'deleted_at' => null,
+    ]);
+
+    Livewire::actingAs($admin)
+        ->test(KelasData::class)
+        ->call('hookModalDelete', $course->id, $course->title)
+        ->assertDispatched('alert-show', function ($eventName, $params) {
+            return ($params['data']['type'] ?? '') === 'warning';
+        })
+        ->assertNotDispatched('modal-delete-setDeleteId')
+        ->dispatch('KelasData-delete', ['id' => $course->id])
+        ->assertDispatched('alert-show', function ($eventName, $params) {
+            return ($params['data']['type'] ?? '') === 'warning';
+        });
+
+    $this->assertDatabaseHas('courses', [
+        'id' => $course->id,
+        'deleted_at' => null,
+    ]);
+});
+
+test('course without registered participants can be soft deleted along with chapters and lessons', function () {
+    $admin = User::factory()->admin()->create();
+    $category = Category::first();
+
+    $course = Course::create([
+        'title' => 'Pelatihan Siap Dihapus Bersih',
+        'category_id' => $category->id,
+        'type' => 'permanent',
+        'status' => 'draft',
+    ]);
+
+    $chapter = Chapter::create([
+        'course_id' => $course->id,
+        'title' => 'Bab 1 Uji Coba',
+        'order' => 1,
+    ]);
+
+    $lesson = Lesson::create([
+        'chapter_id' => $chapter->id,
+        'title' => 'Materi Uji Coba',
+        'order' => 1,
+        'content_type' => 'article',
+        'body_text' => '<p>Konten</p>',
+    ]);
+
+    expect(KelasRepo::canBeDeleted($course))->toBeTrue();
+
+    Livewire::actingAs($admin)
+        ->test(KelasData::class)
+        ->call('hookModalDelete', $course->id, $course->title)
+        ->assertDispatched('modal-delete-setDeleteId')
+        ->dispatch('KelasData-delete', ['id' => $course->id])
+        ->assertDispatched('alert-show', function ($eventName, $params) {
+            return ($params['data']['type'] ?? '') === 'success';
+        });
+
+    $this->assertSoftDeleted('courses', ['id' => $course->id]);
+    $this->assertSoftDeleted('chapters', ['id' => $chapter->id]);
+    $this->assertSoftDeleted('lessons', ['id' => $lesson->id]);
+});
+
+test('course can be archived via KelasData component and repo, updating status to archived', function () {
+    $admin = User::factory()->admin()->create();
+    $category = Category::first();
+
+    $course = Course::create([
+        'title' => 'Pelatihan untuk Diarsipkan',
+        'category_id' => $category->id,
+        'type' => 'batch',
+        'status' => 'draft',
+    ]);
+
+    Livewire::actingAs($admin)
+        ->test(KelasData::class)
+        ->call('archiveCourse', $course->id)
+        ->assertDispatched('alert-show', function ($eventName, $params) {
+            return ($params['data']['type'] ?? '') === 'success';
+        })
+        ->assertDispatched('reloadDT', data: 'dtTable');
+
+    expect($course->fresh()->status)->toBe(CourseStatus::Archived);
+});
+
+test('hookModalDelete displays enhanced curriculum warning when course has lessons and standard message when empty', function () {
+    $admin = User::factory()->admin()->create();
+    $category = Category::first();
+
+    $courseWithLessons = Course::create([
+        'title' => 'Pelatihan Memiliki Materi',
+        'category_id' => $category->id,
+        'type' => 'permanent',
+        'status' => 'draft',
+    ]);
+
+    $chapter = Chapter::create([
+        'course_id' => $courseWithLessons->id,
+        'title' => 'Bab Pembuka',
+        'order' => 1,
+    ]);
+
+    Lesson::create([
+        'chapter_id' => $chapter->id,
+        'title' => 'Materi Bab Pembuka',
+        'order' => 1,
+        'content_type' => 'article',
+        'body_text' => '<p>Konten</p>',
+    ]);
+
+    $emptyCourse = Course::create([
+        'title' => 'Pelatihan Tanpa Materi',
+        'category_id' => $category->id,
+        'type' => 'permanent',
+        'status' => 'draft',
+    ]);
+
+    Livewire::actingAs($admin)
+        ->test(KelasData::class)
+        ->call('hookModalDelete', $courseWithLessons->id, $courseWithLessons->title)
+        ->assertDispatched('modal-delete-setDeleteId', function ($eventName, $params) {
+            $payload = $params[0] ?? $params;
+
+            return str_contains($payload['title'] ?? '', 'Peringatan Hapus Kelas & Materi') &&
+                str_contains($payload['msg'] ?? '', 'PERHATIAN KURIKULUM & MATERI') &&
+                ! str_contains(strtolower($payload['msg'] ?? ''), 'soft delete') &&
+                ($payload['msgBoxClass'] ?? '') === 'bg-danger-subtle border-danger text-danger';
+        })
+        ->call('hookModalDelete', $emptyCourse->id, $emptyCourse->title)
+        ->assertDispatched('modal-delete-setDeleteId', function ($eventName, $params) {
+            $payload = $params[0] ?? $params;
+
+            return str_contains($payload['title'] ?? '', 'Konfirmasi Hapus Kelas') &&
+                ! str_contains($payload['msg'] ?? '', 'PERHATIAN KURIKULUM & MATERI') &&
+                ! str_contains(strtolower($payload['msg'] ?? ''), 'soft delete') &&
+                ($payload['msgBoxClass'] ?? '') === '';
+        });
+});
+
+test('kelas datatables query includes chapters, lessons, and registrations count, and excludes soft-deleted courses', function () {
+    $admin = User::factory()->admin()->create();
+    $participant = User::factory()->peserta()->create();
+    $category = Category::first();
+
+    $activeCourse = Course::create([
+        'title' => 'Kelas Aktif untuk DT',
+        'category_id' => $category->id,
+        'type' => 'batch',
+        'status' => 'published',
+    ]);
+
+    $chapter = Chapter::create([
+        'course_id' => $activeCourse->id,
+        'title' => 'Bab DT',
+        'order' => 1,
+    ]);
+
+    Lesson::create([
+        'chapter_id' => $chapter->id,
+        'title' => 'Lesson DT',
+        'order' => 1,
+        'content_type' => 'article',
+        'body_text' => '<p>Konten</p>',
+    ]);
+
+    CourseUser::create([
+        'registration_number' => 'REG-DT-001',
+        'course_id' => $activeCourse->id,
+        'user_id' => $participant->id,
+        'status' => RegistrationStatus::Active,
+    ]);
+
+    $deletedCourse = Course::create([
+        'title' => 'Kelas Terhapus untuk DT',
+        'category_id' => $category->id,
+        'type' => 'permanent',
+        'status' => 'draft',
+    ]);
+    $deletedCourse->delete();
+
+    $response = $this->actingAs($admin)->getJson(route('kelas.dt'));
+    $response->assertOk();
+
+    $json = $response->json();
+    $courseData = collect($json['data'] ?? [])->firstWhere('id', $activeCourse->id);
+
+    expect($courseData)->not->toBeNull();
+    expect($courseData['chapters_count'])->toBe(1);
+    expect($courseData['lessons_count'])->toBe(1);
+    expect($courseData['registrations_count'])->toBe(1);
+
+    $deletedInDt = collect($json['data'] ?? [])->firstWhere('id', $deletedCourse->id);
+    expect($deletedInDt)->toBeNull();
 });

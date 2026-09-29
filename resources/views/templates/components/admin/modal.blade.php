@@ -223,10 +223,10 @@ new class extends Component {
                     </h5>
 
                     {{-- Message with soft highlight box --}}
-                    <div class="simpel-modal-msg-box text-start">
-                        <p class="simpel-modal-msg">
-                            {{ $data['msg'] ?? 'Apakah Anda yakin ingin menghapus data ini? Tindakan ini tidak dapat dibatalkan.' }}
-                        </p>
+                    <div class="simpel-modal-msg-box text-start {{ $data['msgBoxClass'] ?? '' }}">
+                        <div class="simpel-modal-msg">
+                            {!! nl2br(e($data['msg'] ?? 'Apakah Anda yakin ingin menghapus data ini? Tindakan ini tidak dapat dibatalkan.')) !!}
+                        </div>
                     </div>
 
                     {{-- Action Buttons (50/50 Balanced) --}}
