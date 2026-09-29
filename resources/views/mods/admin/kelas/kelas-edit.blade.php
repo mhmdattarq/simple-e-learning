@@ -12,8 +12,8 @@
     {{-- Header & Breadcrumb Navigation --}}
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
         <div>
-            <h5 class="fw-bold text-dark mb-1">Edit Kelas Pelatihan</h5>
-            <p class="text-muted mb-0">Formulir pembaruan data kelas pelatihan (Batch, Permanen, dan Berbayar).</p>
+            <h5 class="fw-bold text-dark mb-1">Edit Kelas</h5>
+            <p class="text-muted mb-0">Formulir pembaruan data kelas (Batch, Permanen, dan Berbayar).</p>
         </div>
         <div>
             <a href="{{ route('kelas.data') }}" class="btn btn-danger d-flex align-items-center" wire:navigate>
@@ -35,12 +35,12 @@
                     </div>
                 </div>
                 <span class="simpel-badge simpel-badge-navy">
-                    Kelas Pelatihan
+                    Kelas
                 </span>
             </div>
 
             <div class="card-body p-28 p-md-32">
-                {{-- Bagian 1: Informasi Dasar Pelatihan --}}
+                {{-- Bagian 1: Informasi Dasar Kelas --}}
                 <div class="mb-40">
                     <div class="d-flex align-items-center gap-2 mb-20 pb-12 border-bottom"
                         style="border-color: #e6eaf0 !important;">
@@ -67,7 +67,7 @@
                             @enderror
                         </div>
 
-                        {{-- Status Pelatihan --}}
+                        {{-- Status Kelas --}}
                         <div class="col-md-6">
                             <label class="form-label text-xs fw-semibold text-dark mb-1">
                                 Status Kelas <span class="text-danger">*</span>
@@ -83,28 +83,28 @@
                             @enderror
                         </div>
 
-                        {{-- Nama Lengkap Pelatihan --}}
+                        {{-- Nama Lengkap Kelas --}}
                         <div class="col-12">
                             <label class="form-label text-xs fw-semibold text-dark mb-1">
-                                Nama Program Pelatihan <span class="text-danger">*</span>
+                                Nama Program Kelas <span class="text-danger">*</span>
                             </label>
                             <input type="text" class="form-control @error('form.title') is-invalid @enderror"
                                 wire:model="form.title"
-                                placeholder="Contoh: Pelatihan Manajemen Administrator Angkatan I">
+                                placeholder="Contoh: Manajemen Administrator Angkatan I">
                             @error('form.title')
                                 <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
                             @enderror
                         </div>
 
-                        {{-- Deskripsi Program Pelatihan --}}
+                        {{-- Deskripsi Program Kelas --}}
                         <div class="col-12">
                             <label class="form-label text-xs fw-semibold text-dark mb-1">
-                                Deskripsi Kelas Pelatihan
+                                Deskripsi Kelas
                             </label>
                             <textarea class="form-control @error('form.description') is-invalid @enderror"
                                 wire:model="form.description"
                                 rows="4"
-                                placeholder="Tuliskan deskripsi lengkap, tujuan pembelajaran, atau ringkasan kelas pelatihan ini..."></textarea>
+                                placeholder="Tuliskan deskripsi lengkap, tujuan pembelajaran, atau ringkasan kelas ini..."></textarea>
                             @error('form.description')
                                 <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
                             @enderror
@@ -175,11 +175,11 @@
                             </div>
                         @endif
 
-                        {{-- Row Khusus Kelas Berbayar: Biaya Pelatihan --}}
+                        {{-- Row Khusus Kelas Berbayar: Biaya Kelas --}}
                         @if (in_array($form['type'] ?? '', ['paid', 'berbayar']))
                             <div class="col-md-12" wire:key="edit-field-price">
                                 <label class="form-label text-xs fw-semibold text-dark mb-1">
-                                    Biaya Pelatihan (Tarif Masuk) <span class="text-danger">*</span>
+                                    Biaya Kelas (Tarif Masuk) <span class="text-danger">*</span>
                                 </label>
                                 <div class="input-group">
                                     <span class="input-group-text bg-light text-dark fw-bold">Rp</span>
@@ -210,7 +210,7 @@
                         {{-- Poster Thumbnail --}}
                         <div class="col-md-6">
                             <label class="form-label text-xs fw-semibold text-dark mb-1">
-                                Poster Pelatihan (JPG/PNG) <span class="text-muted fw-normal">(Opsional)</span>
+                                Poster Kelas (JPG/PNG) <span class="text-muted fw-normal">(Opsional)</span>
                             </label>
                             <div class="input-group">
                                 <span class="input-group-text bg-light text-muted"><i
@@ -289,7 +289,7 @@
                     <button type="submit" class="btn btn-simpel-gold align-items-center flex-grow-1"
                         wire:loading.attr="disabled">
                         <span wire:loading.remove>
-                            <i class="ri-save-line"></i> Perbarui Pelatihan
+                            <i class="ri-save-line"></i> Perbarui Kelas
                         </span>
                         <span wire:loading style="display: none;">
                             <span class="spinner-border spinner-border-sm"></span> Memperbarui...

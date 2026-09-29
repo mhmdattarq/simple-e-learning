@@ -3,7 +3,7 @@
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
         <div>
             <span class="text-uppercase fw-bold text-xs" style="color: #b37a05; letter-spacing: 1.5px;">Sistem
-                Manajemen Pelatihan</span>
+                Manajemen Kelas</span>
             <h4 class="fw-bold mb-0 text-dark">
                 Beranda Administrator
             </h4>
@@ -27,21 +27,21 @@
                 Selamat Datang Kembali
             </div>
             <h2 class="simpel-hero-title">
-                Kelola seluruh siklus pelatihan dalam satu sistem
+                Kelola seluruh siklus kelas dalam satu sistem
             </h2>
             <p class="simpel-hero-desc">
                 Data terintegrasi, real time, transparan, dan akuntabel — BKPSDM Kabupaten Aceh Timur.
             </p>
         </div>
         @if(auth()->user()?->isAdmin())
-            <button type="button" class="btn-simpel-gold" data-bs-toggle="modal" data-bs-target="#modalRencanaPelatihan">
+            <button type="button" class="btn-simpel-gold" data-bs-toggle="modal" data-bs-target="#modalRencanaKelas">
                 <i class="ri-add-line"></i>
-                Buat Rencana Pelatihan
+                Buat Rencana Kelas
             </button>
         @endif
     </div>
 
-    {{-- 8-Stage Flow / Siklus Pelatihan --}}
+    {{-- 8-Stage Flow / Siklus Kelas --}}
     <div class="mb-24">
         <div class="flow-grid">
             <div class="flow-card done">
@@ -85,11 +85,11 @@
 
     {{-- 4 Stat Cards --}}
     <div class="row row-cols-xxl-4 row-cols-md-2 row-cols-1 g-3 mb-24">
-        {{-- Stat 1: Pelatihan Aktif --}}
+        {{-- Stat 1: Kelas Aktif --}}
         <div class="col">
             <div class="simpel-card p-20 h-100">
                 <div class="d-flex align-items-center justify-content-between mb-12">
-                    <span class="text-secondary-light fw-medium" style="font-size: 13px;">Pelatihan Aktif</span>
+                    <span class="text-secondary-light fw-medium" style="font-size: 13px;">Kelas Aktif</span>
                     <div class="w-40-px h-40-px rounded-3 d-flex align-items-center justify-content-center"
                         style="background-color: #fff4d8; color: #9a6700;">
                         <i class="ri-award-line fs-4"></i>
@@ -355,7 +355,7 @@
                         <th class="py-3 px-3">No. Registrasi</th>
                         <th class="py-3 px-3">Nama Calon Peserta</th>
                         <th class="py-3 px-3">Instansi / SKPK</th>
-                        <th class="py-3 px-3">Program Pelatihan</th>
+                        <th class="py-3 px-3">Program Kelas</th>
                         <th class="py-3 px-3">Status</th>
                         <th class="py-3 px-3 text-end">Aksi</th>
                     </tr>
@@ -377,7 +377,7 @@
                             </div>
                         </td>
                         <td class="px-3">Sekretariat Daerah</td>
-                        <td class="px-3">Pelatihan Manajemen Administrator</td>
+                        <td class="px-3">Kelas Manajemen Administrator</td>
                         <td class="px-3">
                             <span class="simpel-badge simpel-badge-gold">Diajukan</span>
                         </td>
@@ -455,7 +455,7 @@
                             </div>
                         </td>
                         <td class="px-3">Dinas Pendidikan</td>
-                        <td class="px-3">Pelatihan Kepemimpinan</td>
+                        <td class="px-3">Kelas Kepemimpinan</td>
                         <td class="px-3">
                             <span class="simpel-badge simpel-badge-gold">Menunggu</span>
                         </td>
@@ -469,8 +469,8 @@
         </div>
     </div>
 
-    {{-- Modal Rencana Pelatihan Baru (prototype.html style) --}}
-    <div class="modal fade" id="modalRencanaPelatihan" tabindex="-1" aria-labelledby="modalRencanaPelatihanLabel"
+    {{-- Modal Rencana Kelas Baru (prototype.html style) --}}
+    <div class="modal fade" id="modalRencanaKelas" tabindex="-1" aria-labelledby="modalRencanaKelasLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content"
@@ -480,31 +480,31 @@
                     <div>
                         <span class="text-uppercase fw-bold text-xs"
                             style="color: #f3bc42; letter-spacing: 1.5px;">Formulir Kelas</span>
-                        <h5 class="modal-title fw-bold text-white mb-0" id="modalRencanaPelatihanLabel">Kelas Pelatihan Baru</h5>
+                        <h5 class="modal-title fw-bold text-white mb-0" id="modalRencanaKelasLabel">Kelas Baru</h5>
                     </div>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
                         aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-24">
                     <p class="text-muted small mb-20">
-                        Isi parameter utama pelatihan di bawah. Rencana dapat disimpan sebagai draf sebelum diajukan ke
+                        Isi parameter utama kelas di bawah. Rencana dapat disimpan sebagai draf sebelum diajukan ke
                         tahap pendaftaran publik.
                     </p>
 
                     <form>
                         <div class="row g-3">
                             <div class="col-12">
-                                <label class="form-label fw-bold text-dark small">Nama Program Pelatihan</label>
+                                <label class="form-label fw-bold text-dark small">Nama Program Kelas</label>
                                 <input type="text" class="form-control rounded-3"
-                                    placeholder="Contoh: Pelatihan Manajemen Administrator Angkatan II">
+                                    placeholder="Contoh: Manajemen Administrator Angkatan II">
                             </div>
 
                             <div class="col-md-6">
-                                <label class="form-label fw-bold text-dark small">Kategori Pelatihan</label>
+                                <label class="form-label fw-bold text-dark small">Kategori Kelas</label>
                                 <select class="form-select rounded-3">
-                                    <option selected>Pelatihan Kepemimpinan</option>
-                                    <option>Pelatihan Teknis Fungsional</option>
-                                    <option>Pelatihan Sosial Kultural</option>
+                                    <option selected>Kepemimpinan</option>
+                                    <option>Teknis Fungsional</option>
+                                    <option>Sosial Kultural</option>
                                 </select>
                             </div>
 

@@ -18,7 +18,7 @@ test('landing page can be accessed successfully and displays core sections', fun
     $response->assertSee('landing/assets/js/script.js');
     $response->assertSee('Akselerasi Kompetensi');
     $response->assertSee('Daftar Jenis');
-    $response->assertSee('Kelas Pelatihan');
+    $response->assertSee('Kelas');
     $response->assertSee('Katalog');
     $response->assertSee('Alur Mudah Pendaftaran');
     $response->assertSee('Kelas Batch');

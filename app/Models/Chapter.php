@@ -22,7 +22,7 @@ class Chapter extends Model
     }
 
     /**
-     * Pelatihan / Kursus pemilik bab ini.
+     * Kelas / Kursus pemilik bab ini.
      */
     public function course(): BelongsTo
     {

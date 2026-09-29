@@ -103,7 +103,7 @@ class KategoriRepo
             if ($category->courses_count > 0) {
                 return [
                     'status' => false,
-                    'message' => 'Kategori "'.$category->name.'" tidak dapat dihapus karena masih menaungi '.$category->courses_count.' kelas pelatihan.',
+                    'message' => 'Kategori "'.$category->name.'" tidak dapat dihapus karena masih menaungi '.$category->courses_count.' kelas.',
                 ];
             }
 

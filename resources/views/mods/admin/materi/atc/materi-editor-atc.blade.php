@@ -325,7 +325,7 @@
         function createCardHtml(data) {
             const ext = (data.extension || '').toLowerCase();
             const svgs = getDocumentSvgs(ext);
-            const filename = data.filename || 'Dokumen Pelatihan';
+            const filename = data.filename || 'Dokumen Kelas';
             const size = data.size || '';
             const url = data.url || '#';
 

@@ -22,7 +22,7 @@ enum RegistrationStatus: string
             self::RevisionRequired => 'Perlu Perbaikan',
             self::Rejected => 'Ditolak',
             self::Active => 'Aktif Belajar',
-            self::Completed => 'Tuntas Pelatihan',
+            self::Completed => 'Tuntas Kelas',
         };
     }
 

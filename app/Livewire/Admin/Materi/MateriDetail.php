@@ -128,7 +128,7 @@ class MateriDetail extends Component
             $this->dispatch('alert-show', data: [
                 'type' => 'warning',
                 'title' => 'Kurikulum Terkunci',
-                'message' => 'Struktur bab tidak dapat ditambahkan karena pelatihan tipe Batch sedang aktif berjalan.',
+                'message' => 'Struktur bab tidak dapat ditambahkan karena kelas tipe Batch sedang aktif berjalan.',
             ]);
 
             return;
@@ -157,7 +157,7 @@ class MateriDetail extends Component
             $this->dispatch('alert-show', data: [
                 'type' => 'warning',
                 'title' => 'Kurikulum Terkunci',
-                'message' => 'Struktur bab tidak dapat diedit karena pelatihan tipe Batch sedang aktif berjalan.',
+                'message' => 'Struktur bab tidak dapat diedit karena kelas tipe Batch sedang aktif berjalan.',
             ]);
 
             return;
@@ -249,7 +249,7 @@ class MateriDetail extends Component
             $this->dispatch('alert-show', data: [
                 'type' => 'warning',
                 'title' => 'Kurikulum Terkunci',
-                'message' => 'Struktur bab tidak dapat dihapus karena pelatihan tipe Batch sedang aktif berjalan.',
+                'message' => 'Struktur bab tidak dapat dihapus karena kelas tipe Batch sedang aktif berjalan.',
             ]);
 
             return;
@@ -273,7 +273,7 @@ class MateriDetail extends Component
             $this->dispatch('alert-show', data: [
                 'type' => 'warning',
                 'title' => 'Kurikulum Terkunci',
-                'message' => 'Struktur bab tidak dapat dihapus karena pelatihan tipe Batch sedang aktif berjalan.',
+                'message' => 'Struktur bab tidak dapat dihapus karena kelas tipe Batch sedang aktif berjalan.',
             ]);
 
             return;
@@ -310,7 +310,7 @@ class MateriDetail extends Component
             $this->dispatch('alert-show', data: [
                 'type' => 'warning',
                 'title' => 'Kurikulum Terkunci',
-                'message' => 'Materi tidak dapat dihapus karena pelatihan tipe Batch sedang aktif berjalan.',
+                'message' => 'Materi tidak dapat dihapus karena kelas tipe Batch sedang aktif berjalan.',
             ]);
 
             return;
@@ -334,7 +334,7 @@ class MateriDetail extends Component
             $this->dispatch('alert-show', data: [
                 'type' => 'warning',
                 'title' => 'Kurikulum Terkunci',
-                'message' => 'Materi tidak dapat dihapus karena pelatihan tipe Batch sedang aktif berjalan.',
+                'message' => 'Materi tidak dapat dihapus karena kelas tipe Batch sedang aktif berjalan.',
             ]);
 
             return;
@@ -421,7 +421,7 @@ class MateriDetail extends Component
             $this->dispatch('alert-show', data: [
                 'type' => 'warning',
                 'title' => 'Kurikulum Terkunci',
-                'message' => 'Struktur bab tidak dapat ditambahkan materi karena pelatihan tipe Batch sedang aktif berjalan.',
+                'message' => 'Struktur bab tidak dapat ditambahkan materi karena kelas tipe Batch sedang aktif berjalan.',
             ]);
 
             return;
@@ -472,7 +472,7 @@ class MateriDetail extends Component
             $this->dispatch('alert-show', data: [
                 'type' => 'warning',
                 'title' => 'Kurikulum Terkunci',
-                'message' => 'Materi tidak dapat diedit karena pelatihan tipe Batch sedang aktif berjalan.',
+                'message' => 'Materi tidak dapat diedit karena kelas tipe Batch sedang aktif berjalan.',
             ]);
 
             return;
@@ -532,7 +532,7 @@ class MateriDetail extends Component
             $this->dispatch('alert-show', data: [
                 'type' => 'warning',
                 'title' => 'Kurikulum Terkunci',
-                'message' => 'Pelatihan tipe Batch sedang aktif berjalan, materi tidak dapat disimpan atau diubah.',
+                'message' => 'Kelas tipe Batch sedang aktif berjalan, materi tidak dapat disimpan atau diubah.',
             ]);
 
             return;

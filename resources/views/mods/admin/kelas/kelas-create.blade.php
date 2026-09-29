@@ -13,7 +13,7 @@
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
         <div>
             <h5 class="fw-bold text-dark mb-1">Tambah Kelas Baru</h5>
-            <p class="text-muted mb-0">Formulir penambahan data kelas pelatihan (Batch, Permanen, dan Berbayar).</p>
+            <p class="text-muted mb-0">Formulir penambahan data kelas (Batch, Permanen, dan Berbayar).</p>
         </div>
     </div>
 
@@ -24,7 +24,7 @@
                 class="card-header bg-white py-16 px-24 border-bottom d-flex align-items-center justify-content-between flex-wrap gap-2">
                 <div class="d-flex align-items-center gap-3">
                     <div>
-                        <h6 class="fw-bold text-dark mb-0 fs-6">Formulir Kelas Pelatihan</h6>
+                        <h6 class="fw-bold text-dark mb-0 fs-6">Formulir Kelas</h6>
                         <small class="text-muted">Lengkapi data kelas melalui 3 langkah terpandu.</small>
                     </div>
                 </div>
@@ -128,7 +128,7 @@
             </div>
 
             <div class="card-body p-28 p-md-32">
-                {{-- Langkah 1: Informasi Dasar Pelatihan --}}
+                {{-- Langkah 1: Informasi Dasar Kelas --}}
                 @if ($currentStep === 1)
                     <div class="mb-32">
                         <div class="d-flex align-items-center gap-2 mb-20 pb-12 border-bottom"
@@ -139,14 +139,14 @@
                             <h6 class="fw-bold mb-0 fs-6" style="color: #071a33;">Informasi Dasar Kelas</h6>
                         </div>
                         <div class="row g-3">
-                            {{-- Nama Lengkap Pelatihan --}}
+                            {{-- Nama Lengkap Kelas --}}
                             <div class="col-12">
                                 <label class="form-label text-xs fw-semibold text-dark mb-1">
-                                    Nama Program Pelatihan <span class="text-danger">*</span>
+                                    Nama Program Kelas <span class="text-danger">*</span>
                                 </label>
                                 <input type="text" class="form-control @error('form.title') is-invalid @enderror"
                                     wire:model="form.title"
-                                    placeholder="Contoh: Pelatihan Manajemen Administrator Angkatan I">
+                                    placeholder="Contoh: Manajemen Administrator Angkatan I">
                                 @error('form.title')
                                     <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
                                 @enderror
@@ -169,15 +169,15 @@
                                 @enderror
                             </div>
 
-                            {{-- Deskripsi Program Pelatihan --}}
+                            {{-- Deskripsi Program Kelas --}}
                             <div class="col-12">
                                 <label class="form-label text-xs fw-semibold text-dark mb-1">
-                                    Deskripsi Kelas Pelatihan
+                                    Deskripsi Kelas
                                 </label>
                                 <textarea class="form-control @error('form.description') is-invalid @enderror"
                                     wire:model="form.description"
                                     rows="4"
-                                    placeholder="Tuliskan deskripsi lengkap, tujuan pembelajaran, atau ringkasan kelas pelatihan ini..."></textarea>
+                                    placeholder="Tuliskan deskripsi lengkap, tujuan pembelajaran, atau ringkasan kelas ini..."></textarea>
                                 @error('form.description')
                                     <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
                                 @enderror
@@ -250,11 +250,11 @@
                                 </div>
                             @endif
 
-                            {{-- Row Khusus Kelas Berbayar: Biaya Pelatihan --}}
+                            {{-- Row Khusus Kelas Berbayar: Biaya Kelas --}}
                             @if (in_array($form['type'] ?? '', ['paid', 'berbayar']))
                                 <div class="col-md-12" wire:key="field-price">
                                     <label class="form-label text-xs fw-semibold text-dark mb-1">
-                                        Biaya Pelatihan (Tarif Masuk) <span class="text-danger">*</span>
+                                        Biaya Kelas (Tarif Masuk) <span class="text-danger">*</span>
                                     </label>
                                     <div class="input-group">
                                         <span class="input-group-text bg-light text-dark fw-bold">Rp</span>
@@ -263,7 +263,7 @@
                                             wire:model="form.price" placeholder="Contoh: 150000">
                                     </div>
                                     <div class="form-text text-xs text-muted mt-1">Masukkan nominal biaya pendaftaran
-                                        kelas berbayar.</div>
+                                         kelas berbayar.</div>
                                     @error('form.price')
                                         <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
                                     @enderror
@@ -308,7 +308,7 @@
                             {{-- Poster Thumbnail --}}
                             <div class="col-md-6">
                                 <label class="form-label text-xs fw-semibold text-dark mb-1">
-                                    Poster Pelatihan (JPG/PNG) <span class="text-muted fw-normal">(Opsional)</span>
+                                    Poster Kelas (JPG/PNG) <span class="text-muted fw-normal">(Opsional)</span>
                                 </label>
                                 <div class="input-group">
                                     <span class="input-group-text bg-light text-muted"><i

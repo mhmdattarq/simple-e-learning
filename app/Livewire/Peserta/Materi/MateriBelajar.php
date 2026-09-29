@@ -34,7 +34,7 @@ class MateriBelajar extends Component
         $user = Auth::user();
 
         if ($this->course->status !== CourseStatus::Published && ! $user->hasAdminAccess()) {
-            abort(404, 'Pelatihan tidak ditemukan atau belum dipublikasikan.');
+            abort(404, 'Kelas tidak ditemukan atau belum dipublikasikan.');
         }
 
         // Auto-enroll peserta yang login agar riwayat & progres belajar tercatat
@@ -283,7 +283,7 @@ class MateriBelajar extends Component
         } else {
             $this->dispatch('show-toast', [
                 'type' => 'success',
-                'message' => 'Selamat! Anda telah menyelesaikan seluruh materi pelatihan ini.',
+                'message' => 'Selamat! Anda telah menyelesaikan seluruh materi kelas ini.',
             ]);
         }
     }

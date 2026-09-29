@@ -25,7 +25,7 @@ new class extends Component {
                             </a>
                         </div>
                         <p class="site-footer__text">
-                            Sistem Informasi Manajemen Pelatihan Elektronik (SIMPEL) ASN<br>
+                            Sistem Informasi Manajemen Pembelajaran Elektronik (SIMPEL) ASN<br>
                             BKPSDM Pemerintah Kabupaten Aceh Timur.
                         </p>
                     </div>
@@ -133,8 +133,8 @@ new class extends Component {
 
                                 {{-- Newsletter Box --}}
                                 <div class="site-footer__newsletter-box mt-4">
-                                    <h4 class="site-footer__title mb-2">Informasi Pelatihan</h4>
-                                    <p class="text-white-70 fs-8 mb-3">Dapatkan notifikasi jadwal pembukaan batch diklat dan pembaruan beasiswa kedinasan.</p>
+                                    <h4 class="site-footer__title mb-2">Informasi Kelas</h4>
+                                    <p class="text-white-70 fs-8 mb-3">Dapatkan notifikasi jadwal pembukaan batch diklat dan pembaruan kelas kedinasan.</p>
                                     <form class="site-footer__newsletter-form" onsubmit="event.preventDefault();">
                                         <div class="site-footer__newsletter-input">
                                             <input type="email" placeholder="Masukkan Email Kedinasan">

@@ -5,10 +5,10 @@
         <div class="row justify-content-center text-center mb-5 wow fadeInUp" data-wow-delay="100ms">
             <div class="col-lg-8">
                 <h2 class="fw-extrabold text-navy display-6 mb-3">
-                    Alur Mudah Pendaftaran & Pelatihan
+                    Alur Mudah Pendaftaran & Pembelajaran
                 </h2>
                 <p class="text-muted fs-6 mb-0 max-w-700 mx-auto">
-                    Lima langkah praktis bagi aparatur sipil negara untuk mengikuti program beasiswa digital SIMPEL
+                    Lima langkah praktis bagi aparatur sipil negara untuk mengikuti program kelas digital SIMPEL
                     hingga penerbitan e-sertifikat nasional.
                 </p>
             </div>
@@ -41,7 +41,7 @@
                     </div>
                     <h6 class="fw-bold text-navy mb-2 fs-7">Rekomendasi Instansi</h6>
                     <p class="text-muted fs-8 mb-0 lh-sm">
-                        Pilih silabus pelatihan dan unggah formulir persetujuan dari atasan langsung / BKPSDM.
+                        Pilih silabus kelas dan unggah formulir persetujuan dari atasan langsung / BKPSDM.
                     </p>
                 </div>
             </div>
@@ -56,7 +56,7 @@
                     </div>
                     <h6 class="fw-bold text-navy mb-2 fs-7">Seleksi & Penetapan</h6>
                     <p class="text-muted fs-8 mb-0 lh-sm">
-                        Verifikasi berkas administratif dan pengumuman penetapan peserta batch pelatihan.
+                        Verifikasi berkas administratif dan pengumuman penetapan peserta batch kelas.
                     </p>
                 </div>
             </div>

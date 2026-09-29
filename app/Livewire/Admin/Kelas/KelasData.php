@@ -33,7 +33,7 @@ class KelasData extends Component
             $msg = "PERHATIAN KURIKULUM & MATERI:\nKelas \"{$identity}\" memiliki {$course->lessons_count} materi pembelajaran.\n\nSeluruh bab kurikulum dan materi pembelajaran di dalamnya akan ikut dinonaktifkan. Apakah Anda yakin ingin melanjutkan?";
             $msgBoxClass = 'bg-danger-subtle border-danger text-danger';
         } else {
-            $msg = "Apakah Anda yakin ingin menghapus kelas \"{$identity}\"?\nData kelas akan dihapus dari daftar pelatihan.";
+            $msg = "Apakah Anda yakin ingin menghapus kelas \"{$identity}\"?\nData kelas akan dihapus dari daftar kelas.";
             $msgBoxClass = '';
         }
 

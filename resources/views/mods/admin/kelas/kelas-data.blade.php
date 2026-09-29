@@ -3,7 +3,7 @@
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
         <div>
             <h5 class="fw-bold text-dark mb-1">Data Kelas</h5>
-            <p class="text-muted mb-0">Manajemen katalog seluruh kelas pelatihan (Batch, Permanen, dan Berbayar).</p>
+            <p class="text-muted mb-0">Manajemen katalog seluruh kelas (Batch, Permanen, dan Berbayar).</p>
         </div>
         {{-- <div class="d-flex align-items-center gap-2">
             <a href="{{ route('kelas.create') }}" class="btn btn-simple-gold" wire:navigate>
@@ -19,7 +19,7 @@
             class="card-header bg-white pt-20 pb-0 px-20 border-0 d-flex align-items-center justify-content-between flex-wrap gap-2">
             <div class="d-flex align-items-center gap-2">
                 <i class="ri-file-list-3-fill text-simple fs-5"></i>
-                <h6 class="fw-bold text-dark mb-0 fs-6">Daftar Kelas Pelatihan</h6>
+                <h6 class="fw-bold text-dark mb-0 fs-6">Daftar Kelas</h6>
             </div>
         </div>
 

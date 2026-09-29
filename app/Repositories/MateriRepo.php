@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Storage;
 class MateriRepo
 {
     /**
-     * Mengambil struktur kurikulum lengkap (Bab dan Unit Materi) untuk suatu pelatihan.
+     * Mengambil struktur kurikulum lengkap (Bab dan Unit Materi) untuk suatu kelas.
      */
     public static function getCurriculumByCourse(int $courseId): Collection
     {

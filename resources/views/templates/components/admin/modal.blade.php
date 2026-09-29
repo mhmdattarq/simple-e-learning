@@ -265,7 +265,7 @@ new class extends Component {
                             <h5 class="simpel-modal-title mb-1">
                                 {{ !empty($chapterForm['id']) ? 'Edit Bab Kurikulum' : 'Tambah Bab Baru' }}
                             </h5>
-                            <p class="text-muted fs-8 mb-0">Tentukan nomor urut dan judul bab dalam kurikulum pelatihan.
+                            <p class="text-muted fs-8 mb-0">Tentukan nomor urut dan judul bab dalam kurikulum kelas.
                             </p>
                         </div>
                     </div>

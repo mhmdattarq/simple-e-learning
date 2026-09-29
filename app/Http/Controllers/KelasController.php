@@ -9,7 +9,7 @@ class KelasController extends Controller
 {
     /**
      * Serve JSON for Yajra DataTables server-side.
-     * Ultra-Thin Controller pattern untuk penyediaan data Yajra DataTables kelas pelatihan.
+     * Ultra-Thin Controller pattern untuk penyediaan data Yajra DataTables kelas.
      */
     public function dataDt()
     {

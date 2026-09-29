@@ -7,9 +7,12 @@
             <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb mb-0 fs-8">
-                        <li class="breadcrumb-item"><a href="{{ route('landing') }}" class="text-white-50 text-decoration-none hover-gold">Beranda</a></li>
-                        <li class="breadcrumb-item"><a href="{{ $backUrl }}" class="text-white-50 text-decoration-none hover-gold">Katalog Kelas</a></li>
-                        <li class="breadcrumb-item active text-gold fw-semibold" aria-current="page">{{ Str::limit($course->title, 40) }}</li>
+                        <li class="breadcrumb-item"><a href="{{ route('landing') }}"
+                                class="text-white-50 text-decoration-none hover-gold">Beranda</a></li>
+                        <li class="breadcrumb-item"><a href="{{ $backUrl }}"
+                                class="text-white-50 text-decoration-none hover-gold">Katalog Kelas</a></li>
+                        <li class="breadcrumb-item active text-gold fw-semibold" aria-current="page">
+                            {{ Str::limit($course->title, 40) }}</li>
                     </ol>
                 </nav>
                 <a href="{{ $backUrl }}" class="btn-simpel-outline-light fs-8 py-2 px-3">
@@ -51,7 +54,7 @@
                     </h1>
 
                     <p class="text-white-80 fs-6 mb-4 pe-lg-4 line-clamp-3">
-                        {{ $course->description ?: ($course->category?->description ?: 'Tingkatkan kompetensi Anda melalui program pelatihan terstruktur dari BKPSDM Aceh Timur. Pelajari modul, ikuti kuis, dan raih sertifikat resmi.') }}
+                        {{ $course->description ?: ($course->category?->description ?: 'Tingkatkan kompetensi Anda melalui program kelas terstruktur dari BKPSDM Aceh Timur. Pelajari modul, ikuti kuis, dan raih sertifikat resmi.') }}
                     </p>
 
                     <div class="d-flex flex-wrap align-items-center gap-4 text-white-80 fs-8 pt-2">
@@ -100,24 +103,30 @@
                                 <div class="mb-3">{{ $course->category->description }}</div>
                             @else
                                 <p class="mb-3">
-                                    Program pelatihan ini dirancang khusus untuk meningkatkan keahlian dan kompetensi aparatur dalam menghadapi tantangan profesional era digital. Materi disusun secara komprehensif mulai dari konsep dasar hingga implementasi praktis.
+                                    Program kelas ini dirancang khusus untuk meningkatkan keahlian dan kompetensi
+                                    aparatur dalam menghadapi tantangan profesional era digital. Materi disusun secara
+                                    komprehensif mulai dari konsep dasar hingga implementasi praktis.
                                 </p>
                             @endif
                             <p class="mb-0 text-muted fs-8">
-                                Setiap peserta dapat mempelajari modul secara mandiri atau terjadwal, menyelesaikan latihan pada tiap bab, dan memantau kemajuan belajar secara langsung melalui platform pembelajaran elektronik BKPSDM Aceh Timur.
+                                Setiap peserta dapat mempelajari modul secara mandiri atau terjadwal, menyelesaikan
+                                latihan pada tiap bab, dan memantau kemajuan belajar secara langsung melalui platform
+                                pembelajaran elektronik BKPSDM Aceh Timur.
                             </p>
                         </div>
                     </div>
 
                     {{-- Syllabus / Curriculum --}}
                     <div class="card border border-simpel rounded-4 bg-white shadow-xs p-4 mb-4">
-                        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3 pb-2 border-bottom border-simpel">
+                        <div
+                            class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3 pb-2 border-bottom border-simpel">
                             <div>
                                 <h4 class="fw-bold text-navy mb-1 d-flex align-items-center gap-2">
                                     <i class="ri-list-check-2 text-gold"></i>
                                     <span>Silabus & Kurikulum Materi</span>
                                 </h4>
-                                <span class="text-muted fs-8">Struktur materi pembelajaran yang akan Anda pelajari dalam kelas ini</span>
+                                <span class="text-muted fs-8">Struktur materi pembelajaran yang akan Anda pelajari dalam
+                                    kelas ini</span>
                             </div>
                             <span class="badge bg-navy text-white fw-bold fs-8 px-3 py-1_5">
                                 {{ $totalChapters }} Bab • {{ $totalLessons }} Materi
@@ -129,14 +138,17 @@
                                 @foreach ($course->chapters as $index => $chapter)
                                     <div class="accordion-item border border-simpel rounded-3 mb-3 overflow-hidden">
                                         <h2 class="accordion-header" id="heading-{{ $chapter->id }}">
-                                            <button class="accordion-button {{ $index === 0 ? '' : 'collapsed' }} bg-light fw-bold text-navy py-3 px-4"
+                                            <button
+                                                class="accordion-button {{ $index === 0 ? '' : 'collapsed' }} bg-light fw-bold text-navy py-3 px-4"
                                                 type="button" data-bs-toggle="collapse"
                                                 data-bs-target="#collapse-{{ $chapter->id }}"
                                                 aria-expanded="{{ $index === 0 ? 'true' : 'false' }}"
                                                 aria-controls="collapse-{{ $chapter->id }}">
-                                                <div class="d-flex align-items-center justify-content-between w-100 me-3">
+                                                <div
+                                                    class="d-flex align-items-center justify-content-between w-100 me-3">
                                                     <span class="d-flex align-items-center gap-2 fs-7">
-                                                        <span class="badge bg-gold text-navy rounded-circle px-2 py-1 fs-9">{{ $loop->iteration }}</span>
+                                                        <span
+                                                            class="badge bg-gold text-navy rounded-circle px-2 py-1 fs-9">{{ $loop->iteration }}</span>
                                                         <span>{{ $chapter->title }}</span>
                                                     </span>
                                                     <span class="text-muted fs-8 fw-normal">
@@ -152,17 +164,21 @@
                                             <div class="accordion-body p-0">
                                                 <ul class="list-group list-group-flush">
                                                     @forelse ($chapter->lessons as $lesson)
-                                                        <li class="list-group-item d-flex align-items-center justify-content-between py-3 px-4 border-simpel fs-8">
+                                                        <li
+                                                            class="list-group-item d-flex align-items-center justify-content-between py-3 px-4 border-simpel fs-8">
                                                             <div class="d-flex align-items-center gap-2">
                                                                 <i class="ri-play-circle-line text-gold fs-6"></i>
-                                                                <span class="text-dark fw-medium">{{ $lesson->title }}</span>
+                                                                <span
+                                                                    class="text-dark fw-medium">{{ $lesson->title }}</span>
                                                             </div>
-                                                            <span class="badge bg-light text-muted border border-simpel fs-9">
+                                                            <span
+                                                                class="badge bg-light text-muted border border-simpel fs-9">
                                                                 Tersedia
                                                             </span>
                                                         </li>
                                                     @empty
-                                                        <li class="list-group-item py-3 px-4 text-muted fs-8 fst-italic">
+                                                        <li
+                                                            class="list-group-item py-3 px-4 text-muted fs-8 fst-italic">
                                                             Materi sedang dalam proses persiapan.
                                                         </li>
                                                     @endforelse
@@ -179,44 +195,20 @@
                             </div>
                         @endif
                     </div>
-
-                    {{-- Learning Benefits --}}
-                    <div class="card border border-simpel rounded-4 bg-white shadow-xs p-4">
-                        <h4 class="fw-bold text-navy mb-3 d-flex align-items-center gap-2">
-                            <i class="ri-award-line text-gold"></i>
-                            <span>Fasilitas & Manfaat Pembelajaran</span>
-                        </h4>
-                        <div class="row g-3 fs-8 text-secondary">
-                            <div class="col-md-6 d-flex align-items-start gap-2">
-                                <i class="ri-checkbox-circle-fill text-success fs-6 mt-1 flex-shrink-0"></i>
-                                <span>Akses materi digital interaktif 24/7 kapan saja dan dari mana saja.</span>
-                            </div>
-                            <div class="col-md-6 d-flex align-items-start gap-2">
-                                <i class="ri-checkbox-circle-fill text-success fs-6 mt-1 flex-shrink-0"></i>
-                                <span>Pelacakan progres otomatis untuk setiap bab dan materi yang diselesaikan.</span>
-                            </div>
-                            <div class="col-md-6 d-flex align-items-start gap-2">
-                                <i class="ri-checkbox-circle-fill text-success fs-6 mt-1 flex-shrink-0"></i>
-                                <span>Sertifikat kelulusan resmi yang dapat diunduh setelah menyelesaikan seluruh materi.</span>
-                            </div>
-                            <div class="col-md-6 d-flex align-items-start gap-2">
-                                <i class="ri-checkbox-circle-fill text-success fs-6 mt-1 flex-shrink-0"></i>
-                                <span>Dukungan materi audio, video, teks, dan dokumen pendukung diklat.</span>
-                            </div>
-                        </div>
-                    </div>
                 </div>
 
                 {{-- Right Column: Action Card (Sticky on Large Screens) --}}
                 <div class="col-lg-4">
-                    <div class="card border border-simpel rounded-4 bg-white shadow-sm overflow-hidden sticky-lg-top" style="top: 105px; z-index: 15;">
+                    <div class="card border border-simpel rounded-4 bg-white shadow-sm overflow-hidden sticky-lg-top"
+                        style="top: 105px; z-index: 15;">
                         {{-- Thumbnail Preview --}}
                         <div class="position-relative" style="height: 200px; background: #071a33;">
                             @if ($course->thumbnail)
                                 <img src="{{ asset('storage/' . $course->thumbnail) }}" alt="{{ $course->title }}"
                                     class="w-100 h-100 object-fit-cover">
                             @else
-                                <div class="w-100 h-100 d-flex flex-column align-items-center justify-content-center text-white">
+                                <div
+                                    class="w-100 h-100 d-flex flex-column align-items-center justify-content-center text-white">
                                     <i class="ri-book-open-line text-gold" style="font-size: 54px;"></i>
                                     <span class="fs-8 text-white-50 mt-1">SIMPEL E-Learning</span>
                                 </div>
@@ -239,7 +231,7 @@
                             <div class="mb-4">
                                 <small class="text-muted d-block fs-8">Biaya Program</small>
                                 <h3 class="fw-extrabold text-navy mb-0">
-                                    {{ $course->isPaid() ? 'Rp ' . number_format($course->price, 0, ',', '.') : 'Gratis / Beasiswa' }}
+                                    {{ $course->isPaid() ? 'Rp ' . number_format($course->price, 0, ',', '.') : 'Gratis' }}
                                 </h3>
                             </div>
 
@@ -262,13 +254,14 @@
                                 </a>
                                 <p class="text-center text-muted fs-8 mb-3">
                                     Belum memiliki akun?
-                                    <a href="{{ route('register') }}" class="text-navy fw-bold text-decoration-none hover-gold">Daftar Akun Baru</a>
+                                    <a href="{{ route('register') }}"
+                                        class="text-navy fw-bold text-decoration-none hover-gold">Daftar Akun Baru</a>
                                 </p>
                             @endauth
 
                             {{-- Summary Meta Specs --}}
                             <div class="pt-3 border-top border-simpel">
-                                <h6 class="fw-bold text-navy fs-8 mb-3">Informasi Pelatihan</h6>
+                                <h6 class="fw-bold text-navy fs-8 mb-3">Informasi Kelas</h6>
                                 <ul class="list-unstyled mb-0 d-flex flex-column gap-2 fs-8 text-secondary">
                                     <li class="d-flex align-items-center justify-content-between">
                                         <span class="d-flex align-items-center gap-2">
@@ -279,7 +272,8 @@
                                             @if ($course->isPermanent())
                                                 Mandiri 24/7
                                             @elseif ($course->start_date && $course->end_date)
-                                                {{ $course->start_date->format('d M') }} - {{ $course->end_date->format('d M Y') }}
+                                                {{ $course->start_date->format('d M') }} -
+                                                {{ $course->end_date->format('d M Y') }}
                                             @else
                                                 Terjadwal
                                             @endif

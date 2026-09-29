@@ -13,7 +13,7 @@
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
         <div>
             <h5 class="fw-bold text-dark mb-1">Tambah Kategori Baru</h5>
-            <p class="text-muted mb-0">Formulir penambahan rumpun atau klasifikasi bidang kelas pelatihan.</p>
+            <p class="text-muted mb-0">Formulir penambahan rumpun atau klasifikasi bidang kelas.</p>
         </div>
     </div>
 
@@ -43,7 +43,7 @@
                             </label>
                             <input type="text" class="form-control @error('form.name') is-invalid @enderror"
                                 wire:model.blur="form.name"
-                                placeholder="Contoh: Pelatihan Kepemimpinan, Pelatihan Teknis, dsb.">
+                                placeholder="Contoh: Kepemimpinan, Teknis, dsb.">
                             @error('form.name')
                                 <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
                             @enderror

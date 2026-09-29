@@ -11,8 +11,9 @@ test('halaman katalog pelatihan dapat diakses oleh publik', function () {
     $response = $this->get(route('pelatihan.index'));
 
     $response->assertStatus(200);
-    $response->assertSee('Katalog Pelatihan');
-    $response->assertSee('Program Diklat ASN');
+    $response->assertSee('Katalog');
+    $response->assertSee('Kelas');
+    $response->assertSee('Program Kelas ASN');
 });
 
 test('halaman katalog pelatihan menampilkan kursus yang berstatus published', function () {

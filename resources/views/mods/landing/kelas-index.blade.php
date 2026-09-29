@@ -197,14 +197,14 @@
                                         </a>
                                     </h5>
                                     <p class="text-muted fs-7 mb-4 flex-grow-1 line-clamp-2">
-                                        {{ $course->description ?: ($course->category?->description ?: 'Pelatihan digital bagi ASN untuk peningkatan kompetensi berkelanjutan.') }}
+                                        {{ $course->description ?: ($course->category?->description ?: 'Kelas digital bagi ASN untuk peningkatan kompetensi berkelanjutan.') }}
                                     </p>
 
                                     {{-- Footer Action --}}
                                     <div class="pt-3 border-top border-simpel d-flex align-items-center justify-content-between mt-auto">
                                         <div>
                                             <small class="text-muted d-block" style="font-size: 11px;">
-                                                {{ $course->isPaid() ? 'Biaya Pelatihan' : ($course->isPermanent() ? 'Jadwal Akses' : 'Jadwal Diklat') }}
+                                                {{ $course->isPaid() ? 'Biaya Kelas' : ($course->isPermanent() ? 'Jadwal Akses' : 'Jadwal Diklat') }}
                                             </small>
                                             <span class="fw-bold text-navy fs-7">
                                                 @if ($course->isPaid())

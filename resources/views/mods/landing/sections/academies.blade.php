@@ -1,4 +1,4 @@
-{{-- Section 2: Daftar Jenis Kelas Pelatihan (3 Card Interaktif dengan Style Penjadwalan) --}}
+{{-- Section 2: Daftar Jenis Kelas (3 Card Interaktif dengan Style Penjadwalan) --}}
 <section class="py-5 bg-white border-bottom border-simpel" id="jenis-kelas">
     <div class="container py-lg-4 py-2">
 
@@ -11,10 +11,10 @@
                     </span>
                 </div>
                 <h2 class="fw-extrabold text-navy display-6 mb-2">
-                    Daftar Jenis <span class="text-gold">Kelas Pelatihan</span>
+                    Daftar Jenis <span class="text-gold">Kelas</span>
                 </h2>
                 <p class="text-muted fs-6 mb-0">
-                    Pilih skema pelatihan yang sesuai dengan kebutuhan pengembangan kompetensi Anda: Pelatihan Berjadwal (Batch), Pembelajaran Mandiri (Permanen), atau Program Sertifikasi Lanjutan (Berbayar).
+                    Pilih skema kelas yang sesuai dengan kebutuhan pengembangan kompetensi Anda: Kelas Berjadwal (Batch), Pembelajaran Mandiri (Permanen), atau Program Sertifikasi Lanjutan (Berbayar).
                 </p>
             </div>
             <div class="col-lg-4 text-lg-end">
@@ -67,7 +67,7 @@
                             Kelas Batch
                         </h5>
                         <p class="text-muted fs-7 mb-3 flex-grow-1">
-                            Program pelatihan kedinasan berjadwal dengan kuota dan periode registrasi berkala untuk aparatur sipil negara.
+                            Program kelas kedinasan berjadwal dengan kuota dan periode registrasi berkala untuk aparatur sipil negara.
                         </p>
 
                         {{-- Highlight Feature --}}
@@ -126,7 +126,7 @@
                             Kelas Permanen
                         </h5>
                         <p class="text-muted fs-7 mb-3 flex-grow-1">
-                            Pelatihan digital mandiri yang dapat diakses kapan saja dan di mana saja tanpa batasan jadwal atau tanggal berakhir.
+                            Kelas digital mandiri yang dapat diakses kapan saja dan di mana saja tanpa batasan jadwal atau tanggal berakhir.
                         </p>
 
                         {{-- Highlight Feature --}}
@@ -185,7 +185,7 @@
                             Kelas Berbayar
                         </h5>
                         <p class="text-muted fs-7 mb-3 flex-grow-1">
-                            Program sertifikasi keahlian khusus dan pelatihan profesi lanjutan yang diselenggarakan bersama mitra terakreditasi resmi.
+                            Program sertifikasi keahlian khusus dan kelas profesi lanjutan yang diselenggarakan bersama mitra terakreditasi resmi.
                         </p>
 
                         {{-- Highlight Feature --}}

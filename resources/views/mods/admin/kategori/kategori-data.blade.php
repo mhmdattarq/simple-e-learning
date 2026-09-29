@@ -3,7 +3,7 @@
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
         <div>
             <h5 class="fw-bold text-dark mb-1">Kategori Kelas</h5>
-            <p class="text-muted mb-0">Manajemen rumpun dan bidang kompetensi kelas pelatihan ASN.</p>
+            <p class="text-muted mb-0">Manajemen rumpun dan bidang kompetensi kelas ASN.</p>
         </div>
     </div>
 

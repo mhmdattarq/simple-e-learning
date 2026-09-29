@@ -164,7 +164,7 @@ class KelasRepo
     }
 
     /**
-     * Arsipkan pelatihan (Diarsipkan / Archived).
+     * Arsipkan kelas (Diarsipkan / Archived).
      */
     public static function archiveCourse(int|string $id): bool
     {

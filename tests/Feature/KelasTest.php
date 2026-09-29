@@ -46,7 +46,7 @@ test('authorized internal roles can access kelas index page', function () {
     Livewire::actingAs($admin)
         ->test(KelasData::class)
         ->assertOk()
-        ->assertSee('Daftar Kelas Pelatihan');
+        ->assertSee('Daftar Kelas');
 });
 
 test('kelas datatable endpoint returns valid yajra json response', function () {

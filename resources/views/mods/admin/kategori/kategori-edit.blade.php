@@ -49,7 +49,7 @@
                             </label>
                             <input type="text" class="form-control @error('form.name') is-invalid @enderror"
                                 wire:model.blur="form.name"
-                                placeholder="Contoh: Pelatihan Kepemimpinan, Pelatihan Teknis, dsb.">
+                                placeholder="Contoh: Kepemimpinan, Teknis, dsb.">
                             @error('form.name')
                                 <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
                             @enderror

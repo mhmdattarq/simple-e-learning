@@ -1,4 +1,4 @@
-{{-- Section 3: Katalog Kelas Pelatihan (Maksimal 6 Kelas Aktif Terbuka dengan Filter Jenis Kelas) --}}
+{{-- Section 3: Katalog Kelas (Maksimal 6 Kelas Aktif Terbuka dengan Filter Jenis Kelas) --}}
 <section class="py-5 bg-light border-bottom border-simpel" id="katalog-kelas">
     <div class="container py-lg-4 py-2">
 
@@ -11,10 +11,10 @@
                     </span>
                 </div>
                 <h2 class="fw-extrabold text-navy display-6 mb-2">
-                    Katalog <span class="text-gold">Kelas Pelatihan</span>
+                    Katalog <span class="text-gold">Kelas</span>
                 </h2>
                 <p class="text-muted fs-6 mb-0">
-                    Pilih dan ikuti kelas pelatihan aktif dari berbagai bidang kompetensi aparatur yang diselenggarakan BKPSDM Kabupaten Aceh Timur.
+                    Pilih dan ikuti kelas aktif dari berbagai bidang kompetensi aparatur yang diselenggarakan BKPSDM Kabupaten Aceh Timur.
                 </p>
             </div>
 
@@ -112,7 +112,7 @@
                             <div class="p-4 d-flex flex-column flex-grow-1">
                                 <div class="d-flex align-items-center justify-content-between text-muted fs-8 mb-2">
                                     <span class="badge bg-light text-navy border border-simpel">
-                                        {{ $course->category?->name ?? 'Pelatihan ASN' }}
+                                        {{ $course->category?->name ?? 'Kelas ASN' }}
                                     </span>
                                     <span class="text-success fw-bold">
                                         <i class="ri-checkbox-circle-line me-1"></i>Kelas Terbuka
@@ -126,7 +126,7 @@
                                 </h5>
 
                                 <p class="text-muted fs-7 mb-4 flex-grow-1 line-clamp-2">
-                                    {{ $course->description ?: ($course->category?->description ?: 'Program pelatihan kompetensi aparatur yang diselenggarakan oleh BKPSDM Kabupaten Aceh Timur.') }}
+                                    {{ $course->description ?: ($course->category?->description ?: 'Program kelas kompetensi aparatur yang diselenggarakan oleh BKPSDM Kabupaten Aceh Timur.') }}
                                 </p>
 
                                 {{-- Footer Action --}}
@@ -164,7 +164,7 @@
                         </div>
                         <h5 class="text-navy fw-bold mb-1">Belum Ada Kelas Aktif untuk Kategori Ini</h5>
                         <p class="text-muted fs-6 mb-3">
-                            Saat ini belum ada kelas pelatihan terbuka untuk jenis yang Anda pilih.
+                            Saat ini belum ada kelas terbuka untuk jenis yang Anda pilih.
                         </p>
                         <div>
                             <button type="button" class="btn btn-sm btn-simpel-gold rounded-pill px-4"

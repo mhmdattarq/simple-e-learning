@@ -389,7 +389,7 @@
                             }
                         },
 
-                        // Kolom 3: Nama Pelatihan & Tipe
+                        // Kolom 3: Nama Kelas & Tipe
                         {
                             data: 'title',
                             name: 'title',
@@ -513,8 +513,8 @@
                         }
                     ],
                     language: {
-                        emptyTable: 'Belum ada data kelas pelatihan',
-                        zeroRecords: 'Belum ada data kelas pelatihan'
+                        emptyTable: 'Belum ada data kelas',
+                        zeroRecords: 'Belum ada data kelas'
                     },
                     initComplete: function(settings) {
                         var table = settings.oInstance.api();

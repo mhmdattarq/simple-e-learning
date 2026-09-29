@@ -10,7 +10,7 @@ use Livewire\Attributes\Title;
 use Livewire\Component;
 
 #[Layout('templates.layouts.landing')]
-#[Title('SIMPEL E-Learning - Portal Pelatihan Digital ASN & Aparatur')]
+#[Title('SIMPEL E-Learning - Portal Kelas Digital ASN & Aparatur')]
 class LandingIndex extends Component
 {
     public string $searchQuery = '';

@@ -19,7 +19,7 @@
 
                 {{-- Subtitle --}}
                 <p class="text-white-80 fs-6 mb-4 pe-lg-4 lh-base">
-                    Platform beasiswa pelatihan digital terintegrasi <strong>SIMPEL E-Learning</strong> untuk aparatur
+                    Platform pembelajaran digital terintegrasi <strong>SIMPEL E-Learning</strong> untuk aparatur
                     sipil negara. Dilengkapi kurikulum berstandar nasional, mentoring pakar, dan e-sertifikat kompetensi
                     resmi terhubung ke SIASN BKN.
                 </p>
@@ -40,11 +40,11 @@
                 <div class="row g-3 pt-3 border-top border-white-10 text-white">
                     <div class="col-4">
                         <h4 class="mb-0 fw-extrabold text-gold">{{ $totalPublishedCourses > 0 ? $totalPublishedCourses.'+' : '—' }}</h4>
-                        <small class="text-white-70 fs-8">Tema Pelatihan SPBE</small>
+                        <small class="text-white-70 fs-8">Tema Kelas SPBE</small>
                     </div>
                     <div class="col-4 border-start border-white-15 ps-3">
                         <h4 class="mb-0 fw-extrabold text-gold">{{ $totalApprovedParticipants > 0 ? $totalApprovedParticipants.'+' : '100%' }}</h4>
-                        <small class="text-white-70 fs-8">Beasiswa Pemerintah</small>
+                        <small class="text-white-70 fs-8">Program Resmi BKPSDM</small>
                     </div>
                     <div class="col-4 border-start border-white-15 ps-3">
                         <h4 class="mb-0 fw-extrabold text-gold">SIASN</h4>
@@ -70,7 +70,7 @@
                                     <small class="text-white-60 fs-8"><i class="ri-time-line me-1"></i>40 JP</small>
                                 </div>
                                 <h6 class="fw-bold text-white mb-1">Government Transformation Academy</h6>
-                                <p class="text-white-70 fs-8 mb-2 lh-sm">Pelatihan arsitektur SPBE, tata kelola data
+                                <p class="text-white-70 fs-8 mb-2 lh-sm">Pembelajaran arsitektur SPBE, tata kelola data
                                     pemerintahan, dan rekayasa layanan terpadu.</p>
                                 <a href="#katalog-kelas"
                                     class="text-gold text-decoration-none fs-8 fw-semibold d-inline-flex align-items-center gap-1 hover-gold">

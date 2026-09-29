@@ -9,7 +9,7 @@ use Livewire\Attributes\Title;
 use Livewire\Component;
 
 #[Layout('templates.layouts.landing')]
-#[Title('Jadwal Pelatihan – SIMPEL E-Learning BKPSDM Aceh Timur')]
+#[Title('Jadwal Kelas – SIMPEL E-Learning BKPSDM Aceh Timur')]
 class JadwalIndex extends Component
 {
     public function render()
