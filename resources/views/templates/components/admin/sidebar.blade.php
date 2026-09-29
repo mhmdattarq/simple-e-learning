@@ -25,17 +25,73 @@ new class extends Component {
             <ul class="sidebar-menu" id="sidebar-menu"
                 x-data="{
                     activeDropdown: '{{ request()->routeIs('kategori.*') ? 'kategori' : (request()->routeIs(['kelas.*', 'materi.*']) ? 'kelas' : (request()->routeIs('evaluasi.*') ? 'evaluasi' : '')) }}',
+                    currentModule: '{{ request()->routeIs('kategori.*') ? 'kategori' : (request()->routeIs(['kelas.*', 'materi.*']) ? 'kelas' : (request()->routeIs('evaluasi.*') ? 'evaluasi' : '')) }}',
                     toggle(name) {
                         this.activeDropdown = (this.activeDropdown === name) ? '' : name;
                     },
                     init() {
+                        this.syncActive();
                         document.addEventListener('livewire:navigated', () => {
-                            const path = window.location.pathname;
-                            if (path.includes('/kategori')) this.activeDropdown = 'kategori';
-                            else if (path.includes('/kelas') || path.includes('/materi')) this.activeDropdown = 'kelas';
-                            else if (path.includes('/evaluasi')) this.activeDropdown = 'evaluasi';
-                            else this.activeDropdown = '';
+                            this.syncActive();
                         });
+                    },
+                    syncActive() {
+                        const path = window.location.pathname;
+                        if (path.includes('/kategori')) {
+                            this.activeDropdown = 'kategori';
+                            this.currentModule = 'kategori';
+                        } else if (path.includes('/kelas') || path.includes('/materi')) {
+                            this.activeDropdown = 'kelas';
+                            this.currentModule = 'kelas';
+                        } else if (path.includes('/evaluasi')) {
+                            this.activeDropdown = 'evaluasi';
+                            this.currentModule = 'evaluasi';
+                        } else {
+                            this.activeDropdown = '';
+                            this.currentModule = '';
+                        }
+
+                        // Sync active-page class on submenu items when wire:navigate runs
+                        const submenuLinks = document.querySelectorAll('.sidebar-menu .sidebar-submenu li a');
+                        submenuLinks.forEach(link => {
+                            const li = link.closest('li');
+                            const href = link.getAttribute('href');
+                            if (!href || !li) return;
+
+                            let isCurrent = false;
+                            try {
+                                const linkUrl = new URL(href, window.location.origin);
+                                const linkPath = linkUrl.pathname;
+
+                                if (linkPath === path) {
+                                    isCurrent = true;
+                                } else if (linkPath.includes('/evaluasi/data') && path.includes('/evaluasi/detail')) {
+                                    isCurrent = true;
+                                } else if (linkPath.includes('/kelas/data') && (path.includes('/materi') || path.includes('/kelas/edit'))) {
+                                    isCurrent = true;
+                                } else if (linkPath.includes('/kategori/data') && path.includes('/kategori/edit')) {
+                                    isCurrent = true;
+                                }
+                            } catch (e) {}
+
+                            if (isCurrent) {
+                                li.classList.add('active-page');
+                                link.classList.add('active-page');
+                            } else {
+                                li.classList.remove('active-page');
+                                link.classList.remove('active-page');
+                            }
+                        });
+
+                        // Sync top-level nav-item (e.g. Beranda)
+                        const berandaLink = document.querySelector('.sidebar-menu > li.nav-item > a');
+                        if (berandaLink) {
+                            if (path === '/' || path.includes('/admin/dashboard') || path === '/dashboard') {
+                                berandaLink.classList.add('active-page');
+                            } else {
+                                berandaLink.classList.remove('active-page');
+                            }
+                        }
                     }
                 }">
                 <li class="sidebar-menu-group-title">MENU UTAMA</li>
@@ -53,7 +109,7 @@ new class extends Component {
                 <li class="dropdown {{ request()->routeIs('kategori.*') ? 'open is-active-module' : '' }}"
                     :class="{
                         'open': activeDropdown === 'kategori',
-                        'is-active-module': {{ request()->routeIs('kategori.*') ? 'true' : 'false' }}
+                        'is-active-module': currentModule === 'kategori'
                     }">
                     <a href="javascript:void(0)" @click.prevent.stop="toggle('kategori')" title="Kategori Kelas">
                         <i class="ri-folder-3-line menu-icon"></i>
@@ -65,7 +121,7 @@ new class extends Component {
                                 <i class="ri-circle-fill circle-icon"></i> <span>Tambah Kategori</span>
                             </a>
                         </li>
-                        <li class="{{ request()->routeIs('kategori.data') ? 'active-page' : '' }}">
+                        <li class="{{ (request()->routeIs('kategori.data') || request()->routeIs('kategori.edit')) ? 'active-page' : '' }}">
                             <a href="{{ route('kategori.data') }}" wire:navigate>
                                 <i class="ri-circle-fill circle-icon"></i> <span>Data Kategori</span>
                             </a>
@@ -77,7 +133,7 @@ new class extends Component {
                 <li class="dropdown {{ request()->routeIs(['kelas.*', 'materi.*']) ? 'open is-active-module' : '' }}"
                     :class="{
                         'open': activeDropdown === 'kelas',
-                        'is-active-module': {{ request()->routeIs(['kelas.*', 'materi.*']) ? 'true' : 'false' }}
+                        'is-active-module': currentModule === 'kelas'
                     }">
                     <a href="javascript:void(0)" @click.prevent.stop="toggle('kelas')" title="Kelas">
                         <i class="ri-file-list-3-line menu-icon"></i>
@@ -89,7 +145,7 @@ new class extends Component {
                                 <i class="ri-circle-fill circle-icon"></i> <span>Tambah Kelas</span>
                             </a>
                         </li>
-                        <li class="{{ (request()->routeIs('kelas.data') || request()->routeIs('materi.*')) ? 'active-page' : '' }}">
+                        <li class="{{ (request()->routeIs('kelas.data') || request()->routeIs('materi.*') || request()->routeIs('kelas.edit')) ? 'active-page' : '' }}">
                             <a href="{{ route('kelas.data') }}" wire:navigate>
                                 <i class="ri-circle-fill circle-icon"></i> <span>Data Kelas</span>
                             </a>
@@ -101,7 +157,7 @@ new class extends Component {
                 <li class="dropdown {{ request()->routeIs('evaluasi.*') ? 'open is-active-module' : '' }}"
                     :class="{
                         'open': activeDropdown === 'evaluasi',
-                        'is-active-module': {{ request()->routeIs('evaluasi.*') ? 'true' : 'false' }}
+                        'is-active-module': currentModule === 'evaluasi'
                     }">
                     <a href="javascript:void(0)" @click.prevent.stop="toggle('evaluasi')" title="Evaluasi & Kuis">
                         <i class="ri-star-smile-line menu-icon"></i>
@@ -113,7 +169,7 @@ new class extends Component {
                                 <i class="ri-circle-fill circle-icon"></i> <span>Tambah Evaluasi &amp; Kuis</span>
                             </a>
                         </li>
-                        <li class="{{ request()->routeIs('evaluasi.data') ? 'active-page' : '' }}">
+                        <li class="{{ (request()->routeIs('evaluasi.data') || request()->routeIs('evaluasi.detail*')) ? 'active-page' : '' }}">
                             <a href="{{ route('evaluasi.data') }}" wire:navigate>
                                 <i class="ri-circle-fill circle-icon"></i> <span>Data Evaluasi &amp; Kuis</span>
                             </a>

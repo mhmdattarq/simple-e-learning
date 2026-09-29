@@ -77,12 +77,11 @@ test('admin can access evaluasi detail page and sees 4 monitoring cards and ques
     $response = $this->actingAs($this->admin)->get(route('evaluasi.detail', $this->course->id));
 
     $response->assertOk();
-    $response->assertSee('Detail &amp; Monitoring Evaluasi', false);
     $response->assertSee('Tata Kelola Kepegawaian');
-    $response->assertSee('Total Evaluasi');
-    $response->assertSee('Kuis Bab (Formatif)');
-    $response->assertSee('Ujian Akhir (Sumatif)');
-    $response->assertSee('Partisipasi Peserta');
+    $response->assertSeeText('Total Evaluasi');
+    $response->assertSeeText('Kuis Bab (Formatif)');
+    $response->assertSeeText('Ujian Akhir (Sumatif)');
+    $response->assertSeeText('Partisipasi Peserta');
     $response->assertSee('Kuis Regulasi Kepegawaian');
     $response->assertSee('Ujian Akhir Kelulusan');
     $response->assertSee('Apa dasar hukum ASN?');
@@ -127,4 +126,14 @@ test('admin can trigger hookModalDelete and delete quiz from detail page', funct
 
     expect(Quiz::find($this->finalQuiz->id))->toBeNull()
         ->and(Quiz::withTrashed()->find($this->finalQuiz->id))->not->toBeNull();
+});
+
+test('sidebar renders Data Evaluasi child item with active-page class when viewing evaluasi.detail page', function () {
+    $response = $this->actingAs($this->admin)->get(route('evaluasi.detail', $this->course->id));
+
+    $response->assertOk();
+    $response->assertSee('Data Evaluasi &amp; Kuis', false);
+    // Verifikasi bahwa elemen li yang membungkus link Data Evaluasi memiliki class active-page
+    $content = $response->getContent();
+    expect($content)->toMatch('/<li class="active-page">\s*<a href="[^"]*\/evaluasi\/data"[^>]*>\s*<i class="ri-circle-fill circle-icon"><\/i>\s*<span>Data Evaluasi &amp; Kuis<\/span>/');
 });

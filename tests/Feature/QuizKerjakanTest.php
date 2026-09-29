@@ -237,3 +237,29 @@ test('participant cannot retake quiz and directly sees permanent result upon rev
 
     expect(QuizAttempt::where('quiz_id', $this->quiz->id)->where('user_id', $this->peserta->id)->count())->toBe(1);
 });
+
+test('participant promptSubmit dispatches reusable modal configuration and confirm event completes quiz', function () {
+    DB::table('lesson_user')->insert([
+        ['user_id' => $this->peserta->id, 'lesson_id' => $this->lesson1->id, 'is_completed' => true, 'completed_at' => now()],
+        ['user_id' => $this->peserta->id, 'lesson_id' => $this->lesson2->id, 'is_completed' => true, 'completed_at' => now()],
+    ]);
+
+    Livewire::actingAs($this->peserta)
+        ->test(QuizKerjakan::class, ['quiz_id' => $this->quiz->id, 'course_id' => $this->course->id])
+        ->call('startQuiz')
+        ->call('selectOption', $this->q1->id, $this->q1OptA->id)
+        ->call('promptSubmit')
+        ->assertDispatched('modal-delete-setDeleteId', function ($event, $params) {
+            $payload = $params[0] ?? $params;
+
+            return ($payload['title'] ?? '') === 'Konfirmasi Selesai & Kumpulkan'
+                && str_contains($payload['msg'] ?? '', '1 dari 2 butir pertanyaan')
+                && str_contains($payload['msg'] ?? '', 'Masih ada 1 soal yang belum Anda jawab!')
+                && ($payload['dispatch'] ?? '') === 'QuizKerjakan-submit'
+                && ($payload['btnConfirmText'] ?? '') === 'Ya, Kumpulkan';
+        })
+        ->dispatch('QuizKerjakan-submit')
+        ->assertSet('quizState', 'result');
+
+    expect(QuizAttempt::where('quiz_id', $this->quiz->id)->where('user_id', $this->peserta->id)->count())->toBe(1);
+});

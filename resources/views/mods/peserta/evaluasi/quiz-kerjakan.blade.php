@@ -341,7 +341,7 @@
                                         </button>
                                     @else
                                         <button type="button" class="btn btn-success px-4 py-2 radius-8 fs-8 fw-bold"
-                                            wire:click="promptSubmit">
+                                            wire:click="promptSubmit" data-bs-toggle="modal" data-bs-target="#modalDelete">
                                             <i class="ri-checkbox-circle-line me-1"></i> Selesaikan Evaluasi
                                         </button>
                                     @endif
@@ -383,73 +383,17 @@
                                             style="width: 12px; height: 12px;"></span>
                                         <span>Sudah Dijawab</span>
                                     </div>
-                                    <div class="d-flex align-items-center gap-2 text-xxs text-muted mb-3">
+                                    <div class="d-flex align-items-center gap-2 text-xxs text-muted">
                                         <span class="d-inline-block rounded border bg-white"
                                             style="width: 12px; height: 12px;"></span>
                                         <span>Belum Dijawab</span>
                                     </div>
-
-                                    <button type="button" class="btn btn-danger w-100 py-2 radius-8 fs-8 fw-semibold"
-                                        wire:click="promptSubmit">
-                                        <i class="ri-check-double-line me-1"></i> Kumpulkan Jawaban
-                                    </button>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-
-            {{-- Modal Konfirmasi Pengumpulan Jawaban --}}
-            @if ($showSubmitConfirmation)
-                <div class="modal fade show d-block" tabindex="-1"
-                    style="background: rgba(15, 23, 42, 0.65); z-index: 1060;">
-                    <div class="modal-dialog modal-dialog-centered" style="max-width: 480px;">
-                        <div class="modal-content border-0 radius-16 shadow-lg overflow-hidden">
-                            <div class="modal-body p-4 text-center">
-                                <div class="mb-3">
-                                    <div class="d-inline-flex align-items-center justify-content-center bg-warning-subtle text-warning rounded-circle"
-                                        style="width: 64px; height: 64px;">
-                                        <i class="ri-question-mark fs-2"></i>
-                                    </div>
-                                </div>
-
-                                <h5 class="fw-bold text-dark mb-2">Konfirmasi Selesai &amp; Kumpulkan</h5>
-
-                                <p class="text-muted fs-8 mb-3">
-                                    Anda telah menjawab <strong>{{ $this->answeredCount }}</strong> dari
-                                    <strong>{{ $this->questionsCount }}</strong> butir pertanyaan.
-                                    @if ($this->answeredCount < $this->questionsCount)
-                                        <span class="text-danger d-block mt-1 fw-semibold">
-                                            Masih ada {{ $this->questionsCount - $this->answeredCount }} soal yang
-                                            belum Anda jawab!
-                                        </span>
-                                    @endif
-                                </p>
-
-                                <div class="alert alert-warning border-0 p-2 text-xxs text-start mb-4">
-                                    <i class="ri-alert-line me-1"></i>
-                                    <strong>Perhatian:</strong> Kuis ini menerapkan sistem Single Attempt. Jawaban yang
-                                    dikumpulkan bersifat final dan tidak dapat diubah kembali.
-                                </div>
-
-                                <div class="d-flex align-items-center gap-2">
-                                    <button type="button" class="btn btn-outline-secondary w-50 py-2 radius-8 fs-8"
-                                        wire:click="cancelSubmit">
-                                        Periksa Lagi
-                                    </button>
-                                    <button type="button" class="btn btn-success w-50 py-2 radius-8 fs-8 fw-bold"
-                                        wire:click="submitQuiz" wire:loading.attr="disabled">
-                                        <span wire:loading.remove>Ya, Kumpulkan</span>
-                                        <span wire:loading><span class="spinner-border spinner-border-sm me-1"></span>
-                                            Menyimpan...</span>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            @endif
 
             {{-- STATE 4: RESULT / HASIL EVALUASI (SINGLE ATTEMPT FINAL) --}}
         @elseif ($quizState === 'result' && $savedAttempt)

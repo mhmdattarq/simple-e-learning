@@ -92,14 +92,14 @@ new class extends Component {
             width: 64px !important;
             height: 64px !important;
             border-radius: 50% !important;
-            background-color: #fef2f2 !important;
-            color: #dc2626 !important;
+            background-color: #fef2f2;
+            color: #dc2626;
             font-size: 28px !important;
             display: inline-flex !important;
             align-items: center !important;
             justify-content: center !important;
             margin-bottom: 14px !important;
-            box-shadow: 0 8px 24px rgba(220, 38, 38, 0.15) !important;
+            box-shadow: 0 8px 24px rgba(220, 38, 38, 0.15);
         }
 
         .simpel-modal-title {
@@ -165,12 +165,11 @@ new class extends Component {
             border-color: #cbd5e1 !important;
         }
 
-        .simpel-modal-btn-confirm {
+        .simpel-modal-btn-confirm,
+        .simpel-modal-btn-success {
+            flex: 1 1 50% !important;
             width: 100% !important;
             padding: 10px 16px !important;
-            border: 1px solid #dc2626 !important;
-            background-color: #dc2626 !important;
-            color: #ffffff !important;
             font-weight: 600 !important;
             border-radius: 10px !important;
             font-size: 13.5px !important;
@@ -179,15 +178,34 @@ new class extends Component {
             align-items: center !important;
             justify-content: center !important;
             gap: 6px !important;
-            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.25) !important;
             transition: all 0.15s ease !important;
             cursor: pointer !important;
             box-sizing: border-box !important;
         }
 
+        .simpel-modal-btn-confirm {
+            border: 1px solid #dc2626 !important;
+            background-color: #dc2626 !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.25) !important;
+        }
+
         .simpel-modal-btn-confirm:hover {
             background-color: #b91c1c !important;
             border-color: #b91c1c !important;
+            color: #ffffff !important;
+        }
+
+        .simpel-modal-btn-success {
+            border: 1px solid #16a34a !important;
+            background-color: #16a34a !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 12px rgba(22, 163, 74, 0.25) !important;
+        }
+
+        .simpel-modal-btn-success:hover {
+            background-color: #15803d !important;
+            border-color: #15803d !important;
             color: #ffffff !important;
         }
 
@@ -213,8 +231,9 @@ new class extends Component {
                 {{-- Modal Body --}}
                 <div class="modal-body simpel-modal-body">
                     {{-- Warning Icon Badge --}}
-                    <div class="simpel-modal-icon-badge">
-                        <i class="ri-delete-bin-line"></i>
+                    <div class="simpel-modal-icon-badge {{ $data['iconBadgeClass'] ?? '' }}"
+                        @if (!empty($data['iconBadgeStyle'])) style="{{ $data['iconBadgeStyle'] }}" @endif>
+                        <i class="{{ $data['icon'] ?? 'ri-delete-bin-line' }}"></i>
                     </div>
 
                     {{-- Title --}}
@@ -231,12 +250,14 @@ new class extends Component {
 
                     {{-- Action Buttons (50/50 Balanced) --}}
                     <div class="simpel-modal-actions">
-                        <button type="button" class="btn simpel-modal-btn-cancel" data-bs-dismiss="modal">
-                            Batal
+                        <button type="button" class="btn {{ $data['btnCancelClass'] ?? 'simpel-modal-btn-cancel' }}" data-bs-dismiss="modal">
+                            {{ $data['btnCancelText'] ?? 'Batal' }}
                         </button>
-                        <button type="button" class="btn simpel-modal-btn-confirm" data-bs-dismiss="modal"
+                        <button type="button" class="btn {{ $data['btnConfirmClass'] ?? 'simpel-modal-btn-confirm' }}"
+                            @if (!empty($data['btnConfirmStyle'])) style="{{ $data['btnConfirmStyle'] }}" @endif
+                            data-bs-dismiss="modal"
                             wire:click="process({{ $data['id'] ?? 0 }})">
-                            <i class="ri-delete-bin-line"></i> Ya, Hapus
+                            <i class="{{ $data['btnConfirmIcon'] ?? 'ri-delete-bin-line' }}"></i> {{ $data['btnConfirmText'] ?? 'Ya, Hapus' }}
                         </button>
                     </div>
                 </div>

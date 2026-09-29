@@ -33,7 +33,7 @@
                 Data terintegrasi, real time, transparan, dan akuntabel — BKPSDM Kabupaten Aceh Timur.
             </p>
         </div>
-        @if(auth()->user()?->isAdmin())
+        @if (auth()->user()?->isAdmin())
             <button type="button" class="btn-simpel-gold" data-bs-toggle="modal" data-bs-target="#modalRencanaKelas">
                 <i class="ri-add-line"></i>
                 Buat Rencana Kelas
@@ -531,7 +531,7 @@
                 </div>
                 <div class="modal-footer border-top py-16 px-24 d-flex justify-content-end gap-2"
                     style="background-color: #f8f9fb; border-radius: 0 0 19px 19px;">
-                    <button type="button" class="btn btn-outline-secondary rounded-3 px-4"
+                    <button type="button" class="btn btn-outline-danger rounded-3 px-4"
                         data-bs-dismiss="modal">Batal</button>
                     <button type="button" class="btn btn-simpel-gold px-4" data-bs-dismiss="modal">
                         Simpan Draf Rencana

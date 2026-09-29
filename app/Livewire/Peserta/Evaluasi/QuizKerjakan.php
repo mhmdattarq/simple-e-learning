@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\On;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 
@@ -228,11 +229,45 @@ class QuizKerjakan extends Component
     }
 
     /**
-     * Membuka modal konfirmasi pengumpulan jawaban.
+     * Membuka modal konfirmasi pengumpulan jawaban reusable.
      */
     public function promptSubmit(): void
     {
         $this->showSubmitConfirmation = true;
+
+        $unanswered = $this->questionsCount - $this->answeredCount;
+
+        $msg = "Anda telah menjawab {$this->answeredCount} dari {$this->questionsCount} butir pertanyaan.";
+        if ($unanswered > 0) {
+            $msg .= "\n\nMasih ada {$unanswered} soal yang belum Anda jawab!";
+        }
+        $msg .= "\n\nPerhatian: Kuis ini menerapkan sistem Single Attempt. Jawaban yang dikumpulkan bersifat final dan tidak dapat diubah kembali.";
+
+        $dtHook = [
+            'id' => $this->quizId,
+            'title' => 'Konfirmasi Selesai & Kumpulkan',
+            'msg' => $msg,
+            'msgBoxClass' => $unanswered > 0 ? 'bg-warning-subtle text-dark border-warning' : '',
+            'icon' => 'ri-question-mark',
+            'iconBadgeClass' => 'bg-warning-subtle text-warning',
+            'iconBadgeStyle' => 'background-color: #fef3c7 !important; color: #d97706 !important; box-shadow: 0 8px 24px rgba(217, 119, 6, 0.2) !important;',
+            'btnCancelText' => 'Periksa Lagi',
+            'btnConfirmText' => 'Ya, Kumpulkan',
+            'btnConfirmIcon' => 'ri-check-line',
+            'btnConfirmClass' => 'simpel-modal-btn-success',
+            'dispatch' => 'QuizKerjakan-submit',
+        ];
+
+        $this->dispatch('modal-delete-setDeleteId', $dtHook);
+    }
+
+    /**
+     * Listener konfirmasi pengumpulan dari reusable modal.
+     */
+    #[On('QuizKerjakan-submit')]
+    public function handleConfirmSubmit(): void
+    {
+        $this->submitQuiz();
     }
 
     /**
