@@ -866,27 +866,22 @@ select::placeholder,
     gap: 0.35rem;
 }
 
-/* === 8-Stage Flow (Siklus Diklat) === */
+/* === 4-Stage Flow (Alur Pembelajaran) === */
 .flow-grid {
     display: grid;
-    grid-template-columns: repeat(8, 1fr);
-    gap: 8px;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
 }
 
-@media (max-width: 1200px) {
+@media (max-width: 992px) {
     .flow-grid {
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(2, 1fr);
     }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 576px) {
     .flow-grid {
-        display: flex;
-        overflow-x: auto;
-        padding-bottom: 8px;
-    }
-    .flow-card {
-        min-width: 115px;
+        grid-template-columns: 1fr;
     }
 }
 
@@ -1680,8 +1675,8 @@ select::placeholder,
     transition: color 0.15s ease;
 }
 
-.auth-input-wrapper input.auth-input {
-    height: 46px !important;
+.auth-input-wrapper input.auth-input,
+.auth-input-wrapper textarea.auth-input {
     background-color: #f8fafc !important;
     border: 1px solid #e2e8f0 !important;
     border-radius: 10px !important;
@@ -1691,6 +1686,22 @@ select::placeholder,
     color: #0f172a !important;
     transition: all 0.15s ease !important;
     box-shadow: none !important;
+}
+
+.auth-input-wrapper input.auth-input {
+    height: 46px !important;
+}
+
+.auth-input-wrapper textarea.auth-input {
+    padding-top: 12px !important;
+    padding-bottom: 12px !important;
+    line-height: 1.5 !important;
+    min-height: 80px;
+}
+
+.auth-input-wrapper .auth-field-icon.icon-top {
+    top: 14px !important;
+    transform: none !important;
 }
 
 .auth-input-wrapper input.auth-input::placeholder,
@@ -1705,13 +1716,15 @@ select::placeholder,
     padding-right: 44px !important;
 }
 
-.auth-input-wrapper input.auth-input:focus {
+.auth-input-wrapper input.auth-input:focus,
+.auth-input-wrapper textarea.auth-input:focus {
     background-color: #ffffff !important;
     border-color: #071a33 !important;
     box-shadow: 0 0 0 3px rgba(7, 26, 51, 0.08) !important;
 }
 
-.auth-input-wrapper input.auth-input.is-invalid {
+.auth-input-wrapper input.auth-input.is-invalid,
+.auth-input-wrapper textarea.auth-input.is-invalid {
     border-color: #ef4444 !important;
     background-color: #fef2f2 !important;
 }

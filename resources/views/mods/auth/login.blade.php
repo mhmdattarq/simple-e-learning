@@ -22,16 +22,16 @@
 
                 <div class="auth-pills-row">
                     <span class="auth-pill-item">
-                        <i class="ri-computer-line"></i>
-                        Akses Mandiri 24/7
+                        <i class="ri-user-follow-line"></i>
+                        Registrasi Mandiri
                     </span>
                     <span class="auth-pill-item">
-                        <i class="ri-award-line"></i>
-                        E-Sertifikat Resmi
+                        <i class="ri-book-open-line"></i>
+                        Katalog Kelas Terbuka
                     </span>
                     <span class="auth-pill-item">
-                        <i class="ri-shield-check-line"></i>
-                        Integrasi SIASN BKN
+                        <i class="ri-shield-keyhole-line"></i>
+                        Akses Akun Aman
                     </span>
                 </div>
             </div>

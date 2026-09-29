@@ -41,44 +41,24 @@
         @endif
     </div>
 
-    {{-- 8-Stage Flow / Siklus Kelas --}}
+    {{-- 4-Stage Flow / Alur Pembelajaran --}}
     <div class="mb-24">
         <div class="flow-grid">
-            <div class="flow-card done">
-                <div class="flow-n">
-                    <i class="ri-checkbox-circle-fill text-sm"></i>
-                </div>
-                <span>1. Kelola Kelas</span>
+            <div class="flow-card">
+                <div class="flow-n">1</div>
+                <span>1. Registrasi Akun</span>
             </div>
-            <div class="flow-card done">
-                <div class="flow-n">
-                    <i class="ri-checkbox-circle-fill text-sm"></i>
-                </div>
-                <span>2. Pendaftaran</span>
+            <div class="flow-card">
+                <div class="flow-n">2</div>
+                <span>2. Masuk Menggunakan Akun</span>
             </div>
-            <div class="flow-card current">
+            <div class="flow-card">
                 <div class="flow-n">3</div>
-                <span>3. Verifikasi</span>
+                <span>3. Melakukan Pembelajaran</span>
             </div>
             <div class="flow-card">
                 <div class="flow-n">4</div>
-                <span>4. Penjadwalan</span>
-            </div>
-            <div class="flow-card">
-                <div class="flow-n">5</div>
-                <span>5. Absensi</span>
-            </div>
-            <div class="flow-card">
-                <div class="flow-n">6</div>
-                <span>6. Materi</span>
-            </div>
-            <div class="flow-card">
-                <div class="flow-n">7</div>
-                <span>7. Evaluasi</span>
-            </div>
-            <div class="flow-card">
-                <div class="flow-n">8</div>
-                <span>8. Sertifikat</span>
+                <span>4. Evaluasi</span>
             </div>
         </div>
     </div>

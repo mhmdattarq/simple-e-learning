@@ -137,13 +137,13 @@
                         <label class="form-label text-xs fw-semibold text-secondary-dark mb-4" for="reg-address">
                             Alamat Lengkap <span class="text-danger">*</span>
                         </label>
-                        <div class="auth-input-wrapper">
-                            <span class="auth-field-icon" style="top: 14px;">
-                                <i class="ri-map-pin-line"></i>
+                        <div class="auth-input-wrapper position-relative">
+                            <span class="auth-field-icon icon-top" style="position: absolute; left: 14px; top: 12px; transform: none; z-index: 5; pointer-events: none;">
+                                <i class="ri-map-pin-line text-lg"></i>
                             </span>
-                            <textarea id="reg-address" wire:model="form.address" rows="2"
+                            <textarea id="reg-address" wire:model="form.address" rows="3"
                                 class="form-control auth-input @error('form.address') is-invalid @enderror"
-                                style="height: auto; padding-top: 10px; resize: vertical;"
+                                style="height: auto; min-height: 84px; padding-left: 44px !important; padding-top: 10px !important; padding-bottom: 10px !important; line-height: 1.5; resize: vertical;"
                                 placeholder="Alamat domisili lengkap"></textarea>
                         </div>
                         @error('form.address')
