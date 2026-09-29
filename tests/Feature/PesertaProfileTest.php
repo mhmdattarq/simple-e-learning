@@ -2,6 +2,10 @@
 
 use App\Livewire\Peserta\Profile\ProfileIndex;
 use App\Models\AuditLog;
+use App\Models\Category;
+use App\Models\Course;
+use App\Models\Quiz;
+use App\Models\QuizAttempt;
 use App\Models\User;
 use Database\Seeders\CategorySeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -106,4 +110,33 @@ test('navbar renders profile link and completion indicator for authenticated use
     $response->assertSee(route('peserta.profil'));
     $response->assertSee('Profil Saya');
     $response->assertSee('Lengkapi Data ASN Anda');
+});
+
+test('profile page displays quiz evaluation history for authenticated participant', function () {
+    $user = User::factory()->peserta()->create();
+    $admin = User::factory()->admin()->create();
+    $category = Category::factory()->create();
+    $course = Course::factory()->create(['category_id' => $category->id]);
+    $quiz = Quiz::factory()->finalQuiz()->create([
+        'course_id' => $course->id,
+        'title' => 'Ujian Akhir Spesialis ASN',
+        'created_by' => $admin->id,
+    ]);
+
+    QuizAttempt::factory()->create([
+        'quiz_id' => $quiz->id,
+        'user_id' => $user->id,
+        'total_earned_score' => 85,
+        'total_possible_score' => 100,
+        'percentage' => 85.0,
+        'is_passed' => true,
+    ]);
+
+    $response = $this->actingAs($user)->get(route('peserta.profil'));
+    $response->assertStatus(200);
+    $response->assertSee('Riwayat Evaluasi &amp; Kuis', false);
+    $response->assertSee('Ujian Akhir Spesialis ASN');
+    $response->assertSee('85 / 100');
+    $response->assertSee('85.0%');
+    $response->assertSee('Lulus');
 });

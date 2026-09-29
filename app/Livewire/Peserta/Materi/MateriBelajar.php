@@ -8,10 +8,10 @@ use App\Models\Chapter;
 use App\Models\Course;
 use App\Models\CourseUser;
 use App\Models\Lesson;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
-use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 
@@ -30,6 +30,7 @@ class MateriBelajar extends Component
         $this->courseId = $id;
         $this->course = Course::with(['category'])->findOrFail($id);
 
+        /** @var User $user */
         $user = Auth::user();
 
         if ($this->course->status !== CourseStatus::Published && ! $user->hasAdminAccess()) {
@@ -73,7 +74,7 @@ class MateriBelajar extends Component
             ->pluck('lesson_id')
             ->toArray();
 
-        $chapters = Chapter::with(['lessons' => fn($q) => $q->orderBy('order', 'asc')])
+        $chapters = Chapter::with(['lessons' => fn ($q) => $q->orderBy('order', 'asc')])
             ->where('course_id', $this->courseId)
             ->orderBy('order', 'asc')
             ->get();
@@ -102,6 +103,7 @@ class MateriBelajar extends Component
             return;
         }
 
+        /** @var User $user */
         $user = Auth::user();
 
         // Sequential lock: peserta cannot skip ahead
@@ -149,7 +151,7 @@ class MateriBelajar extends Component
      */
     protected function getAllLinearLessons(): array
     {
-        $chapters = Chapter::with(['lessons' => fn($q) => $q->orderBy('order', 'asc')->orderBy('id', 'asc')])
+        $chapters = Chapter::with(['lessons' => fn ($q) => $q->orderBy('order', 'asc')->orderBy('id', 'asc')])
             ->where('course_id', $this->courseId)
             ->orderBy('order', 'asc')
             ->orderBy('id', 'asc')
@@ -201,7 +203,7 @@ class MateriBelajar extends Component
         }
 
         $chapterLessons = $currentLesson->chapter->lessons()->orderBy('order', 'asc')->orderBy('id', 'asc')->get();
-        $currentIndex = $chapterLessons->search(fn($l) => $l->id === $currentLesson->id);
+        $currentIndex = $chapterLessons->search(fn ($l) => $l->id === $currentLesson->id);
 
         if ($currentIndex !== false && $currentIndex < $chapterLessons->count() - 1) {
             $this->markLessonComplete($currentLesson->id);
@@ -255,6 +257,16 @@ class MateriBelajar extends Component
         }
 
         $this->showCompleteModal = false;
+
+        // Jika bab ini memiliki kuis evaluasi dan belum dikerjakan, arahkan peserta ke kuis
+        if ($chapter->quiz && ! $chapter->quiz->isAttemptedByUser($user->id)) {
+            $this->redirect(
+                route('peserta.evaluasi.kerjakan', ['course_id' => $this->courseId, 'quiz_id' => $chapter->quiz->id]),
+                navigate: true
+            );
+
+            return;
+        }
 
         // Cari bab berikutnya
         $allLessons = $this->getAllLinearLessons();
@@ -327,7 +339,10 @@ class MateriBelajar extends Component
     {
         $user = Auth::user();
 
-        $chapters = Chapter::with(['lessons' => fn($q) => $q->orderBy('order', 'asc')])
+        $chapters = Chapter::with([
+            'lessons' => fn ($q) => $q->orderBy('order', 'asc'),
+            'quiz.attempts' => fn ($q) => $q->where('user_id', $user->id),
+        ])
             ->where('course_id', $this->courseId)
             ->orderBy('order', 'asc')
             ->get();

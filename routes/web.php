@@ -5,6 +5,8 @@ use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\KelasController;
 use App\Http\Controllers\MateriController;
 use App\Livewire\Admin\Dashboard\DashboardIndex;
+use App\Livewire\Admin\Evaluasi\EvaluasiCreate;
+use App\Livewire\Admin\Evaluasi\EvaluasiData;
 use App\Livewire\Admin\Kategori\KategoriCreate;
 use App\Livewire\Admin\Kategori\KategoriData;
 use App\Livewire\Admin\Kategori\KategoriEdit;
@@ -19,6 +21,7 @@ use App\Livewire\Landing\JadwalIndex;
 use App\Livewire\Landing\KelasDetail;
 use App\Livewire\Landing\KelasIndex;
 use App\Livewire\Landing\LandingIndex;
+use App\Livewire\Peserta\Evaluasi\QuizKerjakan;
 use App\Livewire\Peserta\Materi\MateriBelajar;
 use App\Livewire\Peserta\Profile\ProfileIndex;
 use Illuminate\Support\Facades\Auth;
@@ -49,6 +52,8 @@ Route::middleware('auth')->group(function () {
     Route::livewire('/profil', ProfileIndex::class)->name('peserta.profil');
     Route::livewire('/kelas/{id}/materi', MateriBelajar::class)->name('peserta.materi');
     Route::get('/pelatihan/{id}/materi', fn ($id) => redirect()->route('peserta.materi', $id));
+    Route::livewire('/kelas/{course_id}/evaluasi/{quiz_id}', QuizKerjakan::class)->name('peserta.evaluasi.kerjakan');
+    Route::livewire('/evaluasi/kerjakan/{quiz_id}', QuizKerjakan::class)->name('peserta.evaluasi.show');
 });
 
 // 4. Logout (Authenticated)
@@ -96,5 +101,11 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
             return redirect()->route('materi.detail', $params);
         })->name('editor');
+    });
+
+    // Modul: Evaluasi & Kuis (Tahap Evaluasi)
+    Route::prefix('evaluasi')->name('evaluasi.')->group(function () {
+        Route::livewire('/data', EvaluasiData::class)->name('data');
+        Route::livewire('/create', EvaluasiCreate::class)->name('create');
     });
 });

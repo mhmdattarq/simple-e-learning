@@ -1,0 +1,239 @@
+<?php
+
+use App\Livewire\Peserta\Evaluasi\QuizKerjakan;
+use App\Models\Category;
+use App\Models\Chapter;
+use App\Models\Course;
+use App\Models\Lesson;
+use App\Models\Quiz;
+use App\Models\QuizAttempt;
+use App\Models\QuizOption;
+use App\Models\QuizQuestion;
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
+use Livewire\Livewire;
+
+uses(RefreshDatabase::class);
+
+beforeEach(function () {
+    $this->category = Category::factory()->create();
+    $this->course = Course::factory()->create([
+        'category_id' => $this->category->id,
+        'title' => 'Pelatihan Transformasi Digital',
+        'status' => 'published',
+    ]);
+
+    $this->chapter = Chapter::create([
+        'course_id' => $this->course->id,
+        'title' => 'Bab 1: Pondasi Digital ASN',
+        'order' => 1,
+    ]);
+
+    $this->lesson1 = Lesson::create([
+        'chapter_id' => $this->chapter->id,
+        'title' => 'Materi 1: Era Digital',
+        'content_type' => 'text',
+        'order' => 1,
+    ]);
+
+    $this->lesson2 = Lesson::create([
+        'chapter_id' => $this->chapter->id,
+        'title' => 'Materi 2: Keamanan Informasi',
+        'content_type' => 'text',
+        'order' => 2,
+    ]);
+
+    $this->admin = User::factory()->admin()->create();
+    $this->peserta = User::factory()->peserta()->create();
+
+    // Setup Quiz with 2 questions (Dynamic scoring: Q1=10, Q2=15 -> Total=25, KKM=70%)
+    $this->quiz = Quiz::create([
+        'course_id' => $this->course->id,
+        'chapter_id' => $this->chapter->id,
+        'type' => 'chapter',
+        'title' => 'Evaluasi Bab 1 Digital',
+        'description' => 'Uji pemahaman pondasi digital ASN',
+        'time_limit_minutes' => 20,
+        'total_score' => 25,
+        'passing_score' => 70,
+        'created_by' => $this->admin->id,
+    ]);
+
+    // Question 1: Score 10, 4 options
+    $this->q1 = QuizQuestion::create([
+        'quiz_id' => $this->quiz->id,
+        'question_text' => 'Apa itu SPBE?',
+        'score' => 10,
+        'order' => 1,
+    ]);
+    $this->q1OptA = QuizOption::create(['question_id' => $this->q1->id, 'option_text' => 'Sistem Pemerintahan Berbasis Elektronik', 'is_correct' => true, 'order' => 1]);
+    $this->q1OptB = QuizOption::create(['question_id' => $this->q1->id, 'option_text' => 'Sistem Pelayanan Bersama Elektronik', 'is_correct' => false, 'order' => 2]);
+    $this->q1OptC = QuizOption::create(['question_id' => $this->q1->id, 'option_text' => 'Standar Pengelolaan Berkas Elektronik', 'is_correct' => false, 'order' => 3]);
+
+    // Question 2: Score 15, 2 options (True / False style)
+    $this->q2 = QuizQuestion::create([
+        'quiz_id' => $this->quiz->id,
+        'question_text' => 'Password wajib diganti secara berkala?',
+        'score' => 15,
+        'order' => 2,
+    ]);
+    $this->q2OptA = QuizOption::create(['question_id' => $this->q2->id, 'option_text' => 'Benar', 'is_correct' => true, 'order' => 1]);
+    $this->q2OptB = QuizOption::create(['question_id' => $this->q2->id, 'option_text' => 'Salah', 'is_correct' => false, 'order' => 2]);
+});
+
+test('guest cannot access quiz taking page and is redirected to login', function () {
+    $this->get(route('peserta.evaluasi.kerjakan', ['course_id' => $this->course->id, 'quiz_id' => $this->quiz->id]))
+        ->assertRedirect(route('login'));
+});
+
+test('quiz is locked when participant has not completed all chapter lessons', function () {
+    // Peserta only completed lesson 1 (lesson 2 still incomplete)
+    DB::table('lesson_user')->insert([
+        'user_id' => $this->peserta->id,
+        'lesson_id' => $this->lesson1->id,
+        'is_completed' => true,
+        'completed_at' => now(),
+    ]);
+
+    Livewire::actingAs($this->peserta)
+        ->test(QuizKerjakan::class, ['quiz_id' => $this->quiz->id, 'course_id' => $this->course->id])
+        ->assertSet('quizState', 'locked')
+        ->assertSee('Evaluasi Belum Dapat Diakses')
+        ->assertSee('Kuis Bab "Bab 1: Pondasi Digital ASN" masih terkunci');
+});
+
+test('admin can bypass prerequisite lock', function () {
+    Livewire::actingAs($this->admin)
+        ->test(QuizKerjakan::class, ['quiz_id' => $this->quiz->id, 'course_id' => $this->course->id])
+        ->assertSet('quizState', 'intro')
+        ->assertSee('Mulai Kerjakan Evaluasi');
+});
+
+test('participant can start quiz when all lessons in chapter are completed', function () {
+    // Complete all lessons in chapter
+    DB::table('lesson_user')->insert([
+        ['user_id' => $this->peserta->id, 'lesson_id' => $this->lesson1->id, 'is_completed' => true, 'completed_at' => now()],
+        ['user_id' => $this->peserta->id, 'lesson_id' => $this->lesson2->id, 'is_completed' => true, 'completed_at' => now()],
+    ]);
+
+    Livewire::actingAs($this->peserta)
+        ->test(QuizKerjakan::class, ['quiz_id' => $this->quiz->id, 'course_id' => $this->course->id])
+        ->assertSet('quizState', 'intro')
+        ->assertSee('Evaluasi Bab 1 Digital')
+        ->assertSee('25 Poin')
+        ->call('startQuiz')
+        ->assertSet('quizState', 'playing')
+        ->assertSet('currentQuestionIndex', 0)
+        ->assertSet('timeRemainingSeconds', 1200); // 20 mins = 1200 secs
+});
+
+test('participant can answer questions, navigate between questions, and jump via grid', function () {
+    DB::table('lesson_user')->insert([
+        ['user_id' => $this->peserta->id, 'lesson_id' => $this->lesson1->id, 'is_completed' => true, 'completed_at' => now()],
+        ['user_id' => $this->peserta->id, 'lesson_id' => $this->lesson2->id, 'is_completed' => true, 'completed_at' => now()],
+    ]);
+
+    Livewire::actingAs($this->peserta)
+        ->test(QuizKerjakan::class, ['quiz_id' => $this->quiz->id, 'course_id' => $this->course->id])
+        ->call('startQuiz')
+        // Answer Question 1
+        ->call('selectOption', $this->q1->id, $this->q1OptA->id)
+        ->assertSet('userAnswers.'.$this->q1->id, $this->q1OptA->id)
+        // Navigate next
+        ->call('nextQuestion')
+        ->assertSet('currentQuestionIndex', 1)
+        // Answer Question 2
+        ->call('selectOption', $this->q2->id, $this->q2OptA->id)
+        ->assertSet('userAnswers.'.$this->q2->id, $this->q2OptA->id)
+        // Jump back to Question 0 via grid
+        ->call('jumpToQuestion', 0)
+        ->assertSet('currentQuestionIndex', 0)
+        // Previous on 0 stays 0
+        ->call('prevQuestion')
+        ->assertSet('currentQuestionIndex', 0);
+});
+
+test('participant submits quiz and score is accurately calculated based on dynamic points 1 to 20', function () {
+    DB::table('lesson_user')->insert([
+        ['user_id' => $this->peserta->id, 'lesson_id' => $this->lesson1->id, 'is_completed' => true, 'completed_at' => now()],
+        ['user_id' => $this->peserta->id, 'lesson_id' => $this->lesson2->id, 'is_completed' => true, 'completed_at' => now()],
+    ]);
+
+    // Q1 (10 pts) answered CORRECTLY ($q1OptA)
+    // Q2 (15 pts) answered INCORRECTLY ($q2OptB)
+    // Earned: 10 / 25 = 40.0% -> Below passing_score (70%) -> Not Passed
+    Livewire::actingAs($this->peserta)
+        ->test(QuizKerjakan::class, ['quiz_id' => $this->quiz->id, 'course_id' => $this->course->id])
+        ->call('startQuiz')
+        ->call('selectOption', $this->q1->id, $this->q1OptA->id)
+        ->call('selectOption', $this->q2->id, $this->q2OptB->id)
+        ->call('submitQuiz')
+        ->assertSet('quizState', 'result')
+        ->assertSee('Evaluasi Telah Selesai')
+        ->assertSee('40.0%')
+        ->assertSee('10');
+
+    $attempt = QuizAttempt::where('quiz_id', $this->quiz->id)->where('user_id', $this->peserta->id)->first();
+    expect($attempt)->not->toBeNull()
+        ->and($attempt->total_earned_score)->toBe(10)
+        ->and($attempt->total_possible_score)->toBe(25)
+        ->and((float) $attempt->percentage)->toBe(40.00)
+        ->and($attempt->is_passed)->toBeFalse()
+        ->and($attempt->answers_data)->toHaveCount(2);
+});
+
+test('participant scoring 100% passes the evaluation', function () {
+    $pesertaLulus = User::factory()->peserta()->create();
+
+    DB::table('lesson_user')->insert([
+        ['user_id' => $pesertaLulus->id, 'lesson_id' => $this->lesson1->id, 'is_completed' => true, 'completed_at' => now()],
+        ['user_id' => $pesertaLulus->id, 'lesson_id' => $this->lesson2->id, 'is_completed' => true, 'completed_at' => now()],
+    ]);
+
+    // Q1 (10 pts) and Q2 (15 pts) BOTH answered CORRECTLY -> 25/25 = 100% -> Passed
+    Livewire::actingAs($pesertaLulus)
+        ->test(QuizKerjakan::class, ['quiz_id' => $this->quiz->id, 'course_id' => $this->course->id])
+        ->call('startQuiz')
+        ->call('selectOption', $this->q1->id, $this->q1OptA->id)
+        ->call('selectOption', $this->q2->id, $this->q2OptA->id)
+        ->call('submitQuiz')
+        ->assertSet('quizState', 'result')
+        ->assertSee('Selamat! Anda Lulus Evaluasi')
+        ->assertSee('100.0%')
+        ->assertSee('25');
+
+    $attempt = QuizAttempt::where('quiz_id', $this->quiz->id)->where('user_id', $pesertaLulus->id)->first();
+    expect($attempt->is_passed)->toBeTrue()
+        ->and($attempt->total_earned_score)->toBe(25);
+});
+
+test('participant cannot retake quiz and directly sees permanent result upon revisiting', function () {
+    // Existing attempt already in DB
+    $attempt = QuizAttempt::factory()->create([
+        'quiz_id' => $this->quiz->id,
+        'user_id' => $this->peserta->id,
+        'total_earned_score' => 25,
+        'total_possible_score' => 25,
+        'percentage' => 100.0,
+        'is_passed' => true,
+    ]);
+
+    // Revisiting the quiz page immediately shows result state
+    Livewire::actingAs($this->peserta)
+        ->test(QuizKerjakan::class, ['quiz_id' => $this->quiz->id, 'course_id' => $this->course->id])
+        ->assertSet('quizState', 'result')
+        ->assertSee('Single Attempt (tanpa retake)')
+        ->assertSee('Selamat! Anda Lulus Evaluasi')
+        ->assertDontSee('Mulai Kerjakan Evaluasi');
+
+    // Calling startQuiz or submitQuiz will not create another attempt
+    Livewire::actingAs($this->peserta)
+        ->test(QuizKerjakan::class, ['quiz_id' => $this->quiz->id, 'course_id' => $this->course->id])
+        ->call('startQuiz')
+        ->assertSet('quizState', 'result')
+        ->call('submitQuiz')
+        ->assertSet('quizState', 'result');
+
+    expect(QuizAttempt::where('quiz_id', $this->quiz->id)->where('user_id', $this->peserta->id)->count())->toBe(1);
+});

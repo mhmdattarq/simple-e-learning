@@ -3,6 +3,7 @@
 namespace App\Livewire\Peserta\Profile;
 
 use App\Models\AuditLog;
+use App\Models\QuizAttempt;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
@@ -121,9 +122,20 @@ class ProfileIndex extends Component
 
     public function render()
     {
+        /** @var User|null $user */
+        $user = Auth::user();
+
+        $quizAttempts = $user
+            ? QuizAttempt::with(['quiz.course', 'quiz.chapter'])
+                ->where('user_id', $user->id)
+                ->latest('submitted_at')
+                ->get()
+            : collect();
+
         return view('mods.peserta.profile.profile-index', [
-            'user' => Auth::user(),
-            'isComplete' => Auth::user()?->isAsnProfileComplete() ?? false,
+            'user' => $user,
+            'isComplete' => $user?->isAsnProfileComplete() ?? false,
+            'quizAttempts' => $quizAttempts,
         ]);
     }
 }

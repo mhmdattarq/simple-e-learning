@@ -88,4 +88,12 @@ class User extends Authenticatable
             ->withPivot(['id', 'registration_number', 'status', 'notes', 'enrolled_at'])
             ->withTimestamps();
     }
+
+    /**
+     * Quiz attempts by this user.
+     */
+    public function quizAttempts(): HasMany
+    {
+        return $this->hasMany(QuizAttempt::class, 'user_id');
+    }
 }

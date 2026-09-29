@@ -295,6 +295,98 @@
                         </div>
                     </form>
                 </div>
+
+                {{-- Riwayat Evaluasi & Kuis ASN --}}
+                <div class="card border-0 shadow-sm rounded-4 p-4 p-lg-5 bg-white mt-4">
+                    <div class="d-flex align-items-center justify-content-between mb-4 pb-3 border-bottom flex-wrap gap-2">
+                        <div>
+                            <h4 class="fw-bold text-dark mb-1">Riwayat Evaluasi &amp; Kuis</h4>
+                            <p class="text-muted fs-7 mb-0">Catatan permanen hasil pengerjaan kuis materi dan ujian akhir kelas Anda.</p>
+                        </div>
+                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-2 rounded-pill fs-8">
+                            {{ $quizAttempts->count() }} Evaluasi Dikerjakan
+                        </span>
+                    </div>
+
+                    @if ($quizAttempts->isNotEmpty())
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0 text-xs">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Evaluasi &amp; Program Kelas</th>
+                                        <th class="text-center" style="width: 130px;">Nilai Skor</th>
+                                        <th class="text-center" style="width: 120px;">Status</th>
+                                        <th class="text-center" style="width: 140px;">Waktu Selesai</th>
+                                        <th class="text-center" style="width: 90px;">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($quizAttempts as $attempt)
+                                        <tr>
+                                            <td>
+                                                <div class="fw-bold text-dark mb-1">
+                                                    {{ $attempt->quiz?->title ?? 'Evaluasi Kuis' }}
+                                                </div>
+                                                <div class="text-muted text-xxs d-flex align-items-center gap-1 flex-wrap">
+                                                    <span>{{ $attempt->quiz?->course?->title ?? '-' }}</span>
+                                                    @if ($attempt->quiz?->isFinalQuiz())
+                                                        <span class="badge bg-warning-subtle text-warning border border-warning text-xxs">
+                                                            Ujian Akhir Kelas
+                                                        </span>
+                                                    @elseif ($attempt->quiz?->chapter)
+                                                        <span class="badge bg-info-subtle text-info border border-info text-xxs">
+                                                            Bab: {{ Str::limit($attempt->quiz->chapter->title, 20) }}
+                                                        </span>
+                                                    @endif
+                                                </div>
+                                            </td>
+                                            <td class="text-center">
+                                                <div class="fw-bold text-dark fs-7">
+                                                    {{ $attempt->total_earned_score }} / {{ $attempt->total_possible_score }}
+                                                </div>
+                                                <span class="text-muted text-xxs">
+                                                    ({{ number_format($attempt->percentage, 1) }}%)
+                                                </span>
+                                            </td>
+                                            <td class="text-center">
+                                                @if ($attempt->is_passed)
+                                                    <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1 radius-6">
+                                                        <i class="ri-checkbox-circle-fill me-1"></i>Lulus
+                                                    </span>
+                                                @else
+                                                    <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-2 py-1 radius-6">
+                                                        <i class="ri-close-circle-fill me-1"></i>Belum Lulus
+                                                    </span>
+                                                @endif
+                                            </td>
+                                            <td class="text-center text-muted">
+                                                {{ $attempt->submitted_at ? $attempt->submitted_at->format('d M Y, H:i') : '-' }}
+                                            </td>
+                                            <td class="text-center">
+                                                <a href="{{ route('peserta.evaluasi.kerjakan', ['course_id' => $attempt->quiz->course_id, 'quiz_id' => $attempt->quiz_id]) }}"
+                                                    class="btn btn-sm btn-outline-primary py-1 px-2 radius-6 text-xxs fw-semibold"
+                                                    title="Buka Lembar Hasil Evaluasi" wire:navigate>
+                                                    <i class="ri-eye-line me-1"></i>Lihat
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @else
+                        <div class="p-4 text-center text-muted border rounded-3 bg-light">
+                            <i class="ri-survey-line text-secondary mb-2 d-block" style="font-size: 40px; opacity: 0.5;"></i>
+                            <h6 class="fw-bold text-dark mb-1 fs-7">Belum Ada Riwayat Evaluasi</h6>
+                            <p class="text-muted text-xs mb-3">
+                                Selesaikan materi pembelajaran di kelas yang Anda ikuti untuk mengerjakan kuis bab atau ujian akhir.
+                            </p>
+                            <a href="{{ route('landing') }}#katalog-kelas" class="btn btn-sm btn-outline-primary rounded-pill px-3" wire:navigate>
+                                <i class="ri-book-open-line me-1"></i> Mulai Belajar Sekarang
+                            </a>
+                        </div>
+                    @endif
+                </div>
             </div>
         </div>
     </div>

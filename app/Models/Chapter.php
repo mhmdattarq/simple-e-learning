@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Chapter extends Model
@@ -35,5 +36,13 @@ class Chapter extends Model
     public function lessons(): HasMany
     {
         return $this->hasMany(Lesson::class, 'chapter_id')->orderBy('order', 'asc');
+    }
+
+    /**
+     * Kuis evaluasi bab ini (opsional).
+     */
+    public function quiz(): HasOne
+    {
+        return $this->hasOne(Quiz::class, 'chapter_id');
     }
 }

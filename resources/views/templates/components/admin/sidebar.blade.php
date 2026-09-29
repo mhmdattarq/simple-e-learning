@@ -108,13 +108,13 @@ new class extends Component {
                         <span>Evaluasi &amp; Kuis</span>
                     </a>
                     <ul class="sidebar-submenu">
-                        <li>
-                            <a href="javascript:void(0)">
+                        <li class="{{ request()->routeIs('evaluasi.create') ? 'active-page' : '' }}">
+                            <a href="{{ route('evaluasi.create') }}" wire:navigate>
                                 <i class="ri-circle-fill circle-icon"></i> <span>Tambah Evaluasi &amp; Kuis</span>
                             </a>
                         </li>
-                        <li>
-                            <a href="javascript:void(0)">
+                        <li class="{{ request()->routeIs('evaluasi.data') ? 'active-page' : '' }}">
+                            <a href="{{ route('evaluasi.data') }}" wire:navigate>
                                 <i class="ri-circle-fill circle-icon"></i> <span>Data Evaluasi &amp; Kuis</span>
                             </a>
                         </li>

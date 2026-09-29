@@ -11,10 +11,11 @@
                     </span>
                 </div>
                 <h2 class="fw-extrabold text-navy display-6 mb-2">
-                    Katalog <span class="text-gold">Kelas</span>
+                    Daftar Katalog <span class="text-gold">Kelas</span>
                 </h2>
                 <p class="text-muted fs-6 mb-0">
-                    Pilih dan ikuti kelas aktif dari berbagai bidang kompetensi aparatur yang diselenggarakan BKPSDM Kabupaten Aceh Timur.
+                    Pilih dan ikuti kelas aktif dari berbagai bidang kompetensi aparatur yang diselenggarakan BKPSDM
+                    Kabupaten Aceh Timur.
                 </p>
             </div>
 
@@ -49,8 +50,9 @@
         <div class="row g-4">
             @if (isset($courses) && $courses->isNotEmpty())
                 @foreach ($courses as $course)
-                    <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="{{ ($loop->index * 50) + 150 }}ms">
-                        <div class="card h-100 border border-simpel rounded-4 bg-white overflow-hidden shadow-xs simpel-course-card d-flex flex-column">
+                    <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="{{ $loop->index * 50 + 150 }}ms">
+                        <div
+                            class="card h-100 border border-simpel rounded-4 bg-white overflow-hidden shadow-xs simpel-course-card d-flex flex-column">
                             {{-- Card Thumbnail & Badges --}}
                             <div class="position-relative overflow-hidden" style="height: 190px;">
                                 @if ($course->thumbnail)
@@ -79,7 +81,8 @@
                                             <i class="ri-infinity-line me-1"></i>Permanen
                                         </span>
                                     @else
-                                        <span class="badge bg-warning-subtle text-dark border border-warning fw-bold fs-8 px-2_5 py-1">
+                                        <span
+                                            class="badge bg-warning-subtle text-dark border border-warning fw-bold fs-8 px-2_5 py-1">
                                             <i class="ri-money-dollar-circle-line me-1"></i>Berbayar
                                         </span>
                                     @endif
@@ -119,8 +122,10 @@
                                     </span>
                                 </div>
 
-                                <h5 class="fw-bold text-navy mb-2 line-clamp-2" style="font-size: 16px; line-height: 1.4;">
-                                    <a href="{{ route('landing.kelas.detail', $course->id) }}" class="text-navy text-decoration-none hover-gold">
+                                <h5 class="fw-bold text-navy mb-2 line-clamp-2"
+                                    style="font-size: 16px; line-height: 1.4;">
+                                    <a href="{{ route('landing.kelas.detail', $course->id) }}"
+                                        class="text-navy text-decoration-none hover-gold">
                                         {{ $course->title }}
                                     </a>
                                 </h5>
@@ -130,7 +135,8 @@
                                 </p>
 
                                 {{-- Footer Action --}}
-                                <div class="pt-3 border-top border-simpel d-flex align-items-center justify-content-between mt-auto">
+                                <div
+                                    class="pt-3 border-top border-simpel d-flex align-items-center justify-content-between mt-auto">
                                     <div>
                                         <small class="text-muted d-block fs-8">Tipe Kelas</small>
                                         <span class="fw-extrabold text-navy fs-7">
@@ -144,7 +150,8 @@
                                         </span>
                                     </div>
 
-                                    <a href="{{ route('landing.kelas.detail', $course->id) }}" class="btn-simpel-cta-gold py-2 px-3 fs-7">
+                                    <a href="{{ route('landing.kelas.detail', $course->id) }}"
+                                        class="btn-simpel-cta-gold py-2 px-3 fs-7">
                                         <span>Lihat Detail</span>
                                         <i class="ri-arrow-right-line ms-1"></i>
                                     </a>
