@@ -1,12 +1,14 @@
 <?php
 
 use App\Http\Controllers\Auth\GoogleAuthController;
+use App\Http\Controllers\EvaluasiController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\KelasController;
 use App\Http\Controllers\MateriController;
 use App\Livewire\Admin\Dashboard\DashboardIndex;
 use App\Livewire\Admin\Evaluasi\EvaluasiCreate;
 use App\Livewire\Admin\Evaluasi\EvaluasiData;
+use App\Livewire\Admin\Evaluasi\EvaluasiDetail;
 use App\Livewire\Admin\Kategori\KategoriCreate;
 use App\Livewire\Admin\Kategori\KategoriData;
 use App\Livewire\Admin\Kategori\KategoriEdit;
@@ -105,7 +107,10 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
     // Modul: Evaluasi & Kuis (Tahap Evaluasi)
     Route::prefix('evaluasi')->name('evaluasi.')->group(function () {
+        Route::get('/datatable', [EvaluasiController::class, 'dataDt'])->name('dt');
+        Route::get('/detail/{course_id}/datatable', [EvaluasiController::class, 'attemptsDt'])->name('detail.dt');
         Route::livewire('/data', EvaluasiData::class)->name('data');
         Route::livewire('/create', EvaluasiCreate::class)->name('create');
+        Route::livewire('/detail/{course_id}', EvaluasiDetail::class)->name('detail');
     });
 });

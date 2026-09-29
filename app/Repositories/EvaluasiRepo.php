@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Models\Course;
 use App\Models\Quiz;
 use App\Models\QuizAttempt;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -11,6 +12,27 @@ use Illuminate\Support\Facades\Log;
 
 class EvaluasiRepo
 {
+    /**
+     * Query builder for Yajra DataTables server-side rendering per Course.
+     * Mengembalikan instance query Builder Course dengan relasi kuis untuk pagination server-side.
+     */
+    public static function getDt(): Builder
+    {
+        return Course::query()
+            ->with(['category'])
+            ->withCount([
+                'quizzes',
+                'chapterQuizzes',
+                'quizzes as questions_count' => function ($q) {
+                    $q->join('quiz_questions', 'quizzes.id', '=', 'quiz_questions.quiz_id');
+                },
+                'quizzes as attempts_count' => function ($q) {
+                    $q->join('quiz_attempts', 'quizzes.id', '=', 'quiz_attempts.quiz_id');
+                },
+            ])
+            ->withExists('finalQuiz');
+    }
+
     /**
      * Mendapatkan statistik ringkas untuk widget dashboard evaluasi.
      *
@@ -29,6 +51,57 @@ class EvaluasiRepo
             'final_quizzes' => Quiz::where('type', 'final')->count(),
             'total_attempts' => QuizAttempt::count(),
         ];
+    }
+
+    /**
+     * Mendapatkan statistik monitoring evaluasi khusus untuk satu kelas diklat.
+     *
+     * @return array{
+     *     total_quizzes: int,
+     *     chapter_quizzes: int,
+     *     has_final_quiz: bool,
+     *     final_quiz: ?Quiz,
+     *     total_attempts: int,
+     *     passed_attempts: int,
+     *     pass_rate: int,
+     *     avg_score: float
+     * }
+     */
+    public static function getCourseStats(int $courseId): array
+    {
+        $totalQuizzes = Quiz::where('course_id', $courseId)->count();
+        $chapterQuizzes = Quiz::where('course_id', $courseId)->where('type', 'chapter')->count();
+        $finalQuiz = Quiz::where('course_id', $courseId)->where('type', 'final')->first();
+
+        $attemptsQuery = QuizAttempt::whereHas('quiz', fn ($q) => $q->where('course_id', $courseId));
+        $totalAttempts = (clone $attemptsQuery)->count();
+        $passedAttempts = (clone $attemptsQuery)->where('is_passed', true)->count();
+        $passRate = $totalAttempts > 0 ? (int) round(($passedAttempts / $totalAttempts) * 100) : 0;
+        $avgScore = $totalAttempts > 0 ? round((float) (clone $attemptsQuery)->avg('percentage'), 1) : 0.0;
+
+        return [
+            'total_quizzes' => $totalQuizzes,
+            'chapter_quizzes' => $chapterQuizzes,
+            'has_final_quiz' => $finalQuiz !== null,
+            'final_quiz' => $finalQuiz,
+            'total_attempts' => $totalAttempts,
+            'passed_attempts' => $passedAttempts,
+            'pass_rate' => $passRate,
+            'avg_score' => $avgScore,
+        ];
+    }
+
+    /**
+     * Query builder riwayat pengerjaan kuis peserta untuk server-side DataTables di halaman detail evaluasi kelas.
+     */
+    public static function getAttemptsDt(int $courseId): Builder
+    {
+        return QuizAttempt::query()
+            ->whereHas('quiz', function ($q) use ($courseId) {
+                $q->where('course_id', $courseId);
+            })
+            ->with(['user', 'quiz.chapter'])
+            ->latest('id');
     }
 
     /**

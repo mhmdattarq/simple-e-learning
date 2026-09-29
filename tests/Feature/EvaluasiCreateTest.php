@@ -78,6 +78,15 @@ test('validates required fields and score bounds between 1 and 20', function () 
         ->assertHasErrors(['questions.0.score']);
 });
 
+test('score field strips alphabetic characters and only accepts numeric values', function () {
+    Livewire::actingAs($this->admin)
+        ->test(EvaluasiCreate::class)
+        ->set('questions.0.score', 'abc')
+        ->assertSet('questions.0.score', null)
+        ->set('questions.0.score', '15xyz')
+        ->assertSet('questions.0.score', 15);
+});
+
 test('validates correct answer selection in options', function () {
     Livewire::actingAs($this->admin)
         ->test(EvaluasiCreate::class)

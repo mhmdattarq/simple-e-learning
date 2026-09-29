@@ -102,8 +102,13 @@
         }
 
         @keyframes pulse-timer {
-            from { opacity: 1; }
-            to { opacity: 0.7; }
+            from {
+                opacity: 1;
+            }
+
+            to {
+                opacity: 0.7;
+            }
         }
     </style>
 @endpush
@@ -125,23 +130,26 @@
                     {{ $lockedReason }}
                 </p>
                 <div class="d-flex justify-content-center gap-2">
-                    <a href="{{ route('peserta.materi', $quiz->course_id) }}" class="btn btn-primary px-4 py-2 radius-8">
+                    <a href="{{ route('peserta.materi', $quiz->course_id) }}"
+                        class="btn btn-primary px-4 py-2 radius-8">
                         <i class="ri-arrow-left-line me-1"></i> Kembali ke Ruang Belajar
                     </a>
                 </div>
             </div>
 
-        {{-- STATE 2: INTRO / PENGANTAR KUIS --}}
+            {{-- STATE 2: INTRO / PENGANTAR KUIS --}}
         @elseif ($quizState === 'intro')
             <div class="card border-0 shadow-sm radius-16 bg-white overflow-hidden my-4">
                 {{-- Card Header --}}
                 <div class="p-24 border-bottom bg-white">
                     <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-2">
-                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-1 fs-8 rounded-pill">
+                        <span
+                            class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-1 fs-8 rounded-pill">
                             <i class="ri-book-open-line me-1"></i> {{ $quiz->course?->title ?? 'Program Kelas' }}
                         </span>
                         @if ($quiz->isFinalQuiz())
-                            <span class="badge bg-warning-subtle text-warning border border-warning px-3 py-1 fs-8 rounded-pill fw-bold">
+                            <span
+                                class="badge bg-warning-subtle text-warning border border-warning px-3 py-1 fs-8 rounded-pill fw-bold">
                                 <i class="ri-award-fill me-1"></i> Ujian Akhir Kelas (Final Quiz)
                             </span>
                         @else
@@ -174,7 +182,8 @@
                         </div>
                         <div class="col-sm-3 col-6">
                             <div class="p-3 bg-light rounded-3 text-center border">
-                                <span class="text-muted text-xxs text-uppercase fw-semibold d-block">Batas Kelulusan (KKM)</span>
+                                <span class="text-muted text-xxs text-uppercase fw-semibold d-block">Batas Kelulusan
+                                    (KKM)</span>
                                 <h4 class="fw-bold text-success mb-0 fs-5">{{ $quiz->passing_score }}%</h4>
                             </div>
                         </div>
@@ -196,23 +205,28 @@
                         <ul class="text-muted fs-8 mb-0 ps-3 d-flex flex-column gap-2">
                             <li>Setiap soal berupa <strong>pilihan ganda</strong> dengan opsi jawaban dinamis.</li>
                             <li>Tiap soal memiliki bobot skor (1–20 poin) yang akan dijumlahkan bila jawaban benar.</li>
-                            <li>Anda dapat berpindah antar-soal secara bebas menggunakan tombol navigasi maupun nomor soal di panel samping.</li>
+                            <li>Anda dapat berpindah antar-soal secara bebas menggunakan tombol navigasi maupun nomor
+                                soal di panel samping.</li>
                             <li>
                                 <strong class="text-danger">Penting (Single Attempt):</strong>
-                                Evaluasi ini hanya dapat dikerjakan <strong>1 (satu) kali</strong> tanpa ada kesempatan retake/pengulangan.
+                                Evaluasi ini hanya dapat dikerjakan <strong>1 (satu) kali</strong> tanpa ada kesempatan
+                                retake/pengulangan.
                             </li>
                             @if ($quiz->time_limit_minutes)
-                                <li>Waktu akan otomatis berjalan mundur saat Anda menekan tombol mulai, dan jawaban akan terkumpul otomatis bila waktu habis.</li>
+                                <li>Waktu akan otomatis berjalan mundur saat Anda menekan tombol mulai, dan jawaban akan
+                                    terkumpul otomatis bila waktu habis.</li>
                             @endif
                         </ul>
                     </div>
 
                     {{-- Tombol Aksi Mulai --}}
                     <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
-                        <a href="{{ route('peserta.materi', $quiz->course_id) }}" class="btn btn-outline-secondary px-4 py-2 radius-8">
+                        <a href="{{ route('peserta.materi', $quiz->course_id) }}"
+                            class="btn btn-outline-danger px-4 py-2 radius-8">
                             <i class="ri-arrow-left-line me-1"></i> Batal / Kembali ke Materi
                         </a>
-                        <button type="button" class="btn btn-simple-gold px-4 py-2 radius-8 fw-bold d-flex align-items-center gap-2 shadow-sm"
+                        <button type="button"
+                            class="btn btn-simple-gold px-4 py-2 radius-8 fw-bold d-flex align-items-center gap-2 shadow-sm"
                             wire:click="startQuiz">
                             <span>Mulai Kerjakan Evaluasi</span>
                             <i class="ri-arrow-right-line fs-5"></i>
@@ -221,42 +235,43 @@
                 </div>
             </div>
 
-        {{-- STATE 3: PLAYING (PENGERJAAN KUIS AKTIF ALA DICODING) --}}
+            {{-- STATE 3: PLAYING (PENGERJAAN KUIS AKTIF ALA DICODING) --}}
         @elseif ($quizState === 'playing')
             @php
                 $q = $this->currentQuestion;
             @endphp
 
-            <div class="card border-0 shadow-sm radius-16 bg-white overflow-hidden my-4"
-                x-data="{
-                    remainingSeconds: {{ $timeRemainingSeconds }},
-                    timerInterval: null,
-                    formatTimer() {
-                        let mins = Math.floor(this.remainingSeconds / 60);
-                        let secs = this.remainingSeconds % 60;
-                        return String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
-                    },
-                    init() {
-                        if (this.remainingSeconds > 0) {
-                            this.timerInterval = setInterval(() => {
-                                if (this.remainingSeconds > 0) {
-                                    this.remainingSeconds--;
-                                } else {
-                                    clearInterval(this.timerInterval);
-                                    $wire.submitQuiz();
-                                }
-                            }, 1000);
-                        }
+            <div class="card border-0 shadow-sm radius-16 bg-white overflow-hidden my-4" x-data="{
+                remainingSeconds: {{ $timeRemainingSeconds }},
+                timerInterval: null,
+                formatTimer() {
+                    let mins = Math.floor(this.remainingSeconds / 60);
+                    let secs = this.remainingSeconds % 60;
+                    return String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
+                },
+                init() {
+                    if (this.remainingSeconds > 0) {
+                        this.timerInterval = setInterval(() => {
+                            if (this.remainingSeconds > 0) {
+                                this.remainingSeconds--;
+                            } else {
+                                clearInterval(this.timerInterval);
+                                $wire.submitQuiz();
+                            }
+                        }, 1000);
                     }
-                }">
+                }
+            }">
 
                 {{-- Header Quiz Player --}}
-                <div class="p-20 px-md-24 border-bottom bg-white d-flex align-items-center justify-content-between flex-wrap gap-2">
+                <div
+                    class="p-20 px-md-24 border-bottom bg-white d-flex align-items-center justify-content-between flex-wrap gap-2">
                     <div class="d-flex align-items-center gap-2">
                         <span class="badge bg-navy text-white px-3 py-2 radius-8 fs-8 fw-bold">
                             Soal {{ $currentQuestionIndex + 1 }} dari {{ $this->questionsCount }}
                         </span>
-                        <span class="badge bg-warning-subtle text-warning border border-warning px-3 py-2 radius-8 fs-8 fw-semibold">
+                        <span
+                            class="badge bg-warning-subtle text-warning border border-warning px-3 py-2 radius-8 fs-8 fw-semibold">
                             Bobot: {{ $q?->score ?? 0 }} Poin
                         </span>
                     </div>
@@ -290,7 +305,8 @@
                                     @foreach ($q->options as $optIndex => $opt)
                                         @php
                                             $letter = chr(65 + $optIndex);
-                                            $isSelected = isset($userAnswers[$q->id]) && $userAnswers[$q->id] === $opt->id;
+                                            $isSelected =
+                                                isset($userAnswers[$q->id]) && $userAnswers[$q->id] === $opt->id;
                                         @endphp
                                         <div class="option-choice-card d-flex align-items-center gap-3 {{ $isSelected ? 'is-selected' : '' }}"
                                             wire:click="selectOption({{ $q->id }}, {{ $opt->id }})"
@@ -301,10 +317,8 @@
                                             </div>
                                             <div>
                                                 <input class="form-check-input" type="radio"
-                                                    name="q_{{ $q->id }}"
-                                                    value="{{ $opt->id }}"
-                                                    {{ $isSelected ? 'checked' : '' }}
-                                                    style="pointer-events: none;">
+                                                    name="q_{{ $q->id }}" value="{{ $opt->id }}"
+                                                    {{ $isSelected ? 'checked' : '' }} style="pointer-events: none;">
                                             </div>
                                         </div>
                                     @endforeach
@@ -312,10 +326,10 @@
                             @endif
 
                             {{-- Tombol Navigasi Soal Bawah --}}
-                            <div class="d-flex align-items-center justify-content-between pt-3 border-top flex-wrap gap-2">
+                            <div
+                                class="d-flex align-items-center justify-content-between pt-3 border-top flex-wrap gap-2">
                                 <button type="button" class="btn btn-outline-secondary px-3 py-2 radius-8 fs-8"
-                                    wire:click="prevQuestion"
-                                    {{ $currentQuestionIndex === 0 ? 'disabled' : '' }}>
+                                    wire:click="prevQuestion" {{ $currentQuestionIndex === 0 ? 'disabled' : '' }}>
                                     <i class="ri-arrow-left-line me-1"></i> Soal Sebelumnya
                                 </button>
 
@@ -365,11 +379,13 @@
 
                                 <div class="border-top pt-2 mt-2">
                                     <div class="d-flex align-items-center gap-2 text-xxs text-muted mb-1">
-                                        <span class="d-inline-block rounded bg-success" style="width: 12px; height: 12px;"></span>
+                                        <span class="d-inline-block rounded bg-success"
+                                            style="width: 12px; height: 12px;"></span>
                                         <span>Sudah Dijawab</span>
                                     </div>
                                     <div class="d-flex align-items-center gap-2 text-xxs text-muted mb-3">
-                                        <span class="d-inline-block rounded border bg-white" style="width: 12px; height: 12px;"></span>
+                                        <span class="d-inline-block rounded border bg-white"
+                                            style="width: 12px; height: 12px;"></span>
                                         <span>Belum Dijawab</span>
                                     </div>
 
@@ -386,7 +402,8 @@
 
             {{-- Modal Konfirmasi Pengumpulan Jawaban --}}
             @if ($showSubmitConfirmation)
-                <div class="modal fade show d-block" tabindex="-1" style="background: rgba(15, 23, 42, 0.65); z-index: 1060;">
+                <div class="modal fade show d-block" tabindex="-1"
+                    style="background: rgba(15, 23, 42, 0.65); z-index: 1060;">
                     <div class="modal-dialog modal-dialog-centered" style="max-width: 480px;">
                         <div class="modal-content border-0 radius-16 shadow-lg overflow-hidden">
                             <div class="modal-body p-4 text-center">
@@ -400,17 +417,20 @@
                                 <h5 class="fw-bold text-dark mb-2">Konfirmasi Selesai &amp; Kumpulkan</h5>
 
                                 <p class="text-muted fs-8 mb-3">
-                                    Anda telah menjawab <strong>{{ $this->answeredCount }}</strong> dari <strong>{{ $this->questionsCount }}</strong> butir pertanyaan.
+                                    Anda telah menjawab <strong>{{ $this->answeredCount }}</strong> dari
+                                    <strong>{{ $this->questionsCount }}</strong> butir pertanyaan.
                                     @if ($this->answeredCount < $this->questionsCount)
                                         <span class="text-danger d-block mt-1 fw-semibold">
-                                            Masih ada {{ $this->questionsCount - $this->answeredCount }} soal yang belum Anda jawab!
+                                            Masih ada {{ $this->questionsCount - $this->answeredCount }} soal yang
+                                            belum Anda jawab!
                                         </span>
                                     @endif
                                 </p>
 
                                 <div class="alert alert-warning border-0 p-2 text-xxs text-start mb-4">
                                     <i class="ri-alert-line me-1"></i>
-                                    <strong>Perhatian:</strong> Kuis ini menerapkan sistem Single Attempt. Jawaban yang dikumpulkan bersifat final dan tidak dapat diubah kembali.
+                                    <strong>Perhatian:</strong> Kuis ini menerapkan sistem Single Attempt. Jawaban yang
+                                    dikumpulkan bersifat final dan tidak dapat diubah kembali.
                                 </div>
 
                                 <div class="d-flex align-items-center gap-2">
@@ -419,10 +439,10 @@
                                         Periksa Lagi
                                     </button>
                                     <button type="button" class="btn btn-success w-50 py-2 radius-8 fs-8 fw-bold"
-                                        wire:click="submitQuiz"
-                                        wire:loading.attr="disabled">
+                                        wire:click="submitQuiz" wire:loading.attr="disabled">
                                         <span wire:loading.remove>Ya, Kumpulkan</span>
-                                        <span wire:loading><span class="spinner-border spinner-border-sm me-1"></span> Menyimpan...</span>
+                                        <span wire:loading><span class="spinner-border spinner-border-sm me-1"></span>
+                                            Menyimpan...</span>
                                     </button>
                                 </div>
                             </div>
@@ -431,11 +451,12 @@
                 </div>
             @endif
 
-        {{-- STATE 4: RESULT / HASIL EVALUASI (SINGLE ATTEMPT FINAL) --}}
+            {{-- STATE 4: RESULT / HASIL EVALUASI (SINGLE ATTEMPT FINAL) --}}
         @elseif ($quizState === 'result' && $savedAttempt)
             <div class="card border-0 shadow-sm radius-16 bg-white overflow-hidden text-center my-4">
                 {{-- Banner Status Kelulusan --}}
-                <div class="p-4 p-md-5 {{ $savedAttempt->is_passed ? 'bg-success-subtle text-success' : 'bg-warning-subtle text-warning' }} border-bottom">
+                <div
+                    class="p-4 p-md-5 {{ $savedAttempt->is_passed ? 'bg-success-subtle text-success' : 'bg-warning-subtle text-warning' }} border-bottom">
                     <div class="mb-3">
                         <div class="d-inline-flex align-items-center justify-content-center rounded-circle {{ $savedAttempt->is_passed ? 'bg-success text-white' : 'bg-warning text-white' }}"
                             style="width: 80px; height: 80px;">
@@ -450,7 +471,8 @@
                     @if ($savedAttempt->is_passed)
                         <h3 class="fw-bold text-success mb-1">Selamat! Anda Lulus Evaluasi</h3>
                         <p class="text-success-emphasis fs-7 mb-0">
-                            Hasil evaluasi Anda telah melampaui standar batas nilai kelulusan (KKM: {{ $quiz->passing_score }}%).
+                            Hasil evaluasi Anda telah melampaui standar batas nilai kelulusan (KKM:
+                            {{ $quiz->passing_score }}%).
                         </p>
                     @else
                         <h3 class="fw-bold text-dark mb-1">Evaluasi Telah Selesai</h3>
@@ -467,7 +489,8 @@
                             <div class="p-3 bg-light rounded-3 border text-center">
                                 <span class="text-muted text-xxs text-uppercase fw-semibold d-block">SKOR AKHIR</span>
                                 <h3 class="fw-bold text-dark mb-0 fs-3">
-                                    {{ $savedAttempt->total_earned_score }} <span class="text-muted fs-6">/ {{ $savedAttempt->total_possible_score }}</span>
+                                    {{ $savedAttempt->total_earned_score }} <span class="text-muted fs-6">/
+                                        {{ $savedAttempt->total_possible_score }}</span>
                                 </h3>
                                 <small class="text-muted text-xxs">Akumulasi Bobot Soal</small>
                             </div>
@@ -475,8 +498,10 @@
 
                         <div class="col-sm-4 col-12">
                             <div class="p-3 bg-light rounded-3 border text-center">
-                                <span class="text-muted text-xxs text-uppercase fw-semibold d-block">PERSENTASE NILAI</span>
-                                <h3 class="fw-bold {{ $savedAttempt->is_passed ? 'text-success' : 'text-danger' }} mb-0 fs-3">
+                                <span class="text-muted text-xxs text-uppercase fw-semibold d-block">PERSENTASE
+                                    NILAI</span>
+                                <h3
+                                    class="fw-bold {{ $savedAttempt->is_passed ? 'text-success' : 'text-danger' }} mb-0 fs-3">
                                     {{ number_format($savedAttempt->percentage, 1) }}%
                                 </h3>
                                 <small class="text-muted text-xxs">Standar KKM: {{ $quiz->passing_score }}%</small>
@@ -485,9 +510,11 @@
 
                         <div class="col-sm-4 col-12">
                             <div class="p-3 bg-light rounded-3 border text-center">
-                                <span class="text-muted text-xxs text-uppercase fw-semibold d-block">WAKTU SELESAI</span>
+                                <span class="text-muted text-xxs text-uppercase fw-semibold d-block">WAKTU
+                                    SELESAI</span>
                                 <h5 class="fw-bold text-dark mb-0 fs-6 pt-2">
-                                    {{ $savedAttempt->submitted_at ? $savedAttempt->submitted_at->format('d M Y, H:i') : '-' }} WIB
+                                    {{ $savedAttempt->submitted_at ? $savedAttempt->submitted_at->format('d M Y, H:i') : '-' }}
+                                    WIB
                                 </h5>
                                 <small class="text-muted text-xxs">Tercatat Permanen</small>
                             </div>
@@ -495,17 +522,21 @@
                     </div>
 
                     {{-- Catatan Single Attempt --}}
-                    <div class="alert alert-secondary border-0 p-3 radius-12 text-xs text-muted mb-4 mx-auto" style="max-width: 600px;">
+                    <div class="alert alert-secondary border-0 p-3 radius-12 text-xs text-muted mb-4 mx-auto"
+                        style="max-width: 600px;">
                         <i class="ri-shield-check-line text-primary me-1"></i>
-                        Evaluasi ini menerapkan kebijakan <strong>Single Attempt (tanpa retake)</strong> demi menjaga integritas penilaian. Skor di atas telah tercatat permanen pada akun Anda.
+                        Evaluasi ini menerapkan kebijakan <strong>Single Attempt (tanpa retake)</strong> demi menjaga
+                        integritas penilaian. Skor di atas telah tercatat permanen pada akun Anda.
                     </div>
 
                     {{-- Tombol Aksi Lanjut --}}
                     <div class="d-flex align-items-center justify-content-center gap-2 flex-wrap">
-                        <a href="{{ route('peserta.materi', $quiz->course_id) }}" class="btn btn-primary px-4 py-2 radius-8 fw-semibold">
+                        <a href="{{ route('peserta.materi', $quiz->course_id) }}"
+                            class="btn btn-primary px-4 py-2 radius-8 fw-semibold">
                             <i class="ri-book-open-line me-1"></i> Kembali ke Ruang Belajar Materi
                         </a>
-                        <a href="{{ route('landing.kelas.detail', $quiz->course_id) }}" class="btn btn-outline-secondary px-4 py-2 radius-8">
+                        <a href="{{ route('landing.kelas.detail', $quiz->course_id) }}"
+                            class="btn btn-outline-secondary px-4 py-2 radius-8">
                             <i class="ri-arrow-left-line me-1"></i> Detail Kelas
                         </a>
                     </div>

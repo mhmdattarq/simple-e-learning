@@ -1,10 +1,12 @@
 <?php
 
 use App\Livewire\Admin\Evaluasi\EvaluasiData;
+use App\Livewire\Admin\Evaluasi\EvaluasiDetail;
 use App\Models\Category;
 use App\Models\Chapter;
 use App\Models\Course;
 use App\Models\Quiz;
+use App\Models\QuizAttempt;
 use App\Models\QuizOption;
 use App\Models\QuizQuestion;
 use App\Models\User;
@@ -14,9 +16,19 @@ use Livewire\Livewire;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    $this->category = Category::factory()->create();
-    $this->course1 = Course::factory()->create(['category_id' => $this->category->id, 'title' => 'Dasar Manajemen ASN']);
-    $this->course2 = Course::factory()->create(['category_id' => $this->category->id, 'title' => 'Kepemimpinan Administrator']);
+    $this->category = Category::factory()->create(['name' => 'Manajemen ASN']);
+    $this->course1 = Course::factory()->create([
+        'category_id' => $this->category->id,
+        'title' => 'Dasar Manajemen ASN',
+        'type' => 'permanent',
+        'status' => 'published',
+    ]);
+    $this->course2 = Course::factory()->create([
+        'category_id' => $this->category->id,
+        'title' => 'Kepemimpinan Administrator',
+        'type' => 'batch',
+        'status' => 'published',
+    ]);
 
     $this->chapter1 = Chapter::create(['course_id' => $this->course1->id, 'title' => 'Bab 1: Kebijakan', 'order' => 1]);
     $this->chapter2 = Chapter::create(['course_id' => $this->course2->id, 'title' => 'Bab 1: Inovasi', 'order' => 1]);
@@ -52,97 +64,82 @@ beforeEach(function () {
         'created_by' => $this->admin->id,
         'total_score' => 15,
     ]);
+    $q3 = QuizQuestion::factory()->create(['quiz_id' => $this->quiz3->id, 'score' => 15, 'question_text' => 'Apa inovasi sektor publik?']);
+
+    // Attempt on Quiz 1
+    QuizAttempt::factory()->create([
+        'quiz_id' => $this->quiz1->id,
+        'user_id' => $this->peserta->id,
+        'total_earned_score' => 20,
+        'total_possible_score' => 20,
+        'percentage' => 100.0,
+        'is_passed' => true,
+    ]);
 });
 
-test('non-admin cannot access evaluasi data page', function () {
-    $this->actingAs($this->peserta)
-        ->get(route('evaluasi.data'))
-        ->assertForbidden();
+test('unauthorized users cannot access evaluasi routes', function () {
+    // Guest redirected to login
+    $this->get(route('evaluasi.data'))->assertRedirect(route('login'));
+    $this->get(route('evaluasi.dt'))->assertRedirect(route('login'));
+
+    // Peserta gets 403 Forbidden
+    $this->actingAs($this->peserta)->get(route('evaluasi.data'))->assertForbidden();
+    $this->actingAs($this->peserta)->get(route('evaluasi.dt'))->assertForbidden();
 });
 
-test('admin can access evaluasi data page and sees quiz listings', function () {
-    $this->actingAs($this->admin)
-        ->get(route('evaluasi.data'))
+test('admin can access evaluasi master table page', function () {
+    $response = $this->actingAs($this->admin)->get(route('evaluasi.data'));
+
+    $response->assertOk();
+    $response->assertSee('Data Evaluasi &amp; Kuis', false);
+    $response->assertSee('Daftar Evaluasi Kelas');
+    $response->assertSee('tableEvaluasi');
+
+    Livewire::actingAs($this->admin)
+        ->test(EvaluasiData::class)
         ->assertOk()
-        ->assertSeeLivewire(EvaluasiData::class)
-        ->assertSee('Data Evaluasi &amp; Kuis', false)
-        ->assertSee('Kuis Kebijakan Publik')
-        ->assertSee('Ujian Akhir Manajemen ASN')
-        ->assertSee('Evaluasi Inovasi Sektor Publik');
+        ->assertSee('Daftar Evaluasi Kelas');
 });
 
-test('can filter quizzes by search term, course, and type', function () {
-    // 1. Filter by search term
-    Livewire::actingAs($this->admin)
-        ->test(EvaluasiData::class)
-        ->set('search', 'Kebijakan')
-        ->assertSee('Kuis Kebijakan Publik')
-        ->assertDontSee('Ujian Akhir Manajemen ASN')
-        ->assertDontSee('Evaluasi Inovasi Sektor Publik');
+test('evaluasi datatable endpoint returns valid yajra json response with course quizzes metrics', function () {
+    $response = $this->actingAs($this->admin)
+        ->getJson(route('evaluasi.dt'));
 
-    // 2. Filter by course
-    Livewire::actingAs($this->admin)
-        ->test(EvaluasiData::class)
-        ->set('course_id', (string) $this->course2->id)
-        ->assertSee('Evaluasi Inovasi Sektor Publik')
-        ->assertDontSee('Kuis Kebijakan Publik')
-        ->assertDontSee('Ujian Akhir Manajemen ASN');
+    $response->assertOk();
+    $response->assertJsonStructure([
+        'draw',
+        'recordsTotal',
+        'recordsFiltered',
+        'data',
+    ]);
 
-    // 3. Filter by type 'final'
-    Livewire::actingAs($this->admin)
-        ->test(EvaluasiData::class)
-        ->set('type', 'final')
-        ->assertSee('Ujian Akhir Manajemen ASN')
-        ->assertDontSee('Kuis Kebijakan Publik')
-        ->assertDontSee('Evaluasi Inovasi Sektor Publik');
+    $data = $response->json('data');
+    expect($data)->toHaveCount(2);
 
-    // 4. Reset filter
-    Livewire::actingAs($this->admin)
-        ->test(EvaluasiData::class)
-        ->set('search', 'Inovasi')
-        ->call('resetFilters')
-        ->assertSet('search', '')
-        ->assertSet('course_id', '')
-        ->assertSet('type', 'all')
-        ->assertSee('Kuis Kebijakan Publik')
-        ->assertSee('Ujian Akhir Manajemen ASN')
-        ->assertSee('Evaluasi Inovasi Sektor Publik');
+    $course1Row = collect($data)->firstWhere('id', $this->course1->id);
+    expect($course1Row)->not->toBeNull();
+    expect($course1Row['title'])->toBe('Dasar Manajemen ASN');
+    expect($course1Row['quizzes_count'])->toBe(2);
+    expect($course1Row['chapter_quizzes_count'])->toBe(1);
+    expect($course1Row['final_quiz_exists'])->toBeTrue();
+    expect($course1Row['questions_count'])->toBe(1);
+    expect($course1Row['attempts_count'])->toBe(1);
+
+    $course2Row = collect($data)->firstWhere('id', $this->course2->id);
+    expect($course2Row)->not->toBeNull();
+    expect($course2Row['title'])->toBe('Kepemimpinan Administrator');
+    expect($course2Row['quizzes_count'])->toBe(1);
+    expect($course2Row['chapter_quizzes_count'])->toBe(1);
+    expect($course2Row['final_quiz_exists'])->toBeFalse();
+    expect($course2Row['questions_count'])->toBe(1);
+    expect($course2Row['attempts_count'])->toBe(0);
 });
 
-test('can open and close question detail modal', function () {
-    Livewire::actingAs($this->admin)
-        ->test(EvaluasiData::class)
-        ->assertSet('isDetailOpen', false)
-        ->assertSet('selectedQuizId', null)
-        ->call('openDetail', $this->quiz1->id)
-        ->assertSet('isDetailOpen', true)
-        ->assertSet('selectedQuizId', $this->quiz1->id)
-        ->assertSee('Apa itu ASN?')
-        ->assertSee('Aparatur Sipil Negara')
-        ->assertSee('Kunci Jawaban')
-        ->call('closeDetail')
-        ->assertSet('isDetailOpen', false)
-        ->assertSet('selectedQuizId', null);
-});
+test('admin can access evaluasi detail page', function () {
+    $response = $this->actingAs($this->admin)
+        ->get(route('evaluasi.detail', $this->course1->id));
 
-test('can trigger delete hook and handle delete confirmation', function () {
-    Livewire::actingAs($this->admin)
-        ->test(EvaluasiData::class)
-        ->call('hookModalDelete', $this->quiz3->id, $this->quiz3->title)
-        ->assertDispatched('modal-delete-setDeleteId')
-        ->call('delete', ['id' => $this->quiz3->id])
-        ->assertDispatched('closeModal', id: 'modalDelete')
-        ->assertDispatched('alert-show');
-
-    expect(Quiz::find($this->quiz3->id))->toBeNull()
-        ->and(Quiz::withTrashed()->find($this->quiz3->id))->not->toBeNull();
-});
-
-test('can delete quiz directly using deleteQuiz method', function () {
-    Livewire::actingAs($this->admin)
-        ->test(EvaluasiData::class)
-        ->call('deleteQuiz', $this->quiz2->id)
-        ->assertDispatched('alert-show');
-
-    expect(Quiz::find($this->quiz2->id))->toBeNull();
+    $response->assertOk();
+    $response->assertSeeLivewire(EvaluasiDetail::class);
+    $response->assertSee('Dasar Manajemen ASN');
 });

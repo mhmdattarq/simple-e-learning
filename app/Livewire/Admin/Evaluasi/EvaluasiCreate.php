@@ -119,6 +119,23 @@ class EvaluasiCreate extends Component
     }
 
     /**
+     * Sanitasi realtime agar bobot skor hanya dapat diisi angka.
+     */
+    public function updatedQuestions($value, $key): void
+    {
+        if (str_ends_with((string) $key, '.score')) {
+            $parts = explode('.', (string) $key);
+            $qIndex = (int) $parts[0];
+            if (isset($this->questions[$qIndex])) {
+                if (is_string($value) && ! is_numeric($value)) {
+                    $cleaned = preg_replace('/[^0-9]/', '', $value);
+                    $this->questions[$qIndex]['score'] = $cleaned !== '' ? (int) $cleaned : null;
+                }
+            }
+        }
+    }
+
+    /**
      * Memberikan rekomendasi judul otomatis agar mempermudah admin.
      */
     protected function suggestTitle(): void

@@ -287,9 +287,12 @@
                         </label>
                         <div class="input-group">
                             <span class="input-group-text bg-light text-muted"><i class="ri-time-line"></i></span>
-                            <input type="number" min="1" max="360"
+                            <input type="number" min="1" max="360" step="1" inputmode="numeric"
                                 class="form-control @error('time_limit_minutes') is-invalid @enderror"
-                                wire:model="time_limit_minutes" placeholder="30">
+                                wire:model="time_limit_minutes"
+                                onkeydown="return ['Backspace','Delete','ArrowLeft','ArrowRight','Tab'].includes(event.key) || (/^[0-9]$/.test(event.key))"
+                                oninput="this.value = this.value.replace(/[^0-9]/g, ''); if(parseInt(this.value) > 360) this.value = 360;"
+                                placeholder="30">
                             <span class="input-group-text bg-light text-muted">Menit</span>
                         </div>
                         <small class="text-muted d-block mt-1">Kosongkan jika pengerjaan kuis tanpa batasan waktu
@@ -306,9 +309,12 @@
                         </label>
                         <div class="input-group">
                             <span class="input-group-text bg-light text-muted"><i class="ri-percent-line"></i></span>
-                            <input type="number" min="0" max="100"
+                            <input type="number" min="0" max="100" step="1" inputmode="numeric"
                                 class="form-control @error('passing_score') is-invalid @enderror"
-                                wire:model="passing_score" placeholder="70">
+                                wire:model="passing_score"
+                                onkeydown="return ['Backspace','Delete','ArrowLeft','ArrowRight','Tab'].includes(event.key) || (/^[0-9]$/.test(event.key))"
+                                oninput="this.value = this.value.replace(/[^0-9]/g, ''); if(parseInt(this.value) > 100) this.value = 100;"
+                                placeholder="70">
                             <span class="input-group-text bg-light text-muted">Poin (0 - 100)</span>
                         </div>
                         <small class="text-muted d-block mt-1">Skor minimum yang harus diraih peserta agar dinyatakan
@@ -363,14 +369,16 @@
                                 </div>
 
                                 <div class="d-flex align-items-center gap-2">
-                                    {{-- Input Skor Soal (1 - 20) --}}
+                                    {{-- Input Skor Soal (1 - 20) Strict Number Only --}}
                                     <div class="d-flex align-items-center gap-1">
-                                        <label class="text-xs text-muted mb-0 fw-semibold text-nowrap">Bobot
-                                            Skor:</label>
-                                        <input type="number" min="1" max="20"
-                                            class="form-control form-control-sm text-center fw-bold"
-                                            style="width: 70px;"
-                                            wire:model.live="questions.{{ $qIndex }}.score">
+                                        <label class="text-xs text-muted mb-0 fw-semibold text-nowrap">Bobot Skor:</label>
+                                        <input type="number" min="1" max="20" step="1" inputmode="numeric"
+                                            class="form-control form-control-sm text-center fw-bold @error("questions.{$qIndex}.score") is-invalid @enderror"
+                                            style="width: 75px;"
+                                            wire:model.live.number="questions.{{ $qIndex }}.score"
+                                            onkeydown="return ['Backspace','Delete','ArrowLeft','ArrowRight','Tab'].includes(event.key) || (/^[0-9]$/.test(event.key))"
+                                            oninput="this.value = this.value.replace(/[^0-9]/g, ''); if(parseInt(this.value) > 20) this.value = 20;"
+                                            placeholder="1-20">
                                         <span class="text-xs text-muted">Poin</span>
                                     </div>
 

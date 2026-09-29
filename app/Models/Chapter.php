@@ -45,4 +45,12 @@ class Chapter extends Model
     {
         return $this->hasOne(Quiz::class, 'chapter_id');
     }
+
+    /**
+     * Daftar kuis evaluasi pada bab ini.
+     */
+    public function quizzes(): HasMany
+    {
+        return $this->hasMany(Quiz::class, 'chapter_id');
+    }
 }
