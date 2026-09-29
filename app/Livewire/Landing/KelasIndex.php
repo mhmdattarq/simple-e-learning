@@ -118,11 +118,11 @@ class KelasIndex extends Component
 
             $trimmedSearch = trim($this->search);
             if ($trimmedSearch !== '') {
-                $query->where('title', 'like', '%'.$trimmedSearch.'%');
+                $query->where('title', 'like', '%' . $trimmedSearch . '%');
             }
 
             if ($this->selectedCategory !== 'all' && $this->selectedCategory !== '') {
-                $query->whereHas('category', fn ($q) => $q->where('slug', $this->selectedCategory));
+                $query->whereHas('category', fn($q) => $q->where('slug', $this->selectedCategory));
             }
 
             $courses = $query->latest('id')->get();
@@ -140,6 +140,6 @@ class KelasIndex extends Component
             'categories',
             'courses',
             'userRegistrations'
-        ))->title($config['page_title']);
+        ));
     }
 }

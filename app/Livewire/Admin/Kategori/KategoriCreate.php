@@ -6,7 +6,6 @@ use App\Repositories\KategoriRepo;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 
-#[Title('Tambah Kategori Kelas - SIMPEL BKPSDM')]
 class KategoriCreate extends Component
 {
     public array $form = [

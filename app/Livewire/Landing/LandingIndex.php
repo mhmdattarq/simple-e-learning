@@ -10,7 +10,6 @@ use Livewire\Attributes\Title;
 use Livewire\Component;
 
 #[Layout('templates.layouts.landing')]
-#[Title('SIMPEL E-Learning - Portal Kelas Digital ASN & Aparatur')]
 class LandingIndex extends Component
 {
     public string $searchQuery = '';
@@ -42,8 +41,8 @@ class LandingIndex extends Component
 
         $courses = $tablesExist
             ? $coursesQuery->latest('id')
-                ->take(6)
-                ->get()
+            ->take(6)
+            ->get()
             : collect();
 
         $totalPublishedCourses = $tablesExist
@@ -68,12 +67,12 @@ class LandingIndex extends Component
 
         $upcomingJadwals = $tablesExist
             ? Course::with('category')
-                ->where('status', 'published')
-                ->where('type', 'batch')
-                ->whereNotNull('start_date')
-                ->orderBy('start_date', 'asc')
-                ->take(3)
-                ->get()
+            ->where('status', 'published')
+            ->where('type', 'batch')
+            ->whereNotNull('start_date')
+            ->orderBy('start_date', 'asc')
+            ->take(3)
+            ->get()
             : collect();
 
         return view('mods.landing.landing-index', compact(

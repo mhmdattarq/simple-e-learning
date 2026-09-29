@@ -16,7 +16,6 @@ use Livewire\Attributes\Url;
 use Livewire\Component;
 
 #[Layout('templates.layouts.landing')]
-#[Title('Ruang Belajar Mandiri - SIMPEL BKPSDM')]
 class MateriBelajar extends Component
 {
     public int $courseId;
@@ -74,7 +73,7 @@ class MateriBelajar extends Component
             ->pluck('lesson_id')
             ->toArray();
 
-        $chapters = Chapter::with(['lessons' => fn ($q) => $q->orderBy('order', 'asc')])
+        $chapters = Chapter::with(['lessons' => fn($q) => $q->orderBy('order', 'asc')])
             ->where('course_id', $this->courseId)
             ->orderBy('order', 'asc')
             ->get();
@@ -150,7 +149,7 @@ class MateriBelajar extends Component
      */
     protected function getAllLinearLessons(): array
     {
-        $chapters = Chapter::with(['lessons' => fn ($q) => $q->orderBy('order', 'asc')->orderBy('id', 'asc')])
+        $chapters = Chapter::with(['lessons' => fn($q) => $q->orderBy('order', 'asc')->orderBy('id', 'asc')])
             ->where('course_id', $this->courseId)
             ->orderBy('order', 'asc')
             ->orderBy('id', 'asc')
@@ -202,7 +201,7 @@ class MateriBelajar extends Component
         }
 
         $chapterLessons = $currentLesson->chapter->lessons()->orderBy('order', 'asc')->orderBy('id', 'asc')->get();
-        $currentIndex = $chapterLessons->search(fn ($l) => $l->id === $currentLesson->id);
+        $currentIndex = $chapterLessons->search(fn($l) => $l->id === $currentLesson->id);
 
         if ($currentIndex !== false && $currentIndex < $chapterLessons->count() - 1) {
             $this->markLessonComplete($currentLesson->id);
@@ -328,7 +327,7 @@ class MateriBelajar extends Component
     {
         $user = Auth::user();
 
-        $chapters = Chapter::with(['lessons' => fn ($q) => $q->orderBy('order', 'asc')])
+        $chapters = Chapter::with(['lessons' => fn($q) => $q->orderBy('order', 'asc')])
             ->where('course_id', $this->courseId)
             ->orderBy('order', 'asc')
             ->get();
