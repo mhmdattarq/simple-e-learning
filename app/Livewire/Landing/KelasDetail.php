@@ -10,7 +10,6 @@ use Livewire\Attributes\Title;
 use Livewire\Component;
 
 #[Layout('templates.layouts.landing')]
-#[Title('Detail Kelas – SIMPEL BKPSDM Aceh Timur')]
 class KelasDetail extends Component
 {
     public int $courseId;
@@ -41,7 +40,7 @@ class KelasDetail extends Component
         }
 
         $totalChapters = $course->chapters->count();
-        $totalLessons = $course->chapters->sum(fn ($ch) => $ch->lessons->count());
+        $totalLessons = $course->chapters->sum(fn($ch) => $ch->lessons->count());
 
         $backUrl = match (true) {
             $course->isPaid() => route('landing.kelas.berbayar'),

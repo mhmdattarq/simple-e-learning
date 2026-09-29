@@ -6,7 +6,6 @@ use App\Repositories\KategoriRepo;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 
-#[Title('Edit Kategori Kelas - SIMPEL BKPSDM')]
 class KategoriEdit extends Component
 {
     public int $categoryId;
@@ -35,7 +34,7 @@ class KategoriEdit extends Component
     public function rules(): array
     {
         return [
-            'form.name' => 'required|string|min:3|max:100|unique:categories,name,'.$this->categoryId,
+            'form.name' => 'required|string|min:3|max:100|unique:categories,name,' . $this->categoryId,
             'form.description' => 'required|string|min:5|max:1000',
         ];
     }

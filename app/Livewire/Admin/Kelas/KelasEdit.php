@@ -10,7 +10,6 @@ use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
-#[Title('Edit Kelas - SIMPEL BKPSDM')]
 class KelasEdit extends Component
 {
     use WithFileUploads;

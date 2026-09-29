@@ -7,7 +7,6 @@ use Livewire\Attributes\On;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 
-#[Title('Data Kategori Kelas - SIMPEL BKPSDM')]
 class KategoriData extends Component
 {
     public function hookModalDelete(int $id, string $identity): void
