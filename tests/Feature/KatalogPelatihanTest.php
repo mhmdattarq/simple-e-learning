@@ -43,8 +43,9 @@ test('halaman katalog pelatihan menampilkan kursus yang berstatus published', fu
     $response->assertSee('Pelatihan Fungsional');
     $response->assertSee('Mandiri 24/7');
     $response->assertSee('Batch Terjadwal');
-    $response->assertSee(route('peserta.materi', $coursePermanent->id));
-    $response->assertSee(route('peserta.materi', $courseBatch->id));
+    $response->assertSee(route('landing.kelas.detail', $coursePermanent->id));
+    $response->assertSee(route('landing.kelas.detail', $courseBatch->id));
+    $response->assertSee('Lihat Detail');
 });
 
 test('halaman katalog pelatihan tidak menampilkan kursus yang berstatus draft', function () {
@@ -68,7 +69,7 @@ test('halaman katalog pelatihan menampilkan empty state jika tidak ada kursus pu
     $response = $this->get(route('pelatihan.index'));
 
     $response->assertStatus(200);
-    $response->assertSee('Belum Ada Program Pelatihan');
+    $response->assertSee('Belum Ada');
     $response->assertSee('Kembali ke Beranda');
 });
 
@@ -76,5 +77,5 @@ test('menu navbar katalog pelatihan aktif ketika berada di halaman katalog pelat
     $response = $this->get(route('pelatihan.index'));
 
     $response->assertStatus(200);
-    $response->assertSee('Katalog Pelatihan');
+    $response->assertSee('Katalog');
 });

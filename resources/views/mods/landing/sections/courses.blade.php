@@ -120,11 +120,13 @@
                                 </div>
 
                                 <h5 class="fw-bold text-navy mb-2 line-clamp-2" style="font-size: 16px; line-height: 1.4;">
-                                    {{ $course->title }}
+                                    <a href="{{ route('landing.kelas.detail', $course->id) }}" class="text-navy text-decoration-none hover-gold">
+                                        {{ $course->title }}
+                                    </a>
                                 </h5>
 
                                 <p class="text-muted fs-7 mb-4 flex-grow-1 line-clamp-2">
-                                    {{ $course->description ?: 'Program pelatihan kompetensi aparatur yang diselenggarakan oleh BKPSDM Kabupaten Aceh Timur.' }}
+                                    {{ $course->description ?: ($course->category?->description ?: 'Program pelatihan kompetensi aparatur yang diselenggarakan oleh BKPSDM Kabupaten Aceh Timur.') }}
                                 </p>
 
                                 {{-- Footer Action --}}
@@ -142,17 +144,10 @@
                                         </span>
                                     </div>
 
-                                    @auth
-                                        <a href="{{ route('peserta.materi', $course->id) }}" class="btn-simpel-cta-gold py-2 px-3 fs-7">
-                                            <span>Mulai Belajar</span>
-                                            <i class="ri-arrow-right-line ms-1"></i>
-                                        </a>
-                                    @else
-                                        <a href="{{ route('login') }}" class="btn-simpel-cta-gold py-2 px-3 fs-7">
-                                            <span>Mulai Belajar</span>
-                                            <i class="ri-arrow-right-line ms-1"></i>
-                                        </a>
-                                    @endauth
+                                    <a href="{{ route('landing.kelas.detail', $course->id) }}" class="btn-simpel-cta-gold py-2 px-3 fs-7">
+                                        <span>Lihat Detail</span>
+                                        <i class="ri-arrow-right-line ms-1"></i>
+                                    </a>
                                 </div>
                             </div>
                         </div>

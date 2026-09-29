@@ -713,3 +713,48 @@ test('kelas datatables query includes chapters, lessons, and registrations count
     $deletedInDt = collect($json['data'] ?? [])->firstWhere('id', $deletedCourse->id);
     expect($deletedInDt)->toBeNull();
 });
+
+test('admin dapat menyimpan kelas baru dengan deskripsi pada langkah 1', function () {
+    $admin = User::factory()->admin()->create();
+    $category = Category::factory()->create();
+
+    Livewire::actingAs($admin)
+        ->test(KelasCreate::class)
+        ->set('form.title', 'Pelatihan Transformasi Digital ASN')
+        ->set('form.description', 'Deskripsi lengkap pelatihan transformasi digital untuk pengembangan kompetensi aparatur.')
+        ->set('form.category_id', $category->id)
+        ->call('nextStep')
+        ->set('form.type', 'permanent')
+        ->call('nextStep')
+        ->set('form.status', 'published')
+        ->call('formSubmit', 'index')
+        ->assertHasNoErrors();
+
+    $course = Course::where('title', 'Pelatihan Transformasi Digital ASN')->first();
+    expect($course)->not->toBeNull();
+    expect($course->description)->toBe('Deskripsi lengkap pelatihan transformasi digital untuk pengembangan kompetensi aparatur.');
+});
+
+test('admin dapat memperbarui deskripsi kelas pada form edit kelas', function () {
+    $admin = User::factory()->admin()->create();
+    $category = Category::factory()->create();
+
+    $course = Course::factory()->create([
+        'title' => 'Kelas Awal',
+        'description' => 'Deskripsi lama',
+        'type' => 'permanent',
+        'status' => 'published',
+        'category_id' => $category->id,
+        'created_by' => $admin->id,
+    ]);
+
+    Livewire::actingAs($admin)
+        ->test(KelasEdit::class, ['id' => $course->id])
+        ->assertSet('form.description', 'Deskripsi lama')
+        ->set('form.description', 'Deskripsi baru yang telah diperbarui')
+        ->call('formSubmit')
+        ->assertHasNoErrors();
+
+    $course->refresh();
+    expect($course->description)->toBe('Deskripsi baru yang telah diperbarui');
+});

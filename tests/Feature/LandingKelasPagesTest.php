@@ -1,8 +1,6 @@
 <?php
 
-use App\Livewire\Landing\KelasBatch;
-use App\Livewire\Landing\KelasBerbayar;
-use App\Livewire\Landing\KelasPermanen;
+use App\Livewire\Landing\KelasIndex;
 use App\Models\Category;
 use App\Models\Course;
 use App\Models\User;
@@ -85,7 +83,7 @@ test('kelas batch page displays only published batch courses and excludes draft,
     $response->assertDontSee('Archived Batch Pelatihan Dasar');
     $response->assertDontSee('Kursus Permanen Literasi Digital');
 
-    Livewire::test(KelasBatch::class)
+    Livewire::test(KelasIndex::class, ['type' => 'batch'])
         ->assertViewHas('courses', function ($courses) use ($publishedBatch) {
             return $courses->count() === 1
                 && $courses->contains('id', $publishedBatch->id);
@@ -117,7 +115,7 @@ test('kelas permanen page displays only published permanent courses', function (
     $response->assertSee('Manajemen Data & Keamanan Informasi ASN');
     $response->assertDontSee('Pelatihan Batch Tidak Muncul Disini');
 
-    Livewire::test(KelasPermanen::class)
+    Livewire::test(KelasIndex::class, ['type' => 'permanent'])
         ->assertViewHas('courses', function ($courses) use ($publishedPermanent) {
             return $courses->count() === 1
                 && $courses->contains('id', $publishedPermanent->id);
@@ -151,7 +149,7 @@ test('kelas berbayar page displays only published paid courses and price', funct
     $response->assertSee('750.000');
     $response->assertDontSee('Kursus Gratis Permanen Tidak Muncul');
 
-    Livewire::test(KelasBerbayar::class)
+    Livewire::test(KelasIndex::class, ['type' => 'paid'])
         ->assertViewHas('courses', function ($courses) use ($publishedPaid) {
             return $courses->count() === 1
                 && $courses->contains('id', $publishedPaid->id);
@@ -179,7 +177,7 @@ test('livewire search and category filtering works on kelas pages', function () 
         'created_by' => $admin->id,
     ]);
 
-    Livewire::test(KelasBatch::class)
+    Livewire::test(KelasIndex::class, ['type' => 'batch'])
         // Search by keyword
         ->set('search', 'Alpha')
         ->assertViewHas('courses', function ($courses) use ($courseA) {
@@ -204,17 +202,9 @@ test('kelas pages search and category filter run silently without exposing query
     $response = $this->get(route('landing.kelas.batch'));
     $response->assertStatus(200);
 
-    $refBatch = new ReflectionClass(KelasBatch::class);
-    expect($refBatch->getProperty('search')->getAttributes(Url::class))->toBeEmpty();
-    expect($refBatch->getProperty('selectedCategory')->getAttributes(Url::class))->toBeEmpty();
-
-    $refPermanen = new ReflectionClass(KelasPermanen::class);
-    expect($refPermanen->getProperty('search')->getAttributes(Url::class))->toBeEmpty();
-    expect($refPermanen->getProperty('selectedCategory')->getAttributes(Url::class))->toBeEmpty();
-
-    $refBerbayar = new ReflectionClass(KelasBerbayar::class);
-    expect($refBerbayar->getProperty('search')->getAttributes(Url::class))->toBeEmpty();
-    expect($refBerbayar->getProperty('selectedCategory')->getAttributes(Url::class))->toBeEmpty();
+    $ref = new ReflectionClass(KelasIndex::class);
+    expect($ref->getProperty('search')->getAttributes(Url::class))->toBeEmpty();
+    expect($ref->getProperty('selectedCategory')->getAttributes(Url::class))->toBeEmpty();
 });
 
 test('setting selectedCategory directly filters courses by category slug across all 3 pages', function () {
@@ -226,7 +216,7 @@ test('setting selectedCategory directly filters courses by category slug across 
     $batchA = Course::factory()->create(['type' => 'batch', 'status' => 'published', 'category_id' => $categoryA->id, 'created_by' => $admin->id]);
     $batchB = Course::factory()->create(['type' => 'batch', 'status' => 'published', 'category_id' => $categoryB->id, 'created_by' => $admin->id]);
 
-    Livewire::test(KelasBatch::class)
+    Livewire::test(KelasIndex::class, ['type' => 'batch'])
         ->set('selectedCategory', 'frontend-development')
         ->assertViewHas('courses', function ($courses) use ($batchB) {
             return $courses->count() === 1 && $courses->contains('id', $batchB->id);
@@ -236,7 +226,7 @@ test('setting selectedCategory directly filters courses by category slug across 
     $permA = Course::factory()->create(['type' => 'permanent', 'status' => 'published', 'category_id' => $categoryA->id, 'created_by' => $admin->id]);
     $permB = Course::factory()->create(['type' => 'permanent', 'status' => 'published', 'category_id' => $categoryB->id, 'created_by' => $admin->id]);
 
-    Livewire::test(KelasPermanen::class)
+    Livewire::test(KelasIndex::class, ['type' => 'permanent'])
         ->set('selectedCategory', 'backend-development')
         ->assertViewHas('courses', function ($courses) use ($permA) {
             return $courses->count() === 1 && $courses->contains('id', $permA->id);
@@ -246,7 +236,7 @@ test('setting selectedCategory directly filters courses by category slug across 
     $paidA = Course::factory()->create(['type' => 'paid', 'status' => 'published', 'category_id' => $categoryA->id, 'created_by' => $admin->id]);
     $paidB = Course::factory()->create(['type' => 'paid', 'status' => 'published', 'category_id' => $categoryB->id, 'created_by' => $admin->id]);
 
-    Livewire::test(KelasBerbayar::class)
+    Livewire::test(KelasIndex::class, ['type' => 'paid'])
         ->set('selectedCategory', 'frontend-development')
         ->assertViewHas('courses', function ($courses) use ($paidB) {
             return $courses->count() === 1 && $courses->contains('id', $paidB->id);
@@ -282,24 +272,24 @@ test('tombol aksi kelas mengarahkan pengguna login langsung ke ruang materi', fu
         'created_by' => $admin->id,
     ]);
 
-    // Guest sees login button
+    // Guest and Authenticated users see direct link to detail page
     $this->get(route('landing.kelas.batch'))
         ->assertStatus(200)
-        ->assertSee(route('login'));
+        ->assertSee(route('landing.kelas.detail', $batchCourse->id))
+        ->assertSee('Lihat Detail');
 
-    // Authenticated user sees direct link to peserta.materi
     $this->actingAs($user)->get(route('landing.kelas.batch'))
         ->assertStatus(200)
-        ->assertSee(route('peserta.materi', $batchCourse->id))
-        ->assertSee('Mulai Belajar');
+        ->assertSee(route('landing.kelas.detail', $batchCourse->id))
+        ->assertSee('Lihat Detail');
 
     $this->actingAs($user)->get(route('landing.kelas.permanen'))
         ->assertStatus(200)
-        ->assertSee(route('peserta.materi', $permanentCourse->id))
-        ->assertSee('Mulai Belajar');
+        ->assertSee(route('landing.kelas.detail', $permanentCourse->id))
+        ->assertSee('Lihat Detail');
 
     $this->actingAs($user)->get(route('landing.kelas.berbayar'))
         ->assertStatus(200)
-        ->assertSee(route('peserta.materi', $paidCourse->id))
-        ->assertSee('Mulai Belajar');
+        ->assertSee(route('landing.kelas.detail', $paidCourse->id))
+        ->assertSee('Lihat Detail');
 });

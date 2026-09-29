@@ -37,6 +37,7 @@ class KelasCreate extends Component
         $this->currentStep = 1;
         $this->form = [
             'title' => '',
+            'description' => '',
             'category_id' => '',
             'category_name' => '',
             'type' => 'batch',
@@ -91,6 +92,7 @@ class KelasCreate extends Component
         if ($step === 1) {
             return [
                 'form.title' => 'required|string|min:3|max:255',
+                'form.description' => 'nullable|string|max:5000',
                 'form.category_id' => 'required_without:form.category_name|nullable|exists:categories,id',
                 'form.category_name' => 'required_without:form.category_id|nullable|string|max:100',
             ];
@@ -192,6 +194,7 @@ class KelasCreate extends Component
 
     public array $validationAttributes = [
         'form.title' => 'Nama Kelas',
+        'form.description' => 'Deskripsi Kelas',
         'form.category_id' => 'Kategori Kelas',
         'form.category_name' => 'Kategori Kelas',
         'form.type' => 'Jenis Kelas',
@@ -223,6 +226,7 @@ class KelasCreate extends Component
 
         $payload = [
             'title' => trim($this->form['title']),
+            'description' => ! empty($this->form['description']) ? trim($this->form['description']) : null,
             'category_id' => $resolvedCategoryId,
             'type' => $this->form['type'],
             'price' => $isPaid ? (float) ($this->form['price'] ?? 0) : 0,

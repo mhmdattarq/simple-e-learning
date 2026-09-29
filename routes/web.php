@@ -16,11 +16,9 @@ use App\Livewire\Auth\Login;
 use App\Livewire\Auth\Register;
 use App\Livewire\Auth\VerifyEmail;
 use App\Livewire\Landing\JadwalIndex;
-use App\Livewire\Landing\KelasBatch;
-use App\Livewire\Landing\KelasBerbayar;
-use App\Livewire\Landing\KelasPermanen;
+use App\Livewire\Landing\KelasDetail;
+use App\Livewire\Landing\KelasIndex;
 use App\Livewire\Landing\LandingIndex;
-use App\Livewire\Landing\PelatihanIndex;
 use App\Livewire\Peserta\Materi\MateriBelajar;
 use App\Livewire\Peserta\Profile\ProfileIndex;
 use Illuminate\Support\Facades\Auth;
@@ -28,12 +26,14 @@ use Illuminate\Support\Facades\Route;
 
 // 1. Landing Page (Public)
 Route::livewire('/', LandingIndex::class)->name('landing');
-Route::livewire('/kelas-batch', KelasBatch::class)->name('landing.kelas.batch');
-Route::livewire('/kelas-permanen', KelasPermanen::class)->name('landing.kelas.permanen');
-Route::livewire('/kelas-berbayar', KelasBerbayar::class)->name('landing.kelas.berbayar');
+Route::livewire('/kelas-batch', KelasIndex::class)->name('landing.kelas.batch');
+Route::livewire('/kelas-permanen', KelasIndex::class)->name('landing.kelas.permanen');
+Route::livewire('/kelas-berbayar', KelasIndex::class)->name('landing.kelas.berbayar');
 Route::livewire('/jadwal', JadwalIndex::class)->name('jadwal');
-Route::livewire('/kelas', PelatihanIndex::class)->name('pelatihan.index');
+Route::livewire('/kelas', KelasIndex::class)->name('pelatihan.index');
+Route::livewire('/kelas/{id}', KelasDetail::class)->whereNumber('id')->name('landing.kelas.detail');
 Route::redirect('/pelatihan', '/kelas');
+Route::get('/pelatihan/{id}', fn ($id) => redirect()->route('landing.kelas.detail', $id));
 
 // 2. Authentication (Guest)
 Route::middleware('guest')->group(function () {

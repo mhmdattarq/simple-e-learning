@@ -95,6 +95,21 @@
                                 <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
                             @enderror
                         </div>
+
+                        {{-- Deskripsi Program Pelatihan --}}
+                        <div class="col-12">
+                            <label class="form-label text-xs fw-semibold text-dark mb-1">
+                                Deskripsi Kelas Pelatihan
+                            </label>
+                            <textarea class="form-control @error('form.description') is-invalid @enderror"
+                                wire:model="form.description"
+                                rows="4"
+                                placeholder="Tuliskan deskripsi lengkap, tujuan pembelajaran, atau ringkasan kelas pelatihan ini..."></textarea>
+                            @error('form.description')
+                                <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
+                            @enderror
+                            <small class="text-muted d-block mt-1">Deskripsi ini akan ditampilkan pada halaman detail kelas dan ringkasannya pada kartu katalog.</small>
+                        </div>
                     </div>
                 </div>
 

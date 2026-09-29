@@ -31,6 +31,7 @@ class KelasEdit extends Component
 
         $this->form = [
             'title' => $this->course->title,
+            'description' => $this->course->description ?? '',
             'category_id' => $this->course->category_id ?? '',
             'category_name' => $this->course->category?->name ?? '',
             'type' => $this->course->type,
@@ -65,6 +66,7 @@ class KelasEdit extends Component
     {
         $rules = [
             'form.title' => 'required|string|min:3|max:255',
+            'form.description' => 'nullable|string|max:5000',
             'form.category_id' => 'required_without:form.category_name|nullable|exists:categories,id',
             'form.category_name' => 'required_without:form.category_id|nullable|string|max:100',
             'form.type' => 'required|in:permanent,batch,paid,berbayar',
@@ -121,6 +123,7 @@ class KelasEdit extends Component
 
     public array $validationAttributes = [
         'form.title' => 'Nama Kelas',
+        'form.description' => 'Deskripsi Kelas',
         'form.category_id' => 'Kategori Kelas',
         'form.category_name' => 'Kategori Kelas',
         'form.type' => 'Jenis Kelas',
@@ -151,6 +154,7 @@ class KelasEdit extends Component
 
         $payload = [
             'title' => trim($this->form['title']),
+            'description' => ! empty($this->form['description']) ? trim($this->form['description']) : null,
             'category_id' => $resolvedCategoryId,
             'type' => $this->form['type'],
             'price' => $isPaid ? (float) ($this->form['price'] ?? 0) : 0,

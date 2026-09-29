@@ -14,10 +14,9 @@
                     </p>
                 </div>
                 <div class="d-flex align-items-center gap-2">
-                    <a href="{{ route('landing') }}" class="btn btn-outline-light btn-sm radius-8 px-3 py-2 fs-8">
-                        <i class="ri-arrow-left-line me-1"></i> Kembali ke Beranda
+                    <a href="{{ route('landing.kelas.detail', $course->id) }}" class="btn btn-outline-light btn-sm radius-8 px-3 py-2 fs-8">
+                        <i class="ri-arrow-left-line me-1"></i> Kembali ke Detail Kelas
                     </a>
-
                 </div>
             </div>
         </div>
