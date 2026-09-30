@@ -154,11 +154,13 @@ class Course extends Model
 
     /**
      * Check if curriculum is frozen (Batch rule: locked once active/started).
+     * Locking is based on exact datetime, not day-level comparison, so admin
+     * can still manage curriculum up until the precise start_date moment.
      */
     public function isCurriculumFrozen(): bool
     {
         if ($this->isBatch() && $this->start_date) {
-            return now()->startOfDay()->gte($this->start_date->startOfDay());
+            return now()->gte($this->start_date);
         }
 
         return false;

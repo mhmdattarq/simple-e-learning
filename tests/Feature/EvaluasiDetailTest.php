@@ -108,7 +108,7 @@ test('evaluasi attempts datatable returns valid json with participant scores', f
 
     $data = $response->json('data');
     expect($data)->toHaveCount(1);
-    expect($data[0]['user']['name'])->toBe($this->peserta->name);
+    expect(html_entity_decode($data[0]['user']['name']))->toBe($this->peserta->name);
     expect($data[0]['quiz']['title'])->toBe('Kuis Regulasi Kepegawaian');
     expect($data[0]['is_passed'])->toBeTrue();
     expect($data[0]['total_earned_score'])->toBe(20);
@@ -137,7 +137,7 @@ test('evaluasi attempts datatable supports multiple column searches without ambi
     $response->assertOk();
     $data = $response->json('data');
     expect($data)->toHaveCount(1);
-    expect($data[0]['user']['name'])->toBe($this->peserta->name);
+    expect(html_entity_decode($data[0]['user']['name']))->toBe($this->peserta->name);
 });
 
 test('admin can trigger hookModalDelete and delete quiz from detail page', function () {
