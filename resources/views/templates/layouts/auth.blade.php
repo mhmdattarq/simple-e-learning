@@ -35,7 +35,7 @@
     <link rel="stylesheet" href="{{ asset('admin/assets/css/style.css') }}">
 
     <!-- App Custom CSS & JS (Classic Asset) -->
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}?v={{ filemtime(public_path('css/app.css')) }}">
     <script src="{{ asset('js/app.js') }}"></script>
 
     @livewireStyles
