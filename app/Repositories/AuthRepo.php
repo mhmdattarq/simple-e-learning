@@ -35,8 +35,8 @@ class AuthRepo
                 // Buat token verifikasi aman 64 karakter
                 $rawToken = EmailVerification::createTokenFor($user);
 
-                // Kirim email notifikasi aktivasi
-                Mail::to($user->email)->send(new VerifyEmailNotification($user, $rawToken));
+                // Kirim email notifikasi aktivasi (background queue)
+                Mail::to($user->email)->queue(new VerifyEmailNotification($user, $rawToken));
 
                 // Catat ke immutable audit log
                 AuditLog::log(

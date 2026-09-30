@@ -90,7 +90,7 @@ class VerifyEmail extends Component
 
         if ($user && ! $user->email_verified_at) {
             $rawToken = EmailVerification::createTokenFor($user);
-            Mail::to($user->email)->send(new VerifyEmailNotification($user, $rawToken));
+            Mail::to($user->email)->queue(new VerifyEmailNotification($user, $rawToken));
 
             AuditLog::log(
                 action: 'user.verification_resent',

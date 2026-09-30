@@ -46,8 +46,8 @@ test('participant registration sends activation email, creates secure verificati
     expect(strlen($verification->token_hash))->toBe(64);
     expect($verification->expires_at->isFuture())->toBeTrue();
 
-    // Verify activation mail was sent
-    Mail::assertSent(VerifyEmailNotification::class, function ($mail) use ($user) {
+    // Verify activation mail was queued
+    Mail::assertQueued(VerifyEmailNotification::class, function ($mail) use ($user) {
         return $mail->hasTo($user->email) && $mail->user->id === $user->id;
     });
 
@@ -79,7 +79,7 @@ test('unverified user cannot login and is prompted to verify email with resend a
     $loginComponent->call('resendVerification')
         ->assertSee('Tautan aktivasi baru telah dikirimkan');
 
-    Mail::assertSent(VerifyEmailNotification::class, function ($mail) use ($user) {
+    Mail::assertQueued(VerifyEmailNotification::class, function ($mail) use ($user) {
         return $mail->hasTo($user->email);
     });
 });
@@ -139,7 +139,7 @@ test('invalid or expired verification token displays failed state and allows rea
         ->assertHasNoErrors()
         ->assertSee('tautan verifikasi baru telah dikirimkan');
 
-    Mail::assertSent(VerifyEmailNotification::class, function ($mail) use ($user) {
+    Mail::assertQueued(VerifyEmailNotification::class, function ($mail) use ($user) {
         return $mail->hasTo($user->email);
     });
 
@@ -185,4 +185,15 @@ test('livewire resend verification applies anti-enumeration for non-existent ema
         ->assertSee('Jika alamat email terdaftar dan belum aktif');
 
     Mail::assertNothingSent();
+});
+
+test('registration route is rate limited after too many requests', function () {
+    RateLimiter::clear('127.0.0.1');
+
+    for ($i = 0; $i < 5; $i++) {
+        $this->get(route('register'))->assertOk();
+    }
+
+    // 6th request within a minute triggers 429 Too Many Requests
+    $this->get(route('register'))->assertStatus(429);
 });

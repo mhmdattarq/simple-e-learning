@@ -39,7 +39,7 @@ Route::livewire('/kelas-batch', KelasIndex::class)->name('landing.kelas.batch');
 Route::livewire('/kelas-permanen', KelasIndex::class)->name('landing.kelas.permanen');
 Route::livewire('/kelas-berbayar', KelasIndex::class)->name('landing.kelas.berbayar');
 Route::livewire('/jadwal', JadwalIndex::class)->name('jadwal');
-Route::livewire('/kontak', KontakIndex::class)->name('kontak');
+Route::livewire('/kontak', KontakIndex::class)->middleware('throttle:contact')->name('kontak');
 Route::redirect('/contact', '/kontak');
 Route::livewire('/kelas', KelasIndex::class)->name('pelatihan.index');
 
@@ -58,8 +58,8 @@ Route::get('/favicon.ico', fn () => response()->file(public_path('favicon.ico'))
 // 2. Authentication (Guest)
 Route::middleware('guest')->group(function () {
     Route::livewire('/login', Login::class)->middleware('throttle:login')->name('login');
-    Route::livewire('/register', Register::class)->name('register');
-    Route::livewire('/email/verify/{token}', VerifyEmail::class)->name('verification.verify');
+    Route::livewire('/register', Register::class)->middleware('throttle:register')->name('register');
+    Route::livewire('/email/verify/{token}', VerifyEmail::class)->middleware('throttle:verification')->name('verification.verify');
     Route::get('/auth/google/redirect', [GoogleAuthController::class, 'redirect'])->name('auth.google.redirect');
     Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback'])->name('auth.google.callback');
 });
