@@ -385,11 +385,24 @@ test('navbar active menu reflects current page and course context across index, 
         'title' => 'Evaluasi Permanen',
         'type' => 'final',
     ]);
-    $resPermEvaluasi = $this->actingAs($user)->get(route('peserta.evaluasi.kerjakan', ['course' => $permanentCourse, 'quiz_id' => $quiz->id]));
+    $evaluasiUrl = route('peserta.evaluasi.kerjakan', ['course' => $permanentCourse, 'quiz_id' => $quiz->id]);
+    expect($evaluasiUrl)->toContain('/kelas-permanen/'.$permanentCourse->slug.'/evaluasi/'.$quiz->slug);
+    expect($evaluasiUrl)->not->toContain('/evaluasi/'.$quiz->id);
+
+    $resPermEvaluasi = $this->actingAs($user)->get($evaluasiUrl);
     $resPermEvaluasi->assertStatus(200);
     $resPermEvaluasi->assertSeeInOrder(['<li class="current"', 'Kelas Permanen']);
 
-    // 4. Kelas Berbayar Index, Detail, and Materi
+    // Redirect when accessing via numeric ID
+    $rawIdUrl = url('/kelas-permanen/'.$permanentCourse->slug.'/evaluasi/'.$quiz->id);
+    $resRawRedirect = $this->actingAs($user)->get($rawIdUrl);
+    $resRawRedirect->assertRedirect($evaluasiUrl);
+
+    // Redirect when accessing standalone /evaluasi/kerjakan/{quiz}
+    $resStandaloneRedirect = $this->actingAs($user)->get(route('peserta.evaluasi.show', ['quiz' => $quiz->slug]));
+    $resStandaloneRedirect->assertRedirect($evaluasiUrl);
+
+    // 4. Kelas Berbayar Index, Detail, Materi, and Evaluasi
     $resPaidIndex = $this->get(route('landing.kelas.berbayar'));
     $resPaidIndex->assertStatus(200);
     $resPaidIndex->assertSeeInOrder(['<li class="current"', 'Kelas Berbayar']);
@@ -401,4 +414,15 @@ test('navbar active menu reflects current page and course context across index, 
     $resPaidMateri = $this->actingAs($user)->get(route('peserta.materi', $paidCourse->id));
     $resPaidMateri->assertStatus(200);
     $resPaidMateri->assertSeeInOrder(['<li class="current"', 'Kelas Berbayar']);
+
+    $paidQuiz = Quiz::factory()->create([
+        'course_id' => $paidCourse->id,
+        'title' => 'Evaluasi Berbayar',
+        'type' => 'final',
+    ]);
+    $paidEvaluasiUrl = route('peserta.evaluasi.kerjakan', ['course' => $paidCourse, 'quiz' => $paidQuiz]);
+    expect($paidEvaluasiUrl)->toContain('/kelas-berbayar/'.$paidCourse->slug.'/evaluasi/'.$paidQuiz->slug);
+    $resPaidEvaluasi = $this->actingAs($user)->get($paidEvaluasiUrl);
+    $resPaidEvaluasi->assertStatus(200);
+    $resPaidEvaluasi->assertSeeInOrder(['<li class="current"', 'Kelas Berbayar']);
 });

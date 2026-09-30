@@ -102,7 +102,7 @@
                                         @endphp
                                         <div class="mt-2 pt-2 border-top">
                                             @if ($quizAttempt)
-                                                <a href="{{ route('peserta.evaluasi.kerjakan', ['course' => $course, 'quiz_id' => $chapter->quiz->id]) }}"
+                                                <a href="{{ route('peserta.evaluasi.kerjakan', ['course' => $course, 'quiz' => $chapter->quiz]) }}"
                                                     class="list-group-item d-flex align-items-center justify-content-between p-2 fs-8 rounded-2 border {{ $quizAttempt->is_passed ? 'bg-success-subtle text-success border-success-subtle' : 'bg-warning-subtle text-warning border-warning-subtle' }} text-decoration-none"
                                                     wire:navigate>
                                                     <div class="d-flex align-items-center gap-2 overflow-hidden">
@@ -117,7 +117,7 @@
                                                     </span>
                                                 </a>
                                             @elseif ($chapLessonsAllDone)
-                                                <a href="{{ route('peserta.evaluasi.kerjakan', ['course' => $course, 'quiz_id' => $chapter->quiz->id]) }}"
+                                                <a href="{{ route('peserta.evaluasi.kerjakan', ['course' => $course, 'quiz' => $chapter->quiz]) }}"
                                                     class="list-group-item list-group-item-action d-flex align-items-center justify-content-between p-2 fs-8 rounded-2 border border-primary bg-primary-subtle text-primary fw-bold text-decoration-none shadow-sm"
                                                     wire:navigate>
                                                     <div class="d-flex align-items-center gap-2 overflow-hidden">
@@ -162,7 +162,7 @@
                                         <span>UJIAN KELULUSAN KELAS</span>
                                     </div>
                                     @if ($finalAttempt)
-                                        <a href="{{ route('peserta.evaluasi.kerjakan', ['course' => $course, 'quiz_id' => $course->finalQuiz->id]) }}"
+                                        <a href="{{ route('peserta.evaluasi.kerjakan', ['course' => $course, 'quiz' => $course->finalQuiz]) }}"
                                             class="list-group-item d-flex align-items-center justify-content-between p-2 fs-8 rounded-2 border {{ $finalAttempt->is_passed ? 'bg-success-subtle text-success border-success-subtle' : 'bg-warning-subtle text-warning border-warning-subtle' }} text-decoration-none"
                                             wire:navigate>
                                             <div class="d-flex align-items-center gap-2 overflow-hidden">
@@ -177,7 +177,7 @@
                                             </span>
                                         </a>
                                     @elseif ($allLessonsDone)
-                                        <a href="{{ route('peserta.evaluasi.kerjakan', ['course' => $course, 'quiz_id' => $course->finalQuiz->id]) }}"
+                                        <a href="{{ route('peserta.evaluasi.kerjakan', ['course' => $course, 'quiz' => $course->finalQuiz]) }}"
                                             class="list-group-item list-group-item-action d-flex align-items-center justify-content-between p-2 fs-8 rounded-2 border border-warning bg-warning-subtle text-warning fw-bold text-decoration-none shadow-sm"
                                             wire:navigate>
                                             <div class="d-flex align-items-center gap-2 overflow-hidden">

@@ -53,15 +53,46 @@ class QuizKerjakan extends Component
 
     public bool $showSubmitConfirmation = false;
 
-    public function mount(int $quiz_id, int|string|Course|null $course = null, int|string|null $course_id = null): void
-    {
-        $this->quizId = $quiz_id;
+    public function mount(
+        int|string|Quiz|null $quiz = null,
+        int|string|null $quiz_id = null,
+        int|string|Course|null $course = null,
+        int|string|null $course_id = null
+    ): void {
+        $targetQuiz = $quiz ?? $quiz_id;
 
-        $this->quiz = Quiz::with([
-            'course.category',
-            'chapter.lessons',
-            'questions.options',
-        ])->findOrFail($quiz_id);
+        if ($targetQuiz instanceof Quiz) {
+            $this->quiz = $targetQuiz->loadMissing([
+                'course.category',
+                'chapter.lessons',
+                'questions.options',
+            ]);
+            $this->quizId = $this->quiz->id;
+        } else {
+            $this->quiz = Quiz::with([
+                'course.category',
+                'chapter.lessons',
+                'questions.options',
+            ])
+                ->where('slug', $targetQuiz)
+                ->orWhere(fn ($q) => is_numeric($targetQuiz) ? $q->where('id', (int) $targetQuiz) : null)
+                ->firstOrFail();
+
+            $this->quizId = $this->quiz->id;
+        }
+
+        // Canonical redirect if accessed via URL with numeric id or standalone route
+        if (request()->route() && ! empty($this->quiz->slug)) {
+            $lastSegment = request()->segment(count(request()->segments()));
+            $isStandalone = request()->routeIs('peserta.evaluasi.show') || request()->is('evaluasi/kerjakan/*');
+
+            if (is_numeric($lastSegment) || $isStandalone) {
+                $courseTarget = $course ?? $this->quiz->course;
+                $this->redirect(route('peserta.evaluasi.kerjakan', ['course' => $courseTarget, 'quiz' => $this->quiz]), navigate: true);
+
+                return;
+            }
+        }
 
         /** @var User $user */
         $user = Auth::user();

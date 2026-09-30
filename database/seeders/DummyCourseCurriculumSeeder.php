@@ -14,6 +14,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class DummyCourseCurriculumSeeder extends Seeder
 {
@@ -716,6 +717,7 @@ class DummyCourseCurriculumSeeder extends Seeder
                                 'type' => 'chapter',
                             ],
                             [
+                                'slug' => Str::slug($course->slug.'-'.$qData['title']),
                                 'title' => $qData['title'],
                                 'description' => $qData['description'] ?? null,
                                 'time_limit_minutes' => $qData['time_limit_minutes'] ?? 15,
@@ -740,6 +742,7 @@ class DummyCourseCurriculumSeeder extends Seeder
                         'type' => 'final',
                     ],
                     [
+                        'slug' => Str::slug($course->slug.'-'.$fqData['title']),
                         'title' => $fqData['title'],
                         'description' => $fqData['description'] ?? null,
                         'time_limit_minutes' => $fqData['time_limit_minutes'] ?? 30,

@@ -73,16 +73,16 @@ Route::middleware('auth')->group(function () {
     Route::livewire('/kelas-permanen/{course}/materi', MateriBelajar::class)->name('peserta.materi.permanen');
     Route::livewire('/kelas-berbayar/{course}/materi', MateriBelajar::class)->name('peserta.materi.berbayar');
 
-    // Evaluasi & Kuis per Jenis
-    Route::livewire('/kelas-batch/{course}/evaluasi/{quiz_id}', QuizKerjakan::class)->name('peserta.evaluasi.kerjakan.batch');
-    Route::livewire('/kelas-permanen/{course}/evaluasi/{quiz_id}', QuizKerjakan::class)->name('peserta.evaluasi.kerjakan.permanen');
-    Route::livewire('/kelas-berbayar/{course}/evaluasi/{quiz_id}', QuizKerjakan::class)->name('peserta.evaluasi.kerjakan.berbayar');
+    // Evaluasi & Kuis per Jenis (Slug-based & Type-aware)
+    Route::livewire('/kelas-batch/{course}/evaluasi/{quiz}', QuizKerjakan::class)->name('peserta.evaluasi.kerjakan.batch');
+    Route::livewire('/kelas-permanen/{course}/evaluasi/{quiz}', QuizKerjakan::class)->name('peserta.evaluasi.kerjakan.permanen');
+    Route::livewire('/kelas-berbayar/{course}/evaluasi/{quiz}', QuizKerjakan::class)->name('peserta.evaluasi.kerjakan.berbayar');
 
     // Generic / Backward-compatible Redirects
     Route::get('/kelas/{course}/materi', fn (Course $course) => redirect()->to(route('peserta.materi', $course)));
     Route::get('/pelatihan/{course}/materi', fn (Course $course) => redirect()->to(route('peserta.materi', $course)));
-    Route::get('/kelas/{course}/evaluasi/{quiz_id}', fn (Course $course, $quiz_id) => redirect()->to(route('peserta.evaluasi.kerjakan', ['course' => $course, 'quiz_id' => $quiz_id])));
-    Route::livewire('/evaluasi/kerjakan/{quiz_id}', QuizKerjakan::class)->name('peserta.evaluasi.show');
+    Route::get('/kelas/{course}/evaluasi/{quiz}', fn (Course $course, $quiz) => redirect()->to(route('peserta.evaluasi.kerjakan', ['course' => $course, 'quiz' => $quiz])));
+    Route::livewire('/evaluasi/kerjakan/{quiz}', QuizKerjakan::class)->name('peserta.evaluasi.show');
 });
 
 // 4. Logout (Authenticated)
