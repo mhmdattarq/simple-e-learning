@@ -383,7 +383,7 @@
                                 {{-- Tombol Sebelumnya --}}
                                 <div>
                                     <button type="button" wire:click="previousLesson"
-                                        class="btn btn-outline-secondary radius-10 px-4 py-2 fs-7 fw-semibold d-inline-flex align-items-center gap-2 shadow-none"
+                                        class="btn btn-outline-danger radius-10 px-4 py-2 fs-7 fw-semibold d-inline-flex align-items-center gap-2 shadow-none"
                                         @if ($isFirstLesson) disabled @endif>
                                         <i class="ri-arrow-left-line"></i>
                                         <span>Sebelumnya</span>
@@ -395,14 +395,14 @@
                                     @if (!$isLastInChapter)
                                         {{-- Masih ada materi berikutnya dalam bab yang sama --}}
                                         <button type="button" wire:click="nextLesson"
-                                            class="btn btn-primary radius-10 px-4 py-2 fs-7 fw-semibold d-inline-flex align-items-center gap-2 shadow-sm">
+                                            class="btn btn-simple-gold radius-10 px-4 py-2 fs-7 fw-semibold d-inline-flex align-items-center gap-2 shadow-sm">
                                             <span>Selanjutnya</span>
                                             <i class="ri-arrow-right-line"></i>
                                         </button>
                                     @elseif (!$hasChapterQuiz && $hasNextChapter)
                                         {{-- Di akhir bab, TIDAK ADA evaluasi bab, dan MASIH ADA bab berikutnya: Tombol Selanjutnya --}}
                                         <button type="button" wire:click="promptCompleteChapter"
-                                            class="btn btn-primary radius-10 px-4 py-2 fs-7 fw-semibold d-inline-flex align-items-center gap-2 shadow-sm">
+                                            class="btn btn-simple-gold radius-10 px-4 py-2 fs-7 fw-semibold d-inline-flex align-items-center gap-2 shadow-sm">
                                             <span>Selanjutnya</span>
                                             <i class="ri-arrow-right-line"></i>
                                         </button>
@@ -478,11 +478,11 @@
 
                         <div class="d-flex align-items-center gap-2">
                             <button type="button" wire:click="cancelCompleteChapter"
-                                class="btn btn-outline-secondary w-50 py-2 radius-10 fw-semibold fs-8">
+                                class="btn btn-outline-danger w-50 py-2 radius-10 fw-semibold fs-8">
                                 Batal
                             </button>
                             <button type="button" wire:click="confirmCompleteChapter"
-                                class="btn {{ $hasChapterQuiz || !$hasNextChapter ? 'btn-success' : 'btn-primary' }} w-50 py-2 radius-10 fw-semibold fs-8 d-inline-flex align-items-center justify-content-center gap-1 shadow-sm">
+                                class="btn {{ $hasChapterQuiz || !$hasNextChapter ? 'btn-success' : 'btn-simple-gold' }} w-50 py-2 radius-10 fw-semibold fs-8 d-inline-flex align-items-center justify-content-center gap-1 shadow-sm">
                                 <i class="ri-check-line"></i>
                                 {{ !$hasChapterQuiz && $hasNextChapter ? 'Lanjutkan' : 'Ya, Selesai' }}
                             </button>

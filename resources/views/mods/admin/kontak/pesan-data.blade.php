@@ -6,7 +6,7 @@
             <p class="text-muted mb-0">Kelola dan respon pertanyaan, aduan, serta permohonan informasi dari ASN atau masyarakat.</p>
         </div>
         <div class="d-flex align-items-center gap-2">
-            <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill px-3 d-flex align-items-center gap-1"
+            <button type="button" class="btn btn-outline-danger btn-sm rounded-pill px-3 d-flex align-items-center gap-1"
                 onclick="if(window.dtPesanTable) window.dtPesanTable.ajax.reload(null, false);">
                 <i class="ri-refresh-line"></i> Refresh Data
             </button>

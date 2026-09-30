@@ -165,7 +165,7 @@
                 </p>
                 <div class="d-flex justify-content-center gap-2">
                     <a href="{{ route('peserta.materi', $quiz->course_id) }}"
-                        class="btn btn-primary px-4 py-2 radius-8">
+                        class="btn btn-simple-gold px-4 py-2 radius-8">
                         <i class="ri-arrow-left-line me-1"></i> Kembali ke Ruang Belajar
                     </a>
                 </div>
@@ -467,14 +467,14 @@
                             {{-- Tombol Navigasi Soal Bawah --}}
                             <div
                                 class="d-flex align-items-center justify-content-between pt-3 border-top flex-wrap gap-2">
-                                <button type="button" class="btn btn-outline-secondary px-3 py-2 radius-8 fs-8"
+                                <button type="button" class="btn btn-outline-danger px-3 py-2 radius-8 fs-8"
                                     wire:click="prevQuestion" {{ $currentQuestionIndex === 0 ? 'disabled' : '' }}>
                                     <i class="ri-arrow-left-line me-1"></i> Soal Sebelumnya
                                 </button>
 
                                 <div class="d-flex align-items-center gap-2">
                                     @if ($currentQuestionIndex < $this->questionsCount - 1)
-                                        <button type="button" class="btn btn-primary px-4 py-2 radius-8 fs-8"
+                                        <button type="button" class="btn btn-simple-gold px-4 py-2 radius-8 fs-8"
                                             wire:click="nextQuestion">
                                             <span>Soal Selanjutnya</span> <i class="ri-arrow-right-line ms-1"></i>
                                         </button>
@@ -621,11 +621,11 @@
                     {{-- Tombol Aksi Lanjut --}}
                     <div class="d-flex align-items-center justify-content-center gap-2 flex-wrap">
                         <a href="{{ route('peserta.materi', $quiz->course ?? $quiz->course_id) }}"
-                            class="btn btn-primary px-4 py-2 radius-8 fw-semibold">
+                            class="btn btn-simple-gold px-4 py-2 radius-8 fw-semibold">
                             <i class="ri-book-open-line me-1"></i> Kembali ke Ruang Belajar Materi
                         </a>
                         <a href="{{ route('landing.kelas.detail', $quiz->course ?? $quiz->course_id) }}"
-                            class="btn btn-outline-secondary px-4 py-2 radius-8">
+                            class="btn btn-outline-danger px-4 py-2 radius-8">
                             <i class="ri-arrow-left-line me-1"></i> Detail Kelas
                         </a>
                     </div>
@@ -678,7 +678,7 @@
 
                         {{-- Action Buttons (50/50 Balanced) --}}
                         <div class="d-flex align-items-center gap-2">
-                            <button type="button" class="btn btn-outline-secondary w-50 py-2 radius-10 fw-semibold fs-8"
+                            <button type="button" class="btn btn-outline-danger w-50 py-2 radius-10 fw-semibold fs-8"
                                 wire:click="cancelSubmit">
                                 Periksa Lagi
                             </button>

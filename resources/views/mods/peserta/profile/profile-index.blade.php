@@ -242,7 +242,7 @@
                         </div>
 
                         <div class="d-flex align-items-center justify-content-end gap-2 pt-3 border-top">
-                            <button type="submit" class="btn btn-primary px-4 rounded-pill fw-semibold shadow-sm"
+                            <button type="submit" class="btn btn-simple-gold px-4 rounded-pill fw-semibold shadow-sm"
                                 wire:loading.attr="disabled">
                                 <span wire:loading.remove wire:target="save">
                                     <i class="ri-save-line me-1"></i> Simpan Data Profil
