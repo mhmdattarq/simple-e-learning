@@ -67,7 +67,21 @@
     <link rel="stylesheet" href="{{ asset('css/app.css') }}?v={{ filemtime(public_path('css/app.css')) }}">
     <script src="{{ asset('js/app.js') }}"></script>
 
+    @stack('css')
+
     <style>
+        /* Utility Spacing & Radius for Landing Layout */
+        .p-24 { padding: 1.5rem !important; }
+        @media (min-width: 768px) {
+            .p-md-32 { padding: 2rem !important; }
+            .p-md-40 { padding: 2.5rem !important; }
+        }
+        .radius-8 { border-radius: 8px !important; }
+        .radius-10 { border-radius: 10px !important; }
+        .radius-12 { border-radius: 12px !important; }
+        .radius-16 { border-radius: 16px !important; }
+        .radius-20 { border-radius: 20px !important; }
+
         /* Custom Button SIMPEL E-Learning */
         .btn-simpel-cta-gold {
             background-color: var(--simpel-gold) !important;
@@ -359,6 +373,8 @@
     <!-- template js -->
     <script data-navigate-once src="{{ asset('landing/assets/js/script.js') }}"></script>
     <script data-navigate-once src="{{ asset('mine/script.js') }}?v={{ filemtime(public_path('mine/script.js')) }}"></script>
+    @stack('js')
+    @stack('scripts')
     @livewireScripts
 </body>
 
