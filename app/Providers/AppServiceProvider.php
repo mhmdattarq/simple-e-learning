@@ -69,5 +69,20 @@ class AppServiceProvider extends ServiceProvider
         RateLimiter::for('export', function (Request $request) {
             return Limit::perMinute(10)->by($request->user()?->id ?: $request->ip());
         });
+
+        // 5. Rate limiter untuk Registrasi Akun Mandiri (5 per menit per IP)
+        RateLimiter::for('register', function (Request $request) {
+            return Limit::perMinute(5)->by($request->ip());
+        });
+
+        // 6. Rate limiter untuk Verifikasi Email (10 per menit per IP)
+        RateLimiter::for('verification', function (Request $request) {
+            return Limit::perMinute(10)->by($request->ip());
+        });
+
+        // 7. Rate limiter untuk Formulir Kontak (5 per menit per IP)
+        RateLimiter::for('contact', function (Request $request) {
+            return Limit::perMinute(5)->by($request->ip());
+        });
     }
 }

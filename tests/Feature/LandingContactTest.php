@@ -4,6 +4,7 @@ use App\Livewire\Landing\KontakIndex;
 use App\Models\AuditLog;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\RateLimiter;
 use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
@@ -72,4 +73,15 @@ test('authenticated user has contact info prefilled and sends audit log', functi
 
     expect($log)->not->toBeNull();
     expect($log->new_values['subject'])->toBe('Kendala Akun & Login');
+});
+
+test('contact page route is rate limited after too many requests', function () {
+    RateLimiter::clear('127.0.0.1');
+
+    for ($i = 0; $i < 5; $i++) {
+        $this->get(route('kontak'))->assertOk();
+    }
+
+    // 6th request within a minute triggers 429 Too Many Requests
+    $this->get(route('kontak'))->assertStatus(429);
 });

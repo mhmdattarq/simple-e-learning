@@ -364,11 +364,12 @@ class MateriBelajar extends Component
         $user = Auth::user();
 
         $chapters = Chapter::with([
-            'lessons' => fn ($q) => $q->orderBy('order', 'asc'),
+            'lessons' => fn ($q) => $q->orderBy('order', 'asc')->orderBy('id', 'asc'),
             'quiz.attempts' => fn ($q) => $q->where('user_id', $user->id),
         ])
             ->where('course_id', $this->courseId)
             ->orderBy('order', 'asc')
+            ->orderBy('id', 'asc')
             ->get();
 
         $completedLessonIds = DB::table('lesson_user')
@@ -377,6 +378,13 @@ class MateriBelajar extends Component
             ->pluck('lesson_id')
             ->toArray();
 
+        $allLinear = [];
+        foreach ($chapters as $ch) {
+            foreach ($ch->lessons as $l) {
+                $allLinear[] = $l;
+            }
+        }
+
         $currentLesson = null;
         $currentChapter = null;
         $isFirstLesson = true;
@@ -384,23 +392,21 @@ class MateriBelajar extends Component
         $hasNextChapter = false;
 
         if ($this->selectedLessonId) {
-            $currentLesson = Lesson::with('chapter')->find($this->selectedLessonId);
-            if ($currentLesson) {
-                $currentChapter = $currentLesson->chapter;
-
-                $allLinear = $this->getAllLinearLessons();
-                $linearIndex = null;
-                foreach ($allLinear as $idx => $l) {
-                    if ($l->id === $currentLesson->id) {
-                        $linearIndex = $idx;
-                        break;
-                    }
+            $linearIndex = null;
+            foreach ($allLinear as $idx => $l) {
+                if ($l->id === $this->selectedLessonId) {
+                    $currentLesson = $l;
+                    $linearIndex = $idx;
+                    break;
                 }
+            }
 
-                $isFirstLesson = ($linearIndex === null || $linearIndex === 0);
+            if ($currentLesson) {
+                $currentChapter = $chapters->firstWhere('id', $currentLesson->chapter_id);
+                $isFirstLesson = ($linearIndex === 0);
 
                 if ($currentChapter) {
-                    $chapterLessons = $currentChapter->lessons()->orderBy('order', 'asc')->orderBy('id', 'asc')->get();
+                    $chapterLessons = $currentChapter->lessons;
                     $lastLessonInChap = $chapterLessons->last();
                     $isLastInChapter = ($lastLessonInChap && $lastLessonInChap->id === $currentLesson->id);
 
@@ -421,7 +427,10 @@ class MateriBelajar extends Component
             $hasChapterQuiz = ! $currentChapter->quiz->isAttemptedByUser($user->id);
         }
 
-        $finalQuiz = Quiz::where('course_id', $this->courseId)->where('type', 'final')->first();
+        $finalQuiz = Quiz::with(['attempts' => fn ($q) => $q->where('user_id', $user->id)])
+            ->where('course_id', $this->courseId)
+            ->where('type', 'final')
+            ->first();
         $hasFinalQuiz = $finalQuiz && ! $finalQuiz->isAttemptedByUser($user->id);
 
         return view('mods.peserta.materi.materi-belajar', compact(

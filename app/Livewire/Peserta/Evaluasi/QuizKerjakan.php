@@ -6,6 +6,7 @@ use App\Enums\CourseStatus;
 use App\Models\CourseUser;
 use App\Models\Quiz;
 use App\Models\QuizAttempt;
+use App\Models\QuizOption;
 use App\Models\QuizQuestion;
 use App\Models\User;
 use Carbon\Carbon;
@@ -226,7 +227,14 @@ class QuizKerjakan extends Component
             return;
         }
 
-        $this->userAnswers[$questionId] = $optionId;
+        // Pastikan opsi benar-benar milik pertanyaan yang bersangkutan
+        $validOption = QuizOption::where('id', $optionId)
+            ->where('question_id', $questionId)
+            ->exists();
+
+        if ($validOption) {
+            $this->userAnswers[$questionId] = $optionId;
+        }
     }
 
     /**
@@ -328,8 +336,15 @@ class QuizKerjakan extends Component
         $earnedScore = 0;
         $answersData = [];
 
-        foreach ($this->quiz->questions as $question) {
-            $correctOption = $question->getCorrectOption();
+        // Ambil data pertanyaan dan opsi resmi langsung dari database untuk validasi & penilaian yang aman
+        $questions = QuizQuestion::with(['options' => fn ($q) => $q->orderBy('order', 'asc')])
+            ->where('quiz_id', $this->quiz->id)
+            ->orderBy('order', 'asc')
+            ->get();
+
+        foreach ($questions as $question) {
+            $correctOption = $question->options->firstWhere('is_correct', true)
+                ?? QuizOption::where('question_id', $question->id)->where('is_correct', true)->first();
             $chosenOptionId = $this->userAnswers[$question->id] ?? null;
 
             $isCorrect = ($chosenOptionId && $correctOption && (int) $chosenOptionId === $correctOption->id);
@@ -347,7 +362,7 @@ class QuizKerjakan extends Component
             ];
         }
 
-        $totalPossible = $this->quiz->total_score > 0 ? $this->quiz->total_score : max(1, (int) $this->quiz->questions->sum('score'));
+        $totalPossible = $this->quiz->total_score > 0 ? $this->quiz->total_score : max(1, (int) $questions->sum('score'));
         $percentage = round(($earnedScore / $totalPossible) * 100, 2);
         $isPassed = ($percentage >= $this->quiz->passing_score);
 

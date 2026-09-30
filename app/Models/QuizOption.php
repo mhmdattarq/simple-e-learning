@@ -15,6 +15,15 @@ class QuizOption extends Model
     protected $guarded = [];
 
     /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var list<string>
+     */
+    protected $hidden = [
+        'is_correct',
+    ];
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>

@@ -263,3 +263,33 @@ test('participant promptSubmit dispatches reusable modal configuration and confi
 
     expect(QuizAttempt::where('quiz_id', $this->quiz->id)->where('user_id', $this->peserta->id)->count())->toBe(1);
 });
+
+test('quiz option is_correct attribute is hidden from serialization to prevent client cheating', function () {
+    $option = $this->q1OptA;
+    $serialized = $option->toArray();
+
+    // is_correct must NOT be in toArray() or json_encode()
+    expect(array_key_exists('is_correct', $serialized))->toBeFalse();
+    expect(json_encode($option))->not->toContain('is_correct');
+
+    // But directly accessible in PHP server-side logic
+    expect($option->is_correct)->toBeTrue();
+});
+
+test('participant cannot select an option that does not belong to the question', function () {
+    DB::table('lesson_user')->insert([
+        ['user_id' => $this->peserta->id, 'lesson_id' => $this->lesson1->id, 'is_completed' => true, 'completed_at' => now()],
+        ['user_id' => $this->peserta->id, 'lesson_id' => $this->lesson2->id, 'is_completed' => true, 'completed_at' => now()],
+    ]);
+
+    Livewire::actingAs($this->peserta)
+        ->test(QuizKerjakan::class, ['quiz_id' => $this->quiz->id, 'course_id' => $this->course->id])
+        ->call('startQuiz')
+        // Attempt to select q2's option for q1
+        ->call('selectOption', $this->q1->id, $this->q2OptA->id)
+        // Must be rejected and not stored in userAnswers for q1
+        ->assertSet('userAnswers.'.$this->q1->id, null)
+        // Non-existent option
+        ->call('selectOption', $this->q1->id, 999999)
+        ->assertSet('userAnswers.'.$this->q1->id, null);
+});

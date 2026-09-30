@@ -109,7 +109,7 @@ class Login extends Component
         $user = User::where('email', Str::lower($this->unverifiedEmail))->first();
         if ($user && ! $user->email_verified_at) {
             $rawToken = EmailVerification::createTokenFor($user);
-            Mail::to($user->email)->send(new VerifyEmailNotification($user, $rawToken));
+            Mail::to($user->email)->queue(new VerifyEmailNotification($user, $rawToken));
 
             AuditLog::log(
                 action: 'user.verification_resent',
