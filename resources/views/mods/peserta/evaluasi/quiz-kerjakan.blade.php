@@ -203,26 +203,38 @@
                     {{-- 4 Parameter Metrik Kuis --}}
                     <div class="row g-3 mb-4">
                         <div class="col-sm-3 col-6">
-                            <div class="p-3 bg-light rounded-3 text-center border h-100 d-flex flex-column justify-content-center">
-                                <span class="text-muted text-xxs text-uppercase fw-semibold d-flex align-items-center justify-content-center mb-1" style="min-height: 28px;">Jumlah Soal</span>
+                            <div
+                                class="p-3 bg-light rounded-3 text-center border h-100 d-flex flex-column justify-content-center">
+                                <span
+                                    class="text-muted text-xxs text-uppercase fw-semibold d-flex align-items-center justify-content-center mb-1"
+                                    style="min-height: 28px;">Jumlah Soal</span>
                                 <h4 class="fw-bold text-dark mb-0 fs-5">{{ $this->questionsCount }} Soal</h4>
                             </div>
                         </div>
                         <div class="col-sm-3 col-6">
-                            <div class="p-3 bg-light rounded-3 text-center border h-100 d-flex flex-column justify-content-center">
-                                <span class="text-muted text-xxs text-uppercase fw-semibold d-flex align-items-center justify-content-center mb-1" style="min-height: 28px;">Total Skor</span>
+                            <div
+                                class="p-3 bg-light rounded-3 text-center border h-100 d-flex flex-column justify-content-center">
+                                <span
+                                    class="text-muted text-xxs text-uppercase fw-semibold d-flex align-items-center justify-content-center mb-1"
+                                    style="min-height: 28px;">Total Skor</span>
                                 <h4 class="fw-bold text-primary mb-0 fs-5">{{ $quiz->total_score }} Poin</h4>
                             </div>
                         </div>
                         <div class="col-sm-3 col-6">
-                            <div class="p-3 bg-light rounded-3 text-center border h-100 d-flex flex-column justify-content-center">
-                                <span class="text-muted text-xxs text-uppercase fw-semibold d-flex align-items-center justify-content-center mb-1" style="min-height: 28px;">Batas Kelulusan (KKM)</span>
+                            <div
+                                class="p-3 bg-light rounded-3 text-center border h-100 d-flex flex-column justify-content-center">
+                                <span
+                                    class="text-muted text-xxs text-uppercase fw-semibold d-flex align-items-center justify-content-center mb-1"
+                                    style="min-height: 28px;">Batas Kelulusan (KKM)</span>
                                 <h4 class="fw-bold text-success mb-0 fs-5">{{ $quiz->passing_score }}%</h4>
                             </div>
                         </div>
                         <div class="col-sm-3 col-6">
-                            <div class="p-3 bg-light rounded-3 text-center border h-100 d-flex flex-column justify-content-center">
-                                <span class="text-muted text-xxs text-uppercase fw-semibold d-flex align-items-center justify-content-center mb-1" style="min-height: 28px;">Durasi Waktu</span>
+                            <div
+                                class="p-3 bg-light rounded-3 text-center border h-100 d-flex flex-column justify-content-center">
+                                <span
+                                    class="text-muted text-xxs text-uppercase fw-semibold d-flex align-items-center justify-content-center mb-1"
+                                    style="min-height: 28px;">Durasi Waktu</span>
                                 <h4 class="fw-bold text-dark mb-0 fs-5">
                                     {{ $quiz->time_limit_minutes ? $quiz->time_limit_minutes . ' Menit' : 'Bebas' }}
                                 </h4>
@@ -268,7 +280,7 @@
                 </div>
             </div>
 
-            {{-- STATE 3: PLAYING (PENGERJAAN KUIS AKTIF ALA DICODING) --}}
+            {{-- STATE 3: PLAYING (PENGERJAAN KUIS AKTIF) --}}
         @elseif ($quizState === 'playing')
             @php
                 $q = $this->currentQuestion;
@@ -285,7 +297,7 @@
                 },
                 init() {
                     window.__quizSubmitting = false;
-
+            
                     if (this.timerInterval) {
                         clearInterval(this.timerInterval);
                     }
@@ -301,7 +313,7 @@
                             }
                         }, 1000);
                     }
-
+            
                     // 1. Browser tab close / reload protection
                     const beforeUnloadHandler = (e) => {
                         if (this.isSubmitting || window.__quizSubmitting) return;
@@ -310,41 +322,41 @@
                         return '';
                     };
                     window.addEventListener('beforeunload', beforeUnloadHandler);
-
+            
                     // 2. Intercept navigation clicks outside the quiz player (navbar links, logo, etc.)
                     const clickHandler = (e) => {
                         if (this.isSubmitting || window.__quizSubmitting) return;
-
+            
                         const link = e.target.closest('a');
                         if (!link) return;
-
+            
                         const href = link.getAttribute('href');
                         if (!href || href === '#' || href.startsWith('#') || href.startsWith('javascript:')) {
                             return;
                         }
-
+            
                         // Don't intercept clicks inside the quiz player card
                         if (this.$el.contains(link)) {
                             return;
                         }
-
+            
                         const confirmed = confirm('Peringatan: Evaluasi kuis Anda sedang berlangsung dan timer waktu terus berjalan. Apakah Anda yakin ingin meninggalkan halaman evaluasi?');
                         if (!confirmed) {
                             e.preventDefault();
                             e.stopPropagation();
                             return false;
                         }
-
+            
                         // User confirmed leaving: allow navigation without second prompt
                         this.isSubmitting = true;
                         window.__quizSubmitting = true;
                     };
                     document.addEventListener('click', clickHandler, true);
-
+            
                     // 3. Intercept logout modal form submission
                     const formSubmitHandler = (e) => {
                         if (this.isSubmitting || window.__quizSubmitting) return;
-
+            
                         const form = e.target;
                         if (form && (form.id === 'logout-form' || form.getAttribute('action')?.includes('logout') || form.classList.contains('simpel-modal-form'))) {
                             const confirmed = confirm('Peringatan: Evaluasi kuis Anda sedang berlangsung. Jika Anda keluar (logout), sesi kuis Anda akan dihentikan dan waktu akan terus berjalan di server. Apakah Anda yakin ingin keluar?');
@@ -358,12 +370,12 @@
                         }
                     };
                     document.addEventListener('submit', formSubmitHandler, true);
-
+            
                     // 4. Browser history (back/forward button) guard
                     history.pushState(null, '', window.location.href);
                     const popstateHandler = () => {
                         if (this.isSubmitting || window.__quizSubmitting) return;
-
+            
                         const confirmed = confirm('Peringatan: Evaluasi kuis Anda sedang berlangsung dan timer waktu terus berjalan. Apakah Anda yakin ingin meninggalkan halaman evaluasi?');
                         if (!confirmed) {
                             history.pushState(null, '', window.location.href);
@@ -374,14 +386,14 @@
                         }
                     };
                     window.addEventListener('popstate', popstateHandler);
-
+            
                     // 5. Custom event listener for smooth submission without dialog
                     const submittingHandler = () => {
                         this.isSubmitting = true;
                         window.__quizSubmitting = true;
                     };
                     window.addEventListener('quiz-submitting', submittingHandler);
-
+            
                     // 6. Cleanup when component is unmounted / destroyed
                     this.$cleanup(() => {
                         if (this.timerInterval) {
@@ -438,8 +450,10 @@
                                     @foreach ($q->options as $optIndex => $opt)
                                         @php
                                             $letter = chr(65 + $optIndex);
-                                            $chosenOptId = $userAnswers[$q->id] ?? ($userAnswers[(string) $q->id] ?? null);
-                                            $isSelected = $chosenOptId !== null && (int) $chosenOptId === (int) $opt->id;
+                                            $chosenOptId =
+                                                $userAnswers[$q->id] ?? ($userAnswers[(string) $q->id] ?? null);
+                                            $isSelected =
+                                                $chosenOptId !== null && (int) $chosenOptId === (int) $opt->id;
                                         @endphp
                                         <div class="option-choice-card d-flex align-items-center gap-3 {{ $isSelected ? 'is-selected' : '' }}"
                                             wire:click="selectOption({{ $q->id }}, {{ $opt->id }})"
@@ -456,7 +470,8 @@
                                                 <div class="quiz-radio-indicator {{ $isSelected ? 'is-selected' : '' }}"
                                                     style="width: 22px; height: 22px; min-width: 22px; border-radius: 50%; border: 2px solid {{ $isSelected ? '#0d6efd' : '#cbd5e1' }}; background: {{ $isSelected ? '#0d6efd' : '#ffffff' }}; display: inline-flex; align-items: center; justify-content: center; box-shadow: {{ $isSelected ? '0 0 0 3px rgba(13, 110, 253, 0.2)' : 'none' }};">
                                                     <div class="quiz-radio-dot"
-                                                        style="width: 8px; height: 8px; border-radius: 50%; background: #ffffff; opacity: {{ $isSelected ? '1' : '0' }}; transform: scale({{ $isSelected ? '1' : '0.4' }});"></div>
+                                                        style="width: 8px; height: 8px; border-radius: 50%; background: #ffffff; opacity: {{ $isSelected ? '1' : '0' }}; transform: scale({{ $isSelected ? '1' : '0.4' }});">
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -479,13 +494,15 @@
                                             <span>Soal Selanjutnya</span> <i class="ri-arrow-right-line ms-1"></i>
                                         </button>
                                     @else
-                                        <button type="button" class="btn btn-success px-4 py-2 radius-8 fs-8 fw-bold d-inline-flex align-items-center gap-1"
+                                        <button type="button"
+                                            class="btn btn-success px-4 py-2 radius-8 fs-8 fw-bold d-inline-flex align-items-center gap-1"
                                             wire:click="promptSubmit" wire:loading.attr="disabled">
                                             <span wire:loading.remove wire:target="promptSubmit">
                                                 <i class="ri-checkbox-circle-line me-1"></i> Selesaikan Evaluasi
                                             </span>
                                             <span wire:loading wire:target="promptSubmit">
-                                                <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span> Membuka Konfirmasi...
+                                                <span class="spinner-border spinner-border-sm me-1" role="status"
+                                                    aria-hidden="true"></span> Membuka Konfirmasi...
                                             </span>
                                         </button>
                                     @endif
@@ -509,7 +526,9 @@
                                 <div class="d-flex flex-wrap gap-2 mb-3">
                                     @foreach ($quiz->questions as $idx => $quest)
                                         @php
-                                            $isAnswered = array_key_exists($quest->id, $userAnswers) || array_key_exists((string) $quest->id, $userAnswers);
+                                            $isAnswered =
+                                                array_key_exists($quest->id, $userAnswers) ||
+                                                array_key_exists((string) $quest->id, $userAnswers);
                                             $isActive = $idx === $currentQuestionIndex;
                                         @endphp
                                         <button type="button"
@@ -575,18 +594,20 @@
                 <div class="card-body p-4 p-md-5">
                     <div class="row g-3 justify-content-center mb-4">
                         <div class="col-sm-4 col-12">
-                            <div class="p-3 bg-light rounded-3 border text-center h-100 d-flex flex-column justify-content-center">
+                            <div
+                                class="p-3 bg-light rounded-3 border text-center h-100 d-flex flex-column justify-content-center">
                                 <span class="text-muted text-xxs text-uppercase fw-semibold d-block">SKOR AKHIR</span>
                                 <h3 class="fw-bold text-dark mb-0 fs-3">
                                     {{ $savedAttempt->total_earned_score }} <span class="text-muted fs-6">/
-                                         {{ $savedAttempt->total_possible_score }}</span>
+                                        {{ $savedAttempt->total_possible_score }}</span>
                                 </h3>
                                 <small class="text-muted text-xxs">Akumulasi Bobot Soal</small>
                             </div>
                         </div>
 
                         <div class="col-sm-4 col-12">
-                            <div class="p-3 bg-light rounded-3 border text-center h-100 d-flex flex-column justify-content-center">
+                            <div
+                                class="p-3 bg-light rounded-3 border text-center h-100 d-flex flex-column justify-content-center">
                                 <span class="text-muted text-xxs text-uppercase fw-semibold d-block">PERSENTASE
                                     NILAI</span>
                                 <h3
@@ -598,7 +619,8 @@
                         </div>
 
                         <div class="col-sm-4 col-12">
-                            <div class="p-3 bg-light rounded-3 border text-center h-100 d-flex flex-column justify-content-center">
+                            <div
+                                class="p-3 bg-light rounded-3 border text-center h-100 d-flex flex-column justify-content-center">
                                 <span class="text-muted text-xxs text-uppercase fw-semibold d-block">WAKTU
                                     SELESAI</span>
                                 <h5 class="fw-bold text-dark mb-0 fs-6 pt-2">
@@ -662,17 +684,21 @@
                         @php
                             $unanswered = $this->questionsCount - $this->answeredCount;
                         @endphp
-                        <div class="bg-light p-3 rounded-12 border mb-4 text-start {{ $unanswered > 0 ? 'bg-warning-subtle text-dark border-warning' : '' }}">
+                        <div
+                            class="bg-light p-3 rounded-12 border mb-4 text-start {{ $unanswered > 0 ? 'bg-warning-subtle text-dark border-warning' : '' }}">
                             <p class="text-muted fs-8 mb-2 line-height-base text-dark">
-                                Anda telah menjawab <strong>{{ $this->answeredCount }} dari {{ $this->questionsCount }}</strong> butir pertanyaan.
+                                Anda telah menjawab <strong>{{ $this->answeredCount }} dari
+                                    {{ $this->questionsCount }}</strong> butir pertanyaan.
                             </p>
                             @if ($unanswered > 0)
                                 <div class="text-danger fw-semibold fs-8 mb-2">
-                                    <i class="ri-error-warning-line me-1"></i> Masih ada <strong>{{ $unanswered }}</strong> soal yang belum Anda jawab!
+                                    <i class="ri-error-warning-line me-1"></i> Masih ada
+                                    <strong>{{ $unanswered }}</strong> soal yang belum Anda jawab!
                                 </div>
                             @endif
                             <div class="pt-2 border-top text-muted" style="font-size: 11.5px; line-height: 1.45;">
-                                <strong>Perhatian:</strong> Kuis ini menerapkan sistem <em>Single Attempt</em>. Jawaban yang dikumpulkan bersifat final dan tidak dapat diubah kembali.
+                                <strong>Perhatian:</strong> Kuis ini menerapkan sistem <em>Single Attempt</em>. Jawaban
+                                yang dikumpulkan bersifat final dan tidak dapat diubah kembali.
                             </div>
                         </div>
 
@@ -682,7 +708,8 @@
                                 wire:click="cancelSubmit">
                                 Periksa Lagi
                             </button>
-                            <button type="button" class="btn btn-success w-50 py-2 radius-10 fw-semibold fs-8 d-inline-flex align-items-center justify-content-center gap-1 shadow-sm"
+                            <button type="button"
+                                class="btn btn-success w-50 py-2 radius-10 fw-semibold fs-8 d-inline-flex align-items-center justify-content-center gap-1 shadow-sm"
                                 wire:click="submitQuiz"
                                 @click="window.dispatchEvent(new CustomEvent('quiz-submitting'))"
                                 wire:loading.attr="disabled">
@@ -690,7 +717,8 @@
                                     <i class="ri-check-line"></i> Ya, Kumpulkan
                                 </span>
                                 <span wire:loading wire:target="submitQuiz">
-                                    <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span> Mengirim...
+                                    <span class="spinner-border spinner-border-sm me-1" role="status"
+                                        aria-hidden="true"></span> Mengirim...
                                 </span>
                             </button>
                         </div>

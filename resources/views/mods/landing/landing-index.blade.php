@@ -1,5 +1,5 @@
 <div>
-    {{-- 1. Hero Highlight (Digitalent Grid Banner + Highlight Cards) --}}
+    {{-- 1. Hero Highlight (Grid Banner + Highlight Cards) --}}
     @include('mods.landing.sections.hero')
 
     {{-- 2. Quick Info Jenis Kelas --}}
