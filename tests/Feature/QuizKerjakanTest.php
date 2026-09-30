@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\CourseStatus;
 use App\Livewire\Peserta\Evaluasi\QuizKerjakan;
 use App\Models\Category;
 use App\Models\Chapter;
@@ -21,6 +22,9 @@ beforeEach(function () {
     $this->course = Course::factory()->create([
         'category_id' => $this->category->id,
         'title' => 'Pelatihan Transformasi Digital',
+        'type' => 'permanent',
+        'start_date' => null,
+        'end_date' => null,
         'status' => 'published',
     ]);
 
@@ -152,6 +156,8 @@ test('participant can answer questions, navigate between questions, and jump via
         // Answer Question 1
         ->call('selectOption', $this->q1->id, $this->q1OptA->id)
         ->assertSet('userAnswers.'.$this->q1->id, $this->q1OptA->id)
+        ->assertSeeHtml('opt-card-'.$this->q1->id.'-'.$this->q1OptA->id.'-1')
+        ->assertSeeHtml('is-selected')
         // Navigate next
         ->call('nextQuestion')
         ->assertSet('currentQuestionIndex', 1)
@@ -325,4 +331,52 @@ test('participant retains active quiz state and answers upon page reload', funct
         ->assertSet('currentQuestionIndex', 1)
         ->assertSet('userAnswers', [$this->q1->id => $this->q1OptA->id])
         ->assertSee('Daftar Nomor Soal');
+});
+
+test('participant cannot access quiz if batch has not started yet', function () {
+    $batchCourse = Course::factory()->create([
+        'status' => CourseStatus::Published,
+        'type' => 'batch',
+        'start_date' => now()->addDays(3),
+        'end_date' => now()->addDays(10),
+        'category_id' => $this->category->id,
+        'created_by' => $this->admin->id,
+    ]);
+
+    $batchQuiz = Quiz::create([
+        'course_id' => $batchCourse->id,
+        'created_by' => $this->admin->id,
+        'title' => 'Kuis Batch Uji Coba',
+        'type' => 'final',
+        'passing_score' => 70,
+    ]);
+
+    Livewire::actingAs($this->peserta)
+        ->test(QuizKerjakan::class, ['quiz_id' => $batchQuiz->id, 'course_id' => $batchCourse->id])
+        ->assertSet('quizState', 'locked')
+        ->assertSee('Evaluasi kuis belum dapat diakses karena batch pelatihan baru dibuka');
+});
+
+test('participant cannot access quiz if batch has already ended', function () {
+    $batchCourse = Course::factory()->create([
+        'status' => CourseStatus::Published,
+        'type' => 'batch',
+        'start_date' => now()->subDays(10),
+        'end_date' => now()->subDays(1),
+        'category_id' => $this->category->id,
+        'created_by' => $this->admin->id,
+    ]);
+
+    $batchQuiz = Quiz::create([
+        'course_id' => $batchCourse->id,
+        'created_by' => $this->admin->id,
+        'title' => 'Kuis Batch Kadaluarsa',
+        'type' => 'final',
+        'passing_score' => 70,
+    ]);
+
+    Livewire::actingAs($this->peserta)
+        ->test(QuizKerjakan::class, ['quiz_id' => $batchQuiz->id, 'course_id' => $batchCourse->id])
+        ->assertSet('quizState', 'locked')
+        ->assertSee('Evaluasi kuis tidak dapat diakses lagi karena masa batch pelatihan telah berakhir');
 });

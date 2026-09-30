@@ -328,6 +328,8 @@ test('navbar active menu reflects current page and course context across index, 
     $batchCourse = Course::factory()->create([
         'title' => 'Kelas Batch Spesial ASN',
         'type' => 'batch',
+        'start_date' => now()->subDay(),
+        'end_date' => now()->addDays(5),
         'status' => 'published',
         'category_id' => $category->id,
         'created_by' => $admin->id,
@@ -425,4 +427,40 @@ test('navbar active menu reflects current page and course context across index, 
     $resPaidEvaluasi = $this->actingAs($user)->get($paidEvaluasiUrl);
     $resPaidEvaluasi->assertStatus(200);
     $resPaidEvaluasi->assertSeeInOrder(['<li class="current"', 'Kelas Berbayar']);
+});
+
+test('batch course detail page displays Batch Belum Dibuka for upcoming batch and Batch Telah Berakhir for expired batch', function () {
+    $category = Category::factory()->create();
+    $admin = User::factory()->admin()->create();
+    $user = User::factory()->peserta()->create();
+
+    $futureBatch = Course::factory()->create([
+        'title' => 'Batch Masa Depan',
+        'type' => 'batch',
+        'start_date' => now()->addDays(5),
+        'end_date' => now()->addDays(15),
+        'status' => 'published',
+        'category_id' => $category->id,
+        'created_by' => $admin->id,
+    ]);
+
+    $expiredBatch = Course::factory()->create([
+        'title' => 'Batch Telah Lalu',
+        'type' => 'batch',
+        'start_date' => now()->subDays(20),
+        'end_date' => now()->subDays(5),
+        'status' => 'published',
+        'category_id' => $category->id,
+        'created_by' => $admin->id,
+    ]);
+
+    $resFuture = $this->actingAs($user)->get(route('landing.kelas.detail', $futureBatch));
+    $resFuture->assertOk();
+    $resFuture->assertSee('Batch Belum Dibuka');
+    $resFuture->assertSee('Materi dapat diakses mulai');
+
+    $resExpired = $this->actingAs($user)->get(route('landing.kelas.detail', $expiredBatch));
+    $resExpired->assertOk();
+    $resExpired->assertSee('Batch Telah Berakhir');
+    $resExpired->assertSee('Masa pembelajaran kelas ini telah selesai pada');
 });

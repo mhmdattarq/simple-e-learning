@@ -46,6 +46,42 @@
             color: #ffffff;
         }
 
+        .quiz-radio-indicator {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            border: 2px solid #cbd5e1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: #ffffff;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .option-choice-card.is-selected .quiz-radio-indicator,
+        .quiz-radio-indicator.is-selected {
+            border-color: #0d6efd;
+            background: #0d6efd;
+            box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.2);
+        }
+
+        .quiz-radio-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #ffffff;
+            opacity: 0;
+            transform: scale(0.4);
+            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .option-choice-card.is-selected .quiz-radio-dot,
+        .quiz-radio-indicator.is-selected .quiz-radio-dot {
+            opacity: 1;
+            transform: scale(1);
+        }
+
         .nav-grid-btn {
             width: 40px;
             height: 40px;
@@ -308,20 +344,20 @@
                                     @foreach ($q->options as $optIndex => $opt)
                                         @php
                                             $letter = chr(65 + $optIndex);
-                                            $isSelected =
-                                                isset($userAnswers[$q->id]) && $userAnswers[$q->id] === $opt->id;
+                                            $chosenOptId = $userAnswers[$q->id] ?? ($userAnswers[(string) $q->id] ?? null);
+                                            $isSelected = $chosenOptId !== null && (int) $chosenOptId === (int) $opt->id;
                                         @endphp
                                         <div class="option-choice-card d-flex align-items-center gap-3 {{ $isSelected ? 'is-selected' : '' }}"
                                             wire:click="selectOption({{ $q->id }}, {{ $opt->id }})"
-                                            wire:key="opt-{{ $opt->id }}">
+                                            wire:key="opt-card-{{ $q->id }}-{{ $opt->id }}-{{ $isSelected ? '1' : '0' }}">
                                             <span class="option-choice-letter">{{ $letter }}</span>
                                             <div class="flex-grow-1 fs-7 fw-medium text-dark">
                                                 {{ $opt->option_text }}
                                             </div>
                                             <div>
-                                                <input class="form-check-input" type="radio"
-                                                    name="q_{{ $q->id }}" value="{{ $opt->id }}"
-                                                    {{ $isSelected ? 'checked' : '' }} style="pointer-events: none;">
+                                                <div class="quiz-radio-indicator {{ $isSelected ? 'is-selected' : '' }}">
+                                                    <div class="quiz-radio-dot"></div>
+                                                </div>
                                             </div>
                                         </div>
                                     @endforeach
@@ -373,12 +409,13 @@
                                 <div class="d-flex flex-wrap gap-2 mb-3">
                                     @foreach ($quiz->questions as $idx => $quest)
                                         @php
-                                            $isAnswered = isset($userAnswers[$quest->id]);
+                                            $isAnswered = array_key_exists($quest->id, $userAnswers) || array_key_exists((string) $quest->id, $userAnswers);
                                             $isActive = $idx === $currentQuestionIndex;
                                         @endphp
                                         <button type="button"
                                             class="nav-grid-btn {{ $isAnswered ? 'is-answered' : '' }} {{ $isActive ? 'is-active' : '' }}"
                                             wire:click="jumpToQuestion({{ $idx }})"
+                                            wire:key="nav-btn-{{ $quest->id }}-{{ $isAnswered ? '1' : '0' }}-{{ $isActive ? '1' : '0' }}"
                                             title="Buka Soal #{{ $idx + 1 }}">
                                             {{ $idx + 1 }}
                                         </button>

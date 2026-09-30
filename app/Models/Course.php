@@ -165,6 +165,45 @@ class Course extends Model
     }
 
     /**
+     * Check if batch course has not started yet.
+     */
+    public function isBatchNotStarted(): bool
+    {
+        if ($this->isBatch() && $this->start_date) {
+            return now()->lt($this->start_date);
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if batch course has ended.
+     */
+    public function isBatchEnded(): bool
+    {
+        if ($this->isBatch() && $this->end_date) {
+            return now()->gt($this->end_date);
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if batch course is currently active (between start and end date).
+     */
+    public function isBatchActive(): bool
+    {
+        if (! $this->isBatch()) {
+            return true;
+        }
+
+        $started = ! $this->start_date || now()->gte($this->start_date);
+        $notEnded = ! $this->end_date || now()->lte($this->end_date);
+
+        return $started && $notEnded;
+    }
+
+    /**
      * Check if course is in draft status.
      */
     public function isDraft(): bool
