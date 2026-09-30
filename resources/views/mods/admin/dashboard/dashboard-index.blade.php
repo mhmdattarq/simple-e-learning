@@ -34,10 +34,10 @@
             </p>
         </div>
         @if (auth()->user()?->isAdmin())
-            <button type="button" class="btn-simpel-gold" data-bs-toggle="modal" data-bs-target="#modalRencanaKelas">
+            <a href="{{ route('kelas.create') }}" class="btn-simpel-gold text-decoration-none">
                 <i class="ri-add-line"></i>
-                Buat Rencana Kelas
-            </button>
+                Buat Kelas Baru
+            </a>
         @endif
     </div>
 
@@ -339,7 +339,8 @@
                         @endphp
                         <tr>
                             <td class="px-3 fw-bold text-dark">
-                                {{ $reg->registration_number ?? 'REG-' . str_pad($reg->id, 5, '0', STR_PAD_LEFT) }}</td>
+                                {{ $reg->registration_number ?? 'REG-' . str_pad($reg->id, 5, '0', STR_PAD_LEFT) }}
+                            </td>
                             <td class="px-3">
                                 <div class="d-flex align-items-center gap-2">
                                     <div class="w-32-px h-32-px rounded-circle d-flex align-items-center justify-content-center fw-bold"
@@ -378,77 +379,4 @@
         </div>
     </div>
 
-    {{-- Modal Rencana Kelas Baru (prototype.html style) --}}
-    <div class="modal fade" id="modalRencanaKelas" tabindex="-1" aria-labelledby="modalRencanaKelasLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content"
-                style="border-radius: 20px; border: 1px solid #e6eaf0; box-shadow: 0 10px 40px rgba(7, 26, 51, 0.15);">
-                <div class="modal-header border-bottom py-20 px-24"
-                    style="background-color: #071a33; border-radius: 19px 19px 0 0;">
-                    <div>
-                        <span class="text-uppercase fw-bold text-xs"
-                            style="color: #f3bc42; letter-spacing: 1.5px;">Formulir Kelas</span>
-                        <h5 class="modal-title fw-bold text-white mb-0" id="modalRencanaKelasLabel">Kelas Baru</h5>
-                    </div>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
-                </div>
-                <div class="modal-body p-24">
-                    <p class="text-muted small mb-20">
-                        Isi parameter utama kelas di bawah. Rencana dapat disimpan sebagai draf sebelum diajukan ke
-                        tahap pendaftaran publik.
-                    </p>
-
-                    <form action="{{ route('kelas.create') }}" method="GET">
-                        <div class="row g-3">
-                            <div class="col-12">
-                                <label class="form-label fw-bold text-dark small">Nama Program Kelas</label>
-                                <input type="text" class="form-control rounded-3"
-                                    placeholder="Contoh: Manajemen Administrator Angkatan II">
-                            </div>
-
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold text-dark small">Kategori Kelas</label>
-                                <select class="form-select rounded-3">
-                                    @forelse ($categories as $cat)
-                                        <option value="{{ $cat->id }}">{{ $cat->name }}</option>
-                                    @empty
-                                        <option selected>Teknis Fungsional</option>
-                                    @endforelse
-                                </select>
-                            </div>
-
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold text-dark small">Metode Pelaksanaan</label>
-                                <select class="form-select rounded-3">
-                                    <option selected>Luring (Tatap Muka di Aula)</option>
-                                    <option>Daring (E-Learning Penuh)</option>
-                                    <option>Hybrid (Kombinasi)</option>
-                                </select>
-                            </div>
-
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold text-dark small">Tanggal Mulai Pelaksanaan</label>
-                                <input type="date" class="form-control rounded-3">
-                            </div>
-
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold text-dark small">Kuota Peserta</label>
-                                <input type="number" class="form-control rounded-3" value="40" min="1">
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer border-top py-16 px-24 d-flex justify-content-end gap-2"
-                    style="background-color: #f8f9fb; border-radius: 0 0 19px 19px;">
-                    <button type="button" class="btn btn-outline-danger rounded-3 px-4"
-                        data-bs-dismiss="modal">Batal</button>
-                    <a href="{{ route('kelas.create') }}" class="btn btn-simpel-gold px-4">
-                        Buat Kelas Sekarang
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
