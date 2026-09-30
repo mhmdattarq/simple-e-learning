@@ -302,12 +302,6 @@
 
                                                     {{-- Lesson Actions --}}
                                                     <div class="d-flex align-items-center gap-1">
-                                                        <button type="button"
-                                                            wire:click="previewLesson({{ $les['id'] }})"
-                                                            class="btn btn-sm btn-outline-info radius-6 px-2 py-1 fs-8 shadow-none"
-                                                            title="Pratinjau Materi Sisi Peserta">
-                                                            <i class="ri-eye-line"></i>
-                                                        </button>
                                                         @if (!$isFrozen)
                                                             <button type="button"
                                                                 wire:click="openEditLesson({{ $les['id'] }})"
