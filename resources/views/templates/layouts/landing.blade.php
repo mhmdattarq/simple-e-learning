@@ -64,7 +64,7 @@
     <link rel="stylesheet" href="{{ asset('admin/assets/css/remixicon.css') }}" />
 
     <!-- App Custom CSS & JS (Classic Asset) -->
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}?v={{ filemtime(public_path('css/app.css')) }}">
     <script src="{{ asset('js/app.js') }}"></script>
 
     <style>
@@ -250,7 +250,7 @@
     @livewireStyles
 </head>
 
-<body class="custom-cursor">
+<body>
     {{-- Notifikasi Toast Universal dari Admin --}}
     <livewire:admin.toast />
 
