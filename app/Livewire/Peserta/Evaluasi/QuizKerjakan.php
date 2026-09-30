@@ -124,8 +124,26 @@ class QuizKerjakan extends Component
             return;
         }
 
-        // 4. Validasi Prasyarat Akses (Prerequisite Completion)
+        // 4. Validasi Prasyarat Akses (Prerequisite Completion & Periode Batch)
         if (! $user->hasAdminAccess()) {
+            if ($this->quiz->course->isBatch()) {
+                if ($this->quiz->course->isBatchNotStarted()) {
+                    $this->quizState = 'locked';
+                    $formattedStart = $this->quiz->course->start_date?->translatedFormat('d F Y, H:i') ?? '-';
+                    $this->lockedReason = "Evaluasi kuis belum dapat diakses karena batch pelatihan baru dibuka pada tanggal {$formattedStart} WIB.";
+
+                    return;
+                }
+
+                if ($this->quiz->course->isBatchEnded()) {
+                    $this->quizState = 'locked';
+                    $formattedEnd = $this->quiz->course->end_date?->translatedFormat('d F Y, H:i') ?? '-';
+                    $this->lockedReason = "Evaluasi kuis tidak dapat diakses lagi karena masa batch pelatihan telah berakhir pada {$formattedEnd} WIB.";
+
+                    return;
+                }
+            }
+
             $lockStatus = $this->checkPrerequisiteLock($user);
             if ($lockStatus['is_locked']) {
                 $this->quizState = 'locked';

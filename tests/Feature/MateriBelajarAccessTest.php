@@ -61,6 +61,8 @@ test('peserta dengan status registrasi pending otomatis diaktifkan saat membuka 
     $course = Course::factory()->create([
         'status' => CourseStatus::Published,
         'type' => 'batch',
+        'start_date' => now()->subDay(),
+        'end_date' => now()->addDays(5),
         'category_id' => $category->id,
         'created_by' => $admin->id,
     ]);
@@ -94,4 +96,60 @@ test('tamu yang belum login diarahkan ke halaman login saat mengakses materi', f
 
     $response = $this->get(route('peserta.materi', $course->id));
     $response->assertRedirect(route('login'));
+});
+
+test('peserta tidak dapat mengakses materi jika batch belum dimulai dan diarahkan ke detail kelas', function () {
+    $user = User::factory()->create();
+    $admin = User::factory()->admin()->create();
+    $category = Category::factory()->create();
+
+    $course = Course::factory()->create([
+        'status' => CourseStatus::Published,
+        'type' => 'batch',
+        'start_date' => now()->addDays(2),
+        'end_date' => now()->addDays(10),
+        'category_id' => $category->id,
+        'created_by' => $admin->id,
+    ]);
+
+    Livewire::actingAs($user)
+        ->test(MateriBelajar::class, ['course' => $course])
+        ->assertRedirect(route('landing.kelas.detail', $course));
+});
+
+test('peserta tidak dapat mengakses materi jika batch telah berakhir dan diarahkan ke detail kelas', function () {
+    $user = User::factory()->create();
+    $admin = User::factory()->admin()->create();
+    $category = Category::factory()->create();
+
+    $course = Course::factory()->create([
+        'status' => CourseStatus::Published,
+        'type' => 'batch',
+        'start_date' => now()->subDays(10),
+        'end_date' => now()->subDays(2),
+        'category_id' => $category->id,
+        'created_by' => $admin->id,
+    ]);
+
+    Livewire::actingAs($user)
+        ->test(MateriBelajar::class, ['course' => $course])
+        ->assertRedirect(route('landing.kelas.detail', $course));
+});
+
+test('admin tetap dapat mengakses materi kelas batch meskipun belum dimulai', function () {
+    $admin = User::factory()->admin()->create();
+    $category = Category::factory()->create();
+
+    $course = Course::factory()->create([
+        'status' => CourseStatus::Published,
+        'type' => 'batch',
+        'start_date' => now()->addDays(5),
+        'end_date' => now()->addDays(15),
+        'category_id' => $category->id,
+        'created_by' => $admin->id,
+    ]);
+
+    Livewire::actingAs($admin)
+        ->test(MateriBelajar::class, ['course' => $course])
+        ->assertOk();
 });

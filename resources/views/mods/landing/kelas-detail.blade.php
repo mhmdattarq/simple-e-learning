@@ -89,6 +89,28 @@
     {{-- Main Content Section --}}
     <section class="py-5 bg-light" style="min-height: 70vh;">
         <div class="container py-lg-3">
+            @if (session('warning'))
+                <div class="alert alert-warning alert-dismissible fade show radius-12 border-0 shadow-sm mb-4 d-flex align-items-center gap-3 bg-warning-subtle text-dark"
+                    role="alert">
+                    <i class="ri-alert-line fs-4 text-warning"></i>
+                    <div class="flex-grow-1 fs-7">
+                        {{ session('warning') }}
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+
+            @if (session('info'))
+                <div class="alert alert-info alert-dismissible fade show radius-12 border-0 shadow-sm mb-4 d-flex align-items-center gap-3 bg-info-subtle text-dark"
+                    role="alert">
+                    <i class="ri-information-line fs-4 text-info"></i>
+                    <div class="flex-grow-1 fs-7">
+                        {{ session('info') }}
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+
             <div class="row g-4">
                 {{-- Left Column: Detail, Syllabus, Requirements --}}
                 <div class="col-lg-8">
@@ -239,21 +261,54 @@
 
                             {{-- CTA Button to Materi --}}
                             @auth
-                                <a href="{{ route('peserta.materi', $course) }}"
-                                    class="btn btn-warning w-100 py-3 fw-bold text-navy shadow-sm d-flex align-items-center justify-content-center gap-2 radius-10 mb-3"
-                                    style="background: #e5a93b; border-color: #e5a93b;">
-                                    <i class="ri-play-circle-line fs-5"></i>
-                                    <span>{{ $isEnrolled ? 'Lanjut Belajar' : 'Mulai Belajar Sekarang' }}</span>
-                                    <i class="ri-arrow-right-line"></i>
-                                </a>
+                                @if ($course->isBatchNotStarted() && ! auth()->user()->hasAdminAccess())
+                                    <button type="button"
+                                        class="btn btn-secondary w-100 py-3 fw-bold text-white shadow-none d-flex align-items-center justify-content-center gap-2 radius-10 mb-2 opacity-75"
+                                        disabled>
+                                        <i class="ri-time-line fs-5"></i>
+                                        <span>Batch Belum Dibuka</span>
+                                    </button>
+                                    <div class="p-2_5 bg-warning-subtle text-dark border border-warning-subtle radius-10 fs-8 mb-3 text-center">
+                                        <i class="ri-calendar-event-line text-warning me-1"></i>
+                                        Materi dapat diakses mulai <strong>{{ $course->start_date?->translatedFormat('d M Y, H:i') }} WIB</strong>
+                                    </div>
+                                @elseif ($course->isBatchEnded() && ! auth()->user()->hasAdminAccess())
+                                    <button type="button"
+                                        class="btn btn-secondary w-100 py-3 fw-bold text-white shadow-none d-flex align-items-center justify-content-center gap-2 radius-10 mb-2 opacity-75"
+                                        disabled>
+                                        <i class="ri-forbid-line fs-5"></i>
+                                        <span>Batch Telah Berakhir</span>
+                                    </button>
+                                    <div class="p-2_5 bg-danger-subtle text-danger border border-danger-subtle radius-10 fs-8 mb-3 text-center">
+                                        <i class="ri-error-warning-line me-1"></i>
+                                        Masa pembelajaran kelas ini telah selesai pada <strong>{{ $course->end_date?->translatedFormat('d M Y, H:i') }} WIB</strong>
+                                    </div>
+                                @else
+                                    <a href="{{ route('peserta.materi', $course) }}"
+                                        class="btn btn-warning w-100 py-3 fw-bold text-navy shadow-sm d-flex align-items-center justify-content-center gap-2 radius-10 mb-3"
+                                        style="background: #e5a93b; border-color: #e5a93b;">
+                                        <i class="ri-play-circle-line fs-5"></i>
+                                        <span>{{ $isEnrolled ? 'Lanjut Belajar' : 'Mulai Belajar Sekarang' }}</span>
+                                        <i class="ri-arrow-right-line"></i>
+                                    </a>
+                                @endif
                             @else
-                                <a href="{{ route('login', ['redirect' => route('peserta.materi', $course)]) }}"
-                                    class="btn btn-warning w-100 py-3 fw-bold text-navy shadow-sm d-flex align-items-center justify-content-center gap-2 radius-10 mb-3"
-                                    style="background: #e5a93b; border-color: #e5a93b;">
-                                    <i class="ri-login-box-line fs-5"></i>
-                                    <span>Masuk untuk Belajar</span>
-                                    <i class="ri-arrow-right-line"></i>
-                                </a>
+                                @if ($course->isBatchEnded())
+                                    <button type="button"
+                                        class="btn btn-secondary w-100 py-3 fw-bold text-white shadow-none d-flex align-items-center justify-content-center gap-2 radius-10 mb-2 opacity-75"
+                                        disabled>
+                                        <i class="ri-forbid-line fs-5"></i>
+                                        <span>Batch Telah Berakhir</span>
+                                    </button>
+                                @else
+                                    <a href="{{ route('login', ['redirect' => route('peserta.materi', $course)]) }}"
+                                        class="btn btn-warning w-100 py-3 fw-bold text-navy shadow-sm d-flex align-items-center justify-content-center gap-2 radius-10 mb-3"
+                                        style="background: #e5a93b; border-color: #e5a93b;">
+                                        <i class="ri-login-box-line fs-5"></i>
+                                        <span>Masuk untuk Belajar</span>
+                                        <i class="ri-arrow-right-line"></i>
+                                    </a>
+                                @endif
                                 <p class="text-center text-muted fs-8 mb-3">
                                     Belum memiliki akun?
                                     <a href="{{ route('register', ['redirect' => route('peserta.materi', $course)]) }}"

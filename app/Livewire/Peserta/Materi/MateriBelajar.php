@@ -48,6 +48,27 @@ class MateriBelajar extends Component
             abort(404, 'Kelas tidak ditemukan atau belum dipublikasikan.');
         }
 
+        // Validasi Periode Pelaksanaan Batch untuk Peserta
+        if (! $user->hasAdminAccess() && $this->course->isBatch()) {
+            if ($this->course->isBatchNotStarted()) {
+                $formattedStart = $this->course->start_date?->translatedFormat('d F Y, H:i') ?? '-';
+                session()->flash('warning', "Kelas batch ini belum dimulai. Pembelajaran baru dapat diakses pada {$formattedStart} WIB.");
+
+                $this->redirect(route('landing.kelas.detail', $this->course), navigate: true);
+
+                return;
+            }
+
+            if ($this->course->isBatchEnded()) {
+                $formattedEnd = $this->course->end_date?->translatedFormat('d F Y, H:i') ?? '-';
+                session()->flash('warning', "Masa pembelajaran batch kelas ini telah berakhir pada {$formattedEnd} WIB.");
+
+                $this->redirect(route('landing.kelas.detail', $this->course), navigate: true);
+
+                return;
+            }
+        }
+
         // Auto-enroll peserta yang login agar riwayat & progres belajar tercatat
         $enrollment = CourseUser::firstOrCreate(
             [

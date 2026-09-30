@@ -98,11 +98,12 @@ class EvaluasiRepo
     public static function getAttemptsDt(int $courseId): Builder
     {
         return QuizAttempt::query()
+            ->select('quiz_attempts.*')
             ->whereHas('quiz', function ($q) use ($courseId) {
                 $q->where('course_id', $courseId);
             })
             ->with(['user', 'quiz.chapter'])
-            ->latest('id');
+            ->latest('quiz_attempts.id');
     }
 
     /**

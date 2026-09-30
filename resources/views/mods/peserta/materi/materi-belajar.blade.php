@@ -277,6 +277,28 @@
                                                 border: 1px solid #e2e8f0;
                                             }
 
+                                            .article-content iframe,
+                                            .article-content video,
+                                            .article-content embed {
+                                                display: block !important;
+                                                margin: 1.75rem auto !important;
+                                                max-width: 100% !important;
+                                                width: 100% !important;
+                                                aspect-ratio: 16 / 9 !important;
+                                                height: auto !important;
+                                                border-radius: 12px;
+                                                border: 1px solid #e2e8f0;
+                                                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+                                            }
+
+                                            .article-content p:has(> iframe),
+                                            .article-content div:has(> iframe) {
+                                                display: flex;
+                                                justify-content: center;
+                                                width: 100%;
+                                                margin: 1.5rem 0;
+                                            }
+
                                             .article-content h1,
                                             .article-content h2,
                                             .article-content h3,

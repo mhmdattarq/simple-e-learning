@@ -114,6 +114,32 @@ test('evaluasi attempts datatable returns valid json with participant scores', f
     expect($data[0]['total_earned_score'])->toBe(20);
 });
 
+test('evaluasi attempts datatable supports multiple column searches without ambiguous id error', function () {
+    $searchName = explode(' ', $this->peserta->name)[0];
+    $queryParams = [
+        'draw' => 1,
+        'columns' => [
+            0 => ['data' => '', 'name' => '', 'searchable' => 'false', 'orderable' => 'false', 'search' => ['value' => '']],
+            1 => ['data' => 'user.name', 'name' => 'user.name', 'searchable' => 'true', 'orderable' => 'true', 'search' => ['value' => $searchName]],
+            2 => ['data' => 'quiz.title', 'name' => 'quiz.title', 'searchable' => 'true', 'orderable' => 'true', 'search' => ['value' => 'Regulasi']],
+        ],
+        'order' => [
+            0 => ['column' => 1, 'dir' => 'asc'],
+        ],
+        'start' => 0,
+        'length' => 10,
+        'search' => ['value' => ''],
+    ];
+
+    $response = $this->actingAs($this->admin)
+        ->getJson(route('evaluasi.detail.dt', $this->course->id).'?'.http_build_query($queryParams));
+
+    $response->assertOk();
+    $data = $response->json('data');
+    expect($data)->toHaveCount(1);
+    expect($data[0]['user']['name'])->toBe($this->peserta->name);
+});
+
 test('admin can trigger hookModalDelete and delete quiz from detail page', function () {
     Livewire::actingAs($this->admin)
         ->test(EvaluasiDetail::class, ['course_id' => $this->course->id])
