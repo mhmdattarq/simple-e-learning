@@ -149,9 +149,10 @@
                 </p>
 
                 <div class="info-box">
-                    <div class="info-row"><strong>NIP:</strong> {{ $user->nip ?? '-' }}</div>
+                    <div class="info-row"><strong>Nama:</strong> {{ $user->name ?? '-' }}</div>
                     <div class="info-row"><strong>Email:</strong> {{ $user->email }}</div>
-                    <div class="info-row"><strong>Instansi/OPD:</strong> {{ $user->opd_agency ?? '-' }}</div>
+                    <div class="info-row"><strong>Nomor HP:</strong> {{ $user->phone_number ?? '-' }}</div>
+                    <div class="info-row"><strong>Alamat:</strong> {{ $user->address ?? '-' }}</div>
                 </div>
 
                 <div class="btn-wrapper">

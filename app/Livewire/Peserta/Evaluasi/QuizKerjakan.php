@@ -135,6 +135,46 @@ class QuizKerjakan extends Component
             }
         }
 
+        // 5. Cek apakah ada sesi pengerjaan kuis yang sedang berlangsung (Active Progress Recovery)
+        $sessionKey = $this->getSessionProgressKey($user->id);
+        if (session()->has($sessionKey)) {
+            $progress = session()->get($sessionKey);
+            $startedAt = $progress['started_at'] ?? now()->toDateTimeString();
+            $isExpired = false;
+
+            if ($this->quiz->time_limit_minutes) {
+                $expiresAt = $progress['expires_at'] ?? null;
+                if (! $expiresAt) {
+                    $expiresAt = Carbon::parse($startedAt)->addMinutes($this->quiz->time_limit_minutes)->timestamp;
+                }
+
+                $remaining = (int) $expiresAt - now()->timestamp;
+
+                if ($remaining <= 0) {
+                    $isExpired = true;
+                    $this->timeRemainingSeconds = 0;
+                } else {
+                    $this->timeRemainingSeconds = $remaining;
+                }
+            }
+
+            if ($isExpired) {
+                $this->userAnswers = (array) ($progress['answers'] ?? []);
+                $this->startedAt = $startedAt;
+                $this->clearSessionProgress($user->id);
+                $this->submitQuiz();
+
+                return;
+            }
+
+            $this->quizState = 'playing';
+            $this->startedAt = $startedAt;
+            $this->currentQuestionIndex = (int) ($progress['current_index'] ?? 0);
+            $this->userAnswers = (array) ($progress['answers'] ?? []);
+
+            return;
+        }
+
         $this->quizState = 'intro';
     }
 
@@ -193,6 +233,33 @@ class QuizKerjakan extends Component
         return ['is_locked' => false, 'reason' => ''];
     }
 
+    protected function getSessionProgressKey(int $userId): string
+    {
+        return "quiz_progress_{$this->quizId}_{$userId}";
+    }
+
+    protected function saveSessionProgress(int $userId): void
+    {
+        $sessionData = [
+            'started_at' => $this->startedAt,
+            'current_index' => $this->currentQuestionIndex,
+            'answers' => $this->userAnswers,
+        ];
+
+        if ($this->quiz && $this->quiz->time_limit_minutes) {
+            $existing = session()->get($this->getSessionProgressKey($userId), []);
+            $sessionData['expires_at'] = $existing['expires_at']
+                ?? now()->addSeconds($this->timeRemainingSeconds > 0 ? $this->timeRemainingSeconds : $this->quiz->time_limit_minutes * 60)->timestamp;
+        }
+
+        session()->put($this->getSessionProgressKey($userId), $sessionData);
+    }
+
+    protected function clearSessionProgress(int $userId): void
+    {
+        session()->forget($this->getSessionProgressKey($userId));
+    }
+
     /**
      * Memulai sesi pengerjaan kuis.
      */
@@ -215,6 +282,14 @@ class QuizKerjakan extends Component
 
         if ($this->quiz->time_limit_minutes) {
             $this->timeRemainingSeconds = $this->quiz->time_limit_minutes * 60;
+            session()->put($this->getSessionProgressKey($user->id), [
+                'started_at' => $this->startedAt,
+                'expires_at' => now()->addMinutes($this->quiz->time_limit_minutes)->timestamp,
+                'current_index' => 0,
+                'answers' => [],
+            ]);
+        } else {
+            $this->saveSessionProgress($user->id);
         }
     }
 
@@ -234,6 +309,7 @@ class QuizKerjakan extends Component
 
         if ($validOption) {
             $this->userAnswers[$questionId] = $optionId;
+            $this->saveSessionProgress(Auth::id());
         }
     }
 
@@ -244,6 +320,7 @@ class QuizKerjakan extends Component
     {
         if ($index >= 0 && $index < $this->questionsCount) {
             $this->currentQuestionIndex = $index;
+            $this->saveSessionProgress(Auth::id());
         }
     }
 
@@ -254,6 +331,7 @@ class QuizKerjakan extends Component
     {
         if ($this->currentQuestionIndex < $this->questionsCount - 1) {
             $this->currentQuestionIndex++;
+            $this->saveSessionProgress(Auth::id());
         }
     }
 
@@ -264,40 +342,16 @@ class QuizKerjakan extends Component
     {
         if ($this->currentQuestionIndex > 0) {
             $this->currentQuestionIndex--;
+            $this->saveSessionProgress(Auth::id());
         }
     }
 
     /**
-     * Membuka modal konfirmasi pengumpulan jawaban reusable.
+     * Membuka modal konfirmasi pengumpulan jawaban.
      */
     public function promptSubmit(): void
     {
         $this->showSubmitConfirmation = true;
-
-        $unanswered = $this->questionsCount - $this->answeredCount;
-
-        $msg = "Anda telah menjawab {$this->answeredCount} dari {$this->questionsCount} butir pertanyaan.";
-        if ($unanswered > 0) {
-            $msg .= "\n\nMasih ada {$unanswered} soal yang belum Anda jawab!";
-        }
-        $msg .= "\n\nPerhatian: Kuis ini menerapkan sistem Single Attempt. Jawaban yang dikumpulkan bersifat final dan tidak dapat diubah kembali.";
-
-        $dtHook = [
-            'id' => $this->quizId,
-            'title' => 'Konfirmasi Selesai & Kumpulkan',
-            'msg' => $msg,
-            'msgBoxClass' => $unanswered > 0 ? 'bg-warning-subtle text-dark border-warning' : '',
-            'icon' => 'ri-question-mark',
-            'iconBadgeClass' => 'bg-warning-subtle text-warning',
-            'iconBadgeStyle' => 'background-color: #fef3c7 !important; color: #d97706 !important; box-shadow: 0 8px 24px rgba(217, 119, 6, 0.2) !important;',
-            'btnCancelText' => 'Periksa Lagi',
-            'btnConfirmText' => 'Ya, Kumpulkan',
-            'btnConfirmIcon' => 'ri-check-line',
-            'btnConfirmClass' => 'simpel-modal-btn-success',
-            'dispatch' => 'QuizKerjakan-submit',
-        ];
-
-        $this->dispatch('modal-delete-setDeleteId', $dtHook);
     }
 
     /**
@@ -377,6 +431,8 @@ class QuizKerjakan extends Component
             'started_at' => $this->startedAt ? Carbon::parse($this->startedAt) : now(),
             'submitted_at' => now(),
         ]);
+
+        $this->clearSessionProgress($user->id);
 
         $this->savedAttempt = $attempt;
         $this->quizState = 'result';

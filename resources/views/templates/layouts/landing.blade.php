@@ -358,7 +358,7 @@
 
     <!-- template js -->
     <script data-navigate-once src="{{ asset('landing/assets/js/script.js') }}"></script>
-    <script data-navigate-once src="{{ asset('mine/script.js') }}"></script>
+    <script data-navigate-once src="{{ asset('mine/script.js') }}?v={{ filemtime(public_path('mine/script.js')) }}"></script>
     @livewireScripts
 </body>
 
