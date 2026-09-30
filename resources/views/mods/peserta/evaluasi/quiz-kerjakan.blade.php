@@ -203,27 +203,26 @@
                     {{-- 4 Parameter Metrik Kuis --}}
                     <div class="row g-3 mb-4">
                         <div class="col-sm-3 col-6">
-                            <div class="p-3 bg-light rounded-3 text-center border">
-                                <span class="text-muted text-xxs text-uppercase fw-semibold d-block">Jumlah Soal</span>
+                            <div class="p-3 bg-light rounded-3 text-center border h-100 d-flex flex-column justify-content-center">
+                                <span class="text-muted text-xxs text-uppercase fw-semibold d-flex align-items-center justify-content-center mb-1" style="min-height: 28px;">Jumlah Soal</span>
                                 <h4 class="fw-bold text-dark mb-0 fs-5">{{ $this->questionsCount }} Soal</h4>
                             </div>
                         </div>
                         <div class="col-sm-3 col-6">
-                            <div class="p-3 bg-light rounded-3 text-center border">
-                                <span class="text-muted text-xxs text-uppercase fw-semibold d-block">Total Skor</span>
+                            <div class="p-3 bg-light rounded-3 text-center border h-100 d-flex flex-column justify-content-center">
+                                <span class="text-muted text-xxs text-uppercase fw-semibold d-flex align-items-center justify-content-center mb-1" style="min-height: 28px;">Total Skor</span>
                                 <h4 class="fw-bold text-primary mb-0 fs-5">{{ $quiz->total_score }} Poin</h4>
                             </div>
                         </div>
                         <div class="col-sm-3 col-6">
-                            <div class="p-3 bg-light rounded-3 text-center border">
-                                <span class="text-muted text-xxs text-uppercase fw-semibold d-block">Batas Kelulusan
-                                    (KKM)</span>
+                            <div class="p-3 bg-light rounded-3 text-center border h-100 d-flex flex-column justify-content-center">
+                                <span class="text-muted text-xxs text-uppercase fw-semibold d-flex align-items-center justify-content-center mb-1" style="min-height: 28px;">Batas Kelulusan (KKM)</span>
                                 <h4 class="fw-bold text-success mb-0 fs-5">{{ $quiz->passing_score }}%</h4>
                             </div>
                         </div>
                         <div class="col-sm-3 col-6">
-                            <div class="p-3 bg-light rounded-3 text-center border">
-                                <span class="text-muted text-xxs text-uppercase fw-semibold d-block">Durasi Waktu</span>
+                            <div class="p-3 bg-light rounded-3 text-center border h-100 d-flex flex-column justify-content-center">
+                                <span class="text-muted text-xxs text-uppercase fw-semibold d-flex align-items-center justify-content-center mb-1" style="min-height: 28px;">Durasi Waktu</span>
                                 <h4 class="fw-bold text-dark mb-0 fs-5">
                                     {{ $quiz->time_limit_minutes ? $quiz->time_limit_minutes . ' Menit' : 'Bebas' }}
                                 </h4>
@@ -399,7 +398,7 @@
 
                 {{-- Header Quiz Player --}}
                 <div
-                    class="p-20 px-md-24 border-bottom bg-white d-flex align-items-center justify-content-between flex-wrap gap-2">
+                    class="px-4 px-md-5 py-3 py-md-4 border-bottom bg-white d-flex align-items-center justify-content-between flex-wrap gap-3">
                     <div class="d-flex align-items-center gap-2">
                         <span class="badge bg-navy text-white px-3 py-2 radius-8 fs-8 fw-bold">
                             Soal {{ $currentQuestionIndex + 1 }} dari {{ $this->questionsCount }}
@@ -576,18 +575,18 @@
                 <div class="card-body p-4 p-md-5">
                     <div class="row g-3 justify-content-center mb-4">
                         <div class="col-sm-4 col-12">
-                            <div class="p-3 bg-light rounded-3 border text-center">
+                            <div class="p-3 bg-light rounded-3 border text-center h-100 d-flex flex-column justify-content-center">
                                 <span class="text-muted text-xxs text-uppercase fw-semibold d-block">SKOR AKHIR</span>
                                 <h3 class="fw-bold text-dark mb-0 fs-3">
                                     {{ $savedAttempt->total_earned_score }} <span class="text-muted fs-6">/
-                                        {{ $savedAttempt->total_possible_score }}</span>
+                                         {{ $savedAttempt->total_possible_score }}</span>
                                 </h3>
                                 <small class="text-muted text-xxs">Akumulasi Bobot Soal</small>
                             </div>
                         </div>
 
                         <div class="col-sm-4 col-12">
-                            <div class="p-3 bg-light rounded-3 border text-center">
+                            <div class="p-3 bg-light rounded-3 border text-center h-100 d-flex flex-column justify-content-center">
                                 <span class="text-muted text-xxs text-uppercase fw-semibold d-block">PERSENTASE
                                     NILAI</span>
                                 <h3
@@ -599,7 +598,7 @@
                         </div>
 
                         <div class="col-sm-4 col-12">
-                            <div class="p-3 bg-light rounded-3 border text-center">
+                            <div class="p-3 bg-light rounded-3 border text-center h-100 d-flex flex-column justify-content-center">
                                 <span class="text-muted text-xxs text-uppercase fw-semibold d-block">WAKTU
                                     SELESAI</span>
                                 <h5 class="fw-bold text-dark mb-0 fs-6 pt-2">
