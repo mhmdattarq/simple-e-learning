@@ -6,6 +6,10 @@ use App\Models\AuditLog;
 use App\Models\Course;
 use App\Models\Quiz;
 use App\Models\QuizAttempt;
+use App\Models\QuizOption;
+use App\Models\QuizQuestion;
+use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
@@ -199,5 +203,91 @@ class EvaluasiRepo
 
             return false;
         }
+    }
+
+    /**
+     * Menyelesaikan dan mengkalkulasi skor evaluasi kuis secara permanen (Single Attempt).
+     *
+     * @param  array<int, int|string>  $userAnswers
+     */
+    public static function finalizeAttempt(Quiz $quiz, User $user, array $userAnswers = [], ?string $startedAt = null): QuizAttempt
+    {
+        $existing = $quiz->getAttemptForUser($user->id);
+        if ($existing) {
+            return $existing;
+        }
+
+        $earnedScore = 0;
+        $answersData = [];
+
+        // Ambil data pertanyaan dan opsi resmi langsung dari database untuk validasi & penilaian yang aman
+        $questions = QuizQuestion::with(['options' => fn ($q) => $q->orderBy('order', 'asc')])
+            ->where('quiz_id', $quiz->id)
+            ->orderBy('order', 'asc')
+            ->get();
+
+        foreach ($questions as $question) {
+            $correctOption = $question->options->firstWhere('is_correct', true)
+                ?? QuizOption::where('question_id', $question->id)->where('is_correct', true)->first();
+            $chosenOptionId = $userAnswers[$question->id] ?? null;
+
+            $isCorrect = ($chosenOptionId && $correctOption && (int) $chosenOptionId === $correctOption->id);
+            $scoreGained = $isCorrect ? (int) $question->score : 0;
+            $earnedScore += $scoreGained;
+
+            $answersData[] = [
+                'question_id' => $question->id,
+                'question_text' => $question->question_text,
+                'chosen_option_id' => $chosenOptionId,
+                'correct_option_id' => $correctOption?->id,
+                'is_correct' => $isCorrect,
+                'score_earned' => $scoreGained,
+                'question_score' => $question->score,
+            ];
+        }
+
+        $totalPossible = $quiz->total_score > 0 ? $quiz->total_score : max(1, (int) $questions->sum('score'));
+        $percentage = round(($earnedScore / $totalPossible) * 100, 2);
+        $isPassed = ($percentage >= $quiz->passing_score);
+
+        return QuizAttempt::create([
+            'quiz_id' => $quiz->id,
+            'user_id' => $user->id,
+            'total_earned_score' => $earnedScore,
+            'total_possible_score' => $totalPossible,
+            'percentage' => $percentage,
+            'is_passed' => $isPassed,
+            'answers_data' => $answersData,
+            'started_at' => $startedAt ? Carbon::parse($startedAt) : now(),
+            'submitted_at' => now(),
+        ]);
+    }
+
+    /**
+     * Memeriksa dan memfinalisasi otomatis seluruh sesi kuis aktif pengguna dari session.
+     * Berguna saat user logout paksa atau sesi terputus saat pengerjaan kuis berlangsung.
+     */
+    public static function finalizeActiveSessionsForUser(User $user): int
+    {
+        $finalizedCount = 0;
+        $sessionAll = session()->all();
+
+        foreach ($sessionAll as $key => $progress) {
+            if (is_string($key) && preg_match('/^quiz_progress_(\d+)_'.preg_quote((string) $user->id, '/').'$/', $key, $matches)) {
+                $quizId = (int) $matches[1];
+                $quiz = Quiz::find($quizId);
+
+                if ($quiz && ! $quiz->isAttemptedByUser($user->id)) {
+                    $userAnswers = (array) ($progress['answers'] ?? []);
+                    $startedAt = $progress['started_at'] ?? null;
+                    static::finalizeAttempt($quiz, $user, $userAnswers, $startedAt);
+                    $finalizedCount++;
+                }
+
+                session()->forget($key);
+            }
+        }
+
+        return $finalizedCount;
     }
 }

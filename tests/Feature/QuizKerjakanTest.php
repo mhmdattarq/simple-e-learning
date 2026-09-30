@@ -380,3 +380,28 @@ test('participant cannot access quiz if batch has already ended', function () {
         ->assertSet('quizState', 'locked')
         ->assertSee('Evaluasi kuis tidak dapat diakses lagi karena masa batch pelatihan telah berakhir');
 });
+
+test('participant active quiz session is automatically finalized upon logout', function () {
+    $sessionKey = "quiz_progress_{$this->quiz->id}_{$this->peserta->id}";
+    $answers = [
+        $this->q1->id => $this->q1OptA->id, // Correct: +10 score
+    ];
+
+    $response = $this->actingAs($this->peserta)
+        ->withSession([
+            $sessionKey => [
+                'started_at' => now()->subMinutes(5)->toDateTimeString(),
+                'current_index' => 0,
+                'answers' => $answers,
+            ],
+        ])
+        ->post(route('logout'));
+
+    $response->assertRedirect(route('login'));
+
+    // Verify QuizAttempt was automatically created and evaluated
+    $attempt = QuizAttempt::where('user_id', $this->peserta->id)->where('quiz_id', $this->quiz->id)->first();
+    expect($attempt)->not->toBeNull();
+    expect($attempt->total_earned_score)->toBe(10);
+    expect($this->quiz->isAttemptedByUser($this->peserta->id))->toBeTrue();
+});

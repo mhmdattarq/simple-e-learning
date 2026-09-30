@@ -213,31 +213,31 @@
                         {{-- Viewer Materi Terbuka --}}
                         <div class="card border-0 shadow-sm radius-16 bg-white overflow-hidden mb-4 position-relative">
                             {{-- Header Materi --}}
-                            <div class="p-24 border-bottom bg-white">
-                                <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-2">
+                            <div class="p-4 p-md-5 border-bottom bg-white">
+                                <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
                                     <span
-                                        class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-1 fs-8 rounded-pill">
+                                        class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-1_5 fs-8 rounded-pill">
                                         <i class="ri-folder-2-line me-1"></i>
                                         {{ $currentChapter?->title ?? 'Bab Pembelajaran' }}
                                     </span>
                                     <div class="d-flex align-items-center gap-2">
                                         @if ($isCompleted)
                                             <span
-                                                class="badge bg-success-subtle text-success border border-success-subtle px-3 py-1 fs-8 rounded-pill">
+                                                class="badge bg-success-subtle text-success border border-success-subtle px-3 py-1_5 fs-8 rounded-pill">
                                                 <i class="ri-checkbox-circle-fill me-1"></i> Selesai Dipelajari
                                             </span>
                                         @endif
                                         <span
-                                            class="badge bg-secondary-subtle text-secondary px-3 py-1 fs-8 rounded-pill text-uppercase">
+                                            class="badge bg-secondary-subtle text-secondary px-3 py-1_5 fs-8 rounded-pill text-uppercase">
                                             <i class="ri-file-info-line me-1"></i> {{ $currentLesson->content_type }}
                                         </span>
                                     </div>
                                 </div>
-                                <h3 class="fw-bold text-dark mb-1 fs-4">{{ $currentLesson->title }}</h3>
+                                <h3 class="fw-bold text-dark mb-0 fs-3">{{ $currentLesson->title }}</h3>
                             </div>
 
                             {{-- Body Materi --}}
-                            <div class="card-body p-24 p-md-32">
+                            <div class="card-body p-4 p-md-5">
                                 {{-- Video Player --}}
                                 @if ($currentLesson->content_type === 'video' && $currentLesson->video_url)
                                     <div class="ratio ratio-16x9 rounded-12 overflow-hidden shadow-sm mb-4 bg-dark">
@@ -262,8 +262,8 @@
 
                                 {{-- Konten Teks / Artikel Bersih & Render Gambar/Format --}}
                                 @if ($currentLesson->body_text)
-                                    <div class="article-content fs-6 text-dark lh-lg mb-4 p-4 bg-white rounded-12 border shadow-none"
-                                        style="font-size: 15.5px; color: #1e293b; line-height: 1.85;">
+                                    <div class="article-content fs-6 text-dark lh-lg mb-4 p-4 p-md-5 bg-white rounded-16 border shadow-none"
+                                        style="font-size: 16px; color: #1e293b; line-height: 1.85;">
                                         <style>
                                             .article-content img {
                                                 max-width: 100%;
@@ -378,7 +378,7 @@
                             </div>
 
                             {{-- Footer Navigasi : Sticky Bottom Bar agar tombol selalu mudah diakses jika artikel panjang --}}
-                            <div class="card-footer bg-white p-20 border-top d-flex align-items-center justify-content-between flex-wrap gap-3 sticky-bottom shadow-sm"
+                            <div class="card-footer bg-white p-3 p-md-4 border-top d-flex align-items-center justify-content-between flex-wrap gap-3 sticky-bottom shadow-sm"
                                 style="bottom: 0; z-index: 5; background-color: #ffffff !important; border-top: 1px solid #e2e8f0;">
                                 {{-- Tombol Sebelumnya --}}
                                 <div>

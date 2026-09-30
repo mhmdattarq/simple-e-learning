@@ -7,6 +7,11 @@ use Livewire\Component;
 new class extends Component {
     public function logout()
     {
+        $user = auth()->user();
+        if ($user instanceof \App\Models\User) {
+            \App\Repositories\EvaluasiRepo::finalizeActiveSessionsForUser($user);
+        }
+
         auth()->logout();
         session()->invalidate();
         session()->regenerateToken();

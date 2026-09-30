@@ -9,6 +9,7 @@ use App\Models\QuizAttempt;
 use App\Models\QuizOption;
 use App\Models\QuizQuestion;
 use App\Models\User;
+use App\Repositories\EvaluasiRepo;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -405,50 +406,7 @@ class QuizKerjakan extends Component
             return;
         }
 
-        $earnedScore = 0;
-        $answersData = [];
-
-        // Ambil data pertanyaan dan opsi resmi langsung dari database untuk validasi & penilaian yang aman
-        $questions = QuizQuestion::with(['options' => fn ($q) => $q->orderBy('order', 'asc')])
-            ->where('quiz_id', $this->quiz->id)
-            ->orderBy('order', 'asc')
-            ->get();
-
-        foreach ($questions as $question) {
-            $correctOption = $question->options->firstWhere('is_correct', true)
-                ?? QuizOption::where('question_id', $question->id)->where('is_correct', true)->first();
-            $chosenOptionId = $this->userAnswers[$question->id] ?? null;
-
-            $isCorrect = ($chosenOptionId && $correctOption && (int) $chosenOptionId === $correctOption->id);
-            $scoreGained = $isCorrect ? (int) $question->score : 0;
-            $earnedScore += $scoreGained;
-
-            $answersData[] = [
-                'question_id' => $question->id,
-                'question_text' => $question->question_text,
-                'chosen_option_id' => $chosenOptionId,
-                'correct_option_id' => $correctOption?->id,
-                'is_correct' => $isCorrect,
-                'score_earned' => $scoreGained,
-                'question_score' => $question->score,
-            ];
-        }
-
-        $totalPossible = $this->quiz->total_score > 0 ? $this->quiz->total_score : max(1, (int) $questions->sum('score'));
-        $percentage = round(($earnedScore / $totalPossible) * 100, 2);
-        $isPassed = ($percentage >= $this->quiz->passing_score);
-
-        $attempt = QuizAttempt::create([
-            'quiz_id' => $this->quiz->id,
-            'user_id' => $user->id,
-            'total_earned_score' => $earnedScore,
-            'total_possible_score' => $totalPossible,
-            'percentage' => $percentage,
-            'is_passed' => $isPassed,
-            'answers_data' => $answersData,
-            'started_at' => $this->startedAt ? Carbon::parse($this->startedAt) : now(),
-            'submitted_at' => now(),
-        ]);
+        $attempt = EvaluasiRepo::finalizeAttempt($this->quiz, $user, $this->userAnswers, $this->startedAt);
 
         $this->clearSessionProgress($user->id);
 
@@ -456,10 +414,10 @@ class QuizKerjakan extends Component
         $this->quizState = 'result';
 
         $this->dispatch('show-toast', [
-            'type' => $isPassed ? 'success' : 'warning',
-            'message' => $isPassed
-                ? 'Selamat! Anda dinyatakan Lulus evaluasi ini dengan nilai '.$percentage.'%.'
-                : 'Evaluasi telah selesai. Nilai Anda '.$percentage.'%.',
+            'type' => $attempt->is_passed ? 'success' : 'warning',
+            'message' => $attempt->is_passed
+                ? 'Selamat! Anda dinyatakan Lulus evaluasi ini dengan nilai '.$attempt->percentage.'%.'
+                : 'Evaluasi telah selesai. Nilai Anda '.$attempt->percentage.'%.',
         ]);
     }
 

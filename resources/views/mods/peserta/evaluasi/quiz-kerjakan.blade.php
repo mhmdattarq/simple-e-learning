@@ -1,4 +1,4 @@
-@push('css')
+<div class="py-4" style="background: #f8fafc; min-height: 85vh;">
     <style>
         .quiz-container {
             max-width: 960px;
@@ -49,6 +49,7 @@
         .quiz-radio-indicator {
             width: 22px;
             height: 22px;
+            min-width: 22px;
             border-radius: 50%;
             border: 2px solid #cbd5e1;
             display: inline-flex;
@@ -147,9 +148,6 @@
             }
         }
     </style>
-@endpush
-
-<div class="py-4" style="background: #f8fafc; min-height: 85vh;">
     <div class="container quiz-container">
 
         {{-- STATE 1: TERKUNCI (LOCKED PREREQUISITE) --}}
@@ -177,7 +175,7 @@
         @elseif ($quizState === 'intro')
             <div class="card border-0 shadow-sm radius-16 bg-white overflow-hidden my-4">
                 {{-- Card Header --}}
-                <div class="p-24 border-bottom bg-white">
+                <div class="p-4 p-md-5 border-bottom bg-white">
                     <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-2">
                         <span
                             class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-1 fs-8 rounded-pill">
@@ -201,7 +199,7 @@
                 </div>
 
                 {{-- Card Body --}}
-                <div class="card-body p-24 p-md-32">
+                <div class="card-body p-4 p-md-5">
                     {{-- 4 Parameter Metrik Kuis --}}
                     <div class="row g-3 mb-4">
                         <div class="col-sm-3 col-6">
@@ -280,12 +278,15 @@
             <div class="card border-0 shadow-sm radius-16 bg-white overflow-hidden my-4" x-data="{
                 remainingSeconds: {{ $timeRemainingSeconds }},
                 timerInterval: null,
+                isSubmitting: false,
                 formatTimer() {
                     let mins = Math.floor(this.remainingSeconds / 60);
                     let secs = this.remainingSeconds % 60;
                     return String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
                 },
                 init() {
+                    window.__quizSubmitting = false;
+
                     if (this.timerInterval) {
                         clearInterval(this.timerInterval);
                     }
@@ -295,10 +296,104 @@
                                 this.remainingSeconds--;
                             } else {
                                 clearInterval(this.timerInterval);
+                                this.isSubmitting = true;
+                                window.__quizSubmitting = true;
                                 $wire.submitQuiz();
                             }
                         }, 1000);
                     }
+
+                    // 1. Browser tab close / reload protection
+                    const beforeUnloadHandler = (e) => {
+                        if (this.isSubmitting || window.__quizSubmitting) return;
+                        e.preventDefault();
+                        e.returnValue = '';
+                        return '';
+                    };
+                    window.addEventListener('beforeunload', beforeUnloadHandler);
+
+                    // 2. Intercept navigation clicks outside the quiz player (navbar links, logo, etc.)
+                    const clickHandler = (e) => {
+                        if (this.isSubmitting || window.__quizSubmitting) return;
+
+                        const link = e.target.closest('a');
+                        if (!link) return;
+
+                        const href = link.getAttribute('href');
+                        if (!href || href === '#' || href.startsWith('#') || href.startsWith('javascript:')) {
+                            return;
+                        }
+
+                        // Don't intercept clicks inside the quiz player card
+                        if (this.$el.contains(link)) {
+                            return;
+                        }
+
+                        const confirmed = confirm('Peringatan: Evaluasi kuis Anda sedang berlangsung dan timer waktu terus berjalan. Apakah Anda yakin ingin meninggalkan halaman evaluasi?');
+                        if (!confirmed) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            return false;
+                        }
+
+                        // User confirmed leaving: allow navigation without second prompt
+                        this.isSubmitting = true;
+                        window.__quizSubmitting = true;
+                    };
+                    document.addEventListener('click', clickHandler, true);
+
+                    // 3. Intercept logout modal form submission
+                    const formSubmitHandler = (e) => {
+                        if (this.isSubmitting || window.__quizSubmitting) return;
+
+                        const form = e.target;
+                        if (form && (form.id === 'logout-form' || form.getAttribute('action')?.includes('logout') || form.classList.contains('simpel-modal-form'))) {
+                            const confirmed = confirm('Peringatan: Evaluasi kuis Anda sedang berlangsung. Jika Anda keluar (logout), sesi kuis Anda akan dihentikan dan waktu akan terus berjalan di server. Apakah Anda yakin ingin keluar?');
+                            if (!confirmed) {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                return false;
+                            }
+                            this.isSubmitting = true;
+                            window.__quizSubmitting = true;
+                        }
+                    };
+                    document.addEventListener('submit', formSubmitHandler, true);
+
+                    // 4. Browser history (back/forward button) guard
+                    history.pushState(null, '', window.location.href);
+                    const popstateHandler = () => {
+                        if (this.isSubmitting || window.__quizSubmitting) return;
+
+                        const confirmed = confirm('Peringatan: Evaluasi kuis Anda sedang berlangsung dan timer waktu terus berjalan. Apakah Anda yakin ingin meninggalkan halaman evaluasi?');
+                        if (!confirmed) {
+                            history.pushState(null, '', window.location.href);
+                        } else {
+                            this.isSubmitting = true;
+                            window.__quizSubmitting = true;
+                            history.back();
+                        }
+                    };
+                    window.addEventListener('popstate', popstateHandler);
+
+                    // 5. Custom event listener for smooth submission without dialog
+                    const submittingHandler = () => {
+                        this.isSubmitting = true;
+                        window.__quizSubmitting = true;
+                    };
+                    window.addEventListener('quiz-submitting', submittingHandler);
+
+                    // 6. Cleanup when component is unmounted / destroyed
+                    this.$cleanup(() => {
+                        if (this.timerInterval) {
+                            clearInterval(this.timerInterval);
+                        }
+                        window.removeEventListener('beforeunload', beforeUnloadHandler);
+                        document.removeEventListener('click', clickHandler, true);
+                        document.removeEventListener('submit', formSubmitHandler, true);
+                        window.removeEventListener('popstate', popstateHandler);
+                        window.removeEventListener('quiz-submitting', submittingHandler);
+                    });
                 }
             }">
 
@@ -328,7 +423,7 @@
                 </div>
 
                 {{-- Body Quiz Player: Soal & Opsi Jawaban --}}
-                <div class="card-body p-24 p-md-32">
+                <div class="card-body p-4 p-md-5">
                     <div class="row g-4">
                         {{-- Kolom Kiri: Pertanyaan & Pilihan Jawaban --}}
                         <div class="col-lg-8 col-12">
@@ -349,14 +444,20 @@
                                         @endphp
                                         <div class="option-choice-card d-flex align-items-center gap-3 {{ $isSelected ? 'is-selected' : '' }}"
                                             wire:click="selectOption({{ $q->id }}, {{ $opt->id }})"
-                                            wire:key="opt-card-{{ $q->id }}-{{ $opt->id }}-{{ $isSelected ? '1' : '0' }}">
-                                            <span class="option-choice-letter">{{ $letter }}</span>
+                                            wire:key="opt-card-{{ $q->id }}-{{ $opt->id }}-{{ $isSelected ? '1' : '0' }}"
+                                            style="border: 2px solid {{ $isSelected ? '#0d6efd' : '#e2e8f0' }}; border-radius: 12px; background: {{ $isSelected ? '#eff6ff' : '#ffffff' }}; padding: 14px 18px; cursor: pointer; user-select: none;">
+                                            <span class="option-choice-letter"
+                                                style="width: 32px; height: 32px; min-width: 32px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; background: {{ $isSelected ? '#0d6efd' : '#e2e8f0' }}; color: {{ $isSelected ? '#ffffff' : '#1e293b' }}; flex-shrink: 0;">
+                                                {{ $letter }}
+                                            </span>
                                             <div class="flex-grow-1 fs-7 fw-medium text-dark">
                                                 {{ $opt->option_text }}
                                             </div>
-                                            <div>
-                                                <div class="quiz-radio-indicator {{ $isSelected ? 'is-selected' : '' }}">
-                                                    <div class="quiz-radio-dot"></div>
+                                            <div class="flex-shrink-0 d-flex align-items-center">
+                                                <div class="quiz-radio-indicator {{ $isSelected ? 'is-selected' : '' }}"
+                                                    style="width: 22px; height: 22px; min-width: 22px; border-radius: 50%; border: 2px solid {{ $isSelected ? '#0d6efd' : '#cbd5e1' }}; background: {{ $isSelected ? '#0d6efd' : '#ffffff' }}; display: inline-flex; align-items: center; justify-content: center; box-shadow: {{ $isSelected ? '0 0 0 3px rgba(13, 110, 253, 0.2)' : 'none' }};">
+                                                    <div class="quiz-radio-dot"
+                                                        style="width: 8px; height: 8px; border-radius: 50%; background: #ffffff; opacity: {{ $isSelected ? '1' : '0' }}; transform: scale({{ $isSelected ? '1' : '0.4' }});"></div>
                                                 </div>
                                             </div>
                                         </div>
@@ -472,7 +573,7 @@
                 </div>
 
                 {{-- Rincian Nilai Skor --}}
-                <div class="card-body p-24 p-md-40">
+                <div class="card-body p-4 p-md-5">
                     <div class="row g-3 justify-content-center mb-4">
                         <div class="col-sm-4 col-12">
                             <div class="p-3 bg-light rounded-3 border text-center">
@@ -583,7 +684,9 @@
                                 Periksa Lagi
                             </button>
                             <button type="button" class="btn btn-success w-50 py-2 radius-10 fw-semibold fs-8 d-inline-flex align-items-center justify-content-center gap-1 shadow-sm"
-                                wire:click="submitQuiz" wire:loading.attr="disabled">
+                                wire:click="submitQuiz"
+                                @click="window.dispatchEvent(new CustomEvent('quiz-submitting'))"
+                                wire:loading.attr="disabled">
                                 <span wire:loading.remove wire:target="submitQuiz">
                                     <i class="ri-check-line"></i> Ya, Kumpulkan
                                 </span>

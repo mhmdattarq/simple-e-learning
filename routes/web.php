@@ -35,6 +35,8 @@ use App\Livewire\Peserta\Evaluasi\QuizKerjakan;
 use App\Livewire\Peserta\Materi\MateriBelajar;
 use App\Livewire\Peserta\Profile\ProfileIndex;
 use App\Models\Course;
+use App\Models\User;
+use App\Repositories\EvaluasiRepo;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -94,6 +96,11 @@ Route::middleware('auth')->group(function () {
 
 // 4. Logout (Authenticated)
 Route::post('/logout', function () {
+    $user = Auth::user();
+    if ($user instanceof User) {
+        EvaluasiRepo::finalizeActiveSessionsForUser($user);
+    }
+
     Auth::logout();
     request()->session()->invalidate();
     request()->session()->regenerateToken();
