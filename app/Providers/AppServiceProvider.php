@@ -84,5 +84,12 @@ class AppServiceProvider extends ServiceProvider
         RateLimiter::for('contact', function (Request $request) {
             return Limit::perMinute(5)->by($request->ip());
         });
+
+        // 8. Rate limiter untuk Permintaan Lupa Kata Sandi (3 per menit per IP + email)
+        RateLimiter::for('forgot-password', function (Request $request) {
+            $email = strtolower(trim((string) $request->input('email', '')));
+
+            return Limit::perMinute(3)->by($request->ip().'|'.$email);
+        });
     }
 }

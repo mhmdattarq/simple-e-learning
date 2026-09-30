@@ -155,8 +155,8 @@
                         <label class="form-label text-xs fw-semibold text-secondary-dark mb-0" for="your-password">
                             Kata Sandi
                         </label>
-                        <a href="javascript:void(0)"
-                            class="text-xs text-decoration-none fw-medium text-muted hover-underline">Lupa Sandi?</a>
+                        <a href="{{ route('password.request') }}"
+                            class="text-xs text-decoration-none fw-medium text-muted hover-underline" wire:navigate>Lupa Sandi?</a>
                     </div>
                     <div class="auth-input-wrapper">
                         <span class="auth-field-icon">

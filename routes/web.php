@@ -18,8 +18,10 @@ use App\Livewire\Admin\Kelas\KelasEdit;
 use App\Livewire\Admin\Materi\MateriDetail;
 use App\Livewire\Admin\Notifikasi\NotifikasiIndex;
 use App\Livewire\Admin\Profile\AdminProfileIndex;
+use App\Livewire\Auth\ForgotPassword;
 use App\Livewire\Auth\Login;
 use App\Livewire\Auth\Register;
+use App\Livewire\Auth\ResetPassword;
 use App\Livewire\Auth\VerifyEmail;
 use App\Livewire\Landing\JadwalIndex;
 use App\Livewire\Landing\KelasDetail;
@@ -59,6 +61,8 @@ Route::get('/favicon.ico', fn () => response()->file(public_path('favicon.ico'))
 Route::middleware('guest')->group(function () {
     Route::livewire('/login', Login::class)->middleware('throttle:login')->name('login');
     Route::livewire('/register', Register::class)->middleware('throttle:register')->name('register');
+    Route::livewire('/forgot-password', ForgotPassword::class)->middleware('throttle:forgot-password')->name('password.request');
+    Route::livewire('/reset-password/{token}', ResetPassword::class)->name('password.reset');
     Route::livewire('/email/verify/{token}', VerifyEmail::class)->middleware('throttle:verification')->name('verification.verify');
     Route::get('/auth/google/redirect', [GoogleAuthController::class, 'redirect'])->name('auth.google.redirect');
     Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback'])->name('auth.google.callback');
