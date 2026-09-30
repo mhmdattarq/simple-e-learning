@@ -99,7 +99,7 @@
                         </div>
                         @if ($search || $module !== 'all' || $date)
                             <button type="button" wire:click="resetFilters"
-                                class="btn btn-outline-secondary btn-sm radius-8 d-flex align-items-center gap-1">
+                                class="btn btn-outline-danger btn-sm radius-8 d-flex align-items-center gap-1">
                                 <i class="ri-refresh-line"></i> Reset
                             </button>
                         @endif

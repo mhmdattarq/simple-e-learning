@@ -6,12 +6,12 @@
             <p class="text-muted mb-0">Kelola identitas kantor, kontak resmi, dan daftar tanya-jawab populer pada halaman
                 bantuan.</p>
         </div>
-        <div>
+        {{-- <div>
             <a href="{{ route('kontak') }}" target="_blank"
                 class="btn btn-outline-primary btn-sm rounded-pill px-3 d-inline-flex align-items-center gap-1">
                 <i class="ri-external-link-line"></i> Lihat Halaman Landing
             </a>
-        </div>
+        </div> --}}
     </div>
 
     @push('css')
@@ -53,6 +53,90 @@
             .custom-nav-pills .nav-link.active .badge {
                 background-color: #071a33 !important;
                 color: #ffffff !important;
+            }
+
+            /* Custom FAQ Toggle Switch */
+            .custom-faq-switch {
+                appearance: none;
+                -webkit-appearance: none;
+                width: 44px;
+                height: 24px;
+                min-width: 44px;
+                background-color: #cbd5e1 !important;
+                background-image: none !important;
+                border-radius: 24px;
+                position: relative;
+                cursor: pointer;
+                outline: none;
+                border: none !important;
+                transition: background-color 0.25s ease;
+                vertical-align: middle;
+                margin: 0 !important;
+                display: inline-block;
+            }
+
+            .custom-faq-switch::before {
+                content: '';
+                position: absolute;
+                width: 18px;
+                height: 18px;
+                border-radius: 50%;
+                background-color: #ffffff;
+                top: 3px;
+                left: 3px;
+                transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+            }
+
+            .custom-faq-switch:checked {
+                background-color: #f3bc42 !important;
+                background-image: none !important;
+            }
+
+            .custom-faq-switch:checked::before {
+                transform: translateX(20px);
+                left: 3px !important;
+            }
+
+            /* Modal FAQ Spacing & Edge Padding */
+            #modalFaqForm .modal-dialog {
+                max-width: 720px;
+                margin: 1.75rem auto;
+            }
+
+            #modalFaqForm .modal-content {
+                border-radius: 20px !important;
+                border: none !important;
+                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+                overflow: hidden !important;
+                background-color: #ffffff !important;
+            }
+
+            #modalFaqForm .modal-header {
+                padding: 26px 36px 20px 36px !important;
+                border-bottom: 1px solid #f1f5f9 !important;
+                background-color: #ffffff !important;
+            }
+
+            #modalFaqForm .modal-header .btn-close {
+                margin: 0 !important;
+                padding: 10px !important;
+                opacity: 0.6;
+                transition: opacity 0.2s ease;
+            }
+
+            #modalFaqForm .modal-header .btn-close:hover {
+                opacity: 1;
+            }
+
+            #modalFaqForm .modal-body {
+                padding: 28px 36px !important;
+            }
+
+            #modalFaqForm .modal-footer {
+                padding: 20px 36px 30px 36px !important;
+                border-top: 1px solid #f1f5f9 !important;
+                background-color: #f8fafc !important;
             }
         </style>
     @endpush
@@ -355,27 +439,35 @@
     <div wire:ignore.self class="modal fade" id="modalFaqForm" tabindex="-1" aria-labelledby="modalFaqFormLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content border-0 shadow radius-16 overflow-hidden">
-                <div class="modal-header border-bottom py-3 px-4 bg-light">
-                    <div class="d-flex align-items-center gap-2">
-                        <i class="ri-questionnaire-fill text-primary fs-5"></i>
-                        <h6 class="modal-title fw-bold text-dark mb-0" id="modalFaqFormLabel">
-                            {{ $faqId ? 'Edit Pertanyaan FAQ' : 'Tambah Pertanyaan FAQ Baru' }}
-                        </h6>
+            <div class="modal-content border-0 shadow-lg radius-16 overflow-hidden bg-white">
+                <div
+                    class="modal-header border-bottom p-4 px-md-5 bg-white d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="rounded-circle d-inline-flex align-items-center justify-content-center bg-simple-gold-subtle text-simple-gold"
+                            style="width: 44px; height: 44px; min-width: 44px;">
+                            <i class="ri-questionnaire-fill fs-5"></i>
+                        </div>
+                        <div>
+                            <h5 class="modal-title fw-bold text-dark mb-0 fs-6" id="modalFaqFormLabel">
+                                {{ $faqId ? 'Edit Pertanyaan FAQ' : 'Tambah Pertanyaan FAQ Baru' }}
+                            </h5>
+                            <small class="text-muted fs-8">Kelola tanya jawab umum seputar platform SIMPEL
+                                BKPSDM</small>
+                        </div>
                     </div>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
                 <form wire:submit.prevent="saveFaq">
-                    <div class="modal-body p-4">
-                        <div class="row g-3">
+                    <div class="modal-body p-4 p-md-5">
+                        <div class="row g-4">
                             {{-- Pertanyaan --}}
                             <div class="col-12">
                                 <label for="faqQuestionInput" class="form-label text-dark fw-semibold fs-7 mb-1">
                                     Pertanyaan FAQ <span class="text-danger">*</span>
                                 </label>
                                 <input type="text" id="faqQuestionInput" wire:model="faqQuestion"
-                                    class="form-control radius-8 @error('faqQuestion') is-invalid @enderror"
+                                    class="form-control radius-8 py-2 px-3 @error('faqQuestion') is-invalid @enderror"
                                     placeholder="Contoh: Bagaimana jika lupa kata sandi akun?">
                                 @error('faqQuestion')
                                     <div class="text-danger fs-8 mt-1">{{ $message }}</div>
@@ -388,7 +480,7 @@
                                     Jawaban Penjelasan <span class="text-danger">*</span>
                                 </label>
                                 <textarea id="faqAnswerInput" wire:model="faqAnswer" rows="5"
-                                    class="form-control radius-8 @error('faqAnswer') is-invalid @enderror"
+                                    class="form-control radius-8 p-3 @error('faqAnswer') is-invalid @enderror"
                                     placeholder="Tuliskan jawaban yang jelas dan membantu pengguna..."></textarea>
                                 @error('faqAnswer')
                                     <div class="text-danger fs-8 mt-1">{{ $message }}</div>
@@ -402,7 +494,7 @@
                                 </label>
                                 <input type="number" id="faqOrderInput" wire:model="faqOrder" min="1"
                                     max="999"
-                                    class="form-control radius-8 @error('faqOrder') is-invalid @enderror">
+                                    class="form-control radius-8 py-2 px-3 @error('faqOrder') is-invalid @enderror">
                                 @error('faqOrder')
                                     <div class="text-danger fs-8 mt-1">{{ $message }}</div>
                                 @enderror
@@ -413,25 +505,26 @@
                             {{-- Status Aktif --}}
                             <div class="col-md-6 col-12 d-flex flex-column justify-content-center">
                                 <label class="form-label text-dark fw-semibold fs-7 mb-2">Status Publikasi</label>
-                                <div
-                                    class="form-check form-switch switch-primary d-flex align-items-center gap-2 m-0 p-0">
-                                    <input class="form-check-input cursor-pointer m-0 flex-shrink-0" type="checkbox"
-                                        role="switch" id="faqIsActiveInput" wire:model="faqIsActive"
-                                        style="float: none;">
+                                <div class="d-flex align-items-center gap-3">
                                     <label
-                                        class="form-check-label text-dark fw-semibold fs-7 cursor-pointer m-0 user-select-none"
+                                        class="d-inline-flex align-items-center gap-2 m-0 cursor-pointer user-select-none"
                                         for="faqIsActiveInput">
-                                        Tampilkan di Halaman Landing
+                                        <input class="custom-faq-switch cursor-pointer" type="checkbox"
+                                            role="switch" id="faqIsActiveInput" wire:model="faqIsActive">
+                                        <span class="text-dark fw-semibold fs-7 ms-1">
+                                            Tampilkan di Halaman Landing
+                                        </span>
                                     </label>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="modal-footer border-top py-2 px-4 bg-light d-flex justify-content-between">
-                        <button type="button" class="btn btn-danger btn-sm px-4"
+                    <div
+                        class="modal-footer border-top bg-light d-flex justify-content-between align-items-center">
+                        <button type="button" class="btn btn-outline-danger px-4 py-2 radius-10 fw-semibold"
                             data-bs-dismiss="modal">Batal</button>
-                        <button type="submit" class="btn btn-simple-gold btn-sm px-4 fw-semibold shadow-sm"
+                        <button type="submit" class="btn btn-simple-gold px-4 py-2 radius-10 fw-semibold shadow-sm"
                             wire:loading.attr="disabled">
                             <span wire:loading.remove wire:target="saveFaq">
                                 <i class="ri-check-line me-1"></i> Simpan FAQ

@@ -227,7 +227,7 @@
                             </div>
 
                             <div class="mt-4 pt-2">
-                                <button type="submit" class="btn btn-primary rounded-pill px-4 py-2_5 fw-semibold d-inline-flex align-items-center gap-2 shadow-sm"
+                                <button type="submit" class="btn btn-simple-gold rounded-pill px-4 py-2_5 fw-semibold d-inline-flex align-items-center gap-2 shadow-sm"
                                     wire:loading.attr="disabled">
                                     <span wire:loading.remove wire:target="sendMessage">
                                         <i class="ri-send-plane-2-line"></i> Kirim Pesan Sekarang

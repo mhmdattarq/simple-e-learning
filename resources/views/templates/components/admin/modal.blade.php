@@ -624,7 +624,7 @@ new class extends Component {
                                     </button>
                                 @else
                                     <button type="button"
-                                        class="btn btn-outline-secondary btn-sm rounded-pill px-3 py-2 d-inline-flex align-items-center gap-1"
+                                        class="btn btn-outline-danger btn-sm rounded-pill px-3 py-2 d-inline-flex align-items-center gap-1"
                                         wire:click="changePesanStatus('read')">
                                         <i class="ri-refresh-line"></i> Ubah ke Status Dibaca
                                     </button>
