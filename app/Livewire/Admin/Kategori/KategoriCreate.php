@@ -3,7 +3,6 @@
 namespace App\Livewire\Admin\Kategori;
 
 use App\Repositories\KategoriRepo;
-use Livewire\Attributes\Title;
 use Livewire\Component;
 
 class KategoriCreate extends Component

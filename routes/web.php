@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\GoogleAuthController;
+use App\Http\Controllers\ContactMessageController;
 use App\Http\Controllers\EvaluasiController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\KelasController;
@@ -15,6 +16,8 @@ use App\Livewire\Admin\Kategori\KategoriEdit;
 use App\Livewire\Admin\Kelas\KelasCreate;
 use App\Livewire\Admin\Kelas\KelasData;
 use App\Livewire\Admin\Kelas\KelasEdit;
+use App\Livewire\Admin\Kontak\KontakPesanData;
+use App\Livewire\Admin\Kontak\KontakSettingData;
 use App\Livewire\Admin\Materi\MateriDetail;
 use App\Livewire\Admin\Notifikasi\NotifikasiIndex;
 use App\Livewire\Admin\Profile\AdminProfileIndex;
@@ -145,5 +148,14 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::livewire('/data', EvaluasiData::class)->name('data');
         Route::livewire('/create', EvaluasiCreate::class)->name('create');
         Route::livewire('/detail/{course_id}', EvaluasiDetail::class)->name('detail');
+    });
+
+    // Modul: Layanan Kontak (Tahap 2 & 3)
+    Route::prefix('kontak-admin')->name('kontak.')->group(function () {
+        Route::prefix('pesan')->name('pesan.')->group(function () {
+            Route::get('/datatable', [ContactMessageController::class, 'dataDt'])->name('dt');
+            Route::livewire('/data', KontakPesanData::class)->name('data');
+        });
+        Route::livewire('/pengaturan', KontakSettingData::class)->name('setting.data');
     });
 });

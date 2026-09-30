@@ -23,8 +23,8 @@ new class extends Component {
         </div>
         <div class="sidebar-menu-area">
             <ul class="sidebar-menu" id="sidebar-menu" x-data="{
-                activeDropdown: '{{ request()->routeIs('kategori.*') ? 'kategori' : (request()->routeIs(['kelas.*', 'materi.*']) ? 'kelas' : (request()->routeIs('evaluasi.*') ? 'evaluasi' : '')) }}',
-                currentModule: '{{ request()->routeIs('kategori.*') ? 'kategori' : (request()->routeIs(['kelas.*', 'materi.*']) ? 'kelas' : (request()->routeIs('evaluasi.*') ? 'evaluasi' : '')) }}',
+                activeDropdown: '{{ request()->routeIs('kategori.*') ? 'kategori' : (request()->routeIs(['kelas.*', 'materi.*']) ? 'kelas' : (request()->routeIs('evaluasi.*') ? 'evaluasi' : (request()->routeIs('kontak.*') ? 'kontak' : ''))) }}',
+                currentModule: '{{ request()->routeIs('kategori.*') ? 'kategori' : (request()->routeIs(['kelas.*', 'materi.*']) ? 'kelas' : (request()->routeIs('evaluasi.*') ? 'evaluasi' : (request()->routeIs('kontak.*') ? 'kontak' : ''))) }}',
                 toggle(name) {
                     this.activeDropdown = (this.activeDropdown === name) ? '' : name;
                 },
@@ -45,6 +45,9 @@ new class extends Component {
                     } else if (path.includes('/evaluasi')) {
                         this.activeDropdown = 'evaluasi';
                         this.currentModule = 'evaluasi';
+                    } else if (path.includes('/kontak-admin')) {
+                        this.activeDropdown = 'kontak';
+                        this.currentModule = 'kontak';
                     } else {
                         this.activeDropdown = '';
                         this.currentModule = '';
@@ -173,6 +176,30 @@ new class extends Component {
                         <li class="{{ request()->routeIs('evaluasi.data') || request()->routeIs('evaluasi.detail*') ? 'active-page' : '' }}">
                             <a href="{{ route('evaluasi.data') }}" wire:navigate>
                                 <i class="ri-circle-fill circle-icon"></i> <span>Data Evaluasi &amp; Kuis</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                {{-- Layanan Kontak --}}
+                <li class="dropdown {{ request()->routeIs('kontak.*') ? 'open is-active-module' : '' }}"
+                    :class="{
+                        'open': activeDropdown === 'kontak',
+                        'is-active-module': currentModule === 'kontak'
+                    }">
+                    <a href="javascript:void(0)" @click.prevent.stop="toggle('kontak')" title="Layanan Kontak">
+                        <i class="ri-customer-service-2-line menu-icon"></i>
+                        <span>Layanan Kontak</span>
+                    </a>
+                    <ul class="sidebar-submenu">
+                        <li class="{{ request()->routeIs('kontak.pesan.*') ? 'active-page' : '' }}">
+                            <a href="{{ route('kontak.pesan.data') }}" wire:navigate>
+                                <i class="ri-circle-fill circle-icon"></i> <span>Kotak Masuk Pesan</span>
+                            </a>
+                        </li>
+                        <li class="{{ request()->routeIs('kontak.setting.*') ? 'active-page' : '' }}">
+                            <a href="{{ route('kontak.setting.data') }}" wire:navigate>
+                                <i class="ri-circle-fill circle-icon"></i> <span>Pengaturan &amp; FAQ</span>
                             </a>
                         </li>
                     </ul>

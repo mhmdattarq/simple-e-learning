@@ -6,7 +6,6 @@ use App\Models\Category;
 use App\Repositories\KelasRepo;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
-use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
