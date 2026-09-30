@@ -87,6 +87,18 @@ test('guest cannot access quiz taking page and is redirected to login', function
         ->assertRedirect(route('login'));
 });
 
+test('authenticated participant can access quiz taking page via http get', function () {
+    DB::table('lesson_user')->insert([
+        ['user_id' => $this->peserta->id, 'lesson_id' => $this->lesson1->id, 'is_completed' => true, 'completed_at' => now()],
+        ['user_id' => $this->peserta->id, 'lesson_id' => $this->lesson2->id, 'is_completed' => true, 'completed_at' => now()],
+    ]);
+
+    $response = $this->actingAs($this->peserta)
+        ->get(route('peserta.evaluasi.kerjakan', ['course' => $this->course, 'quiz' => $this->quiz]));
+
+    $response->assertOk();
+});
+
 test('quiz is locked when participant has not completed all chapter lessons', function () {
     // Peserta only completed lesson 1 (lesson 2 still incomplete)
     DB::table('lesson_user')->insert([
@@ -238,7 +250,7 @@ test('participant cannot retake quiz and directly sees permanent result upon rev
     expect(QuizAttempt::where('quiz_id', $this->quiz->id)->where('user_id', $this->peserta->id)->count())->toBe(1);
 });
 
-test('participant promptSubmit dispatches reusable modal configuration and confirm event completes quiz', function () {
+test('participant promptSubmit opens dedicated modal and confirm completes quiz', function () {
     DB::table('lesson_user')->insert([
         ['user_id' => $this->peserta->id, 'lesson_id' => $this->lesson1->id, 'is_completed' => true, 'completed_at' => now()],
         ['user_id' => $this->peserta->id, 'lesson_id' => $this->lesson2->id, 'is_completed' => true, 'completed_at' => now()],
@@ -249,16 +261,12 @@ test('participant promptSubmit dispatches reusable modal configuration and confi
         ->call('startQuiz')
         ->call('selectOption', $this->q1->id, $this->q1OptA->id)
         ->call('promptSubmit')
-        ->assertDispatched('modal-delete-setDeleteId', function ($event, $params) {
-            $payload = $params[0] ?? $params;
-
-            return ($payload['title'] ?? '') === 'Konfirmasi Selesai & Kumpulkan'
-                && str_contains($payload['msg'] ?? '', '1 dari 2 butir pertanyaan')
-                && str_contains($payload['msg'] ?? '', 'Masih ada 1 soal yang belum Anda jawab!')
-                && ($payload['dispatch'] ?? '') === 'QuizKerjakan-submit'
-                && ($payload['btnConfirmText'] ?? '') === 'Ya, Kumpulkan';
-        })
-        ->dispatch('QuizKerjakan-submit')
+        ->assertSet('showSubmitConfirmation', true)
+        ->assertSee('Konfirmasi Selesai & Kumpulkan')
+        ->assertSee('1 dari 2')
+        ->assertSee('soal yang belum Anda jawab!')
+        ->call('submitQuiz')
+        ->assertSet('showSubmitConfirmation', false)
         ->assertSet('quizState', 'result');
 
     expect(QuizAttempt::where('quiz_id', $this->quiz->id)->where('user_id', $this->peserta->id)->count())->toBe(1);
@@ -292,4 +300,29 @@ test('participant cannot select an option that does not belong to the question',
         // Non-existent option
         ->call('selectOption', $this->q1->id, 999999)
         ->assertSet('userAnswers.'.$this->q1->id, null);
+});
+
+test('participant retains active quiz state and answers upon page reload', function () {
+    DB::table('lesson_user')->insert([
+        ['user_id' => $this->peserta->id, 'lesson_id' => $this->lesson1->id, 'is_completed' => true, 'completed_at' => now()],
+        ['user_id' => $this->peserta->id, 'lesson_id' => $this->lesson2->id, 'is_completed' => true, 'completed_at' => now()],
+    ]);
+
+    // Step 1: Start quiz and select answer for question 1
+    Livewire::actingAs($this->peserta)
+        ->test(QuizKerjakan::class, ['quiz_id' => $this->quiz->id, 'course_id' => $this->course->id])
+        ->call('startQuiz')
+        ->call('selectOption', $this->q1->id, $this->q1OptA->id)
+        ->call('jumpToQuestion', 1)
+        ->assertSet('quizState', 'playing')
+        ->assertSet('currentQuestionIndex', 1)
+        ->assertSet('userAnswers', [$this->q1->id => $this->q1OptA->id]);
+
+    // Step 2: Simulate browser reload by remounting the component
+    Livewire::actingAs($this->peserta)
+        ->test(QuizKerjakan::class, ['quiz_id' => $this->quiz->id, 'course_id' => $this->course->id])
+        ->assertSet('quizState', 'playing')
+        ->assertSet('currentQuestionIndex', 1)
+        ->assertSet('userAnswers', [$this->q1->id => $this->q1OptA->id])
+        ->assertSee('Daftar Nomor Soal');
 });

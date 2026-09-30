@@ -250,6 +250,9 @@
                     return String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
                 },
                 init() {
+                    if (this.timerInterval) {
+                        clearInterval(this.timerInterval);
+                    }
                     if (this.remainingSeconds > 0) {
                         this.timerInterval = setInterval(() => {
                             if (this.remainingSeconds > 0) {
@@ -280,7 +283,7 @@
                     @if ($quiz->time_limit_minutes)
                         <div class="d-flex align-items-center gap-2">
                             <span class="text-muted text-xs d-none d-sm-inline">Sisa Waktu:</span>
-                            <div class="timer-badge" :class="{ 'timer-warning': remainingSeconds < 300 }">
+                            <div class="timer-badge" :class="{ 'timer-warning': remainingSeconds < 300 }" wire:ignore>
                                 <i class="ri-time-line"></i>
                                 <span x-text="formatTimer()">--:--</span>
                             </div>
@@ -340,10 +343,14 @@
                                             <span>Soal Selanjutnya</span> <i class="ri-arrow-right-line ms-1"></i>
                                         </button>
                                     @else
-                                        <button type="button" class="btn btn-success px-4 py-2 radius-8 fs-8 fw-bold"
-                                            wire:click="promptSubmit" data-bs-toggle="modal"
-                                            data-bs-target="#modalDelete">
-                                            <i class="ri-checkbox-circle-line me-1"></i> Selesaikan Evaluasi
+                                        <button type="button" class="btn btn-success px-4 py-2 radius-8 fs-8 fw-bold d-inline-flex align-items-center gap-1"
+                                            wire:click="promptSubmit" wire:loading.attr="disabled">
+                                            <span wire:loading.remove wire:target="promptSubmit">
+                                                <i class="ri-checkbox-circle-line me-1"></i> Selesaikan Evaluasi
+                                            </span>
+                                            <span wire:loading wire:target="promptSubmit">
+                                                <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span> Membuka Konfirmasi...
+                                            </span>
                                         </button>
                                     @endif
                                 </div>
@@ -488,6 +495,69 @@
                 </div>
             </div>
         @endif
-
     </div>
+
+    {{-- Modal Konfirmasi Selesai & Kumpulkan Kuis --}}
+    @if ($showSubmitConfirmation)
+        <div class="modal fade show d-block" tabindex="-1" style="background: rgba(15, 23, 42, 0.6); z-index: 1060;"
+            role="dialog" aria-modal="true">
+            <div class="modal-dialog modal-dialog-centered" style="max-width: 440px;" role="document">
+                <div class="modal-content border-0 radius-20 shadow-lg overflow-hidden bg-white position-relative">
+                    {{-- Close Button --}}
+                    <button type="button" class="btn-close position-absolute top-0 end-0 m-3"
+                        wire:click="cancelSubmit" aria-label="Close"
+                        style="z-index: 10; font-size: 11px; cursor: pointer;"></button>
+
+                    {{-- Modal Body --}}
+                    <div class="modal-body p-4 text-center">
+                        {{-- Icon Badge --}}
+                        <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                            style="width: 64px; height: 64px; background-color: #fef3c7; color: #d97706; font-size: 28px; box-shadow: 0 8px 24px rgba(217, 119, 6, 0.2);">
+                            <i class="ri-question-mark"></i>
+                        </div>
+
+                        {{-- Title --}}
+                        <h5 class="fw-bold text-dark mb-2" style="font-size: 18px;">
+                            Konfirmasi Selesai &amp; Kumpulkan
+                        </h5>
+
+                        {{-- Message with soft highlight box --}}
+                        @php
+                            $unanswered = $this->questionsCount - $this->answeredCount;
+                        @endphp
+                        <div class="bg-light p-3 rounded-12 border mb-4 text-start {{ $unanswered > 0 ? 'bg-warning-subtle text-dark border-warning' : '' }}">
+                            <p class="text-muted fs-8 mb-2 line-height-base text-dark">
+                                Anda telah menjawab <strong>{{ $this->answeredCount }} dari {{ $this->questionsCount }}</strong> butir pertanyaan.
+                            </p>
+                            @if ($unanswered > 0)
+                                <div class="text-danger fw-semibold fs-8 mb-2">
+                                    <i class="ri-error-warning-line me-1"></i> Masih ada <strong>{{ $unanswered }}</strong> soal yang belum Anda jawab!
+                                </div>
+                            @endif
+                            <div class="pt-2 border-top text-muted" style="font-size: 11.5px; line-height: 1.45;">
+                                <strong>Perhatian:</strong> Kuis ini menerapkan sistem <em>Single Attempt</em>. Jawaban yang dikumpulkan bersifat final dan tidak dapat diubah kembali.
+                            </div>
+                        </div>
+
+                        {{-- Action Buttons (50/50 Balanced) --}}
+                        <div class="d-flex align-items-center gap-2">
+                            <button type="button" class="btn btn-outline-secondary w-50 py-2 radius-10 fw-semibold fs-8"
+                                wire:click="cancelSubmit">
+                                Periksa Lagi
+                            </button>
+                            <button type="button" class="btn btn-success w-50 py-2 radius-10 fw-semibold fs-8 d-inline-flex align-items-center justify-content-center gap-1 shadow-sm"
+                                wire:click="submitQuiz" wire:loading.attr="disabled">
+                                <span wire:loading.remove wire:target="submitQuiz">
+                                    <i class="ri-check-line"></i> Ya, Kumpulkan
+                                </span>
+                                <span wire:loading wire:target="submitQuiz">
+                                    <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span> Mengirim...
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
 </div>

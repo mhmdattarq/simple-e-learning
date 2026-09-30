@@ -5,13 +5,28 @@ window.addEventListener("closeModal", (param) => {
         (Array.isArray(param.detail) ? param.detail[0]?.id : param.detail);
     if (id) {
         const el = document.getElementById(id);
-        if (el && typeof bootstrap !== "undefined") {
-            const modal =
-                bootstrap.Modal.getInstance(el) ||
-                bootstrap.Modal.getOrCreateInstance(el);
-            modal.hide();
-        } else if (typeof $ !== "undefined") {
-            $("#" + id).modal("hide");
+        if (el) {
+            let closed = false;
+            if (typeof bootstrap !== "undefined" && bootstrap.Modal) {
+                try {
+                    const modal =
+                        (typeof bootstrap.Modal.getInstance === "function" ? bootstrap.Modal.getInstance(el) : null) ||
+                        (typeof bootstrap.Modal.getOrCreateInstance === "function" ? bootstrap.Modal.getOrCreateInstance(el) : null);
+                    if (modal) {
+                        modal.hide();
+                        closed = true;
+                    }
+                } catch (e) {
+                    console.warn("Bootstrap modal hide error:", e);
+                }
+            }
+            if (!closed && typeof $ !== "undefined") {
+                try {
+                    $("#" + id).modal("hide");
+                } catch (e) {
+                    console.warn("jQuery modal hide error:", e);
+                }
+            }
         }
         setTimeout(() => {
             if (typeof $ !== "undefined") {
@@ -44,11 +59,29 @@ const handleShowModal = (param) => {
         if (typeof $ !== "undefined") {
             $(".modal-backdrop").not(".show").remove();
         }
-        if (el && typeof bootstrap !== "undefined") {
-            const modal = bootstrap.Modal.getOrCreateInstance(el);
-            modal.show();
-        } else if (typeof $ !== "undefined") {
-            $("#" + id).modal("show");
+        let shown = false;
+        if (el && typeof bootstrap !== "undefined" && bootstrap.Modal) {
+            try {
+                const modal =
+                    (typeof bootstrap.Modal.getOrCreateInstance === "function"
+                        ? bootstrap.Modal.getOrCreateInstance(el)
+                        : (typeof bootstrap.Modal.getInstance === "function"
+                            ? bootstrap.Modal.getInstance(el)
+                            : null) || new bootstrap.Modal(el));
+                if (modal) {
+                    modal.show();
+                    shown = true;
+                }
+            } catch (e) {
+                console.warn("Bootstrap modal show error:", e);
+            }
+        }
+        if (!shown && typeof $ !== "undefined") {
+            try {
+                $("#" + id).modal("show");
+            } catch (e) {
+                console.warn("jQuery modal show error:", e);
+            }
         }
     }
 };
