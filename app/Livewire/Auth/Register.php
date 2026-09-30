@@ -4,11 +4,15 @@ namespace App\Livewire\Auth;
 
 use App\Repositories\AuthRepo;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\Url;
 use Livewire\Component;
 
 #[Layout('templates.layouts.auth')]
 class Register extends Component
 {
+    #[Url(as: 'redirect')]
+    public ?string $redirectTo = null;
+
     /**
      * State form registrasi peserta.
      *
@@ -22,6 +26,15 @@ class Register extends Component
         'password' => '',
         'password_confirmation' => '',
     ];
+
+    public function mount(?string $redirect = null): void
+    {
+        $target = $redirect ?: request()->query('redirect');
+        if ($target && is_string($target)) {
+            $this->redirectTo = $target;
+            session()->put('url.intended', $target);
+        }
+    }
 
     /**
      * Validation rules for user registration.
@@ -78,7 +91,9 @@ class Register extends Component
 
         session()->flash('success', 'Pendaftaran akun berhasil! Tautan aktivasi telah dikirimkan ke email '.$user->email.'. Silakan verifikasi email Anda sebelum masuk.');
 
-        return $this->redirectRoute('login', navigate: true);
+        $params = $this->redirectTo ? ['redirect' => $this->redirectTo] : [];
+
+        return $this->redirectRoute('login', $params, navigate: true);
     }
 
     public function render()

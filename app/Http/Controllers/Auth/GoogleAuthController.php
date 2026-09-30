@@ -19,8 +19,12 @@ class GoogleAuthController extends Controller
     /**
      * Redirect pengguna ke halaman persetujuan (OAuth consent) Google.
      */
-    public function redirect(): RedirectResponse
+    public function redirect(Request $request): RedirectResponse
     {
+        if ($request->filled('redirect')) {
+            session()->put('url.intended', $request->query('redirect'));
+        }
+
         return Socialite::driver('google')->redirect();
     }
 
@@ -151,7 +155,7 @@ class GoogleAuthController extends Controller
             return redirect()->intended(route('admin.dashboard'));
         }
 
-        // Peserta diarahkan ke Halaman Landing
-        return redirect()->route('landing');
+        // Peserta diarahkan ke URL tujuan yang dituju (intended) atau Halaman Landing
+        return redirect()->intended(route('landing'));
     }
 }

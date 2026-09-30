@@ -63,15 +63,15 @@ test('detail kelas shows login button for guests and learning link for authentic
     ]);
 
     // Guest sees login button
-    $this->get(route('landing.kelas.detail', $course->id))
+    $this->get(route('landing.kelas.detail', $course))
         ->assertStatus(200)
         ->assertSee(route('login'))
         ->assertSee('Masuk untuk Belajar');
 
     // Authenticated user sees start/continue learning link to materi
-    $this->actingAs($user)->get(route('landing.kelas.detail', $course->id))
+    $this->actingAs($user)->get(route('landing.kelas.detail', $course))
         ->assertStatus(200)
-        ->assertSee(route('peserta.materi', $course->id))
+        ->assertSee(route('peserta.materi', $course))
         ->assertSee('Mulai Belajar Sekarang');
 });
 
@@ -85,7 +85,7 @@ test('backward compatibility redirect works from /pelatihan/{id} to /kelas/{id}'
     ]);
 
     $response = $this->get('/pelatihan/'.$course->id);
-    $response->assertRedirect(route('landing.kelas.detail', $course->id));
+    $response->assertRedirect(route('landing.kelas.detail', $course));
 });
 
 test('flow from materi back button redirects to detail kelas instead of landing', function () {
@@ -113,10 +113,10 @@ test('flow from materi back button redirects to detail kelas instead of landing'
         'order' => 1,
     ]);
 
-    $response = $this->actingAs($user)->get(route('peserta.materi', $course->id));
+    $response = $this->actingAs($user)->get(route('peserta.materi', $course));
 
     $response->assertStatus(200);
-    $response->assertSee(route('landing.kelas.detail', $course->id));
+    $response->assertSee(route('landing.kelas.detail', $course));
     $response->assertSee('Kembali ke Detail Kelas');
 });
 
@@ -148,18 +148,18 @@ test('end-to-end routing flow: katalog master -> detail kelas -> materi', functi
     // 1. Katalog Master has link to Detail Kelas
     $katalogResponse = $this->get(route('landing.kelas.permanen'));
     $katalogResponse->assertStatus(200);
-    $katalogResponse->assertSee(route('landing.kelas.detail', $course->id));
+    $katalogResponse->assertSee(route('landing.kelas.detail', $course));
 
     // 2. Detail Kelas has link to Materi and back to Katalog Master
-    $detailResponse = $this->actingAs($user)->get(route('landing.kelas.detail', $course->id));
+    $detailResponse = $this->actingAs($user)->get(route('landing.kelas.detail', $course));
     $detailResponse->assertStatus(200);
-    $detailResponse->assertSee(route('peserta.materi', $course->id));
+    $detailResponse->assertSee(route('peserta.materi', $course));
     $detailResponse->assertSee(route('landing.kelas.permanen'));
 
     // 3. Materi has back link to Detail Kelas
-    $materiResponse = $this->actingAs($user)->get(route('peserta.materi', $course->id));
+    $materiResponse = $this->actingAs($user)->get(route('peserta.materi', $course));
     $materiResponse->assertStatus(200);
-    $materiResponse->assertSee(route('landing.kelas.detail', $course->id));
+    $materiResponse->assertSee(route('landing.kelas.detail', $course));
 });
 
 test('detail kelas and catalog render custom course description set by admin', function () {

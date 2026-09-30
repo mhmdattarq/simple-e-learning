@@ -17,16 +17,16 @@ new class extends Component {
     #[Computed]
     public function activeMenu(): string
     {
-        // 1. Direct class catalog routes
-        if (request()->routeIs('landing.kelas.batch') || request()->is('kelas-batch*') || request()->routeIs('jadwal') || request()->is('jadwal*')) {
+        // 1. Direct class routes (Catalog, Detail, Materi, Evaluasi)
+        if (request()->routeIs(['landing.kelas.batch*', 'peserta.materi.batch*', 'peserta.evaluasi.kerjakan.batch*']) || request()->is('kelas-batch*') || request()->routeIs('jadwal*') || request()->is('jadwal*')) {
             return 'batch';
         }
 
-        if (request()->routeIs('landing.kelas.permanen') || request()->is('kelas-permanen*')) {
+        if (request()->routeIs(['landing.kelas.permanen*', 'peserta.materi.permanen*', 'peserta.evaluasi.kerjakan.permanen*']) || request()->is('kelas-permanen*')) {
             return 'permanen';
         }
 
-        if (request()->routeIs('landing.kelas.berbayar') || request()->is('kelas-berbayar*')) {
+        if (request()->routeIs(['landing.kelas.berbayar*', 'peserta.materi.berbayar*', 'peserta.evaluasi.kerjakan.berbayar*']) || request()->is('kelas-berbayar*')) {
             return 'berbayar';
         }
 
@@ -42,31 +42,53 @@ new class extends Component {
             return 'berbayar';
         }
 
-        // 3. Detail page (/kelas/{id}) or Materi page (/kelas/{id}/materi)
-        $courseId = request()->route('id');
-        if (! $courseId && request()->is('kelas/*') && is_numeric(request()->segment(2))) {
-            $courseId = request()->segment(2);
+        // 3. Detail, Materi, or Evaluasi page with generic /kelas/{course} pattern
+        $courseParam = request()->route('course') ?? request()->route('id');
+        if (! $courseParam && request()->is('kelas/*')) {
+            $courseParam = request()->segment(2);
         }
 
-        if ($courseId && is_numeric($courseId)) {
-            $type = Course::where('id', $courseId)->value('type');
-            if ($type === 'batch') {
-                return 'batch';
-            }
-            if ($type === 'permanent') {
-                return 'permanen';
-            }
-            if (in_array($type, ['paid', 'berbayar'], true)) {
-                return 'berbayar';
+        if ($courseParam) {
+            $course = $courseParam instanceof Course
+                ? $courseParam
+                : Course::where('slug', $courseParam)->orWhere(fn ($q) => is_numeric($courseParam) ? $q->where('id', (int) $courseParam) : null)->first();
+
+            if ($course) {
+                if ($course->type === 'batch') {
+                    return 'batch';
+                }
+                if ($course->type === 'permanent') {
+                    return 'permanen';
+                }
+                if (in_array($course->type, ['paid', 'berbayar'], true)) {
+                    return 'berbayar';
+                }
             }
         }
 
-        // 4. Beranda
+        // 4. Standalone evaluasi: /evaluasi/kerjakan/{quiz_id}
+        if (request()->routeIs('peserta.evaluasi.*') || request()->is('evaluasi/*')) {
+            $quizId = request()->route('quiz_id') ?? request()->segment(3);
+            if ($quizId && is_numeric($quizId)) {
+                $type = \App\Models\Quiz::with('course')->find($quizId)?->course?->type;
+                if ($type === 'batch') {
+                    return 'batch';
+                }
+                if ($type === 'permanent') {
+                    return 'permanen';
+                }
+                if (in_array($type, ['paid', 'berbayar'], true)) {
+                    return 'berbayar';
+                }
+            }
+        }
+
+        // 5. Beranda
         if (request()->routeIs('landing') && ! request()->is('kelas*')) {
             return 'beranda';
         }
 
-        // 5. Kontak
+        // 6. Kontak
         if (request()->routeIs('kontak') || request()->is('kontak*') || request()->is('contact*')) {
             return 'kontak';
         }

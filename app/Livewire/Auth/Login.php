@@ -13,11 +13,15 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\Url;
 use Livewire\Component;
 
 #[Layout('templates.layouts.auth')]
 class Login extends Component
 {
+    #[Url(as: 'redirect')]
+    public ?string $redirectTo = null;
+
     public string $identifier = '';
 
     public string $email = '';
@@ -27,6 +31,15 @@ class Login extends Component
     public bool $remember = false;
 
     public string $errorMessage = '';
+
+    public function mount(?string $redirect = null): void
+    {
+        $target = $redirect ?: request()->query('redirect');
+        if ($target && is_string($target)) {
+            $this->redirectTo = $target;
+            session()->put('url.intended', $target);
+        }
+    }
 
     /**
      * Keep identifier and email in sync for backward compatibility.
@@ -230,7 +243,9 @@ class Login extends Component
                 return redirect()->intended(route('admin.dashboard'));
             }
 
-            return redirect()->intended(route('landing'));
+            $fallback = $this->redirectTo ?: route('landing');
+
+            return redirect()->intended($fallback);
         }
 
         // Catat kegagalan login dan increment attempt

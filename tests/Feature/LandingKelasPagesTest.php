@@ -3,6 +3,7 @@
 use App\Livewire\Landing\KelasIndex;
 use App\Models\Category;
 use App\Models\Course;
+use App\Models\Quiz;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Attributes\Url;
@@ -275,22 +276,22 @@ test('tombol aksi kelas mengarahkan pengguna login langsung ke ruang materi', fu
     // Guest and Authenticated users see direct link to detail page
     $this->get(route('landing.kelas.batch'))
         ->assertStatus(200)
-        ->assertSee(route('landing.kelas.detail', $batchCourse->id))
+        ->assertSee(route('landing.kelas.detail', $batchCourse))
         ->assertSee('Lihat Detail');
 
     $this->actingAs($user)->get(route('landing.kelas.batch'))
         ->assertStatus(200)
-        ->assertSee(route('landing.kelas.detail', $batchCourse->id))
+        ->assertSee(route('landing.kelas.detail', $batchCourse))
         ->assertSee('Lihat Detail');
 
     $this->actingAs($user)->get(route('landing.kelas.permanen'))
         ->assertStatus(200)
-        ->assertSee(route('landing.kelas.detail', $permanentCourse->id))
+        ->assertSee(route('landing.kelas.detail', $permanentCourse))
         ->assertSee('Lihat Detail');
 
     $this->actingAs($user)->get(route('landing.kelas.berbayar'))
         ->assertStatus(200)
-        ->assertSee(route('landing.kelas.detail', $paidCourse->id))
+        ->assertSee(route('landing.kelas.detail', $paidCourse))
         ->assertSee('Lihat Detail');
 });
 
@@ -378,6 +379,15 @@ test('navbar active menu reflects current page and course context across index, 
     $resPermMateri = $this->actingAs($user)->get(route('peserta.materi', $permanentCourse->id));
     $resPermMateri->assertStatus(200);
     $resPermMateri->assertSeeInOrder(['<li class="current"', 'Kelas Permanen']);
+
+    $quiz = Quiz::factory()->create([
+        'course_id' => $permanentCourse->id,
+        'title' => 'Evaluasi Permanen',
+        'type' => 'final',
+    ]);
+    $resPermEvaluasi = $this->actingAs($user)->get(route('peserta.evaluasi.kerjakan', ['course' => $permanentCourse, 'quiz_id' => $quiz->id]));
+    $resPermEvaluasi->assertStatus(200);
+    $resPermEvaluasi->assertSeeInOrder(['<li class="current"', 'Kelas Permanen']);
 
     // 4. Kelas Berbayar Index, Detail, and Materi
     $resPaidIndex = $this->get(route('landing.kelas.berbayar'));
