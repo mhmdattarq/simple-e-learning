@@ -13,6 +13,7 @@ use App\Models\QuizQuestion;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Storage;
 
 class DummyCourseCurriculumSeeder extends Seeder
 {
@@ -21,6 +22,9 @@ class DummyCourseCurriculumSeeder extends Seeder
      */
     public function run(): void
     {
+        // 0. Pastikan file thumbnail SVG tersedia di storage
+        $this->ensureThumbnailsExist();
+
         // 1. Pastikan kategori dasar tersedia
         $this->call(CategorySeeder::class);
 
@@ -782,6 +786,297 @@ class DummyCourseCurriculumSeeder extends Seeder
                     'is_correct' => $opt['is_correct'],
                     'order' => $optIndex + 1,
                 ]);
+            }
+        }
+    }
+
+    /**
+     * Memastikan seluruh berkas thumbnail SVG dummy tersedia di storage publik.
+     */
+    protected function ensureThumbnailsExist(): void
+    {
+        $dir = 'courses/dummy';
+        if (! Storage::disk('public')->exists($dir)) {
+            Storage::disk('public')->makeDirectory($dir);
+        }
+
+        $thumbnails = [
+            'batch_pelayanan_publik.svg' => <<<'SVG'
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f766e" />
+      <stop offset="100%" stop-color="#115e59" />
+    </linearGradient>
+    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#2dd4bf" />
+      <stop offset="100%" stop-color="#34d399" />
+    </linearGradient>
+  </defs>
+  <rect width="800" height="450" fill="url(#bgGrad)" />
+  <circle cx="720" cy="80" r="180" fill="#2dd4bf" opacity="0.08" />
+  <circle cx="80" cy="380" r="140" fill="#14b8a6" opacity="0.12" />
+  <path d="M-50,200 Q200,100 400,280 T850,220" fill="none" stroke="#2dd4bf" stroke-width="2" opacity="0.15" />
+  <g transform="translate(60, 60)">
+    <rect width="130" height="34" rx="17" fill="#134e4a" stroke="#2dd4bf" stroke-width="1.5" />
+    <circle cx="20" cy="17" r="5" fill="#2dd4bf" />
+    <text x="34" y="22" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="700" fill="#ccfbf1" letter-spacing="1">KELAS BATCH</text>
+  </g>
+  <g transform="translate(560, 160)">
+    <circle cx="90" cy="90" r="85" fill="#134e4a" stroke="#2dd4bf" stroke-width="3" opacity="0.7"/>
+    <path d="M50,110 C50,80 80,60 90,60 C100,60 130,80 130,110 C130,135 90,150 90,150 C90,150 50,135 50,110 Z" fill="url(#accentGrad)" />
+    <circle cx="78" cy="92" r="4" fill="#0f766e" />
+    <circle cx="102" cy="92" r="4" fill="#0f766e" />
+    <path d="M80,105 Q90,118 100,105" fill="none" stroke="#0f766e" stroke-width="3" stroke-linecap="round" />
+  </g>
+  <g transform="translate(60, 150)">
+    <text font-family="system-ui, -apple-system, sans-serif" font-size="16" font-weight="600" fill="#5eead4" letter-spacing="1.5">PELATIHAN KOMPETENSI PELAYANAN</text>
+    <text y="50" font-family="system-ui, -apple-system, sans-serif" font-size="34" font-weight="800" fill="#ffffff">Pelayanan Publik</text>
+    <text y="92" font-family="system-ui, -apple-system, sans-serif" font-size="34" font-weight="800" fill="url(#accentGrad)">Prima &amp; Terpadu</text>
+    <text y="145" font-family="system-ui, -apple-system, sans-serif" font-size="16" fill="#99f6e4" opacity="0.9">
+      <tspan x="0" dy="0">Standar keramahan, active listening, dan</tspan>
+      <tspan x="0" dy="24">teknik penyelesaian keluhan masyarakat secara solutif.</tspan>
+    </text>
+    <g transform="translate(0, 210)">
+      <rect width="110" height="28" rx="6" fill="#134e4a" />
+      <text x="12" y="19" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="600" fill="#ccfbf1">3 Bab Modul</text>
+      <rect x="120" width="130" height="28" rx="6" fill="#134e4a" />
+      <text x="132" y="19" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="600" fill="#ccfbf1">Evaluasi Studi Kasus</text>
+    </g>
+  </g>
+</svg>
+SVG,
+            'batch_manajemen_proyek.svg' => <<<'SVG'
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e1b4b" />
+      <stop offset="100%" stop-color="#312e81" />
+    </linearGradient>
+    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#818cf8" />
+      <stop offset="100%" stop-color="#60a5fa" />
+    </linearGradient>
+  </defs>
+  <rect width="800" height="450" fill="url(#bgGrad)" />
+  <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#4338ca" stroke-width="0.8" opacity="0.3"/>
+  </pattern>
+  <rect width="800" height="450" fill="url(#grid)" />
+  <circle cx="700" cy="100" r="160" fill="#6366f1" opacity="0.1" />
+  <g transform="translate(60, 60)">
+    <rect width="130" height="34" rx="17" fill="#312e81" stroke="#818cf8" stroke-width="1.5" />
+    <circle cx="20" cy="17" r="5" fill="#818cf8" />
+    <text x="34" y="22" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="700" fill="#e0e7ff" letter-spacing="1">KELAS BATCH</text>
+  </g>
+  <g transform="translate(550, 150)">
+    <rect width="180" height="150" rx="16" fill="#3730a3" stroke="#818cf8" stroke-width="2" opacity="0.8"/>
+    <rect x="25" y="80" width="20" height="45" rx="4" fill="#60a5fa" />
+    <rect x="55" y="55" width="20" height="70" rx="4" fill="#818cf8" />
+    <rect x="85" y="40" width="20" height="85" rx="4" fill="#a5b4fc" />
+    <rect x="115" y="25" width="20" height="100" rx="4" fill="#c7d2fe" />
+    <circle cx="150" cy="35" r="14" fill="#4f46e5" stroke="#a5b4fc" stroke-width="2"/>
+    <circle cx="150" cy="35" r="6" fill="#818cf8" />
+  </g>
+  <g transform="translate(60, 150)">
+    <text font-family="system-ui, -apple-system, sans-serif" font-size="16" font-weight="600" fill="#a5b4fc" letter-spacing="1.5">MANAJEMEN KINERJA &amp; AKUNTABILITAS</text>
+    <text y="50" font-family="system-ui, -apple-system, sans-serif" font-size="34" font-weight="800" fill="#ffffff">Manajemen Proyek &amp;</text>
+    <text y="92" font-family="system-ui, -apple-system, sans-serif" font-size="34" font-weight="800" fill="url(#accentGrad)">Eksekusi Berorientasi Hasil</text>
+    <text y="145" font-family="system-ui, -apple-system, sans-serif" font-size="16" fill="#c7d2fe" opacity="0.9">
+      <tspan x="0" dy="0">Kerangka kerja SMART, mitigasi risiko kegiatan,</tspan>
+      <tspan x="0" dy="24">dan pelaporan akuntabilitas kinerja program.</tspan>
+    </text>
+    <g transform="translate(0, 210)">
+      <rect width="110" height="28" rx="6" fill="#312e81" />
+      <text x="12" y="19" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="600" fill="#e0e7ff">3 Bab Modul</text>
+      <rect x="120" width="130" height="28" rx="6" fill="#312e81" />
+      <text x="132" y="19" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="600" fill="#e0e7ff">Evaluasi LogFrame</text>
+    </g>
+  </g>
+</svg>
+SVG,
+            'batch_kepemimpinan_adaptif.svg' => <<<'SVG'
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7c2d12" />
+      <stop offset="100%" stop-color="#9a3412" />
+    </linearGradient>
+    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#fb923c" />
+      <stop offset="100%" stop-color="#fde047" />
+    </linearGradient>
+  </defs>
+  <rect width="800" height="450" fill="url(#bgGrad)" />
+  <circle cx="730" cy="110" r="170" fill="#ea580c" opacity="0.15" />
+  <circle cx="100" cy="400" r="120" fill="#c2410c" opacity="0.12" />
+  <g transform="translate(60, 60)">
+    <rect width="130" height="34" rx="17" fill="#431407" stroke="#fb923c" stroke-width="1.5" />
+    <circle cx="20" cy="17" r="5" fill="#fb923c" />
+    <text x="34" y="22" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="700" fill="#ffedd5" letter-spacing="1">KELAS BATCH</text>
+  </g>
+  <g transform="translate(560, 160)">
+    <circle cx="85" cy="85" r="80" fill="#431407" stroke="#fb923c" stroke-width="2.5" opacity="0.8"/>
+    <polygon points="85,30 97,85 85,80" fill="#fbbf24" />
+    <polygon points="85,140 73,85 85,90" fill="#9a3412" />
+    <circle cx="85" cy="85" r="10" fill="#fed7aa" />
+  </g>
+  <g transform="translate(60, 150)">
+    <text font-family="system-ui, -apple-system, sans-serif" font-size="16" font-weight="600" fill="#fdba74" letter-spacing="1.5">KEPEMIMPINAN &amp; TRANSFORMASI</text>
+    <text y="50" font-family="system-ui, -apple-system, sans-serif" font-size="34" font-weight="800" fill="#ffffff">Kepemimpinan Adaptif &amp;</text>
+    <text y="92" font-family="system-ui, -apple-system, sans-serif" font-size="34" font-weight="800" fill="url(#accentGrad)">Manajemen Perubahan</text>
+    <text y="145" font-family="system-ui, -apple-system, sans-serif" font-size="16" fill="#fed7aa" opacity="0.9">
+      <tspan x="0" dy="0">Navigasi resistensi tim, coaching berkala,</tspan>
+      <tspan x="0" dy="24">dan pengambilan keputusan berbasis data akurat.</tspan>
+    </text>
+    <g transform="translate(0, 210)">
+      <rect width="110" height="28" rx="6" fill="#431407" />
+      <text x="12" y="19" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="600" fill="#ffedd5">3 Bab Modul</text>
+      <rect x="120" width="130" height="28" rx="6" fill="#431407" />
+      <text x="132" y="19" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="600" fill="#ffedd5">Studi Kasus Tim</text>
+    </g>
+  </g>
+</svg>
+SVG,
+            'permanent_berakhlak.svg' => <<<'SVG'
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#881337" />
+      <stop offset="100%" stop-color="#9f1239" />
+    </linearGradient>
+    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#f43f5e" />
+      <stop offset="100%" stop-color="#fb7185" />
+    </linearGradient>
+  </defs>
+  <rect width="800" height="450" fill="url(#bgGrad)" />
+  <circle cx="700" cy="120" r="150" fill="#be123c" opacity="0.2" />
+  <circle cx="120" cy="360" r="110" fill="#e11d48" opacity="0.1" />
+  <g transform="translate(60, 60)">
+    <rect width="165" height="34" rx="17" fill="#4c0519" stroke="#fb7185" stroke-width="1.5" />
+    <circle cx="20" cy="17" r="5" fill="#fb7185" />
+    <text x="34" y="22" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="700" fill="#ffe4e6" letter-spacing="1">KELAS PERMANEN</text>
+  </g>
+  <g transform="translate(560, 150)">
+    <path d="M85,30 L150,55 L150,115 C150,155 85,185 85,185 C85,185 20,155 20,115 L20,55 Z" fill="#4c0519" stroke="#fb7185" stroke-width="2.5" opacity="0.85"/>
+    <polygon points="85,65 92,85 112,85 96,98 102,118 85,106 68,118 74,98 58,85 78,85" fill="url(#accentGrad)" />
+  </g>
+  <g transform="translate(60, 150)">
+    <text font-family="system-ui, -apple-system, sans-serif" font-size="16" font-weight="600" fill="#fda4af" letter-spacing="1.5">INTEGRITAS &amp; NILAI DASAR</text>
+    <text y="50" font-family="system-ui, -apple-system, sans-serif" font-size="34" font-weight="800" fill="#ffffff">Budaya Kerja &amp;</text>
+    <text y="92" font-family="system-ui, -apple-system, sans-serif" font-size="34" font-weight="800" fill="url(#accentGrad)">Core Values BerAKHLAK</text>
+    <text y="145" font-family="system-ui, -apple-system, sans-serif" font-size="16" fill="#fecdd3" opacity="0.9">
+      <tspan x="0" dy="0">Panduan perilaku 7 pilar: Berorientasi Pelayanan, Akuntabel,</tspan>
+      <tspan x="0" dy="24">Kompeten, Harmonis, Loyal, Adaptif, dan Kolaboratif.</tspan>
+    </text>
+    <g transform="translate(0, 210)">
+      <rect width="110" height="28" rx="6" fill="#4c0519" />
+      <text x="12" y="19" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="600" fill="#ffe4e6">3 Bab Modul</text>
+      <rect x="120" width="130" height="28" rx="6" fill="#4c0519" />
+      <text x="132" y="19" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="600" fill="#ffe4e6">Kuis Pemahaman</text>
+    </g>
+  </g>
+</svg>
+SVG,
+            'permanent_keamanan_siber.svg' => <<<'SVG'
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#090d16" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#06b6d4" />
+      <stop offset="100%" stop-color="#38bdf8" />
+    </linearGradient>
+  </defs>
+  <rect width="800" height="450" fill="url(#bgGrad)" />
+  <path d="M500,50 L560,110 L650,110 L700,60" fill="none" stroke="#0891b2" stroke-width="1.5" opacity="0.3"/>
+  <circle cx="560" cy="110" r="4" fill="#22d3ee" opacity="0.5"/>
+  <circle cx="650" cy="110" r="4" fill="#22d3ee" opacity="0.5"/>
+  <path d="M520,380 L600,300 L720,300" fill="none" stroke="#0891b2" stroke-width="1.5" opacity="0.3"/>
+  <g transform="translate(60, 60)">
+    <rect width="165" height="34" rx="17" fill="#164e63" stroke="#22d3ee" stroke-width="1.5" />
+    <circle cx="20" cy="17" r="5" fill="#22d3ee" />
+    <text x="34" y="22" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="700" fill="#cffafe" letter-spacing="1">KELAS PERMANEN</text>
+  </g>
+  <g transform="translate(560, 150)">
+    <rect width="160" height="150" rx="20" fill="#155e75" stroke="#38bdf8" stroke-width="2" opacity="0.8"/>
+    <path d="M55,60 L55,40 C55,25 65,15 80,15 C95,15 105,25 105,40 L105,60" fill="none" stroke="#38bdf8" stroke-width="6" stroke-linecap="round"/>
+    <circle cx="80" cy="95" r="10" fill="#090d16" />
+    <polygon points="76,95 84,95 86,115 74,115" fill="#090d16" />
+  </g>
+  <g transform="translate(60, 150)">
+    <text font-family="system-ui, -apple-system, sans-serif" font-size="16" font-weight="600" fill="#67e8f9" letter-spacing="1.5">LITERASI DIGITAL &amp; KEAMANAN INFORMASI</text>
+    <text y="50" font-family="system-ui, -apple-system, sans-serif" font-size="34" font-weight="800" fill="#ffffff">Keamanan Siber &amp;</text>
+    <text y="92" font-family="system-ui, -apple-system, sans-serif" font-size="34" font-weight="800" fill="url(#accentGrad)">Kesadaran Data Pribadi</text>
+    <text y="145" font-family="system-ui, -apple-system, sans-serif" font-size="16" fill="#a5f3fc" opacity="0.9">
+      <tspan x="0" dy="0">Antisipasi rekayasa sosial (phishing), proteksi password,</tspan>
+      <tspan x="0" dy="24">otentikasi 2FA, dan kepatuhan UU Perlindungan Data Pribadi.</tspan>
+    </text>
+    <g transform="translate(0, 210)">
+      <rect width="110" height="28" rx="6" fill="#164e63" />
+      <text x="12" y="19" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="600" fill="#cffafe">3 Bab Modul</text>
+      <rect x="120" width="130" height="28" rx="6" fill="#164e63" />
+      <text x="132" y="19" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="600" fill="#cffafe">Evaluasi Phishing</text>
+    </g>
+  </g>
+</svg>
+SVG,
+            'permanent_manajemen_waktu.svg' => <<<'SVG'
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2e1065" />
+      <stop offset="100%" stop-color="#4c1d95" />
+    </linearGradient>
+    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#a855f7" />
+      <stop offset="100%" stop-color="#c084fc" />
+    </linearGradient>
+  </defs>
+  <rect width="800" height="450" fill="url(#bgGrad)" />
+  <circle cx="710" cy="110" r="160" fill="#7c3aed" opacity="0.15" />
+  <circle cx="90" cy="390" r="120" fill="#6d28d9" opacity="0.1" />
+  <g transform="translate(60, 60)">
+    <rect width="165" height="34" rx="17" fill="#3b0764" stroke="#c084fc" stroke-width="1.5" />
+    <circle cx="20" cy="17" r="5" fill="#c084fc" />
+    <text x="34" y="22" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="700" fill="#f3e8ff" letter-spacing="1">KELAS PERMANEN</text>
+  </g>
+  <g transform="translate(560, 150)">
+    <circle cx="85" cy="85" r="75" fill="#3b0764" stroke="#c084fc" stroke-width="2.5" opacity="0.85"/>
+    <line x1="85" y1="20" x2="85" y2="30" stroke="#a855f7" stroke-width="3" stroke-linecap="round"/>
+    <line x1="85" y1="140" x2="85" y2="150" stroke="#a855f7" stroke-width="3" stroke-linecap="round"/>
+    <line x1="20" y1="85" x2="30" y2="85" stroke="#a855f7" stroke-width="3" stroke-linecap="round"/>
+    <line x1="140" y1="85" x2="150" y2="85" stroke="#a855f7" stroke-width="3" stroke-linecap="round"/>
+    <line x1="85" y1="85" x2="85" y2="45" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round"/>
+    <line x1="85" y1="85" x2="120" y2="85" stroke="#c084fc" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="85" cy="85" r="6" fill="#a855f7" />
+  </g>
+  <g transform="translate(60, 150)">
+    <text font-family="system-ui, -apple-system, sans-serif" font-size="16" font-weight="600" fill="#d8b4fe" letter-spacing="1.5">PRODUKTIVITAS &amp; WELLBEING</text>
+    <text y="50" font-family="system-ui, -apple-system, sans-serif" font-size="34" font-weight="800" fill="#ffffff">Manajemen Waktu &amp;</text>
+    <text y="92" font-family="system-ui, -apple-system, sans-serif" font-size="34" font-weight="800" fill="url(#accentGrad)">Fokus Kerja Produktif</text>
+    <text y="145" font-family="system-ui, -apple-system, sans-serif" font-size="16" fill="#e9d5ff" opacity="0.9">
+      <tspan x="0" dy="0">Metode Eisenhower, teknik Pomodoro, penanganan distraksi</tspan>
+      <tspan x="0" dy="24">digital, serta pencegahan burnout di lingkungan kerja.</tspan>
+    </text>
+    <g transform="translate(0, 210)">
+      <rect width="110" height="28" rx="6" fill="#3b0764" />
+      <text x="12" y="19" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="600" fill="#f3e8ff">3 Bab Modul</text>
+      <rect x="120" width="130" height="28" rx="6" fill="#3b0764" />
+      <text x="132" y="19" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="600" fill="#f3e8ff">Asesmen Waktu</text>
+    </g>
+  </g>
+</svg>
+SVG,
+        ];
+
+        foreach ($thumbnails as $filename => $content) {
+            $path = "{$dir}/{$filename}";
+            if (! Storage::disk('public')->exists($path)) {
+                Storage::disk('public')->put($path, trim($content));
             }
         }
     }
