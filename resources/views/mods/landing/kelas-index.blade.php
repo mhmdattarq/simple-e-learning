@@ -202,7 +202,7 @@
 
                                     <h5 class="fw-bold text-navy mb-2 line-clamp-2"
                                         style="font-size: 16px; line-height: 1.4;">
-                                        <a href="{{ route('landing.kelas.detail', $course->id) }}"
+                                        <a href="{{ route('landing.kelas.detail', $course) }}"
                                             class="text-navy text-decoration-none hover-gold">
                                             {{ $course->title }}
                                         </a>
@@ -229,7 +229,7 @@
                                                 @endif
                                             </span>
                                         </div>
-                                        <a href="{{ route('landing.kelas.detail', $course->id) }}"
+                                        <a href="{{ route('landing.kelas.detail', $course) }}"
                                             class="btn-simpel-cta-gold py-2 px-3 fs-7">
                                             <span>Lihat Detail</span>
                                             <i class="ri-arrow-right-line ms-1"></i>

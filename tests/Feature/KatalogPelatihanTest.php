@@ -44,8 +44,8 @@ test('halaman katalog pelatihan menampilkan kursus yang berstatus published', fu
     $response->assertSee('Pelatihan Fungsional');
     $response->assertSee('Mandiri 24/7');
     $response->assertSee('Batch Terjadwal');
-    $response->assertSee(route('landing.kelas.detail', $coursePermanent->id));
-    $response->assertSee(route('landing.kelas.detail', $courseBatch->id));
+    $response->assertSee(route('landing.kelas.detail', $coursePermanent));
+    $response->assertSee(route('landing.kelas.detail', $courseBatch));
     $response->assertSee('Lihat Detail');
 });
 

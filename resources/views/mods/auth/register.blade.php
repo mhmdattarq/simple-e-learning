@@ -206,7 +206,7 @@
                     <span class="bg-base z-1 px-4">atau</span>
                 </div>
                 <div class="mt-32 d-flex align-items-center gap-3">
-                    <a href="{{ route('auth.google.redirect') }}" class="btn btn-secondary w-100 d-inline-flex align-items-center justify-content-center gap-2">
+                    <a href="{{ $redirectTo ? route('auth.google.redirect', ['redirect' => $redirectTo]) : route('auth.google.redirect') }}" class="btn btn-secondary w-100 d-inline-flex align-items-center justify-content-center gap-2">
                         <i class="ri-google-line"></i>
                         Buat Akun Dengan Google
                     </a>
@@ -216,7 +216,7 @@
                 <div class="text-center pt-16 mt-16 border-top">
                     <p class="text-xs text-muted mb-0">
                         Sudah memiliki akun?
-                        <a href="{{ route('login') }}"
+                        <a href="{{ $redirectTo ? route('login', ['redirect' => $redirectTo]) : route('login') }}"
                             class="fw-semibold text-dark text-decoration-none hover-underline" wire:navigate>
                             Masuk ke Portal
                         </a>

@@ -6,7 +6,6 @@ use App\Models\Course;
 use App\Models\CourseUser;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
-use Livewire\Attributes\Title;
 use Livewire\Component;
 
 #[Layout('templates.layouts.landing')]
@@ -14,9 +13,19 @@ class KelasDetail extends Component
 {
     public int $courseId;
 
-    public function mount(int|string $id): void
+    public function mount(int|string|Course $course): void
     {
-        $this->courseId = (int) $id;
+        if ($course instanceof Course) {
+            $this->courseId = $course->id;
+
+            return;
+        }
+
+        $found = Course::where('slug', $course)
+            ->orWhere(fn ($q) => is_numeric($course) ? $q->where('id', (int) $course) : null)
+            ->firstOrFail();
+
+        $this->courseId = $found->id;
     }
 
     public function render()
@@ -40,7 +49,7 @@ class KelasDetail extends Component
         }
 
         $totalChapters = $course->chapters->count();
-        $totalLessons = $course->chapters->sum(fn($ch) => $ch->lessons->count());
+        $totalLessons = $course->chapters->sum(fn ($ch) => $ch->lessons->count());
 
         $backUrl = match (true) {
             $course->isPaid() => route('landing.kelas.berbayar'),

@@ -8,6 +8,7 @@ use App\Models\Chapter;
 use App\Models\Course;
 use App\Models\CourseUser;
 use App\Models\Lesson;
+use App\Models\Quiz;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -25,10 +26,20 @@ class MateriBelajar extends Component
     #[Url(as: 'lesson')]
     public ?int $selectedLessonId = null;
 
-    public function mount(int $id): void
+    public function mount(int|string|Course|null $course = null, int|string|null $id = null): void
     {
-        $this->courseId = $id;
-        $this->course = Course::with(['category'])->findOrFail($id);
+        $resolved = $course ?? $id;
+
+        if ($resolved instanceof Course) {
+            $this->course = $resolved;
+            $this->courseId = $resolved->id;
+        } else {
+            $this->course = Course::with(['category'])
+                ->where('slug', $resolved)
+                ->orWhere(fn ($q) => is_numeric($resolved) ? $q->where('id', (int) $resolved) : null)
+                ->firstOrFail();
+            $this->courseId = $this->course->id;
+        }
 
         /** @var User $user */
         $user = Auth::user();
@@ -229,7 +240,7 @@ class MateriBelajar extends Component
     }
 
     /**
-     * Menyelesaikan seluruh materi dalam bab saat ini dan otomatis lanjut ke bab berikutnya.
+     * Menyelesaikan seluruh materi dalam bab saat ini dan otomatis lanjut ke bab berikutnya atau kuis.
      */
     public function confirmCompleteChapter(): void
     {
@@ -258,17 +269,17 @@ class MateriBelajar extends Component
 
         $this->showCompleteModal = false;
 
-        // Jika bab ini memiliki kuis evaluasi dan belum dikerjakan, arahkan peserta ke kuis
+        // Cek apakah bab ini memiliki kuis evaluasi dan belum dikerjakan
         if ($chapter->quiz && ! $chapter->quiz->isAttemptedByUser($user->id)) {
             $this->redirect(
-                route('peserta.evaluasi.kerjakan', ['course_id' => $this->courseId, 'quiz_id' => $chapter->quiz->id]),
+                route('peserta.evaluasi.kerjakan', ['course' => $this->course ?? $this->courseId, 'quiz_id' => $chapter->quiz->id]),
                 navigate: true
             );
 
             return;
         }
 
-        // Cari bab berikutnya
+        // Cari materi pertama pada bab berikutnya
         $allLessons = $this->getAllLinearLessons();
         $nextLesson = null;
         $foundCurrentChapter = false;
@@ -289,12 +300,25 @@ class MateriBelajar extends Component
             $this->selectLesson($nextLesson->id);
             $this->dispatch('show-toast', [
                 'type' => 'success',
-                'message' => 'Selamat! Bab telah selesai, Anda melanjutkan ke materi berikutnya.',
+                'message' => 'Selamat! Bab telah selesai, Anda melanjutkan ke materi bab berikutnya.',
             ]);
         } else {
+            // Seluruh bab telah selesai (berada di akhir kelas pembelajaran).
+            // Cek apakah ada Evaluasi Akhir (Final Quiz) dan belum dikerjakan.
+            $finalQuiz = Quiz::where('course_id', $this->courseId)->where('type', 'final')->first();
+
+            if ($finalQuiz && ! $finalQuiz->isAttemptedByUser($user->id)) {
+                $this->redirect(
+                    route('peserta.evaluasi.kerjakan', ['course' => $this->course ?? $this->courseId, 'quiz_id' => $finalQuiz->id]),
+                    navigate: true
+                );
+
+                return;
+            }
+
             $this->dispatch('show-toast', [
                 'type' => 'success',
-                'message' => 'Selamat! Anda telah menyelesaikan seluruh materi kelas ini.',
+                'message' => 'Selamat! Anda telah menyelesaikan seluruh rangkaian materi kelas ini.',
             ]);
         }
     }
@@ -392,6 +416,14 @@ class MateriBelajar extends Component
             }
         }
 
+        $hasChapterQuiz = false;
+        if ($currentChapter && $currentChapter->quiz) {
+            $hasChapterQuiz = ! $currentChapter->quiz->isAttemptedByUser($user->id);
+        }
+
+        $finalQuiz = Quiz::where('course_id', $this->courseId)->where('type', 'final')->first();
+        $hasFinalQuiz = $finalQuiz && ! $finalQuiz->isAttemptedByUser($user->id);
+
         return view('mods.peserta.materi.materi-belajar', compact(
             'chapters',
             'completedLessonIds',
@@ -399,7 +431,9 @@ class MateriBelajar extends Component
             'currentChapter',
             'isFirstLesson',
             'isLastInChapter',
-            'hasNextChapter'
+            'hasNextChapter',
+            'hasChapterQuiz',
+            'hasFinalQuiz'
         ));
     }
 }

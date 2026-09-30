@@ -83,7 +83,7 @@ beforeEach(function () {
 });
 
 test('guest cannot access quiz taking page and is redirected to login', function () {
-    $this->get(route('peserta.evaluasi.kerjakan', ['course_id' => $this->course->id, 'quiz_id' => $this->quiz->id]))
+    $this->get(route('peserta.evaluasi.kerjakan', ['course' => $this->course, 'quiz_id' => $this->quiz->id]))
         ->assertRedirect(route('login'));
 });
 

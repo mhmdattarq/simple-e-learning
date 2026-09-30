@@ -221,7 +221,7 @@
 
                     {{-- Tombol Aksi Mulai --}}
                     <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
-                        <a href="{{ route('peserta.materi', $quiz->course_id) }}"
+                        <a href="{{ route('peserta.materi', $quiz->course ?? $quiz->course_id) }}"
                             class="btn btn-outline-danger px-4 py-2 radius-8">
                             <i class="ri-arrow-left-line me-1"></i> Batal / Kembali ke Materi
                         </a>
@@ -476,11 +476,11 @@
 
                     {{-- Tombol Aksi Lanjut --}}
                     <div class="d-flex align-items-center justify-content-center gap-2 flex-wrap">
-                        <a href="{{ route('peserta.materi', $quiz->course_id) }}"
+                        <a href="{{ route('peserta.materi', $quiz->course ?? $quiz->course_id) }}"
                             class="btn btn-primary px-4 py-2 radius-8 fw-semibold">
                             <i class="ri-book-open-line me-1"></i> Kembali ke Ruang Belajar Materi
                         </a>
-                        <a href="{{ route('landing.kelas.detail', $quiz->course_id) }}"
+                        <a href="{{ route('landing.kelas.detail', $quiz->course ?? $quiz->course_id) }}"
                             class="btn btn-outline-secondary px-4 py-2 radius-8">
                             <i class="ri-arrow-left-line me-1"></i> Detail Kelas
                         </a>

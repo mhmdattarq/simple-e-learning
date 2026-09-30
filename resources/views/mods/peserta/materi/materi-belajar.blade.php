@@ -14,8 +14,7 @@
                     </p>
                 </div>
                 <div class="d-flex align-items-center gap-2">
-                    <a href="{{ route('landing.kelas.detail', $course->id) }}"
-                        class="btn btn-outline-light btn-sm radius-8 px-3 py-2 fs-8">
+                    <a href="{{ route('landing.kelas.detail', $course) }}" class="btn btn-simpel-outline-light">
                         <i class="ri-arrow-left-line me-1"></i> Kembali ke Detail Kelas
                     </a>
                 </div>
@@ -103,7 +102,7 @@
                                         @endphp
                                         <div class="mt-2 pt-2 border-top">
                                             @if ($quizAttempt)
-                                                <a href="{{ route('peserta.evaluasi.kerjakan', ['course_id' => $course->id, 'quiz_id' => $chapter->quiz->id]) }}"
+                                                <a href="{{ route('peserta.evaluasi.kerjakan', ['course' => $course, 'quiz_id' => $chapter->quiz->id]) }}"
                                                     class="list-group-item d-flex align-items-center justify-content-between p-2 fs-8 rounded-2 border {{ $quizAttempt->is_passed ? 'bg-success-subtle text-success border-success-subtle' : 'bg-warning-subtle text-warning border-warning-subtle' }} text-decoration-none"
                                                     wire:navigate>
                                                     <div class="d-flex align-items-center gap-2 overflow-hidden">
@@ -118,7 +117,7 @@
                                                     </span>
                                                 </a>
                                             @elseif ($chapLessonsAllDone)
-                                                <a href="{{ route('peserta.evaluasi.kerjakan', ['course_id' => $course->id, 'quiz_id' => $chapter->quiz->id]) }}"
+                                                <a href="{{ route('peserta.evaluasi.kerjakan', ['course' => $course, 'quiz_id' => $chapter->quiz->id]) }}"
                                                     class="list-group-item list-group-item-action d-flex align-items-center justify-content-between p-2 fs-8 rounded-2 border border-primary bg-primary-subtle text-primary fw-bold text-decoration-none shadow-sm"
                                                     wire:navigate>
                                                     <div class="d-flex align-items-center gap-2 overflow-hidden">
@@ -163,7 +162,7 @@
                                         <span>UJIAN KELULUSAN KELAS</span>
                                     </div>
                                     @if ($finalAttempt)
-                                        <a href="{{ route('peserta.evaluasi.kerjakan', ['course_id' => $course->id, 'quiz_id' => $course->finalQuiz->id]) }}"
+                                        <a href="{{ route('peserta.evaluasi.kerjakan', ['course' => $course, 'quiz_id' => $course->finalQuiz->id]) }}"
                                             class="list-group-item d-flex align-items-center justify-content-between p-2 fs-8 rounded-2 border {{ $finalAttempt->is_passed ? 'bg-success-subtle text-success border-success-subtle' : 'bg-warning-subtle text-warning border-warning-subtle' }} text-decoration-none"
                                             wire:navigate>
                                             <div class="d-flex align-items-center gap-2 overflow-hidden">
@@ -178,7 +177,7 @@
                                             </span>
                                         </a>
                                     @elseif ($allLessonsDone)
-                                        <a href="{{ route('peserta.evaluasi.kerjakan', ['course_id' => $course->id, 'quiz_id' => $course->finalQuiz->id]) }}"
+                                        <a href="{{ route('peserta.evaluasi.kerjakan', ['course' => $course, 'quiz_id' => $course->finalQuiz->id]) }}"
                                             class="list-group-item list-group-item-action d-flex align-items-center justify-content-between p-2 fs-8 rounded-2 border border-warning bg-warning-subtle text-warning fw-bold text-decoration-none shadow-sm"
                                             wire:navigate>
                                             <div class="d-flex align-items-center gap-2 overflow-hidden">
@@ -378,8 +377,15 @@
                                             <span>Selanjutnya</span>
                                             <i class="ri-arrow-right-line"></i>
                                         </button>
+                                    @elseif (!$hasChapterQuiz && $hasNextChapter)
+                                        {{-- Di akhir bab, TIDAK ADA evaluasi bab, dan MASIH ADA bab berikutnya: Tombol Selanjutnya --}}
+                                        <button type="button" wire:click="promptCompleteChapter"
+                                            class="btn btn-primary radius-10 px-4 py-2 fs-7 fw-semibold d-inline-flex align-items-center gap-2 shadow-sm">
+                                            <span>Selanjutnya</span>
+                                            <i class="ri-arrow-right-line"></i>
+                                        </button>
                                     @else
-                                        {{-- Di materi terakhir bab: Munculkan Tandai Selesai Belajar --}}
+                                        {{-- Ada evaluasi bab ATAU sudah di akhir seluruh rangkaian bab: Tombol Selesai --}}
                                         <button type="button" wire:click="promptCompleteChapter"
                                             class="btn btn-success radius-10 px-4 py-2 fs-7 fw-bold d-inline-flex align-items-center gap-2 shadow-sm">
                                             <i class="ri-checkbox-circle-line"></i>
@@ -415,21 +421,35 @@
                 <div class="modal-content border-0 radius-20 shadow-lg overflow-hidden bg-white">
                     <div class="modal-body p-4 text-center">
                         {{-- Icon Badge --}}
-                        <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3 text-success"
-                            style="width: 64px; height: 64px; background-color: #ecfdf5; box-shadow: 0 8px 24px rgba(16, 185, 129, 0.15);">
-                            <i class="ri-checkbox-circle-fill" style="font-size: 32px;"></i>
+                        <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3 {{ $hasChapterQuiz || !$hasNextChapter ? 'text-success' : 'text-primary' }}"
+                            style="width: 64px; height: 64px; background-color: {{ $hasChapterQuiz || !$hasNextChapter ? '#ecfdf5' : '#eff6ff' }}; box-shadow: 0 8px 24px rgba(16, 185, 129, 0.15);">
+                            <i class="{{ $hasChapterQuiz || !$hasNextChapter ? 'ri-checkbox-circle-fill' : 'ri-arrow-right-circle-fill' }}"
+                                style="font-size: 32px;"></i>
                         </div>
 
-                        <h5 class="fw-bold text-dark mb-2">Konfirmasi Selesai Bab</h5>
+                        <h5 class="fw-bold text-dark mb-2">
+                            @if (!$hasChapterQuiz && $hasNextChapter)
+                                Lanjut ke Bab Berikutnya
+                            @elseif ($hasChapterQuiz)
+                                Selesaikan Bab &amp; Mulai Evaluasi
+                            @else
+                                Selesaikan Pembelajaran Kelas
+                            @endif
+                        </h5>
 
                         <div class="bg-light p-3 rounded-12 border mb-4 text-start">
                             <p class="text-muted fs-8 mb-0 line-height-base">
-                                Apakah Anda yakin menandai bab <strong>{{ $currentChapter?->title ?? 'ini' }}</strong>
-                                selesai?
-                                @if ($hasNextChapter)
-                                    Setelah ini, sistem akan otomatis mengarahkan Anda ke materi bab berikutnya.
+                                @if (!$hasChapterQuiz && $hasNextChapter)
+                                    Materi pada bab <strong>{{ $currentChapter?->title ?? 'ini' }}</strong> telah
+                                    selesai dipelajari. Apakah Anda ingin melanjutkan ke materi bab berikutnya?
+                                @elseif ($hasChapterQuiz)
+                                    Bab <strong>{{ $currentChapter?->title ?? 'ini' }}</strong> memiliki kuis evaluasi
+                                    pemahaman. Anda akan diarahkan untuk mengerjakan kuis evaluasi bab terlebih dahulu.
+                                @elseif ($hasFinalQuiz)
+                                    Selamat! Anda telah menyelesaikan materi di semua bab. Anda akan diarahkan menuju ke
+                                    <strong>Ujian Akhir Kelas</strong>.
                                 @else
-                                    Seluruh modul pembelajaran pada materi ini telah Anda tuntaskan.
+                                    Selamat! Anda telah menuntaskan seluruh rangkaian modul pembelajaran pada kelas ini.
                                 @endif
                             </p>
                         </div>
@@ -440,8 +460,9 @@
                                 Batal
                             </button>
                             <button type="button" wire:click="confirmCompleteChapter"
-                                class="btn btn-success w-50 py-2 radius-10 fw-semibold fs-8 d-inline-flex align-items-center justify-content-center gap-1 shadow-sm">
-                                <i class="ri-check-line"></i> Ya, Selesai
+                                class="btn {{ $hasChapterQuiz || !$hasNextChapter ? 'btn-success' : 'btn-primary' }} w-50 py-2 radius-10 fw-semibold fs-8 d-inline-flex align-items-center justify-content-center gap-1 shadow-sm">
+                                <i class="ri-check-line"></i>
+                                {{ !$hasChapterQuiz && $hasNextChapter ? 'Lanjutkan' : 'Ya, Selesai' }}
                             </button>
                         </div>
                     </div>

@@ -330,7 +330,7 @@
                                                 {{ $attempt->submitted_at ? $attempt->submitted_at->format('d M Y, H:i') : '-' }}
                                             </td>
                                             <td class="text-center">
-                                                <a href="{{ route('peserta.evaluasi.kerjakan', ['course_id' => $attempt->quiz->course_id, 'quiz_id' => $attempt->quiz_id]) }}"
+                                                <a href="{{ route('peserta.evaluasi.kerjakan', ['course' => $attempt->quiz?->course ?? $attempt->quiz?->course_id, 'quiz_id' => $attempt->quiz_id]) }}"
                                                     class="btn btn-sm btn-outline-primary py-1 px-2 radius-6 text-xxs fw-semibold"
                                                     title="Buka Lembar Hasil Evaluasi" wire:navigate>
                                                     <i class="ri-eye-line me-1"></i>Lihat

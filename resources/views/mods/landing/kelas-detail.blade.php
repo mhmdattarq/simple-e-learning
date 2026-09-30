@@ -239,7 +239,7 @@
 
                             {{-- CTA Button to Materi --}}
                             @auth
-                                <a href="{{ route('peserta.materi', $course->id) }}"
+                                <a href="{{ route('peserta.materi', $course) }}"
                                     class="btn btn-warning w-100 py-3 fw-bold text-navy shadow-sm d-flex align-items-center justify-content-center gap-2 radius-10 mb-3"
                                     style="background: #e5a93b; border-color: #e5a93b;">
                                     <i class="ri-play-circle-line fs-5"></i>
@@ -247,7 +247,7 @@
                                     <i class="ri-arrow-right-line"></i>
                                 </a>
                             @else
-                                <a href="{{ route('login') }}"
+                                <a href="{{ route('login', ['redirect' => route('peserta.materi', $course)]) }}"
                                     class="btn btn-warning w-100 py-3 fw-bold text-navy shadow-sm d-flex align-items-center justify-content-center gap-2 radius-10 mb-3"
                                     style="background: #e5a93b; border-color: #e5a93b;">
                                     <i class="ri-login-box-line fs-5"></i>
@@ -256,7 +256,7 @@
                                 </a>
                                 <p class="text-center text-muted fs-8 mb-3">
                                     Belum memiliki akun?
-                                    <a href="{{ route('register') }}"
+                                    <a href="{{ route('register', ['redirect' => route('peserta.materi', $course)]) }}"
                                         class="text-navy fw-bold text-decoration-none hover-gold">Daftar Akun Baru</a>
                                 </p>
                             @endauth

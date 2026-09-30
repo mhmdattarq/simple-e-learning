@@ -31,6 +31,30 @@ class Course extends Model
     }
 
     /**
+     * Use slug for route model binding and URL generation.
+     */
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
+
+    /**
+     * Resolve the route binding for the course by slug or numeric id.
+     */
+    public function resolveRouteBinding($value, $field = null): ?self
+    {
+        $field = $field ?? $this->getRouteKeyName();
+
+        if ($field === 'slug') {
+            return $this->where('slug', $value)
+                ->when(is_numeric($value), fn ($q) => $q->orWhere('id', (int) $value))
+                ->first();
+        }
+
+        return parent::resolveRouteBinding($value, $field);
+    }
+
+    /**
      * Category of this course.
      */
     public function category(): BelongsTo

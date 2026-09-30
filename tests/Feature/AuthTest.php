@@ -25,10 +25,16 @@ test('login page can be accessed and assets are correctly routed', function () {
 });
 
 test('admin can login using email and is redirected to admin dashboard with welcome toast', function () {
-    $admin = User::factory()->admin()->create([
-        'email' => 'admin@simpel.go.id',
-        'password' => bcrypt('password123'),
-    ]);
+    $admin = User::updateOrCreate(
+        ['email' => 'admin@simpel.go.id'],
+        [
+            'name' => 'Admin Simpel',
+            'password' => bcrypt('password123'),
+            'role' => Role::Admin,
+            'phone_number' => '081234567890',
+            'email_verified_at' => now(),
+        ]
+    );
 
     Livewire::test(Login::class)
         ->set('identifier', 'admin@simpel.go.id')

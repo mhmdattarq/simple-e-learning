@@ -53,7 +53,7 @@ class QuizKerjakan extends Component
 
     public bool $showSubmitConfirmation = false;
 
-    public function mount(int $quiz_id, ?int $course_id = null): void
+    public function mount(int $quiz_id, int|string|Course|null $course = null, int|string|null $course_id = null): void
     {
         $this->quizId = $quiz_id;
 

@@ -198,7 +198,7 @@
                     <span class="bg-base z-1 px-4">atau</span>
                 </div>
                 <div class="mt-32 d-flex align-items-center gap-3">
-                    <a href="{{ route('auth.google.redirect') }}" class="btn btn-secondary w-100 d-inline-flex align-items-center justify-content-center gap-2">
+                    <a href="{{ $redirectTo ? route('auth.google.redirect', ['redirect' => $redirectTo]) : route('auth.google.redirect') }}" class="btn btn-secondary w-100 d-inline-flex align-items-center justify-content-center gap-2">
                         <i class="ri-google-line"></i>
                         Masuk Dengan Google
                     </a>
@@ -207,7 +207,7 @@
                 <div class="text-center pt-16">
                     <p class="text-xs text-muted mb-0">
                         Belum memiliki akun?
-                        <a href="{{ route('register') }}"
+                        <a href="{{ $redirectTo ? route('register', ['redirect' => $redirectTo]) : route('register') }}"
                             class="fw-semibold text-dark text-decoration-none hover-underline" wire:navigate>
                             Daftar Sekarang
                         </a>

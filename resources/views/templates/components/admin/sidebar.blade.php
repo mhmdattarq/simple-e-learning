@@ -170,8 +170,7 @@ new class extends Component {
                                 <i class="ri-circle-fill circle-icon"></i> <span>Tambah Evaluasi &amp; Kuis</span>
                             </a>
                         </li>
-                        <li
-                            class="{{ request()->routeIs('evaluasi.data') || request()->routeIs('evaluasi.detail*') ? 'active-page' : '' }}">
+                        <li class="{{ request()->routeIs('evaluasi.data') || request()->routeIs('evaluasi.detail*') ? 'active-page' : '' }}">
                             <a href="{{ route('evaluasi.data') }}" wire:navigate>
                                 <i class="ri-circle-fill circle-icon"></i> <span>Data Evaluasi &amp; Kuis</span>
                             </a>

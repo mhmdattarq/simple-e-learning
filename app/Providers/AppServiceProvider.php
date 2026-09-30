@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\CourseUser;
 use App\Policies\RegistrationPolicy;
+use App\Routing\AppUrlGenerator;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -17,7 +18,27 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->extend('url', function ($url, $app) {
+            $newUrl = new AppUrlGenerator(
+                $app['router']->getRoutes(),
+                $app->rebinding('request', function ($app, $request) {
+                    $app['url']->setRequest($request);
+                }),
+                $app['config']['app.asset_url']
+            );
+
+            $newUrl->setSessionResolver(function () use ($app) {
+                return $app['session'] ?? null;
+            });
+
+            $newUrl->setKeyResolver(function () use ($app) {
+                $config = $app->make('config');
+
+                return [$config->get('app.key'), ...($config->get('app.previous_keys') ?? [])];
+            });
+
+            return $newUrl;
+        });
     }
 
     /**
