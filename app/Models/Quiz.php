@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 
 class Quiz extends Model
 {
@@ -28,6 +29,45 @@ class Quiz extends Model
             'total_score' => 'integer',
             'passing_score' => 'integer',
         ];
+    }
+
+    protected static function booted(): void
+    {
+        static::creating(function (Quiz $quiz) {
+            if (empty($quiz->slug) && ! empty($quiz->title)) {
+                $baseSlug = Str::slug($quiz->title) ?: 'evaluasi';
+                $slug = $baseSlug;
+                $count = 1;
+                while (static::where('slug', $slug)->exists()) {
+                    $slug = $baseSlug.'-'.$count++;
+                }
+                $quiz->slug = $slug;
+            }
+        });
+    }
+
+    /**
+     * Use slug for route model binding and URL generation.
+     */
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
+
+    /**
+     * Resolve the route binding for the quiz by slug or numeric id.
+     */
+    public function resolveRouteBinding($value, $field = null): ?self
+    {
+        $field = $field ?? $this->getRouteKeyName();
+
+        if ($field === 'slug') {
+            return $this->where('slug', $value)
+                ->when(is_numeric($value), fn ($q) => $q->orWhere('id', (int) $value))
+                ->first();
+        }
+
+        return parent::resolveRouteBinding($value, $field);
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace App\Routing;
 
 use App\Models\Course;
+use App\Models\Quiz;
 use Illuminate\Routing\UrlGenerator;
 
 class AppUrlGenerator extends UrlGenerator
@@ -71,12 +72,62 @@ class AppUrlGenerator extends UrlGenerator
             $course = is_array($parameters) ? ($parameters['course'] ?? ($parameters['course_id'] ?? reset($parameters))) : $parameters;
             $typeSuffix = $this->resolveCourseTypeSuffix($course);
 
-            if (is_array($parameters) && isset($parameters['course_id']) && ! isset($parameters['course'])) {
-                $parameters['course'] = $parameters['course_id'];
-                unset($parameters['course_id']);
+            if (is_array($parameters)) {
+                if (isset($parameters['course_id']) && ! isset($parameters['course'])) {
+                    $parameters['course'] = $parameters['course_id'];
+                    unset($parameters['course_id']);
+                }
+
+                if (isset($parameters['quiz_id']) && ! isset($parameters['quiz'])) {
+                    $parameters['quiz'] = $parameters['quiz_id'];
+                    unset($parameters['quiz_id']);
+                }
+
+                if (isset($parameters['quiz']) && is_numeric($parameters['quiz'])) {
+                    $quizModel = Quiz::find((int) $parameters['quiz']);
+                    if ($quizModel) {
+                        $parameters['quiz'] = $quizModel;
+                    }
+                }
             }
 
             return parent::route("peserta.evaluasi.kerjakan.{$typeSuffix}", $parameters, $absolute);
+        }
+
+        if (str_starts_with($name, 'peserta.evaluasi.kerjakan.')) {
+            if (is_array($parameters)) {
+                if (isset($parameters['quiz_id']) && ! isset($parameters['quiz'])) {
+                    $parameters['quiz'] = $parameters['quiz_id'];
+                    unset($parameters['quiz_id']);
+                }
+
+                if (isset($parameters['quiz']) && is_numeric($parameters['quiz'])) {
+                    $quizModel = Quiz::find((int) $parameters['quiz']);
+                    if ($quizModel) {
+                        $parameters['quiz'] = $quizModel;
+                    }
+                }
+            }
+
+            return parent::route($name, $parameters, $absolute);
+        }
+
+        if ($name === 'peserta.evaluasi.show') {
+            if (is_array($parameters)) {
+                if (isset($parameters['quiz_id']) && ! isset($parameters['quiz'])) {
+                    $parameters['quiz'] = $parameters['quiz_id'];
+                    unset($parameters['quiz_id']);
+                }
+
+                if (isset($parameters['quiz']) && is_numeric($parameters['quiz'])) {
+                    $quizModel = Quiz::find((int) $parameters['quiz']);
+                    if ($quizModel) {
+                        $parameters['quiz'] = $quizModel;
+                    }
+                }
+            }
+
+            return parent::route($name, $parameters, $absolute);
         }
 
         return parent::route($name, $parameters, $absolute);

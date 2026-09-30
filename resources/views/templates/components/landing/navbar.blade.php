@@ -66,11 +66,18 @@ new class extends Component {
             }
         }
 
-        // 4. Standalone evaluasi: /evaluasi/kerjakan/{quiz_id}
+        // 4. Standalone evaluasi: /evaluasi/kerjakan/{quiz}
         if (request()->routeIs('peserta.evaluasi.*') || request()->is('evaluasi/*')) {
-            $quizId = request()->route('quiz_id') ?? request()->segment(3);
-            if ($quizId && is_numeric($quizId)) {
-                $type = \App\Models\Quiz::with('course')->find($quizId)?->course?->type;
+            $quizParam = request()->route('quiz') ?? request()->route('quiz_id') ?? request()->segment(3);
+            if ($quizParam) {
+                $quiz = $quizParam instanceof \App\Models\Quiz
+                    ? $quizParam
+                    : \App\Models\Quiz::with('course')
+                        ->where('slug', $quizParam)
+                        ->orWhere(fn ($q) => is_numeric($quizParam) ? $q->where('id', (int) $quizParam) : null)
+                        ->first();
+
+                $type = $quiz?->course?->type;
                 if ($type === 'batch') {
                     return 'batch';
                 }

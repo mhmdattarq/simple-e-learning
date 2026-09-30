@@ -272,7 +272,7 @@ class MateriBelajar extends Component
         // Cek apakah bab ini memiliki kuis evaluasi dan belum dikerjakan
         if ($chapter->quiz && ! $chapter->quiz->isAttemptedByUser($user->id)) {
             $this->redirect(
-                route('peserta.evaluasi.kerjakan', ['course' => $this->course ?? $this->courseId, 'quiz_id' => $chapter->quiz->id]),
+                route('peserta.evaluasi.kerjakan', ['course' => $this->course ?? $this->courseId, 'quiz' => $chapter->quiz]),
                 navigate: true
             );
 
@@ -309,7 +309,7 @@ class MateriBelajar extends Component
 
             if ($finalQuiz && ! $finalQuiz->isAttemptedByUser($user->id)) {
                 $this->redirect(
-                    route('peserta.evaluasi.kerjakan', ['course' => $this->course ?? $this->courseId, 'quiz_id' => $finalQuiz->id]),
+                    route('peserta.evaluasi.kerjakan', ['course' => $this->course ?? $this->courseId, 'quiz' => $finalQuiz]),
                     navigate: true
                 );
 
