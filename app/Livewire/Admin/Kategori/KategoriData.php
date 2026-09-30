@@ -4,7 +4,6 @@ namespace App\Livewire\Admin\Kategori;
 
 use App\Repositories\KategoriRepo;
 use Livewire\Attributes\On;
-use Livewire\Attributes\Title;
 use Livewire\Component;
 
 class KategoriData extends Component

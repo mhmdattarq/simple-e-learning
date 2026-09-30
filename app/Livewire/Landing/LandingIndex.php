@@ -6,7 +6,6 @@ use App\Models\Course;
 use App\Models\CourseUser;
 use Illuminate\Support\Facades\Schema;
 use Livewire\Attributes\Layout;
-use Livewire\Attributes\Title;
 use Livewire\Component;
 
 #[Layout('templates.layouts.landing')]
@@ -41,8 +40,8 @@ class LandingIndex extends Component
 
         $courses = $tablesExist
             ? $coursesQuery->latest('id')
-            ->take(6)
-            ->get()
+                ->take(6)
+                ->get()
             : collect();
 
         $totalPublishedCourses = $tablesExist
@@ -67,12 +66,12 @@ class LandingIndex extends Component
 
         $upcomingJadwals = $tablesExist
             ? Course::with('category')
-            ->where('status', 'published')
-            ->where('type', 'batch')
-            ->whereNotNull('start_date')
-            ->orderBy('start_date', 'asc')
-            ->take(3)
-            ->get()
+                ->where('status', 'published')
+                ->where('type', 'batch')
+                ->whereNotNull('start_date')
+                ->orderBy('start_date', 'asc')
+                ->take(3)
+                ->get()
             : collect();
 
         return view('mods.landing.landing-index', compact(

@@ -21,22 +21,49 @@ new class extends Component {
     }
 
     #[On('modal-delete-setDeleteId')]
-    public function setDeleteId($data)
+    public function setDeleteId($data = null, $id = null, $title = null, $msg = null, $dispatch = null, ...$rest)
     {
-        $this->data = is_array($data) && isset($data['data']) ? $data['data'] : $data;
+        if (is_array($data) && isset($data['data']) && is_array($data['data'])) {
+            $this->data = $data['data'];
+        } elseif (is_array($data) && ! empty($data)) {
+            $this->data = $data;
+        } elseif ($id !== null) {
+            $this->data = array_merge([
+                'id' => $id,
+                'title' => $title ?? 'Konfirmasi Hapus',
+                'msg' => $msg ?? 'Apakah Anda yakin ingin menghapus data ini? Tindakan ini tidak dapat dibatalkan.',
+                'dispatch' => $dispatch ?? 'ModulData-delete',
+            ], $rest);
+        } elseif (is_numeric($data)) {
+            $this->data = [
+                'id' => (int) $data,
+                'title' => 'Konfirmasi Hapus',
+                'msg' => 'Apakah Anda yakin ingin menghapus data ini? Tindakan ini tidak dapat dibatalkan.',
+                'dispatch' => 'ModulData-delete',
+            ];
+        }
+
+        $targetModal = $this->data['modalId'] ?? $this->modalId ?? 'modalDelete';
+        $this->dispatch('openModal', id: $targetModal);
     }
 
     public function process($id = null)
     {
+        $targetId = ($id !== null && (int) $id !== 0) ? (int) $id : ($this->data['id'] ?? null);
+        if (! $targetId) {
+            return;
+        }
+
         $dtHook = [
-            'id' => $id,
+            'id' => (int) $targetId,
             'payload' => $this->data['payload'] ?? null,
         ];
         $this->dispatch($this->data['dispatch'] ?? 'ModulData-delete', $dtHook);
+        $this->data = [];
     }
 
     #[On('modal-chapter-set')]
-    public function setChapterData($data)
+    public function setChapterData($data = null)
     {
         $data = is_array($data) && isset($data['data']) ? $data['data'] : $data;
         $this->chapterForm = [
@@ -62,6 +89,72 @@ new class extends Component {
         );
 
         $this->dispatch('MateriDetail-saveChapter', $this->chapterForm);
+    }
+
+    public $pesanDetail = null;
+
+    public $pesanAdminNotes = '';
+
+    #[On('modal-detail-pesan-set')]
+    public function setDetailPesan($id = null, $data = null)
+    {
+        $targetId = $id ?? (is_array($data) ? $data['id'] ?? null : $data);
+        if (!$targetId) {
+            return;
+        }
+
+        $message = \App\Repositories\ContactMessageRepo::markAsRead((int) $targetId);
+        $this->pesanDetail = [
+            'id' => $message->id,
+            'name' => $message->name,
+            'email' => $message->email,
+            'phone' => $message->phone,
+            'subject' => $message->subject,
+            'message' => $message->message,
+            'status' => $message->status,
+            'admin_notes' => $message->admin_notes,
+            'formatted_date' => $message->created_at ? $message->created_at->translatedFormat('d F Y - H:i') . ' WIB' : '-',
+            'whatsapp_reply_url' => $message->whatsapp_reply_url,
+            'email_reply_url' => $message->email_reply_url,
+        ];
+        $this->pesanAdminNotes = (string) ($message->admin_notes ?? '');
+
+        $this->dispatch('openModal', id: 'modalDetailPesan');
+        $this->dispatch('reloadDT');
+    }
+
+    public function changePesanStatus(string $newStatus)
+    {
+        if (empty($this->pesanDetail['id'])) {
+            return;
+        }
+
+        $result = \App\Repositories\ContactMessageRepo::updateStatus((int) $this->pesanDetail['id'], $newStatus, $this->pesanAdminNotes);
+
+        if ($result['status']) {
+            $msg = $result['data'];
+            $this->pesanDetail['status'] = $msg->status;
+            $this->pesanDetail['admin_notes'] = $msg->admin_notes;
+
+            $this->dispatch(
+                'alert-show',
+                data: [
+                    'type' => 'success',
+                    'title' => 'Berhasil',
+                    'message' => $result['message'],
+                ],
+            );
+            $this->dispatch('reloadDT');
+        } else {
+            $this->dispatch(
+                'alert-show',
+                data: [
+                    'type' => 'danger',
+                    'title' => 'Gagal',
+                    'message' => $result['message'],
+                ],
+            );
+        }
     }
 };
 ?>
@@ -216,6 +309,47 @@ new class extends Component {
             padding: 0 !important;
             box-sizing: border-box !important;
         }
+
+        /* Detail Pesan Modal */
+        .pesan-modal-dialog {
+            max-width: 740px !important;
+            margin: 1.75rem auto !important;
+        }
+
+        .pesan-modal-content {
+            border: none !important;
+            border-radius: 20px !important;
+            overflow: hidden !important;
+            background-color: #ffffff !important;
+            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.12) !important;
+        }
+
+        .pesan-modal-header {
+            padding: 20px 36px !important;
+            background-color: #ffffff !important;
+            border-bottom: 1px solid #f1f5f9 !important;
+        }
+
+        .pesan-modal-body {
+            padding: 28px 36px !important;
+            box-sizing: border-box !important;
+        }
+
+        .pesan-modal-footer {
+            padding: 16px 36px !important;
+            background-color: #f8fafc !important;
+            border-top: 1px solid #f1f5f9 !important;
+        }
+
+        @media (max-width: 576px) {
+
+            .pesan-modal-header,
+            .pesan-modal-body,
+            .pesan-modal-footer {
+                padding-left: 20px !important;
+                padding-right: 20px !important;
+            }
+        }
     </style>
 
     {{-- Modal Delete / Universal Action --}}
@@ -250,14 +384,15 @@ new class extends Component {
 
                     {{-- Action Buttons (50/50 Balanced) --}}
                     <div class="simpel-modal-actions">
-                        <button type="button" class="btn {{ $data['btnCancelClass'] ?? 'simpel-modal-btn-cancel' }}" data-bs-dismiss="modal">
+                        <button type="button" class="btn {{ $data['btnCancelClass'] ?? 'simpel-modal-btn-cancel' }}"
+                            data-bs-dismiss="modal">
                             {{ $data['btnCancelText'] ?? 'Batal' }}
                         </button>
                         <button type="button" class="btn {{ $data['btnConfirmClass'] ?? 'simpel-modal-btn-confirm' }}"
                             @if (!empty($data['btnConfirmStyle'])) style="{{ $data['btnConfirmStyle'] }}" @endif
-                            data-bs-dismiss="modal"
-                            wire:click="process({{ $data['id'] ?? 0 }})">
-                            <i class="{{ $data['btnConfirmIcon'] ?? 'ri-delete-bin-line' }}"></i> {{ $data['btnConfirmText'] ?? 'Ya, Hapus' }}
+                            data-bs-dismiss="modal" wire:click="process">
+                            <i class="{{ $data['btnConfirmIcon'] ?? 'ri-delete-bin-line' }}"></i>
+                            {{ $data['btnConfirmText'] ?? 'Ya, Hapus' }}
                         </button>
                     </div>
                 </div>
@@ -368,6 +503,145 @@ new class extends Component {
                             </button>
                         </form>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Modal Detail Pesan Masuk --}}
+    <div wire:ignore.self class="modal fade" id="modalDetailPesan" tabindex="-1"
+        aria-labelledby="modalDetailPesanLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered pesan-modal-dialog">
+            <div class="modal-content pesan-modal-content">
+                <div class="modal-header pesan-modal-header d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center gap-2">
+                        <div
+                            class="w-36-px h-36-px rounded-circle bg-primary-subtle text-primary d-flex align-items-center justify-content-center fs-5 flex-shrink-0">
+                            <i class="ri-mail-open-line"></i>
+                        </div>
+                        <div>
+                            <h6 class="modal-title fw-bold text-dark mb-0 fs-6" id="modalDetailPesanLabel">Detail
+                                Pesan Masuk</h6>
+                            <small class="text-muted fs-8">Informasi pengirim dan tanggapan pesan</small>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body pesan-modal-body">
+                    @if ($pesanDetail)
+                        {{-- Sender Profile Info --}}
+                        <div
+                            class="d-flex align-items-center justify-content-between flex-wrap gap-3 pb-3 mb-4 border-bottom">
+                            <div class="d-flex align-items-center gap-3">
+                                <div
+                                    class="w-48-px h-48-px rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold fs-5 flex-shrink-0 shadow-sm">
+                                    {{ strtoupper(substr($pesanDetail['name'] ?? '', 0, 1)) }}
+                                </div>
+                                <div>
+                                    <h6 class="fw-bold text-dark mb-1 fs-6">{{ $pesanDetail['name'] ?? '-' }}</h6>
+                                    <div class="d-flex align-items-center gap-3 flex-wrap text-muted fs-7">
+                                        <span><i
+                                                class="ri-mail-line me-1 text-primary"></i>{{ $pesanDetail['email'] ?? '-' }}</span>
+                                        @if (!empty($pesanDetail['phone']))
+                                            <span><i
+                                                    class="ri-phone-line me-1 text-success"></i>{{ $pesanDetail['phone'] }}</span>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                @if (($pesanDetail['status'] ?? '') === 'unread')
+                                    <span
+                                        class="badge bg-danger-subtle text-danger border border-danger-subtle px-3 py-1_5 radius-8 fs-8 fw-semibold">
+                                        <i class="ri-mail-unread-line me-1"></i> Belum Dibaca
+                                    </span>
+                                @elseif (($pesanDetail['status'] ?? '') === 'read')
+                                    <span
+                                        class="badge bg-info-subtle text-info border border-info-subtle px-3 py-1_5 radius-8 fs-8 fw-semibold">
+                                        <i class="ri-mail-open-line me-1"></i> Telah Dibaca
+                                    </span>
+                                @else
+                                    <span
+                                        class="badge bg-success-subtle text-success border border-success-subtle px-3 py-1_5 radius-8 fs-8 fw-semibold">
+                                        <i class="ri-checkbox-circle-line me-1"></i> Sudah Dibalas
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+
+                        {{-- Subject & Time --}}
+                        <div class="mb-4">
+                            <span class="text-muted fs-8 text-uppercase fw-bold letter-spacing-1 d-block mb-1">Topik /
+                                Subjek:</span>
+                            <h5 class="fw-bold text-dark mb-1 fs-6">{{ $pesanDetail['subject'] ?? '-' }}</h5>
+                            <small class="text-muted fs-8">
+                                <i class="ri-time-line me-1"></i>Dikirim pada
+                                {{ $pesanDetail['formatted_date'] ?? '-' }}
+                            </small>
+                        </div>
+
+                        {{-- Message Content Box --}}
+                        <div class="p-3 bg-light rounded-3 border mb-4">
+                            <span class="text-muted fs-8 text-uppercase fw-bold letter-spacing-1 d-block mb-2">Isi
+                                Pesan:</span>
+                            <div class="text-dark fs-7 px-1" style="white-space: pre-wrap; line-height: 1.6;">
+                                {{ $pesanDetail['message'] ?? '-' }}</div>
+                        </div>
+
+                        {{-- Admin Notes / Catatan Tindak Lanjut --}}
+                        <div class="mb-4">
+                            <label for="adminNotesInput" class="form-label text-dark fw-bold fs-7 mb-1">Catatan Tindak
+                                Lanjut Administrator (Opsional):</label>
+                            <textarea id="adminNotesInput" wire:model="pesanAdminNotes" rows="3" class="form-control radius-8 fs-7 p-3"
+                                placeholder="Tuliskan catatan internal mengenai pesan ini (misal: telah dikonfirmasi ke bidang mutasi)..."></textarea>
+                        </div>
+
+                        {{-- Quick Reply Actions --}}
+                        <div class="p-3 rounded-3 border bg-white mb-2">
+                            <span class="text-muted fs-8 text-uppercase fw-bold letter-spacing-1 d-block mb-2">Respon
+                                Cepat Pengirim:</span>
+                            <div class="d-flex flex-wrap gap-2">
+                                @if (!empty($pesanDetail['whatsapp_reply_url']))
+                                    <a href="{{ $pesanDetail['whatsapp_reply_url'] }}" target="_blank"
+                                        class="btn btn-success btn-sm rounded-pill px-3 py-2 d-inline-flex align-items-center gap-1 shadow-sm">
+                                        <i class="ri-whatsapp-line fs-6"></i> Balas via WhatsApp
+                                    </a>
+                                @endif
+
+                                @if (!empty($pesanDetail['email_reply_url']))
+                                    <a href="{{ $pesanDetail['email_reply_url'] }}"
+                                        class="btn btn-outline-primary btn-sm rounded-pill px-3 py-2 d-inline-flex align-items-center gap-1">
+                                        <i class="ri-mail-send-line fs-6"></i> Balas via Email
+                                    </a>
+                                @endif
+
+                                @if (($pesanDetail['status'] ?? '') !== 'replied')
+                                    <button type="button"
+                                        class="btn btn-simple-gold btn-sm rounded-pill px-3 py-2 d-inline-flex align-items-center gap-1 shadow-sm"
+                                        wire:click="changePesanStatus('replied')">
+                                        <i class="ri-check-double-line"></i> Tandai Sudah Dibalas
+                                    </button>
+                                @else
+                                    <button type="button"
+                                        class="btn btn-outline-secondary btn-sm rounded-pill px-3 py-2 d-inline-flex align-items-center gap-1"
+                                        wire:click="changePesanStatus('read')">
+                                        <i class="ri-refresh-line"></i> Ubah ke Status Dibaca
+                                    </button>
+                                @endif
+                            </div>
+                        </div>
+                    @else
+                        <div class="text-center py-4">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Memuat...</span>
+                            </div>
+                        </div>
+                    @endif
+                </div>
+
+                <div class="modal-footer pesan-modal-footer d-flex justify-content-end">
+                    <button type="button" class="btn btn-danger px-4 py-2" data-bs-dismiss="modal">Tutup</button>
                 </div>
             </div>
         </div>

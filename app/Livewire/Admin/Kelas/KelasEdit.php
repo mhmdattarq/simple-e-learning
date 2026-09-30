@@ -6,7 +6,6 @@ use App\Models\Category;
 use App\Models\Course;
 use App\Repositories\KelasRepo;
 use Carbon\Carbon;
-use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 

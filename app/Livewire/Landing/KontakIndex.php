@@ -3,6 +3,9 @@
 namespace App\Livewire\Landing;
 
 use App\Models\AuditLog;
+use App\Models\ContactFaq;
+use App\Models\ContactMessage;
+use App\Models\ContactSetting;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
@@ -66,7 +69,17 @@ class KontakIndex extends Component
     {
         $this->validate();
 
-        // Optional audit log tracking for messages
+        // 1. Simpan pesan masuk ke database contact_messages
+        ContactMessage::create([
+            'name' => trim($this->name),
+            'email' => trim($this->email),
+            'phone' => trim($this->phone) ?: null,
+            'subject' => trim($this->subject),
+            'message' => trim($this->message),
+            'status' => 'unread',
+        ]);
+
+        // 2. Audit log tracking (jika login)
         if (Auth::check()) {
             AuditLog::log(
                 action: 'contact.message_sent',
@@ -89,6 +102,9 @@ class KontakIndex extends Component
 
     public function render(): View
     {
-        return view('mods.landing.kontak-index');
+        return view('mods.landing.kontak-index', [
+            'settings' => ContactSetting::getSettings(),
+            'faqs' => ContactFaq::active()->get(),
+        ]);
     }
 }

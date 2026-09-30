@@ -5,7 +5,6 @@ namespace App\Livewire\Admin\Kelas;
 use App\Models\Course;
 use App\Repositories\KelasRepo;
 use Livewire\Attributes\On;
-use Livewire\Attributes\Title;
 use Livewire\Component;
 
 class KelasData extends Component
@@ -22,7 +21,7 @@ class KelasData extends Component
             $this->dispatch('alert-show', data: [
                 'type' => 'warning',
                 'title' => 'Tidak Dapat Dihapus',
-                'message' => 'Kelas "' . $identity . '" sudah memiliki ' . $course->registrations_count . ' peserta terdaftar dan tidak dapat dihapus. Anda dapat mengarsipkan kelas ini.',
+                'message' => 'Kelas "'.$identity.'" sudah memiliki '.$course->registrations_count.' peserta terdaftar dan tidak dapat dihapus. Anda dapat mengarsipkan kelas ini.',
             ]);
 
             return;
