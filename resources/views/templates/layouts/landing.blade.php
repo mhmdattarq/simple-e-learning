@@ -62,6 +62,7 @@
     <link rel="stylesheet" href="{{ asset('landing/assets/css/responsive.css') }}" />
     <!-- Remix Icon from admin -->
     <link rel="stylesheet" href="{{ asset('admin/assets/css/remixicon.css') }}" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" />
 
     <!-- App Custom CSS & JS (Classic Asset) -->
     <link rel="stylesheet" href="{{ asset('css/app.css') }}?v={{ filemtime(public_path('css/app.css')) }}">
@@ -288,7 +289,7 @@
         <div class="mobile-nav__overlay mobile-nav__toggler"></div>
         <!-- /.mobile-nav__overlay -->
         <div class="mobile-nav__content">
-            <span class="mobile-nav__close mobile-nav__toggler"><i class="fa fa-times"></i></span>
+            <span class="mobile-nav__close mobile-nav__toggler"><i class="ri-close-line fs-3"></i></span>
 
             <div class="logo-box">
                 <a href="{{ route('landing') }}" class="brand text-decoration-none">
@@ -303,24 +304,59 @@
             <div class="mobile-nav__container"></div>
             <!-- /.mobile-nav__container -->
 
-            <ul class="mobile-nav__contact list-unstyled">
+            @guest
+                <div class="p-3 my-2 border-top border-white border-opacity-10">
+                    <a href="{{ route('login') }}" class="btn btn-simple-gold w-100 fw-bold py-2 mb-2 d-flex align-items-center justify-content-center gap-2">
+                        <i class="ri-login-box-line"></i> Masuk ke Akun
+                    </a>
+                    <a href="{{ route('register') }}" class="btn btn-outline-light w-100 fw-bold py-2 d-flex align-items-center justify-content-center gap-2">
+                        <i class="ri-user-add-line"></i> Daftar Akun Peserta
+                    </a>
+                </div>
+            @else
+                <div class="p-3 my-2 border-top border-white border-opacity-10">
+                    <div class="d-flex align-items-center gap-2 mb-3 bg-white bg-opacity-10 p-2 rounded-3">
+                        @if (auth()->user()?->avatar_url)
+                            <img src="{{ auth()->user()->avatar_url }}" alt="{{ auth()->user()->name }}" class="rounded-circle shadow-sm" style="width: 38px; height: 38px; object-fit: cover; border: 2px solid #f3bc42;">
+                        @else
+                            <div class="seal" style="width: 38px !important; height: 38px !important; font-size: 14px !important; border-radius: 8px !important;">
+                                {{ strtoupper(substr(auth()->user()->name, 0, 2)) }}
+                            </div>
+                        @endif
+                        <div class="overflow-hidden">
+                            <strong class="text-white text-truncate d-block" style="font-size: 13.5px;">{{ auth()->user()->name }}</strong>
+                            <small class="text-warning d-block" style="font-size: 11px;">{{ auth()->user()?->role?->label() ?? 'Peserta' }}</small>
+                        </div>
+                    </div>
+                    <div class="vstack gap-2">
+                        @if (auth()->user()->hasAdminAccess())
+                            <a href="{{ route('admin.dashboard') }}" class="btn btn-primary w-100 btn-sm text-start d-flex align-items-center gap-2 py-2">
+                                <i class="ri-dashboard-line"></i> Panel Manajemen
+                            </a>
+                        @endif
+                        <a href="{{ route('peserta.profil') }}" class="btn btn-outline-light w-100 btn-sm text-start d-flex align-items-center gap-2 py-2">
+                            <i class="ri-user-line"></i> Profil Saya
+                        </a>
+                        <form method="POST" action="{{ route('logout') }}" class="m-0">
+                            @csrf
+                            <button type="submit" class="btn btn-outline-danger w-100 btn-sm text-start d-flex align-items-center gap-2 py-2">
+                                <i class="ri-logout-box-r-line"></i> Keluar
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            @endguest
+
+            <ul class="mobile-nav__contact list-unstyled mt-3">
                 <li>
-                    <i class="fa fa-envelope"></i>
-                    <a href="mailto:needhelp@packageName__.com">needhelp@fistudy.com</a>
+                    <i class="ri-mail-line text-warning"></i>
+                    <a href="mailto:bkpsdm@acehtimurkab.go.id">bkpsdm@acehtimurkab.go.id</a>
                 </li>
                 <li>
-                    <i class="fas fa-phone"></i>
-                    <a href="tel:666-888-0000">666 888 0000</a>
+                    <i class="ri-map-pin-line text-warning"></i>
+                    <span class="text-white-50">Idi Rayeuk, Kab. Aceh Timur</span>
                 </li>
-            </ul><!-- /.mobile-nav__contact -->
-            <div class="mobile-nav__top">
-                <div class="mobile-nav__social">
-                    <a href="#" class="fab fa-twitter"></a>
-                    <a href="#" class="fab fa-facebook-square"></a>
-                    <a href="#" class="fab fa-pinterest-p"></a>
-                    <a href="#" class="fab fa-instagram"></a>
-                </div><!-- /.mobile-nav__social -->
-            </div><!-- /.mobile-nav__top -->
+            </ul>
 
 
 

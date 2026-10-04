@@ -16,6 +16,7 @@
 
     <!-- remix icon font css  -->
     <link rel="stylesheet" href="{{ asset('admin/assets/css/remixicon.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css">
     <!-- BootStrap css -->
     <link rel="stylesheet" href="{{ asset('admin/assets/css/lib/bootstrap.min.css') }}">
     <!-- Apex Chart css -->
@@ -50,6 +51,7 @@
 
     {{-- sidebar --}}
     <livewire:admin.sidebar wire:key="admin-sidebar-nav" />
+    <div class="sidebar-overlay sidebar-close-btn" aria-label="Tutup Menu"></div>
 
     <main class="dashboard-main">
         {{-- navbar / header --}}

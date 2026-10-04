@@ -85,14 +85,23 @@
             vertical-align: middle !important;
         }
 
-        .table-responsive {
-            min-height: 280px;
-            overflow: visible !important;
+        @media (min-width: 992px) {
+            .table-responsive {
+                min-height: 280px;
+                overflow: visible !important;
+            }
+
+            #tableKategori_wrapper .dataTables_scroll,
+            #tableKategori_wrapper .dataTables_scrollBody {
+                overflow: visible !important;
+            }
         }
 
-        #tableKategori_wrapper .dataTables_scroll,
-        #tableKategori_wrapper .dataTables_scrollBody {
-            overflow: visible !important;
+        @media (max-width: 991.98px) {
+            .table-responsive {
+                overflow-x: auto !important;
+                -webkit-overflow-scrolling: touch !important;
+            }
         }
 
         #tableKategori {

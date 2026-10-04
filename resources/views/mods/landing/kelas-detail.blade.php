@@ -112,8 +112,8 @@
             @endif
 
             <div class="row g-4">
-                {{-- Left Column: Detail, Syllabus, Requirements --}}
-                <div class="col-lg-8">
+                {{-- Left Column: Detail, Syllabus, Requirements (Order 2 on mobile, Order 1 on desktop) --}}
+                <div class="col-lg-8 order-2 order-lg-1">
                     {{-- About Course --}}
                     <div class="card border border-simpel rounded-4 bg-white shadow-xs p-4 mb-4">
                         <h4 class="fw-bold text-navy mb-3 d-flex align-items-center gap-2">
@@ -221,8 +221,8 @@
                     </div>
                 </div>
 
-                {{-- Right Column: Action Card (Sticky on Large Screens) --}}
-                <div class="col-lg-4">
+                {{-- Right Column: Action Card (Order 1 on mobile, Order 2 on desktop) --}}
+                <div class="col-lg-4 order-1 order-lg-2">
                     <div class="card border border-simpel rounded-4 bg-white shadow-sm overflow-hidden sticky-lg-top"
                         style="top: 105px; z-index: 15;">
                         {{-- Thumbnail Preview --}}

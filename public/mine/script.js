@@ -134,6 +134,12 @@ document.addEventListener("livewire:navigated", () => {
             .css("overflow", "")
             .css("padding-right", "");
 
+        // Tutup sidebar dan mobile drawer yang mungkin aktif
+        $(".sidebar").removeClass("sidebar-open");
+        $("body").removeClass("overlay-active");
+        $(".mobile-nav__wrapper").removeClass("expanded");
+        $("body").removeClass("locked");
+
         // Tutup dropdown yang mungkin tertinggal dari halaman sebelumnya
         $(".dropdown-menu.show").removeClass("show");
         $('[data-bs-toggle="dropdown"].show')
@@ -155,6 +161,15 @@ document.addEventListener("livewire:navigated", () => {
     }
 });
 
+// Sinkronisasi mobile nav saat halaman pertama kali dimuat
+document.addEventListener("DOMContentLoaded", () => {
+    const mainMenuList = document.querySelector(".main-header .main-menu__list");
+    const mobileContainer = document.querySelector(".mobile-nav__container");
+    if (mainMenuList && mobileContainer && !mobileContainer.innerHTML.trim()) {
+        mobileContainer.innerHTML = mainMenuList.outerHTML;
+    }
+});
+
 // 6. Bridge Event jQuery ke Livewire / Native DOM (misal niceSelect)
 if (typeof $ !== "undefined") {
     $(document).on("change", "select", function (e) {
@@ -169,6 +184,26 @@ if (typeof $ !== "undefined") {
         e.preventDefault();
         $(".mobile-nav__wrapper").toggleClass("expanded");
         $("body").toggleClass("locked");
+    });
+
+    // Auto-tutup drawer navigasi saat tautan di dalamnya diklik
+    $(document).on("click", ".mobile-nav__container a, .mobile-nav__content a:not(.mobile-nav__toggler)", function () {
+        $(".mobile-nav__wrapper").removeClass("expanded");
+        $("body").removeClass("locked");
+    });
+
+    // Auto-tutup sidebar admin saat menu diklik di perangkat mobile (< 1200px)
+    $(document).on("click", ".sidebar-menu a", function () {
+        if (window.innerWidth < 1200) {
+            $(".sidebar").removeClass("sidebar-open");
+            $("body").removeClass("overlay-active");
+        }
+    });
+
+    // Tutup sidebar saat klik backdrop overlay di admin
+    $(document).on("click", ".sidebar-overlay", function () {
+        $(".sidebar").removeClass("sidebar-open");
+        $("body").removeClass("overlay-active");
     });
 
     // Delegasi klik bootstrap dropdown fallback jika listener native terlepas

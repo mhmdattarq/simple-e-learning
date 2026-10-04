@@ -12,7 +12,10 @@
   font-family: "remixicon";
   src: url("../fonts/remixicon.woff2?t=1708865856766") format("woff2"),
        url("../fonts/remixicon.woff?t=1708865856766") format("woff"),
-       url('../fonts/remixicon.ttf?t=1708865856766') format('truetype');
+       url('../fonts/remixicon.ttf?t=1708865856766') format('truetype'),
+       url("https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.woff2") format("woff2"),
+       url("https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.woff") format("woff"),
+       url("https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.ttf") format("truetype");
   font-display: swap;
 }
 

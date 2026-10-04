@@ -48,11 +48,11 @@ class AppServiceProvider extends ServiceProvider
     {
         Gate::policy(CourseUser::class, RegistrationPolicy::class);
 
-        // 1. Rate limiter untuk percobaan Login (5 per menit per IP + email/identitas)
+        // 1. Rate limiter untuk percobaan Login (60 per menit per IP untuk page access)
         RateLimiter::for('login', function (Request $request) {
             $identifier = (string) ($request->input('identifier') ?: $request->input('email', ''));
 
-            return Limit::perMinute(5)->by($request->ip().'|'.strtolower($identifier));
+            return Limit::perMinute(60)->by($request->ip().'|'.strtolower($identifier));
         });
 
         // 2. Rate limiter untuk Presensi QR / token attendance (15 per menit per user/IP)

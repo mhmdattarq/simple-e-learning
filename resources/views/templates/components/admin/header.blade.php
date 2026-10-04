@@ -172,7 +172,14 @@ new class extends Component {
     <div class="navbar-header">
         <div class="row align-items-center justify-content-between">
             <div class="col-auto">
-                <div class="d-flex flex-wrap align-items-center gap-3">
+                <div class="d-flex align-items-center gap-2 gap-sm-3">
+                    <button type="button" class="sidebar-mobile-toggle border-0 bg-transparent p-0 d-inline-flex align-items-center justify-content-center text-dark fs-4" aria-label="Buka Menu Navigasi" style="width: 36px; height: 36px; cursor: pointer;">
+                        <i class="ri-menu-2-line"></i>
+                    </button>
+                    <div class="d-flex d-lg-none align-items-center gap-2">
+                        <img src="{{ asset('mine/logo_aceh_timur.webp') }}" alt="Logo" style="width: 28px; height: 28px; object-fit: contain;">
+                        <span class="fw-bold text-dark fs-7">SIMPEL</span>
+                    </div>
                     <div class="d-none d-md-flex align-items-center gap-2">
                         <span class="text-simple-gold medium d-none d-lg-inline">Sistem Informasi Manajemen
                             Pembelajaran</span>

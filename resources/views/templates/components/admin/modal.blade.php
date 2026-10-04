@@ -342,6 +342,14 @@ new class extends Component {
         }
 
         @media (max-width: 576px) {
+            .simpel-modal-dialog {
+                width: calc(100% - 24px) !important;
+                margin: 1rem auto !important;
+            }
+
+            .simpel-modal-body {
+                padding: 24px 16px !important;
+            }
 
             .pesan-modal-header,
             .pesan-modal-body,

@@ -34,7 +34,7 @@
 
             <div class="row g-4">
                 {{-- Sidebar: Daftar Sesi & Materi --}}
-                <div class="col-lg-4 col-12">
+                <div class="col-lg-4 col-12 order-2 order-lg-1">
                     <div class="card border-0 shadow-sm radius-16 bg-white overflow-hidden mb-4 sticky-top"
                         style="top: 20px; z-index: 10;">
                         <div
@@ -204,7 +204,7 @@
                 </div>
 
                 {{-- Main Column: Pembaca Materi / Lesson Player --}}
-                <div class="col-lg-8 col-12">
+                <div class="col-lg-8 col-12 order-1 order-lg-2">
                     @if ($currentLesson)
                         @php
                             $isCompleted = in_array($currentLesson->id, $completedLessonIds);
