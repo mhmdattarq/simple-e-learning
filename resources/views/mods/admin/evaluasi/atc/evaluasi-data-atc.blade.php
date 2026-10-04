@@ -199,19 +199,33 @@
             opacity: 0.4 !important;
         }
 
-        .table-responsive {
-            min-height: 320px;
-            overflow: visible !important;
+        @media (min-width: 992px) {
+            .table-responsive {
+                min-height: 320px;
+                overflow: visible !important;
+            }
+
+            #tableEvaluasi_wrapper .dataTables_scroll,
+            #tableEvaluasi_wrapper .dataTables_scrollBody {
+                overflow: visible !important;
+            }
+
+            #tableEvaluasi {
+                width: 100% !important;
+                table-layout: fixed !important;
+            }
         }
 
-        #tableEvaluasi_wrapper .dataTables_scroll,
-        #tableEvaluasi_wrapper .dataTables_scrollBody {
-            overflow: visible !important;
-        }
+        @media (max-width: 991.98px) {
+            .table-responsive {
+                overflow-x: auto !important;
+                -webkit-overflow-scrolling: touch !important;
+            }
 
-        #tableEvaluasi {
-            width: 100% !important;
-            table-layout: fixed !important;
+            #tableEvaluasi {
+                width: 100% !important;
+                min-width: 650px;
+            }
         }
 
         #tableEvaluasi .btn-evaluasi-action {

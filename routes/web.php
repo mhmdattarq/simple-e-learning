@@ -64,7 +64,7 @@ Route::get('/favicon.ico', fn () => response()->file(public_path('favicon.ico'))
 
 // 2. Authentication (Guest)
 Route::middleware('guest')->group(function () {
-    Route::livewire('/login', Login::class)->middleware('throttle:login')->name('login');
+    Route::livewire('/login', Login::class)->name('login');
     Route::livewire('/register', Register::class)->middleware('throttle:register')->name('register');
     Route::livewire('/forgot-password', ForgotPassword::class)->middleware('throttle:forgot-password')->name('password.request');
     Route::livewire('/reset-password/{token}', ResetPassword::class)->name('password.reset');

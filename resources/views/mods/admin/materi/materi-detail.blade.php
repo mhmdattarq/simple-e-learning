@@ -63,7 +63,8 @@
             .ql-editor-preview iframe.ql-video {
                 width: 100%;
                 max-width: 720px;
-                height: 380px;
+                aspect-ratio: 16 / 9;
+                height: auto;
                 border-radius: 8px;
                 display: block;
                 margin: 16px auto;

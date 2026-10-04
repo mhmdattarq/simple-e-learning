@@ -209,14 +209,23 @@
             opacity: 0.4 !important;
         }
 
-        .table-responsive {
-            min-height: 320px;
-            overflow: visible !important;
+        @media (min-width: 992px) {
+            .table-responsive {
+                min-height: 320px;
+                overflow: visible !important;
+            }
+
+            #tableKelas_wrapper .dataTables_scroll,
+            #tableKelas_wrapper .dataTables_scrollBody {
+                overflow: visible !important;
+            }
         }
 
-        #tableKelas_wrapper .dataTables_scroll,
-        #tableKelas_wrapper .dataTables_scrollBody {
-            overflow: visible !important;
+        @media (max-width: 991.98px) {
+            .table-responsive {
+                overflow-x: auto !important;
+                -webkit-overflow-scrolling: touch !important;
+            }
         }
 
         #tableKelas {

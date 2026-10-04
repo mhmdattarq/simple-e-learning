@@ -15,6 +15,7 @@
     <!-- CSS Dependencies -->
     <link rel="stylesheet" href="{{ asset('landing/assets/css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ asset('admin/assets/css/remixicon.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css">
 
     <style>
         :root {

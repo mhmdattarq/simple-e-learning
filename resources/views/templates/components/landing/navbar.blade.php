@@ -132,8 +132,15 @@ new class extends Component {
                             </div>
 
                         </div>
-                        <div class="main-menu__main-menu-box">
-                            <a href="#" class="mobile-nav__toggler"><i class="fa fa-bars"></i></a>
+                        <div class="main-menu__main-menu-box d-flex align-items-center">
+                            @guest
+                                <a href="{{ route('login') }}" class="btn btn-sm btn-simple-gold d-inline-flex d-xl-none align-items-center py-1 px-3 me-2 fw-bold text-decoration-none" style="font-size: 12.5px; border-radius: 8px;">
+                                    Masuk
+                                </a>
+                            @endguest
+                            <a href="#" class="mobile-nav__toggler d-flex align-items-center justify-content-center p-2 text-dark text-decoration-none" aria-label="Buka Menu Navigasi" style="font-size: 24px; cursor: pointer;">
+                                <i class="ri-menu-line"></i>
+                            </a>
                             <ul class="main-menu__list">
                                 <li class="{{ $activeMenu === 'beranda' ? 'current' : '' }}">
                                     <a href="{{ route('landing') }}">Beranda</a>

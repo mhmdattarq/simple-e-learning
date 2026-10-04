@@ -21,7 +21,7 @@
 
             {{-- Filter Pills Jenis Kelas --}}
             <div class="col-lg-6 text-lg-end">
-                <div class="d-inline-flex flex-wrap gap-1 p-1 bg-white border border-simpel rounded-pill shadow-xs">
+                <div class="d-inline-flex flex-wrap gap-1 p-1 bg-white border border-simpel rounded-pill shadow-xs simpel-filter-pills">
                     <button type="button"
                         class="btn btn-sm rounded-pill px-3 fw-medium {{ ($selectedType ?? 'all') === 'all' ? 'bg-navy text-white fw-bold' : 'text-secondary hover-navy' }}"
                         wire:click="filterType('all')">
