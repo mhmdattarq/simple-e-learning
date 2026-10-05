@@ -58,8 +58,8 @@
     <link rel="stylesheet" href="{{ asset('landing/assets/css/module-css/contact.css') }}" />
 
     <!-- template styles -->
-    <link rel="stylesheet" href="{{ asset('landing/assets/css/style.css') }}" />
-    <link rel="stylesheet" href="{{ asset('landing/assets/css/responsive.css') }}" />
+    <link rel="stylesheet" href="{{ asset('landing/assets/css/style.css') }}?v={{ filemtime(public_path('landing/assets/css/style.css')) }}" />
+    <link rel="stylesheet" href="{{ asset('landing/assets/css/responsive.css') }}?v={{ filemtime(public_path('landing/assets/css/responsive.css')) }}" />
     <!-- Remix Icon from admin -->
     <link rel="stylesheet" href="{{ asset('admin/assets/css/remixicon.css') }}" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" />
@@ -72,6 +72,9 @@
             if (e) {
                 e.preventDefault();
                 e.stopPropagation();
+                if (typeof e.stopImmediatePropagation === 'function') {
+                    e.stopImmediatePropagation();
+                }
             }
             var w = document.querySelector('.mobile-nav__wrapper');
             if (w) {
@@ -83,6 +86,9 @@
             if (e) {
                 e.preventDefault();
                 e.stopPropagation();
+                if (typeof e.stopImmediatePropagation === 'function') {
+                    e.stopImmediatePropagation();
+                }
             }
             var w = document.querySelector('.mobile-nav__wrapper');
             if (w) {
@@ -323,10 +329,10 @@
 
 
     <div class="mobile-nav__wrapper">
-        <div class="mobile-nav__overlay mobile-nav__toggler" onclick="closeMobileDrawer(event)"></div>
+        <div class="mobile-nav__overlay" onclick="closeMobileDrawer(event)"></div>
         <!-- /.mobile-nav__overlay -->
         <div class="mobile-nav__content">
-            <span class="mobile-nav__close mobile-nav__toggler" onclick="closeMobileDrawer(event)"><i class="ri-close-line fs-3"></i></span>
+            <span class="mobile-nav__close" onclick="closeMobileDrawer(event)"><i class="ri-close-line fs-3"></i></span>
 
             <div class="logo-box">
                 <a href="{{ route('landing') }}" class="brand text-decoration-none">
@@ -449,7 +455,7 @@
     <script data-navigate-once src="{{ asset('landing/assets/js/gsap/SplitText.js') }}"></script>
 
     <!-- template js -->
-    <script data-navigate-once src="{{ asset('landing/assets/js/script.js') }}"></script>
+    <script data-navigate-once src="{{ asset('landing/assets/js/script.js') }}?v={{ filemtime(public_path('landing/assets/js/script.js')) }}"></script>
     <script data-navigate-once src="{{ asset('mine/script.js') }}?v={{ filemtime(public_path('mine/script.js')) }}"></script>
     @stack('js')
     @stack('scripts')

@@ -191,6 +191,22 @@ if (typeof $ !== "undefined") {
     $(document).ready(syncMobileNavMenu);
     document.addEventListener("livewire:navigated", syncMobileNavMenu);
 
+    // Handler tombol hamburger mobile drawer (mencegah duplikasi event & konflik listener)
+    $(document).off("click", ".mobile-nav__toggler").on("click", ".mobile-nav__toggler", function (e) {
+        if (e) {
+            e.preventDefault();
+            if (typeof e.stopImmediatePropagation === "function") {
+                e.stopImmediatePropagation();
+            }
+        }
+        if (typeof window.toggleMobileDrawer === "function") {
+            window.toggleMobileDrawer(e);
+        } else {
+            $(".mobile-nav__wrapper").toggleClass("expanded");
+            $("body").toggleClass("locked");
+        }
+    });
+
     // Auto-tutup drawer navigasi saat tautan di dalamnya diklik
     $(document).on("click", ".mobile-nav__container a, .mobile-nav__content a:not(.mobile-nav__toggler)", function () {
         if (typeof window.closeMobileDrawer === "function") {
