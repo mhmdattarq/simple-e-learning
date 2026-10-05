@@ -19,18 +19,23 @@
 
                 {{-- Subtitle --}}
                 <p class="text-white-80 fs-6 mb-4 pe-lg-4 lh-base">
-                    Platform pembelajaran digital terintegrasi <strong>SIMPEL E-Learning</strong> BKPSDM Kabupaten Aceh Timur.
-                    Tingkatkan keahlian melalui <strong>Kelas Batch</strong> berjadwal, <strong>Kelas Permanen</strong> mandiri,
-                    serta <strong>Kelas Berbayar</strong> intensif dengan kurikulum terstruktur dan evaluasi kompetensi terarah.
+                    Platform pembelajaran digital terintegrasi <strong>SIMPEL E-Learning</strong> BKPSDM Kabupaten Aceh
+                    Timur.
+                    Tingkatkan keahlian melalui <strong>Kelas Batch</strong> berjadwal, <strong>Kelas Permanen</strong>
+                    mandiri,
+                    serta <strong>Kelas Berbayar</strong> intensif dengan kurikulum terstruktur dan evaluasi kompetensi
+                    terarah.
                 </p>
 
                 {{-- Action CTA Buttons using SIMPEL Button System --}}
                 <div class="d-flex flex-wrap align-items-center gap-3 mb-4">
-                    <a href="#katalog-kelas" class="btn-simpel-cta-gold fs-6" style="padding: 13px 26px; border-radius: 12px;">
+                    <a href="#katalog-kelas" class="btn-simpel-cta-gold fs-6"
+                        style="padding: 13px 26px; border-radius: 12px;">
                         <span>Jelajahi Kelas</span>
                         <i class="ri-arrow-right-line"></i>
                     </a>
-                    <a href="#jenis-kelas" class="btn-simpel-outline-light fs-6" style="padding: 13px 24px; border-radius: 12px;">
+                    <a href="#jenis-kelas" class="btn-simpel-outline-light fs-6"
+                        style="padding: 13px 24px; border-radius: 12px;">
                         <i class="ri-layout-grid-line fs-5"></i>
                         <span>Daftar Jenis Kelas</span>
                     </a>
@@ -39,7 +44,8 @@
                 {{-- Key Metric Indicators --}}
                 <div class="row g-3 pt-3 border-top border-white-10 text-white">
                     <div class="col-4">
-                        <h4 class="mb-0 fw-extrabold text-gold">{{ $totalPublishedCourses > 0 ? $totalPublishedCourses.'+' : '—' }}</h4>
+                        <h4 class="mb-0 fw-extrabold text-gold">
+                            {{ $totalPublishedCourses > 0 ? $totalPublishedCourses . '+' : '—' }}</h4>
                         <small class="text-white-70 fs-8">Katalog Kelas Terbuka</small>
                     </div>
                     <div class="col-4 border-start border-white-15 ps-3">
@@ -67,11 +73,14 @@
                             <div class="flex-grow-1">
                                 <div class="d-flex align-items-center justify-content-between mb-1">
                                     <span class="badge bg-gold text-navy fw-bold fs-8">Kelas Batch</span>
-                                    <small class="text-white-60 fs-8"><i class="ri-time-line me-1"></i>Pelatihan Berjadwal</small>
+                                    <small class="text-white-60 fs-8"><i class="ri-time-line me-1"></i>Pelatihan
+                                        Berjadwal</small>
                                 </div>
+
                                 <h6 class="fw-bold text-white mb-1">Pelatihan Terjadwal &amp; Kuota Terarah</h6>
                                 <p class="text-white-70 fs-8 mb-2 lh-sm">
-                                    Program pelatihan berkala dengan periode pendaftaran, kuota peserta terarah, serta evaluasi komprehensif.
+                                    Program pelatihan berkala dengan periode pendaftaran, kuota peserta terarah, serta
+                                    evaluasi komprehensif.
                                 </p>
                                 <a href="{{ route('landing.kelas.batch') }}"
                                     class="text-gold text-decoration-none fs-8 fw-semibold d-inline-flex align-items-center gap-1 hover-gold">
@@ -92,12 +101,15 @@
                             </div>
                             <div class="flex-grow-1">
                                 <div class="d-flex align-items-center justify-content-between mb-1">
-                                    <span class="badge bg-white-15 text-white fw-medium fs-8">Permanen &amp; Berbayar</span>
-                                    <small class="text-white-60 fs-8"><i class="ri-flashlight-line me-1"></i>Akses Fleksibel</small>
+                                    <span class="badge bg-white-15 text-white fw-medium fs-8">Permanen &amp;
+                                        Berbayar</span>
+                                    <small class="text-white-60 fs-8"><i class="ri-flashlight-line me-1"></i>Akses
+                                        Fleksibel</small>
                                 </div>
                                 <h6 class="fw-bold text-white mb-1">Belajar Mandiri &amp; Program Intensif</h6>
                                 <p class="text-white-70 fs-8 mb-2 lh-sm">
-                                    Akses materi pembelajaran mandiri kapan saja atau ikuti kelas berbayar untuk pendalaman materi spesialisasi.
+                                    Akses materi pembelajaran mandiri kapan saja atau ikuti kelas berbayar untuk
+                                    pendalaman materi spesialisasi.
                                 </p>
                                 <a href="{{ route('landing.kelas.permanen') }}"
                                     class="text-gold text-decoration-none fs-8 fw-semibold d-inline-flex align-items-center gap-1 hover-gold">
