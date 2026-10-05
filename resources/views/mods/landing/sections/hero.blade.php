@@ -63,7 +63,7 @@
             <div class="col-lg-5 wow fadeInRight" data-wow-delay="200ms">
                 <div class="d-flex flex-column gap-3">
                     {{-- Highlight Card 1: Kelas Batch --}}
-                    <div class="card border border-white-15 rounded-4 p-3_5 text-white shadow-lg transition-all simpel-hero-card"
+                    <div class="card border border-white-15 rounded-4 p-3 p-lg-4 text-white shadow-lg transition-all simpel-hero-card"
                         style="background: rgba(7, 26, 51, 0.75); backdrop-filter: blur(12px);">
                         <div class="d-flex align-items-start gap-3">
                             <div class="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0 simpel-hero-card-icon"
@@ -71,9 +71,9 @@
                                 <i class="ri-calendar-event-line text-gold fs-3"></i>
                             </div>
                             <div class="flex-grow-1 min-w-0">
-                                <div class="d-flex align-items-center justify-content-between flex-wrap gap-1 mb-1">
+                                <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-1 pe-2 pe-lg-3">
                                     <span class="badge bg-gold text-navy fw-bold fs-8">Kelas Batch</span>
-                                    <small class="text-white-60 fs-8"><i class="ri-time-line me-1"></i>Pelatihan
+                                    <small class="text-white-60 fs-8 pe-1 simpel-hero-card-meta"><i class="ri-time-line me-1"></i>Pelatihan
                                         Berjadwal</small>
                                 </div>
 
@@ -92,7 +92,7 @@
                     </div>
 
                     {{-- Highlight Card 2: Kelas Permanen & Berbayar --}}
-                    <div class="card border border-white-15 rounded-4 p-3_5 text-white shadow-lg transition-all simpel-hero-card"
+                    <div class="card border border-white-15 rounded-4 p-3 p-lg-4 text-white shadow-lg transition-all simpel-hero-card"
                         style="background: rgba(12, 49, 88, 0.75); backdrop-filter: blur(12px);">
                         <div class="d-flex align-items-start gap-3">
                             <div class="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0 simpel-hero-card-icon"
@@ -100,10 +100,10 @@
                                 <i class="ri-play-circle-line text-gold fs-3"></i>
                             </div>
                             <div class="flex-grow-1 min-w-0">
-                                <div class="d-flex align-items-center justify-content-between flex-wrap gap-1 mb-1">
+                                <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-1 pe-2 pe-lg-3">
                                     <span class="badge bg-white-15 text-white fw-medium fs-8">Permanen &amp;
                                         Berbayar</span>
-                                    <small class="text-white-60 fs-8"><i class="ri-flashlight-line me-1"></i>Akses
+                                    <small class="text-white-60 fs-8 pe-1 simpel-hero-card-meta"><i class="ri-flashlight-line me-1"></i>Akses
                                         Fleksibel</small>
                                 </div>
                                 <h6 class="fw-bold text-white mb-1">Belajar Mandiri &amp; Program Intensif</h6>

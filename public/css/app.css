@@ -1395,6 +1395,17 @@ select::placeholder,
     -webkit-text-fill-color: transparent;
 }
 
+/* Hero Feature Cards Base (Desktop & Tablet) */
+.simpel-hero-card {
+    padding: 22px 24px !important;
+}
+
+.simpel-hero-card-meta {
+    padding-right: 8px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+}
+
 .simpel-dot-pulse {
     display: inline-block;
     width: 8px;
