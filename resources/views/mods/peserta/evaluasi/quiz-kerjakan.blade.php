@@ -152,7 +152,7 @@
 
         {{-- STATE 1: TERKUNCI (LOCKED PREREQUISITE) --}}
         @if ($quizState === 'locked')
-            <div class="card border-0 shadow-sm radius-16 bg-white overflow-hidden text-center p-4 p-md-5 my-4">
+            <div class="card border-0 shadow-sm radius-16 bg-white overflow-hidden text-center p-3 p-sm-4 p-md-5 my-4">
                 <div class="mb-3">
                     <div class="d-inline-flex align-items-center justify-content-center bg-danger-subtle text-danger rounded-circle"
                         style="width: 72px; height: 72px;">
@@ -175,7 +175,7 @@
         @elseif ($quizState === 'intro')
             <div class="card border-0 shadow-sm radius-16 bg-white overflow-hidden my-4">
                 {{-- Card Header --}}
-                <div class="p-4 p-md-5 border-bottom bg-white">
+                <div class="p-3 p-sm-4 p-md-5 border-bottom bg-white">
                     <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-2">
                         <span
                             class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-1 fs-8 rounded-pill">
@@ -199,12 +199,12 @@
                 </div>
 
                 {{-- Card Body --}}
-                <div class="card-body p-4 p-md-5">
+                <div class="card-body p-3 p-sm-4 p-md-5">
                     {{-- 4 Parameter Metrik Kuis --}}
-                    <div class="row g-3 mb-4">
+                    <div class="row g-2 g-sm-3 mb-4">
                         <div class="col-sm-3 col-6">
                             <div
-                                class="p-3 bg-light rounded-3 text-center border h-100 d-flex flex-column justify-content-center">
+                                class="p-2 p-sm-3 bg-light rounded-3 text-center border h-100 d-flex flex-column justify-content-center">
                                 <span
                                     class="text-muted text-xxs text-uppercase fw-semibold d-flex align-items-center justify-content-center mb-1"
                                     style="min-height: 28px;">Jumlah Soal</span>
@@ -213,7 +213,7 @@
                         </div>
                         <div class="col-sm-3 col-6">
                             <div
-                                class="p-3 bg-light rounded-3 text-center border h-100 d-flex flex-column justify-content-center">
+                                class="p-2 p-sm-3 bg-light rounded-3 text-center border h-100 d-flex flex-column justify-content-center">
                                 <span
                                     class="text-muted text-xxs text-uppercase fw-semibold d-flex align-items-center justify-content-center mb-1"
                                     style="min-height: 28px;">Total Skor</span>
@@ -222,7 +222,7 @@
                         </div>
                         <div class="col-sm-3 col-6">
                             <div
-                                class="p-3 bg-light rounded-3 text-center border h-100 d-flex flex-column justify-content-center">
+                                class="p-2 p-sm-3 bg-light rounded-3 text-center border h-100 d-flex flex-column justify-content-center">
                                 <span
                                     class="text-muted text-xxs text-uppercase fw-semibold d-flex align-items-center justify-content-center mb-1"
                                     style="min-height: 28px;">Batas Kelulusan (KKM)</span>
@@ -231,7 +231,7 @@
                         </div>
                         <div class="col-sm-3 col-6">
                             <div
-                                class="p-3 bg-light rounded-3 text-center border h-100 d-flex flex-column justify-content-center">
+                                class="p-2 p-sm-3 bg-light rounded-3 text-center border h-100 d-flex flex-column justify-content-center">
                                 <span
                                     class="text-muted text-xxs text-uppercase fw-semibold d-flex align-items-center justify-content-center mb-1"
                                     style="min-height: 28px;">Durasi Waktu</span>
@@ -265,13 +265,13 @@
                     </div>
 
                     {{-- Tombol Aksi Mulai --}}
-                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+                    <div class="d-flex flex-column-reverse flex-sm-row align-items-stretch align-items-sm-center justify-content-between gap-3">
                         <a href="{{ route('peserta.materi', $quiz->course ?? $quiz->course_id) }}"
-                            class="btn btn-outline-danger px-4 py-2 radius-8">
+                            class="btn btn-outline-danger px-4 py-2_5 radius-8 text-center">
                             <i class="ri-arrow-left-line me-1"></i> Batal / Kembali ke Materi
                         </a>
                         <button type="button"
-                            class="btn btn-simple-gold px-4 py-2 radius-8 fw-bold d-flex align-items-center gap-2 shadow-sm"
+                            class="btn btn-simple-gold px-4 py-2_5 radius-8 fw-bold d-flex align-items-center justify-content-center gap-2 shadow-sm"
                             wire:click="startQuiz">
                             <span>Mulai Kerjakan Evaluasi</span>
                             <i class="ri-arrow-right-line fs-5"></i>
@@ -410,7 +410,7 @@
 
                 {{-- Header Quiz Player --}}
                 <div
-                    class="px-4 px-md-5 py-3 py-md-4 border-bottom bg-white d-flex align-items-center justify-content-between flex-wrap gap-3">
+                    class="px-3 px-sm-4 px-md-5 py-3 py-md-4 border-bottom bg-white d-flex align-items-center justify-content-between flex-wrap gap-2">
                     <div class="d-flex align-items-center gap-2">
                         <span class="badge bg-navy text-white px-3 py-2 radius-8 fs-8 fw-bold">
                             Soal {{ $currentQuestionIndex + 1 }} dari {{ $this->questionsCount }}
@@ -434,7 +434,7 @@
                 </div>
 
                 {{-- Body Quiz Player: Soal & Opsi Jawaban --}}
-                <div class="card-body p-4 p-md-5">
+                <div class="card-body p-3 p-sm-4 p-md-5">
                     <div class="row g-4">
                         {{-- Kolom Kiri: Pertanyaan & Pilihan Jawaban --}}
                         <div class="col-lg-8 col-12">
@@ -481,28 +481,28 @@
 
                             {{-- Tombol Navigasi Soal Bawah --}}
                             <div
-                                class="d-flex align-items-center justify-content-between pt-3 border-top flex-wrap gap-2">
-                                <button type="button" class="btn btn-outline-danger px-3 py-2 radius-8 fs-8"
+                                class="d-flex align-items-center justify-content-between pt-3 border-top gap-2">
+                                <button type="button" class="btn btn-outline-danger px-3 py-2 radius-8 fs-8 flex-fill flex-sm-grow-0"
                                     wire:click="prevQuestion" {{ $currentQuestionIndex === 0 ? 'disabled' : '' }}>
-                                    <i class="ri-arrow-left-line me-1"></i> Soal Sebelumnya
+                                    <i class="ri-arrow-left-line me-1"></i> <span class="d-none d-sm-inline">Soal </span>Sebelumnya
                                 </button>
 
-                                <div class="d-flex align-items-center gap-2">
+                                <div class="d-flex align-items-center gap-2 flex-fill flex-sm-grow-0 justify-content-end">
                                     @if ($currentQuestionIndex < $this->questionsCount - 1)
-                                        <button type="button" class="btn btn-simple-gold px-4 py-2 radius-8 fs-8"
+                                        <button type="button" class="btn btn-simple-gold px-3 px-sm-4 py-2 radius-8 fs-8 w-100 w-sm-auto text-center"
                                             wire:click="nextQuestion">
-                                            <span>Soal Selanjutnya</span> <i class="ri-arrow-right-line ms-1"></i>
+                                            <span><span class="d-none d-sm-inline">Soal </span>Selanjutnya</span> <i class="ri-arrow-right-line ms-1"></i>
                                         </button>
                                     @else
                                         <button type="button"
-                                            class="btn btn-success px-4 py-2 radius-8 fs-8 fw-bold d-inline-flex align-items-center gap-1"
+                                            class="btn btn-success px-3 px-sm-4 py-2 radius-8 fs-8 fw-bold d-inline-flex align-items-center justify-content-center gap-1 w-100 w-sm-auto"
                                             wire:click="promptSubmit" wire:loading.attr="disabled">
                                             <span wire:loading.remove wire:target="promptSubmit">
                                                 <i class="ri-checkbox-circle-line me-1"></i> Selesaikan Evaluasi
                                             </span>
                                             <span wire:loading wire:target="promptSubmit">
                                                 <span class="spinner-border spinner-border-sm me-1" role="status"
-                                                    aria-hidden="true"></span> Membuka Konfirmasi...
+                                                    aria-hidden="true"></span> Membuka...
                                             </span>
                                         </button>
                                     @endif
@@ -564,7 +564,7 @@
             <div class="card border-0 shadow-sm radius-16 bg-white overflow-hidden text-center my-4">
                 {{-- Banner Status Kelulusan --}}
                 <div
-                    class="p-4 p-md-5 {{ $savedAttempt->is_passed ? 'bg-success-subtle text-success' : 'bg-warning-subtle text-warning' }} border-bottom">
+                    class="p-3 p-sm-4 p-md-5 {{ $savedAttempt->is_passed ? 'bg-success-subtle text-success' : 'bg-warning-subtle text-warning' }} border-bottom">
                     <div class="mb-3">
                         <div class="d-inline-flex align-items-center justify-content-center rounded-circle {{ $savedAttempt->is_passed ? 'bg-success text-white' : 'bg-warning text-white' }}"
                             style="width: 80px; height: 80px;">
@@ -591,7 +591,7 @@
                 </div>
 
                 {{-- Rincian Nilai Skor --}}
-                <div class="card-body p-4 p-md-5">
+                <div class="card-body p-3 p-sm-4 p-md-5">
                     <div class="row g-3 justify-content-center mb-4">
                         <div class="col-sm-4 col-12">
                             <div
@@ -641,14 +641,14 @@
                     </div>
 
                     {{-- Tombol Aksi Lanjut --}}
-                    <div class="d-flex align-items-center justify-content-center gap-2 flex-wrap">
+                    <div class="d-flex flex-column flex-sm-row align-items-stretch align-items-sm-center justify-content-center gap-2">
                         <a href="{{ route('peserta.materi', $quiz->course ?? $quiz->course_id) }}"
-                            class="btn btn-simple-gold px-4 py-2 radius-8 fw-semibold">
+                            class="btn btn-simple-gold px-4 py-2_5 radius-8 fw-semibold text-center">
                             <i class="ri-book-open-line me-1"></i> Kembali ke Ruang Belajar Materi
                         </a>
                         <a href="{{ route('landing.kelas.detail', $quiz->course ?? $quiz->course_id) }}"
-                            class="btn btn-outline-danger px-4 py-2 radius-8">
-                            <i class="ri-arrow-left-line me-1"></i> Detail Kelas
+                            class="btn btn-outline-danger px-4 py-2_5 radius-8 text-center">
+                            <i class="ri-arrow-left-line me-1"></i> Detail Pelatihan
                         </a>
                     </div>
                 </div>

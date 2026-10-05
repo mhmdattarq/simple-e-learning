@@ -8,13 +8,13 @@
                         style="background: rgba(255, 255, 255, 0.1);">
                         <i class="ri-book-open-line text-warning me-1"></i> Ruang Belajar Mandiri
                     </span>
-                    <h2 class="text-white fw-bold mb-1 fs-3">{{ $course->title }}</h2>
+                    <h2 class="text-white fw-bold mb-1 fs-4 fs-md-3">{{ $course->title }}</h2>
                     <p class="text-white-50 mb-0 fs-7">
                         Akses seluruh modul dan silabus materi pembelajaran interaktif Anda.
                     </p>
                 </div>
-                <div class="d-flex align-items-center gap-2">
-                    <a href="{{ route('landing.kelas.detail', $course) }}" class="btn btn-simpel-outline-light">
+                <div class="d-flex align-items-center gap-2 w-100 w-sm-auto">
+                    <a href="{{ route('landing.kelas.detail', $course) }}" class="btn btn-simpel-outline-light w-100 w-sm-auto text-center">
                         <i class="ri-arrow-left-line me-1"></i> Kembali ke Detail Kelas
                     </a>
                 </div>
@@ -213,14 +213,14 @@
                         {{-- Viewer Materi Terbuka --}}
                         <div class="card border-0 shadow-sm radius-16 bg-white overflow-hidden mb-4 position-relative">
                             {{-- Header Materi --}}
-                            <div class="p-4 p-md-5 border-bottom bg-white">
+                            <div class="p-3 p-sm-4 p-md-5 border-bottom bg-white">
                                 <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
                                     <span
                                         class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-1_5 fs-8 rounded-pill">
                                         <i class="ri-folder-2-line me-1"></i>
                                         {{ $currentChapter?->title ?? 'Bab Pembelajaran' }}
                                     </span>
-                                    <div class="d-flex align-items-center gap-2">
+                                    <div class="d-flex align-items-center gap-2 flex-wrap">
                                         @if ($isCompleted)
                                             <span
                                                 class="badge bg-success-subtle text-success border border-success-subtle px-3 py-1_5 fs-8 rounded-pill">
@@ -233,11 +233,11 @@
                                         </span>
                                     </div>
                                 </div>
-                                <h3 class="fw-bold text-dark mb-0 fs-3">{{ $currentLesson->title }}</h3>
+                                <h3 class="fw-bold text-dark mb-0 fs-4 fs-md-3">{{ $currentLesson->title }}</h3>
                             </div>
 
                             {{-- Body Materi --}}
-                            <div class="card-body p-4 p-md-5">
+                            <div class="card-body p-3 p-sm-4 p-md-5">
                                 {{-- Video Player --}}
                                 @if ($currentLesson->content_type === 'video' && $currentLesson->video_url)
                                     <div class="ratio ratio-16x9 rounded-12 overflow-hidden shadow-sm mb-4 bg-dark">
@@ -378,12 +378,12 @@
                             </div>
 
                             {{-- Footer Navigasi : Sticky Bottom Bar agar tombol selalu mudah diakses jika artikel panjang --}}
-                            <div class="card-footer bg-white p-3 p-md-4 border-top d-flex align-items-center justify-content-between flex-wrap gap-3 sticky-bottom shadow-sm"
+                            <div class="card-footer bg-white p-3 p-md-4 border-top d-flex align-items-center justify-content-between gap-2 sticky-bottom shadow-sm"
                                 style="bottom: 0; z-index: 5; background-color: #ffffff !important; border-top: 1px solid #e2e8f0;">
                                 {{-- Tombol Sebelumnya --}}
-                                <div>
+                                <div class="flex-fill flex-sm-grow-0">
                                     <button type="button" wire:click="previousLesson"
-                                        class="btn btn-outline-danger radius-10 px-4 py-2 fs-7 fw-semibold d-inline-flex align-items-center gap-2 shadow-none"
+                                        class="btn btn-outline-danger radius-10 px-3 px-sm-4 py-2 fs-7 fw-semibold d-inline-flex align-items-center justify-content-center gap-2 shadow-none w-100 w-sm-auto"
                                         @if ($isFirstLesson) disabled @endif>
                                         <i class="ri-arrow-left-line"></i>
                                         <span>Sebelumnya</span>
@@ -391,25 +391,25 @@
                                 </div>
 
                                 {{-- Tombol Kanan: Selanjutnya atau Tandai Selesai Belajar --}}
-                                <div>
+                                <div class="flex-fill flex-sm-grow-0 text-end">
                                     @if (!$isLastInChapter)
                                         {{-- Masih ada materi berikutnya dalam bab yang sama --}}
                                         <button type="button" wire:click="nextLesson"
-                                            class="btn btn-simple-gold radius-10 px-4 py-2 fs-7 fw-semibold d-inline-flex align-items-center gap-2 shadow-sm">
+                                            class="btn btn-simple-gold radius-10 px-3 px-sm-4 py-2 fs-7 fw-semibold d-inline-flex align-items-center justify-content-center gap-2 shadow-sm w-100 w-sm-auto">
                                             <span>Selanjutnya</span>
                                             <i class="ri-arrow-right-line"></i>
                                         </button>
                                     @elseif (!$hasChapterQuiz && $hasNextChapter)
                                         {{-- Di akhir bab, TIDAK ADA evaluasi bab, dan MASIH ADA bab berikutnya: Tombol Selanjutnya --}}
                                         <button type="button" wire:click="promptCompleteChapter"
-                                            class="btn btn-simple-gold radius-10 px-4 py-2 fs-7 fw-semibold d-inline-flex align-items-center gap-2 shadow-sm">
+                                            class="btn btn-simple-gold radius-10 px-3 px-sm-4 py-2 fs-7 fw-semibold d-inline-flex align-items-center justify-content-center gap-2 shadow-sm w-100 w-sm-auto">
                                             <span>Selanjutnya</span>
                                             <i class="ri-arrow-right-line"></i>
                                         </button>
                                     @else
                                         {{-- Ada evaluasi bab ATAU sudah di akhir seluruh rangkaian bab: Tombol Selesai --}}
                                         <button type="button" wire:click="promptCompleteChapter"
-                                            class="btn btn-success radius-10 px-4 py-2 fs-7 fw-bold d-inline-flex align-items-center gap-2 shadow-sm">
+                                            class="btn btn-success radius-10 px-3 px-sm-4 py-2 fs-7 fw-bold d-inline-flex align-items-center justify-content-center gap-2 shadow-sm w-100 w-sm-auto">
                                             <i class="ri-checkbox-circle-line"></i>
                                             <span>Selesai</span>
                                         </button>
