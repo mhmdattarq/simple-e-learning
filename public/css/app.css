@@ -2400,6 +2400,72 @@ html, body {
         justify-content: center !important;
     }
 
+    /* Hero Metrics Bar on Mobile */
+    .simpel-hero-metrics {
+        background: rgba(255, 255, 255, 0.05) !important;
+        border: 1px solid rgba(255, 255, 255, 0.12) !important;
+        border-radius: 14px !important;
+        padding: 12px 6px !important;
+        margin-top: 20px !important;
+        margin-bottom: 24px !important;
+    }
+    .simpel-hero-metrics .col-4 {
+        padding-left: 4px !important;
+        padding-right: 4px !important;
+        text-align: center !important;
+    }
+    .simpel-hero-metrics .simpel-metric-col {
+        border-left: 1px solid rgba(255, 255, 255, 0.15) !important;
+        padding-left: 4px !important;
+    }
+    .simpel-hero-metrics h4 {
+        font-size: 17px !important;
+        font-weight: 800 !important;
+        line-height: 1.2 !important;
+        margin-bottom: 2px !important;
+    }
+    .simpel-hero-metrics small {
+        font-size: 10px !important;
+        line-height: 1.25 !important;
+        display: block !important;
+        color: rgba(255, 255, 255, 0.75) !important;
+    }
+
+    /* Hero Feature Cards on Mobile */
+    .simpel-hero-card {
+        padding: 15px 14px !important;
+        border-radius: 14px !important;
+    }
+    .simpel-hero-card .simpel-hero-card-icon {
+        width: 42px !important;
+        height: 42px !important;
+        border-radius: 10px !important;
+    }
+    .simpel-hero-card .simpel-hero-card-icon i {
+        font-size: 1.35rem !important;
+    }
+    .simpel-hero-card h6 {
+        font-size: 14.5px !important;
+        line-height: 1.35 !important;
+        margin-bottom: 4px !important;
+    }
+    .simpel-hero-card p {
+        font-size: 11.5px !important;
+        line-height: 1.4 !important;
+        margin-bottom: 8px !important;
+        color: rgba(255, 255, 255, 0.75) !important;
+    }
+    .simpel-hero-card a {
+        font-size: 12px !important;
+    }
+
+    /* Mini Status Bar on Mobile */
+    .simpel-hero-mini-status {
+        padding: 10px 12px !important;
+        font-size: 11px !important;
+        border-radius: 10px !important;
+    }
+
     /* Filter Pills Touch Horizontal Scroll */
     .simpel-filter-pills {
         display: flex !important;
@@ -2460,16 +2526,6 @@ html, body {
     }
     .auth-form-container {
         max-width: 100% !important;
-    }
-    .simpel-landing-hero .row.g-3 > .col-4 {
-        padding-left: 6px !important;
-        padding-right: 6px !important;
-    }
-    .simpel-landing-hero .row.g-3 h4 {
-        font-size: 16px !important;
-    }
-    .simpel-landing-hero .row.g-3 small {
-        font-size: 10px !important;
     }
 
     /* Form & Quiz Responsive Elements */

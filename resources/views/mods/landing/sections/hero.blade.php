@@ -42,17 +42,17 @@
                 </div>
 
                 {{-- Key Metric Indicators --}}
-                <div class="row g-3 pt-3 border-top border-white-10 text-white">
+                <div class="row g-3 pt-3 border-top border-white-10 text-white simpel-hero-metrics">
                     <div class="col-4">
                         <h4 class="mb-0 fw-extrabold text-gold">
                             {{ $totalPublishedCourses > 0 ? $totalPublishedCourses . '+' : '—' }}</h4>
                         <small class="text-white-70 fs-8">Katalog Kelas Terbuka</small>
                     </div>
-                    <div class="col-4 border-start border-white-15 ps-3">
+                    <div class="col-4 border-start border-white-15 ps-3 simpel-metric-col">
                         <h4 class="mb-0 fw-extrabold text-gold">3 Model</h4>
                         <small class="text-white-70 fs-8">Batch, Permanen, Berbayar</small>
                     </div>
-                    <div class="col-4 border-start border-white-15 ps-3">
+                    <div class="col-4 border-start border-white-15 ps-3 simpel-metric-col">
                         <h4 class="mb-0 fw-extrabold text-gold">Online</h4>
                         <small class="text-white-70 fs-8">Akses Belajar Fleksibel</small>
                     </div>
@@ -63,15 +63,15 @@
             <div class="col-lg-5 wow fadeInRight" data-wow-delay="200ms">
                 <div class="d-flex flex-column gap-3">
                     {{-- Highlight Card 1: Kelas Batch --}}
-                    <div class="card border border-white-15 rounded-4 p-3_5 text-white shadow-lg transition-all"
+                    <div class="card border border-white-15 rounded-4 p-3_5 text-white shadow-lg transition-all simpel-hero-card"
                         style="background: rgba(7, 26, 51, 0.75); backdrop-filter: blur(12px);">
                         <div class="d-flex align-items-start gap-3">
-                            <div class="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0"
+                            <div class="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0 simpel-hero-card-icon"
                                 style="width: 52px; height: 52px; background: rgba(243, 188, 66, 0.15); border: 1px solid rgba(243, 188, 66, 0.3);">
                                 <i class="ri-calendar-event-line text-gold fs-3"></i>
                             </div>
-                            <div class="flex-grow-1">
-                                <div class="d-flex align-items-center justify-content-between mb-1">
+                            <div class="flex-grow-1 min-w-0">
+                                <div class="d-flex align-items-center justify-content-between flex-wrap gap-1 mb-1">
                                     <span class="badge bg-gold text-navy fw-bold fs-8">Kelas Batch</span>
                                     <small class="text-white-60 fs-8"><i class="ri-time-line me-1"></i>Pelatihan
                                         Berjadwal</small>
@@ -92,15 +92,15 @@
                     </div>
 
                     {{-- Highlight Card 2: Kelas Permanen & Berbayar --}}
-                    <div class="card border border-white-15 rounded-4 p-3_5 text-white shadow-lg transition-all"
+                    <div class="card border border-white-15 rounded-4 p-3_5 text-white shadow-lg transition-all simpel-hero-card"
                         style="background: rgba(12, 49, 88, 0.75); backdrop-filter: blur(12px);">
                         <div class="d-flex align-items-start gap-3">
-                            <div class="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0"
+                            <div class="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0 simpel-hero-card-icon"
                                 style="width: 52px; height: 52px; background: rgba(243, 188, 66, 0.15); border: 1px solid rgba(243, 188, 66, 0.3);">
                                 <i class="ri-play-circle-line text-gold fs-3"></i>
                             </div>
-                            <div class="flex-grow-1">
-                                <div class="d-flex align-items-center justify-content-between mb-1">
+                            <div class="flex-grow-1 min-w-0">
+                                <div class="d-flex align-items-center justify-content-between flex-wrap gap-1 mb-1">
                                     <span class="badge bg-white-15 text-white fw-medium fs-8">Permanen &amp;
                                         Berbayar</span>
                                     <small class="text-white-60 fs-8"><i class="ri-flashlight-line me-1"></i>Akses
@@ -122,13 +122,16 @@
 
                     {{-- Mini Status Bar --}}
                     <div
-                        class="d-flex align-items-center justify-content-between p-2_5 px-3 rounded-3 bg-white-10 border border-white-10 text-white-80 fs-8">
-                        <span class="d-inline-flex align-items-center gap-1_5">
-                            <i class="ri-checkbox-circle-fill text-gold fs-6"></i>
-                            <span>Akses Modul Materi Interaktif &amp; Evaluasi Pembelajaran</span>
-                        </span>
-                        <a href="#alur-pendaftaran" class="text-gold text-decoration-none fw-semibold">Pelajari Alur
-                            &rarr;</a>
+                        class="simpel-hero-mini-status d-flex flex-column flex-sm-row align-items-start align-items-sm-center justify-content-between gap-2 p-2_5 px-3 rounded-3 bg-white-10 border border-white-10 text-white-80 fs-8">
+                        <div class="d-inline-flex align-items-center gap-2">
+                            <i class="ri-checkbox-circle-fill text-gold fs-6 flex-shrink-0"></i>
+                            <span class="lh-sm">Akses Modul Materi Interaktif &amp; Evaluasi Pembelajaran</span>
+                        </div>
+                        <a href="#alur-pendaftaran"
+                            class="text-gold text-decoration-none fw-semibold text-nowrap d-inline-flex align-items-center gap-1 ms-auto ms-sm-0">
+                            <span>Pelajari Alur</span>
+                            <i class="ri-arrow-right-line"></i>
+                        </a>
                     </div>
                 </div>
             </div>
