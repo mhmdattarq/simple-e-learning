@@ -138,9 +138,9 @@ new class extends Component {
                                     Masuk
                                 </a>
                             @endguest
-                            <a href="#" class="mobile-nav__toggler d-flex align-items-center justify-content-center p-2 text-dark text-decoration-none" aria-label="Buka Menu Navigasi" style="font-size: 24px; cursor: pointer;">
+                            <button type="button" class="mobile-nav__toggler d-xl-none d-flex align-items-center justify-content-center p-2 text-dark text-decoration-none border-0 bg-transparent shadow-none" aria-label="Buka Menu Navigasi" style="font-size: 24px; cursor: pointer;" onclick="toggleMobileDrawer(event)">
                                 <i class="ri-menu-line"></i>
-                            </a>
+                            </button>
                             <ul class="main-menu__list">
                                 <li class="{{ $activeMenu === 'beranda' ? 'current' : '' }}">
                                     <a href="{{ route('landing') }}">Beranda</a>
@@ -167,7 +167,7 @@ new class extends Component {
                                 </div>
                             </div>
                             @guest
-                                <div class="main-menu__btn-boxes">
+                                <div class="main-menu__btn-boxes d-none d-xl-flex">
                                     <div class="main-menu__btn-box-1">
                                         <a href="{{ route('login') }}" class="thm-btn">Masuk</a>
                                     </div>
