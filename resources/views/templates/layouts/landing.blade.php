@@ -67,6 +67,30 @@
     <!-- App Custom CSS & JS (Classic Asset) -->
     <link rel="stylesheet" href="{{ asset('css/app.css') }}?v={{ filemtime(public_path('css/app.css')) }}">
     <script src="{{ asset('js/app.js') }}"></script>
+    <script>
+        window.toggleMobileDrawer = function(e) {
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            var w = document.querySelector('.mobile-nav__wrapper');
+            if (w) {
+                w.classList.toggle('expanded');
+                document.body.classList.toggle('locked');
+            }
+        };
+        window.closeMobileDrawer = function(e) {
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            var w = document.querySelector('.mobile-nav__wrapper');
+            if (w) {
+                w.classList.remove('expanded');
+                document.body.classList.remove('locked');
+            }
+        };
+    </script>
 
     @stack('css')
 
@@ -256,9 +280,22 @@
             color: #ffffff !important;
         }
 
-        .mobile-nav__content .main-menu__list > li.current > a {
-            color: var(--fistudy-base, #f3bc42) !important;
+        .mobile-nav__content .main-menu__list > li.current > a,
+        .mobile-nav__content .main-menu__list li.current a,
+        .mobile-nav__content .main-menu__list li.active a,
+        .mobile-nav__content .main-menu__list li a:hover,
+        .mobile-nav__container .main-menu__list > li.current > a,
+        .mobile-nav__container .main-menu__list li.current a {
+            color: #f3bc42 !important;
             font-weight: 700 !important;
+        }
+
+        .mobile-nav__content .brand strong {
+            color: #ffffff !important;
+        }
+
+        .mobile-nav__content .brand small {
+            color: rgba(255, 255, 255, 0.7) !important;
         }
     </style>
 
@@ -286,10 +323,10 @@
 
 
     <div class="mobile-nav__wrapper">
-        <div class="mobile-nav__overlay mobile-nav__toggler"></div>
+        <div class="mobile-nav__overlay mobile-nav__toggler" onclick="closeMobileDrawer(event)"></div>
         <!-- /.mobile-nav__overlay -->
         <div class="mobile-nav__content">
-            <span class="mobile-nav__close mobile-nav__toggler"><i class="ri-close-line fs-3"></i></span>
+            <span class="mobile-nav__close mobile-nav__toggler" onclick="closeMobileDrawer(event)"><i class="ri-close-line fs-3"></i></span>
 
             <div class="logo-box">
                 <a href="{{ route('landing') }}" class="brand text-decoration-none">
@@ -301,7 +338,25 @@
                 </a>
             </div>
             <!-- /.logo-box -->
-            <div class="mobile-nav__container"></div>
+            <div class="mobile-nav__container">
+                <ul class="main-menu__list">
+                    <li class="{{ request()->routeIs('landing') && !request()->is('kelas*') ? 'current' : '' }}">
+                        <a href="{{ route('landing') }}">Beranda</a>
+                    </li>
+                    <li class="{{ request()->routeIs('landing.kelas.batch*') || request()->is('kelas-batch*') ? 'current' : '' }}">
+                        <a href="{{ route('landing.kelas.batch') }}">Kelas Batch</a>
+                    </li>
+                    <li class="{{ request()->routeIs('landing.kelas.permanen*') || request()->is('kelas-permanen*') ? 'current' : '' }}">
+                        <a href="{{ route('landing.kelas.permanen') }}">Kelas Permanen</a>
+                    </li>
+                    <li class="{{ request()->routeIs('landing.kelas.berbayar*') || request()->is('kelas-berbayar*') ? 'current' : '' }}">
+                        <a href="{{ route('landing.kelas.berbayar') }}">Kelas Berbayar</a>
+                    </li>
+                    <li class="{{ request()->routeIs('kontak*') ? 'current' : '' }}">
+                        <a href="{{ route('kontak') }}">Kontak</a>
+                    </li>
+                </ul>
+            </div>
             <!-- /.mobile-nav__container -->
 
             @guest
@@ -346,19 +401,6 @@
                     </div>
                 </div>
             @endguest
-
-            <ul class="mobile-nav__contact list-unstyled mt-3">
-                <li>
-                    <i class="ri-mail-line text-warning"></i>
-                    <a href="mailto:bkpsdm@acehtimurkab.go.id">bkpsdm@acehtimurkab.go.id</a>
-                </li>
-                <li>
-                    <i class="ri-map-pin-line text-warning"></i>
-                    <span class="text-white-50">Idi Rayeuk, Kab. Aceh Timur</span>
-                </li>
-            </ul>
-
-
 
         </div>
         <!-- /.mobile-nav__content -->

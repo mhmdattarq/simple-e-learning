@@ -179,17 +179,26 @@ if (typeof $ !== "undefined") {
         }
     });
 
-    // Delegasi klik mobile nav toggler agar selalu responsif setelah navigasi SPA
-    $(document).on("click", ".mobile-nav__toggler", function (e) {
-        e.preventDefault();
-        $(".mobile-nav__wrapper").toggleClass("expanded");
-        $("body").toggleClass("locked");
-    });
+    // Sinkronisasi isi menu mobile drawer saat DOM siap atau setelah navigasi Livewire
+    function syncMobileNavMenu() {
+        const mainNavList = document.querySelector(".main-menu__list");
+        const mobileContainer = document.querySelector(".mobile-nav__container");
+        if (mainNavList && mobileContainer && (!mobileContainer.firstElementChild)) {
+            mobileContainer.innerHTML = mainNavList.outerHTML;
+        }
+    }
+
+    $(document).ready(syncMobileNavMenu);
+    document.addEventListener("livewire:navigated", syncMobileNavMenu);
 
     // Auto-tutup drawer navigasi saat tautan di dalamnya diklik
     $(document).on("click", ".mobile-nav__container a, .mobile-nav__content a:not(.mobile-nav__toggler)", function () {
-        $(".mobile-nav__wrapper").removeClass("expanded");
-        $("body").removeClass("locked");
+        if (typeof window.closeMobileDrawer === "function") {
+            window.closeMobileDrawer();
+        } else {
+            $(".mobile-nav__wrapper").removeClass("expanded");
+            $("body").removeClass("locked");
+        }
     });
 
     // Auto-tutup sidebar admin saat menu diklik di perangkat mobile (< 1200px)

@@ -990,13 +990,7 @@
     });
   }
 
-  if ($(".mobile-nav__toggler").length) {
-    $(".mobile-nav__toggler").on("click", function (e) {
-      e.preventDefault();
-      $(".mobile-nav__wrapper").toggleClass("expanded");
-      $("body").toggleClass("locked");
-    });
-  }
+  // mobile-nav__toggler dikelola secara terpusat oleh mine/script.js agar kompatibel dengan Livewire SPA navigation
 
   //Header Search
   if ($('.searcher-toggler-box').length) {

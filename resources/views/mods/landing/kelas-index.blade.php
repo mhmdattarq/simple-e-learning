@@ -54,7 +54,7 @@
                 <div class="col-md-5 col-lg-4 text-md-end">
                     <div class="dropdown d-inline-block w-100 w-md-auto">
                         <button
-                            class="btn btn-outline-danger dropdown-toggle w-100 border-simpel rounded-pill px-3 py-2 fs-7 text-navy fw-medium d-flex align-items-center justify-content-between gap-2 shadow-xs"
+                            class="btn bg-white border border-simpel dropdown-toggle w-100 rounded-pill px-3 py-2 fs-7 text-navy fw-medium d-flex align-items-center justify-content-between gap-2 shadow-xs"
                             type="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <span class="d-flex align-items-center gap-2">
                                 <i class="ri-filter-3-line text-gold"></i>
@@ -69,7 +69,7 @@
                             style="min-width: 220px; max-height: 280px; overflow-y: auto;">
                             <li>
                                 <button type="button"
-                                    class="dropdown-item radius-8 fs-8 py-2 d-flex align-items-center justify-content-between {{ $selectedCategory === 'all' ? 'active bg-gold text-navy fw-bold' : '' }}"
+                                    class="dropdown-item radius-8 fs-8 py-2 d-flex align-items-center justify-content-between {{ $selectedCategory === 'all' ? 'active bg-simple-gold text-navy fw-bold' : '' }}"
                                     wire:click="filterCategory('all')">
                                     <span>Semua Kategori</span>
                                     @if ($selectedCategory === 'all')
@@ -80,7 +80,7 @@
                             @foreach ($categories as $cat)
                                 <li>
                                     <button type="button"
-                                        class="dropdown-item radius-8 fs-8 py-2 d-flex align-items-center justify-content-between {{ $selectedCategory === $cat->slug ? 'active bg-gold text-navy fw-bold' : '' }}"
+                                        class="dropdown-item radius-8 fs-8 py-2 d-flex align-items-center justify-content-between {{ $selectedCategory === $cat->slug ? 'active bg-simple-gold text-navy fw-bold' : '' }}"
                                         wire:click="filterCategory('{{ $cat->slug }}')">
                                         <span>{{ $cat->name }}</span>
                                         @if ($selectedCategory === $cat->slug)
@@ -258,7 +258,7 @@
                     </p>
                     <div>
                         @if ($search !== '' || $selectedCategory !== 'all')
-                            <button class="btn btn-outline-danger radius-8 px-4 py-2 fs-7"
+                            <button class="btn btn-outline-secondary radius-8 px-4 py-2 fs-7"
                                 wire:click="resetFilter">
                                 <i class="ri-refresh-line me-1"></i>Reset Pencarian
                             </button>
