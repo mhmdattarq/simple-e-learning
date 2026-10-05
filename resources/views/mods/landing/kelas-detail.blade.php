@@ -163,13 +163,13 @@
                                     <div class="accordion-item border border-simpel rounded-3 mb-3 overflow-hidden">
                                         <h2 class="accordion-header" id="heading-{{ $chapter->id }}">
                                             <button
-                                                class="accordion-button {{ $index === 0 ? '' : 'collapsed' }} bg-light fw-bold text-navy py-3 px-4"
+                                                class="accordion-button {{ $index === 0 ? '' : 'collapsed' }} bg-light fw-bold text-navy py-3 px-3 px-sm-4"
                                                 type="button" data-bs-toggle="collapse"
                                                 data-bs-target="#collapse-{{ $chapter->id }}"
                                                 aria-expanded="{{ $index === 0 ? 'true' : 'false' }}"
                                                 aria-controls="collapse-{{ $chapter->id }}">
                                                 <div
-                                                    class="d-flex align-items-center justify-content-between w-100 me-3">
+                                                    class="d-flex align-items-center justify-content-between w-100 me-2 me-sm-3 flex-wrap gap-1">
                                                     <span class="d-flex align-items-center gap-2 fs-7">
                                                         <span
                                                             class="badge bg-gold text-navy rounded-circle px-2 py-1 fs-9">{{ $loop->iteration }}</span>
@@ -189,20 +189,20 @@
                                                 <ul class="list-group list-group-flush">
                                                     @forelse ($chapter->lessons as $lesson)
                                                         <li
-                                                            class="list-group-item d-flex align-items-center justify-content-between py-3 px-4 border-simpel fs-8">
-                                                            <div class="d-flex align-items-center gap-2">
-                                                                <i class="ri-play-circle-line text-gold fs-6"></i>
+                                                            class="list-group-item d-flex align-items-center justify-content-between py-2_5 py-sm-3 px-3 px-sm-4 border-simpel fs-8 gap-2">
+                                                            <div class="d-flex align-items-center gap-2 overflow-hidden">
+                                                                <i class="ri-play-circle-line text-gold fs-6 flex-shrink-0"></i>
                                                                 <span
-                                                                    class="text-dark fw-medium">{{ $lesson->title }}</span>
+                                                                    class="text-dark fw-medium text-truncate">{{ $lesson->title }}</span>
                                                             </div>
                                                             <span
-                                                                class="badge bg-light text-muted border border-simpel fs-9">
+                                                                class="badge bg-light text-muted border border-simpel fs-9 flex-shrink-0">
                                                                 Tersedia
                                                             </span>
                                                         </li>
                                                     @empty
                                                         <li
-                                                            class="list-group-item py-3 px-4 text-muted fs-8 fst-italic">
+                                                            class="list-group-item py-3 px-3 px-sm-4 text-muted fs-8 fst-italic">
                                                             Materi sedang dalam proses persiapan.
                                                         </li>
                                                     @endforelse
