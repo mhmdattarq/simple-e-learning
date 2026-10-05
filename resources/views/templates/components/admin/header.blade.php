@@ -168,7 +168,7 @@ new class extends Component {
 };
 ?>
 
-<div style="position: sticky; top: 0; z-index: 1040;">
+<div class="admin-header-sticky-wrapper" style="position: sticky; top: 0; z-index: 1040;">
     <div class="navbar-header">
         <div class="row align-items-center justify-content-between">
             <div class="col-auto">
@@ -203,9 +203,8 @@ new class extends Component {
                                 </span>
                             @endif
                         </button>
-                        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0 shadow-lg" x-show="open"
-                            x-cloak :class="{ 'show': open }"
-                            style="position: absolute; right: 0; left: auto !important; top: calc(100% + 8px); z-index: 1060; width: 340px; max-width: calc(100vw - 32px); border-radius: 14px; overflow: hidden; border: 1px solid #e2e8f0;">
+                        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0 shadow-lg notification-dropdown-menu" x-show="open"
+                            x-cloak :class="{ 'show': open }">
                             <div class="py-12 px-16 border-bottom d-flex align-items-center justify-content-between"
                                 style="background-color: #071a33;">
                                 <div class="d-flex align-items-center gap-2">
@@ -217,15 +216,22 @@ new class extends Component {
                                             Aktivitas</span>
                                     @endif
                                 </div>
-                                @if ($this->unreadCount > 0)
-                                    <button type="button" wire:click="markAsRead"
-                                        class="btn btn-link text-white-50 p-0 text-decoration-none fs-7 hover-text-white d-flex align-items-center gap-1"
-                                        title="Tandai semua sudah dibaca">
-                                        <i class="ri-check-double-line"></i> Dibaca
+                                <div class="d-flex align-items-center gap-2">
+                                    @if ($this->unreadCount > 0)
+                                        <button type="button" wire:click="markAsRead"
+                                            class="btn btn-link text-white-50 p-0 text-decoration-none fs-7 hover-text-white d-flex align-items-center gap-1"
+                                            title="Tandai semua sudah dibaca">
+                                            <i class="ri-check-double-line"></i> Dibaca
+                                        </button>
+                                    @endif
+                                    <button type="button" @click="open = false"
+                                        class="d-flex d-md-none btn btn-link text-white-50 p-0 text-decoration-none hover-text-white ms-1"
+                                        aria-label="Tutup Notifikasi" style="font-size: 18px; line-height: 1;">
+                                        <i class="ri-close-line"></i>
                                     </button>
-                                @endif
+                                </div>
                             </div>
-                            <div class="p-2" style="max-height: 380px; overflow-y: auto;">
+                            <div class="p-2" style="max-height: min(380px, calc(100vh - 160px)); overflow-y: auto;">
                                 @forelse ($this->auditLogs as $log)
                                     @php
                                         $notif = $this->formatNotification($log);
@@ -280,9 +286,8 @@ new class extends Component {
                                 :style="open ? 'transform: rotate(180deg); transition: transform 0.2s;' :
                                     'transition: transform 0.2s;'"></i>
                         </button>
-                        <div class="dropdown-menu dropdown-menu-end shadow-lg p-0" x-show="open" x-cloak
-                            :class="{ 'show': open }"
-                            style="position: absolute; right: 0; left: auto !important; top: calc(100% + 8px); z-index: 1060; min-width: 250px; max-width: calc(100vw - 32px); border-radius: 14px; overflow: hidden; border: 1px solid #e2e8f0;">
+                        <div class="dropdown-menu dropdown-menu-end shadow-lg p-0 profile-dropdown-menu" x-show="open" x-cloak
+                            :class="{ 'show': open }">
                             <div class="py-16 px-16" style="background: #071a33; color: #fff;">
                                 <h6 class="text-white fw-semibold mb-1"
                                     style="font-size: 14px; line-height: 1.3; word-break: break-word;">

@@ -74,21 +74,72 @@ body {
 /* Sidebar Backdrop Overlay on Mobile */
 .sidebar-overlay {
     display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(7, 26, 51, 0.6);
-    backdrop-filter: blur(2px);
-    -webkit-backdrop-filter: blur(2px);
-    z-index: 1055;
-    cursor: pointer;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    background-color: rgba(7, 26, 51, 0.6) !important;
+    backdrop-filter: blur(2px) !important;
+    -webkit-backdrop-filter: blur(2px) !important;
+    z-index: 1055 !important;
+    cursor: pointer !important;
 }
 
 @media (max-width: 1199.98px) {
     body.overlay-active .sidebar-overlay {
         display: block !important;
+    }
+    /* Matikan backdrop bawaan template agar tidak double overlay */
+    body.overlay-active::after {
+        display: none !important;
+        width: 0 !important;
+    }
+    /* Pastikan header dan wrapper tunduk di bawah backdrop saat overlay aktif */
+    body.overlay-active .admin-header-sticky-wrapper,
+    body.overlay-active .navbar-header {
+        z-index: 1040 !important;
+    }
+    /* Pastikan drawer sidebar berada di atas overlay */
+    .sidebar {
+        z-index: 1060 !important;
+    }
+    .sidebar.sidebar-open {
+        z-index: 1060 !important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3) !important;
+    }
+    /* Tombol close X di sidebar drawer mobile */
+    .sidebar .sidebar-close-btn {
+        position: absolute !important;
+        top: 18px !important;
+        right: 14px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 32px !important;
+        height: 32px !important;
+        background: rgba(255, 255, 255, 0.1) !important;
+        color: #ffffff !important;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        z-index: 1070 !important;
+        transition: background 0.2s ease, transform 0.2s ease !important;
+    }
+    .sidebar .sidebar-close-btn:hover {
+        background: rgba(255, 255, 255, 0.25) !important;
+        color: #ffffff !important;
+    }
+    .sidebar .brand-container {
+        padding-right: 48px !important;
+    }
+}
+
+@media (min-width: 1200px) {
+    .sidebar-close-btn {
+        display: none !important;
     }
 }
 
@@ -474,6 +525,50 @@ select::placeholder,
 
 .navbar-header .dropdown-menu {
     z-index: 1060 !important;
+}
+
+/* === Header Notification & Profile Dropdowns === */
+.notification-dropdown-menu {
+    position: absolute !important;
+    right: 0 !important;
+    left: auto !important;
+    top: calc(100% + 8px) !important;
+    z-index: 1060 !important;
+    width: 360px !important;
+    max-width: calc(100vw - 32px) !important;
+    border-radius: 14px !important;
+    overflow: hidden !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12) !important;
+}
+
+.profile-dropdown-menu {
+    position: absolute !important;
+    right: 0 !important;
+    left: auto !important;
+    top: calc(100% + 8px) !important;
+    z-index: 1060 !important;
+    min-width: 250px !important;
+    max-width: calc(100vw - 32px) !important;
+    border-radius: 14px !important;
+    overflow: hidden !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12) !important;
+}
+
+@media (max-width: 767.98px) {
+    .navbar-header .notification-dropdown-menu {
+        position: fixed !important;
+        top: 64px !important;
+        left: 12px !important;
+        right: 12px !important;
+        width: auto !important;
+        max-width: none !important;
+        margin: 0 !important;
+        border-radius: 14px !important;
+        box-shadow: 0 12px 36px rgba(0, 0, 0, 0.25) !important;
+        z-index: 1065 !important;
+    }
 }
 
 /* === Dropdown Menus & Items (SIMPEL Gold Theme) === */
@@ -2125,22 +2220,6 @@ html, body {
     }
     .navbar-header {
         padding: 12px 14px !important;
-    }
-    .sidebar-close-btn {
-        display: inline-flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        width: 32px !important;
-        height: 32px !important;
-        background: rgba(255, 255, 255, 0.1) !important;
-        color: #ffffff !important;
-        border: 1px solid rgba(255, 255, 255, 0.2) !important;
-        border-radius: 8px !important;
-        cursor: pointer !important;
-        z-index: 1070 !important;
-    }
-    .sidebar-close-btn:hover {
-        background: rgba(255, 255, 255, 0.25) !important;
     }
 }
 

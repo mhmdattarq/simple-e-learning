@@ -51,13 +51,11 @@
 
     {{-- sidebar --}}
     <livewire:admin.sidebar wire:key="admin-sidebar-nav" />
-    <div class="sidebar-overlay sidebar-close-btn" aria-label="Tutup Menu"></div>
+    <div class="sidebar-overlay" aria-label="Tutup Menu"></div>
 
     <main class="dashboard-main">
         {{-- navbar / header --}}
-        <div style="position: sticky; top: 0; z-index: 1040;">
-            <livewire:admin.header wire:key="admin-header-nav" />
-        </div>
+        <livewire:admin.header wire:key="admin-header-nav" />
 
         {{-- main contenct  --}}
         <div class="dashboard-main-body">
