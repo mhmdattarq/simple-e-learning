@@ -527,6 +527,50 @@ select::placeholder,
     z-index: 1060 !important;
 }
 
+/* === Header Notification & Profile Dropdowns === */
+.notification-dropdown-menu {
+    position: absolute !important;
+    right: 0 !important;
+    left: auto !important;
+    top: calc(100% + 8px) !important;
+    z-index: 1060 !important;
+    width: 360px !important;
+    max-width: calc(100vw - 32px) !important;
+    border-radius: 14px !important;
+    overflow: hidden !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12) !important;
+}
+
+.profile-dropdown-menu {
+    position: absolute !important;
+    right: 0 !important;
+    left: auto !important;
+    top: calc(100% + 8px) !important;
+    z-index: 1060 !important;
+    min-width: 250px !important;
+    max-width: calc(100vw - 32px) !important;
+    border-radius: 14px !important;
+    overflow: hidden !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12) !important;
+}
+
+@media (max-width: 767.98px) {
+    .navbar-header .notification-dropdown-menu {
+        position: fixed !important;
+        top: 64px !important;
+        left: 12px !important;
+        right: 12px !important;
+        width: auto !important;
+        max-width: none !important;
+        margin: 0 !important;
+        border-radius: 14px !important;
+        box-shadow: 0 12px 36px rgba(0, 0, 0, 0.25) !important;
+        z-index: 1065 !important;
+    }
+}
+
 /* === Dropdown Menus & Items (SIMPEL Gold Theme) === */
 .dropdown-item {
     transition: background-color 0.15s ease, color 0.15s ease;
