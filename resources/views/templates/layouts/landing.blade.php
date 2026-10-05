@@ -376,32 +376,45 @@
                 </div>
             @else
                 <div class="p-3 my-2 border-top border-white border-opacity-10">
-                    <div class="d-flex align-items-center gap-2 mb-3 bg-white bg-opacity-10 p-2 rounded-3">
+                    <div class="d-flex align-items-center gap-3 p-3 rounded-3 mb-3 mobile-drawer-profile-card">
                         @if (auth()->user()?->avatar_url)
-                            <img src="{{ auth()->user()->avatar_url }}" alt="{{ auth()->user()->name }}" class="rounded-circle shadow-sm" style="width: 38px; height: 38px; object-fit: cover; border: 2px solid #f3bc42;">
+                            <img src="{{ auth()->user()->avatar_url }}" alt="{{ auth()->user()->name }}" class="rounded-circle shadow-sm flex-shrink-0" style="width: 42px; height: 42px; object-fit: cover; border: 2px solid #f3bc42;">
                         @else
-                            <div class="seal" style="width: 38px !important; height: 38px !important; font-size: 14px !important; border-radius: 8px !important;">
+                            <div class="seal flex-shrink-0" style="width: 42px !important; height: 42px !important; font-size: 15px !important; border-radius: 10px !important;">
                                 {{ strtoupper(substr(auth()->user()->name, 0, 2)) }}
                             </div>
                         @endif
-                        <div class="overflow-hidden">
-                            <strong class="text-white text-truncate d-block" style="font-size: 13.5px;">{{ auth()->user()->name }}</strong>
-                            <small class="text-warning d-block" style="font-size: 11px;">{{ auth()->user()?->role?->label() ?? 'Peserta' }}</small>
+                        <div class="overflow-hidden flex-grow-1">
+                            <strong class="text-white text-truncate d-block fw-semibold" style="font-size: 14px; line-height: 1.3;">{{ auth()->user()->name }}</strong>
+                            <div class="d-flex align-items-center gap-1 mt-1">
+                                <span class="badge" style="background: rgba(243, 188, 66, 0.2); color: #f3bc42; font-weight: 600; font-size: 10.5px; border: 1px solid rgba(243, 188, 66, 0.35);">
+                                    {{ auth()->user()?->role?->label() ?? 'Peserta' }}
+                                </span>
+                            </div>
                         </div>
                     </div>
-                    <div class="vstack gap-2">
+                    <div class="d-flex flex-column gap-2">
                         @if (auth()->user()->hasAdminAccess())
-                            <a href="{{ route('admin.dashboard') }}" class="btn btn-primary w-100 btn-sm text-start d-flex align-items-center gap-2 py-2">
-                                <i class="ri-dashboard-line"></i> Panel Manajemen
+                            <a href="{{ route('admin.dashboard') }}" class="mobile-drawer-action-btn mobile-drawer-btn-admin">
+                                <i class="ri-dashboard-line fs-5"></i>
+                                <span>Panel Manajemen</span>
+                                <i class="ri-arrow-right-s-line ms-auto text-white-50"></i>
                             </a>
                         @endif
-                        <a href="{{ route('peserta.profil') }}" class="btn btn-outline-light w-100 btn-sm text-start d-flex align-items-center gap-2 py-2">
-                            <i class="ri-user-line"></i> Profil Saya
+                        <a href="{{ route('peserta.profil') }}" class="mobile-drawer-action-btn">
+                            <i class="ri-user-line fs-5 text-gold"></i>
+                            <span>Profil Saya</span>
+                            @if (! auth()->user()?->isProfileComplete())
+                                <span class="badge bg-warning text-dark ms-auto" style="font-size: 9.5px;">Lengkapi</span>
+                            @else
+                                <i class="ri-arrow-right-s-line ms-auto text-white-50"></i>
+                            @endif
                         </a>
                         <form method="POST" action="{{ route('logout') }}" class="m-0">
                             @csrf
-                            <button type="submit" class="btn btn-outline-danger w-100 btn-sm text-start d-flex align-items-center gap-2 py-2">
-                                <i class="ri-logout-box-r-line"></i> Keluar
+                            <button type="submit" class="mobile-drawer-action-btn mobile-drawer-btn-logout">
+                                <i class="ri-logout-box-r-line fs-5 text-danger"></i>
+                                <span>Keluar</span>
                             </button>
                         </form>
                     </div>
