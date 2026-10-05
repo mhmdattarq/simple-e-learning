@@ -168,7 +168,7 @@ new class extends Component {
 };
 ?>
 
-<div style="position: sticky; top: 0; z-index: 1040;">
+<div class="admin-header-sticky-wrapper" style="position: sticky; top: 0; z-index: 1040;">
     <div class="navbar-header">
         <div class="row align-items-center justify-content-between">
             <div class="col-auto">
