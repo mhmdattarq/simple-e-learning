@@ -99,6 +99,38 @@ test('login fails with invalid credentials', function () {
     $this->assertGuest();
 });
 
+test('peserta can login using NIP and is redirected to landing page', function () {
+    $peserta = User::factory()->peserta()->create([
+        'email' => 'asn@simpel.go.id',
+        'nip' => '199405302020121007',
+        'password' => bcrypt('password123'),
+    ]);
+
+    Livewire::test(Login::class)
+        ->set('identifier', '199405302020121007')
+        ->set('password', 'password123')
+        ->call('authenticate')
+        ->assertRedirect(route('landing'))
+        ->assertSessionHas('alert-show', [
+            'type' => 'success',
+            'title' => 'Berhasil',
+            'message' => 'berhasil login selamat datang peserta',
+        ]);
+
+    $this->assertAuthenticatedAs($peserta);
+});
+
+test('login fails gracefully when entering unknown NIP without database error', function () {
+    Livewire::test(Login::class)
+        ->set('identifier', '199405302020121007')
+        ->set('password', 'anypassword123')
+        ->call('authenticate')
+        ->assertHasErrors(['identifier'])
+        ->assertSee('Email/NIP atau kata sandi yang Anda masukkan salah.');
+
+    $this->assertGuest();
+});
+
 test('role middleware protects admin route from unauthorized roles', function () {
     // Guest redirected to login
     $this->get(route('admin.dashboard'))
