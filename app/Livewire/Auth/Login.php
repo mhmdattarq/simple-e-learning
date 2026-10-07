@@ -177,8 +177,12 @@ class Login extends Component
         }
 
         // 2. Autentikasi Fleksibel (NIP atau Email) & Pencegahan Timing Attack
-        $field = is_numeric($resolvedIdentifier) ? 'nip' : 'email';
-        $targetUser = User::where($field, $resolvedIdentifier)->first();
+        $cleanDigits = preg_replace('/[^0-9]/', '', $resolvedIdentifier);
+        $isNip = ! str_contains($resolvedIdentifier, '@') && strlen($cleanDigits) >= 8 && (str_replace(' ', '', $resolvedIdentifier) === $cleanDigits);
+        $field = $isNip ? 'nip' : 'email';
+        $searchIdentifier = $isNip ? $cleanDigits : Str::lower($resolvedIdentifier);
+
+        $targetUser = User::where($field, $searchIdentifier)->first();
 
         if (! $targetUser) {
             // Constant-time dummy comparison to defeat side-channel timing enumeration attacks
@@ -186,7 +190,7 @@ class Login extends Component
         }
 
         $credentials = [
-            $field => $resolvedIdentifier,
+            $field => $searchIdentifier,
             'password' => $this->password,
         ];
 

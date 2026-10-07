@@ -99,6 +99,38 @@ test('login fails with invalid credentials', function () {
     $this->assertGuest();
 });
 
+test('peserta can login using NIP and is redirected to landing page', function () {
+    $peserta = User::factory()->peserta()->create([
+        'email' => 'asn@simpel.go.id',
+        'nip' => '199405302020121007',
+        'password' => bcrypt('password123'),
+    ]);
+
+    Livewire::test(Login::class)
+        ->set('identifier', '199405302020121007')
+        ->set('password', 'password123')
+        ->call('authenticate')
+        ->assertRedirect(route('landing'))
+        ->assertSessionHas('alert-show', [
+            'type' => 'success',
+            'title' => 'Berhasil',
+            'message' => 'berhasil login selamat datang peserta',
+        ]);
+
+    $this->assertAuthenticatedAs($peserta);
+});
+
+test('login fails gracefully when entering unknown NIP without database error', function () {
+    Livewire::test(Login::class)
+        ->set('identifier', '199405302020121007')
+        ->set('password', 'anypassword123')
+        ->call('authenticate')
+        ->assertHasErrors(['identifier'])
+        ->assertSee('Email/NIP atau kata sandi yang Anda masukkan salah.');
+
+    $this->assertGuest();
+});
+
 test('role middleware protects admin route from unauthorized roles', function () {
     // Guest redirected to login
     $this->get(route('admin.dashboard'))
@@ -162,6 +194,39 @@ test('guest user can register successfully as peserta with valid data', function
     $createdUser = User::where('email', 'fauzan@acehtimurkab.go.id')->first();
     expect($createdUser->isPeserta())->toBeTrue();
     expect(Hash::check('rahasia123', $createdUser->password))->toBeTrue();
+});
+
+test('guest user can register with nip and nip is stored correctly', function () {
+    Livewire::test(Register::class)
+        ->set('form.name', 'PNS Aceh Timur')
+        ->set('form.nip', '199001012020121001')
+        ->set('form.email', 'pns@acehtimurkab.go.id')
+        ->set('form.phone_number', '081234567891')
+        ->set('form.address', 'Idi Rayeuk')
+        ->set('form.password', 'rahasia123')
+        ->set('form.password_confirmation', 'rahasia123')
+        ->call('register')
+        ->assertHasNoErrors()
+        ->assertRedirect(route('login'));
+
+    $this->assertDatabaseHas('users', [
+        'email' => 'pns@acehtimurkab.go.id',
+        'nip' => '199001012020121001',
+    ]);
+});
+
+test('registration validates nip format if provided', function () {
+    Livewire::test(Register::class)
+        ->set('form.name', 'PNS Aceh Timur')
+        ->set('form.nip', '123456') // Not 18 digits
+        ->set('form.email', 'pns@acehtimurkab.go.id')
+        ->set('form.phone_number', '081234567891')
+        ->set('form.address', 'Idi Rayeuk')
+        ->set('form.password', 'rahasia123')
+        ->set('form.password_confirmation', 'rahasia123')
+        ->call('register')
+        ->assertHasErrors(['form.nip'])
+        ->assertSee('NIP harus berjumlah 18 digit angka.');
 });
 
 test('registration validates required fields', function () {

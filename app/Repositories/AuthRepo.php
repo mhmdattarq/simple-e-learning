@@ -22,8 +22,11 @@ class AuthRepo
     {
         try {
             return DB::transaction(function () use ($data) {
+                $cleanNip = ! empty($data['nip']) ? preg_replace('/[^0-9]/', '', (string) $data['nip']) : null;
+
                 $user = User::create([
                     'name' => trim($data['name']),
+                    'nip' => $cleanNip,
                     'email' => Str::lower(trim($data['email'])),
                     'phone_number' => trim($data['phone_number']),
                     'address' => trim($data['address']),
@@ -46,6 +49,7 @@ class AuthRepo
                     newValues: [
                         'email' => $user->email,
                         'name' => $user->name,
+                        'nip' => $user->nip,
                         'phone_number' => $user->phone_number,
                         'address' => $user->address,
                     ],

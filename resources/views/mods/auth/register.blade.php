@@ -79,7 +79,7 @@
             <form wire:submit="register">
                 <div class="row g-3 mb-20">
                     {{-- Nama Lengkap --}}
-                    <div class="col-12">
+                    <div class="col-md-6">
                         <label class="form-label text-xs fw-semibold text-secondary-dark mb-4" for="reg-name">
                             Nama Lengkap <span class="text-danger">*</span>
                         </label>
@@ -92,6 +92,24 @@
                                 placeholder="Nama lengkap Anda">
                         </div>
                         @error('form.name')
+                            <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    {{-- NIP (Opsional / ASN) --}}
+                    <div class="col-md-6">
+                        <label class="form-label text-xs fw-semibold text-secondary-dark mb-4" for="reg-nip">
+                            NIP <span class="text-muted fw-normal fs-8">(Opsional / ASN)</span>
+                        </label>
+                        <div class="auth-input-wrapper">
+                            <span class="auth-field-icon">
+                                <i class="ri-id-card-line"></i>
+                            </span>
+                            <input type="text" id="reg-nip" wire:model="form.nip" maxlength="18"
+                                class="form-control auth-input @error('form.nip') is-invalid @enderror"
+                                placeholder="18 digit NIP (opsional)">
+                        </div>
+                        @error('form.nip')
                             <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
                         @enderror
                     </div>

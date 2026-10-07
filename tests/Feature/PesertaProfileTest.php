@@ -220,3 +220,31 @@ test('profile password validation enforces min 8 chars and matching confirmation
         ->assertHasErrors(['form.password'])
         ->assertSee('Konfirmasi kata sandi baru tidak cocok.');
 });
+
+test('user can update nip in profile and use it to authenticate', function () {
+    $user = User::factory()->peserta()->create([
+        'nip' => null,
+    ]);
+
+    // Validation fails if not 18 digits
+    Livewire::actingAs($user)
+        ->test(ProfileIndex::class)
+        ->set('form.nip', '12345')
+        ->call('save')
+        ->assertHasErrors(['form.nip'])
+        ->assertSee('NIP harus berjumlah 18 digit angka.');
+
+    // Successful update
+    Livewire::actingAs($user)
+        ->test(ProfileIndex::class)
+        ->set('form.name', $user->name)
+        ->set('form.nip', '199501012022011001')
+        ->set('form.phone_number', '081234567890')
+        ->set('form.address', 'Alamat Lengkap')
+        ->call('save')
+        ->assertHasNoErrors()
+        ->assertSee('Profil Anda berhasil disimpan dan diperbarui.');
+
+    $user->refresh();
+    expect($user->nip)->toBe('199501012022011001');
+});
