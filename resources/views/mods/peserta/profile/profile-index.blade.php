@@ -185,7 +185,7 @@
                                 @enderror
                             </div>
 
-                            <div class="col-md-6">
+                            <div class="col-12">
                                 <label class="form-label text-xs fw-semibold text-secondary-dark mb-1" for="user-phone">
                                     No. Handphone / WhatsApp <span class="text-danger">*</span>
                                 </label>
@@ -224,7 +224,7 @@
                             <div class="col-md-6">
                                 <label class="form-label text-xs fw-semibold text-secondary-dark mb-1"
                                     for="user-password">
-                                    Kata Sandi Baru <span class="text-muted fw-normal fs-8">(Opsional)</span>
+                                    Kata Sandi <span class="text-danger">*</span>
                                 </label>
                                 <div class="input-group">
                                     <span class="input-group-text bg-light text-muted border-end-0">
@@ -232,7 +232,7 @@
                                     </span>
                                     <input type="password" id="user-password" wire:model="form.password"
                                         class="form-control @error('form.password') is-invalid @enderror"
-                                        placeholder="Kosongkan jika tidak diubah" autocomplete="new-password">
+                                        placeholder="Minimal 8 karakter" autocomplete="new-password">
                                 </div>
                                 @error('form.password')
                                     <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
@@ -242,23 +242,26 @@
                             <div class="col-md-6">
                                 <label class="form-label text-xs fw-semibold text-secondary-dark mb-1"
                                     for="user-password-confirmation">
-                                    Ulangi Kata Sandi Baru <span class="text-muted fw-normal fs-8">(Opsional)</span>
+                                    Konfirmasi Kata Sandi <span class="text-danger">*</span>
                                 </label>
                                 <div class="input-group">
                                     <span class="input-group-text bg-light text-muted border-end-0">
                                         <i class="ri-lock-line"></i>
                                     </span>
                                     <input type="password" id="user-password-confirmation"
-                                        wire:model="form.password_confirmation" class="form-control"
-                                        placeholder="Ketik ulang kata sandi baru" autocomplete="new-password">
+                                        wire:model="form.password_confirmation"
+                                        class="form-control @error('form.password_confirmation') is-invalid @enderror"
+                                        placeholder="Ketik ulang kata sandi" autocomplete="new-password">
                                 </div>
+                                @error('form.password_confirmation')
+                                    <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <div class="col-12 mt-1">
                                 <small class="text-muted fs-8">
                                     <i class="ri-information-line me-1"></i>
-                                    Isi kata sandi di atas jika Anda ingin mengatur atau mengubah kata sandi untuk login
-                                    manual dengan email (minimal 8 karakter).
+                                    Kata sandi wajib diisi (minimal 8 karakter) untuk mengamankan akun dan digunakan saat masuk (login) ke sistem.
                                 </small>
                             </div>
                         </div>
