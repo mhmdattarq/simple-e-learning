@@ -75,6 +75,11 @@
                                     style="max-width: 170px;">{{ $user->name ?: '(Belum diisi)' }}</strong>
                             </div>
                             <div class="d-flex justify-content-between">
+                                <span class="text-muted"><i class="ri-id-card-line me-1 text-primary"></i>NIP:</span>
+                                <strong class="text-dark font-monospace text-truncate"
+                                    style="max-width: 170px;">{{ $user->nip ?: '(Belum diisi)' }}</strong>
+                            </div>
+                            <div class="d-flex justify-content-between">
                                 <span class="text-muted"><i class="ri-mail-line me-1 text-primary"></i>Email:</span>
                                 <strong class="text-dark text-truncate"
                                     style="max-width: 170px;">{{ $user->email }}</strong>
@@ -159,6 +164,23 @@
                                         placeholder="Nama lengkap Anda">
                                 </div>
                                 @error('form.name')
+                                    <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label text-xs fw-semibold text-secondary-dark mb-1" for="user-nip">
+                                    NIP <span class="text-muted fw-normal fs-8">(Opsional / ASN)</span>
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light text-muted border-end-0">
+                                        <i class="ri-id-card-line"></i>
+                                    </span>
+                                    <input type="text" id="user-nip" wire:model="form.nip" maxlength="18"
+                                        class="form-control @error('form.nip') is-invalid @enderror"
+                                        placeholder="18 digit NIP (Contoh: 19940530...)">
+                                </div>
+                                @error('form.nip')
                                     <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
                                 @enderror
                             </div>

@@ -7,6 +7,7 @@ use App\Models\QuizAttempt;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -17,6 +18,7 @@ class ProfileIndex extends Component
 {
     public array $form = [
         'name' => '',
+        'nip' => '',
         'email' => '',
         'phone_number' => '',
         'address' => '',
@@ -35,6 +37,7 @@ class ProfileIndex extends Component
 
         $this->form = [
             'name' => (string) ($user->name ?? ''),
+            'nip' => (string) ($user->nip ?? ''),
             'email' => (string) ($user->email ?? ''),
             'phone_number' => (string) ($user->phone_number ?? ''),
             'address' => (string) ($user->address ?? ''),
@@ -50,6 +53,7 @@ class ProfileIndex extends Component
     {
         return [
             'form.name' => ['required', 'string', 'max:255'],
+            'form.nip' => ['nullable', 'numeric', 'digits:18', Rule::unique('users', 'nip')->ignore(Auth::id())],
             'form.phone_number' => ['required', 'string', 'max:20'],
             'form.address' => ['required', 'string', 'max:1000'],
             'form.password' => ['nullable', 'string', 'min:8', 'confirmed'],
@@ -60,6 +64,9 @@ class ProfileIndex extends Component
     {
         return [
             'form.name.required' => 'Nama lengkap wajib diisi.',
+            'form.nip.numeric' => 'NIP harus berupa angka.',
+            'form.nip.digits' => 'NIP harus berjumlah 18 digit angka.',
+            'form.nip.unique' => 'NIP ini sudah digunakan oleh akun lain.',
             'form.phone_number.required' => 'Nomor WhatsApp / HP wajib diisi.',
             'form.address.required' => 'Alamat lengkap wajib diisi.',
             'form.password.min' => 'Kata sandi baru minimal 8 karakter.',
@@ -74,14 +81,18 @@ class ProfileIndex extends Component
         /** @var User $user */
         $user = Auth::user();
 
+        $cleanNip = ! empty($this->form['nip']) ? preg_replace('/[^0-9]/', '', (string) $this->form['nip']) : null;
+
         $oldValues = [
             'name' => $user->name,
+            'nip' => $user->nip,
             'phone_number' => $user->phone_number,
             'address' => $user->address,
         ];
 
         $newValues = [
             'name' => trim($this->form['name']),
+            'nip' => $cleanNip,
             'phone_number' => trim($this->form['phone_number']),
             'address' => trim($this->form['address']),
         ];

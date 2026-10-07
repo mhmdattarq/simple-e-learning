@@ -196,6 +196,39 @@ test('guest user can register successfully as peserta with valid data', function
     expect(Hash::check('rahasia123', $createdUser->password))->toBeTrue();
 });
 
+test('guest user can register with nip and nip is stored correctly', function () {
+    Livewire::test(Register::class)
+        ->set('form.name', 'PNS Aceh Timur')
+        ->set('form.nip', '199001012020121001')
+        ->set('form.email', 'pns@acehtimurkab.go.id')
+        ->set('form.phone_number', '081234567891')
+        ->set('form.address', 'Idi Rayeuk')
+        ->set('form.password', 'rahasia123')
+        ->set('form.password_confirmation', 'rahasia123')
+        ->call('register')
+        ->assertHasNoErrors()
+        ->assertRedirect(route('login'));
+
+    $this->assertDatabaseHas('users', [
+        'email' => 'pns@acehtimurkab.go.id',
+        'nip' => '199001012020121001',
+    ]);
+});
+
+test('registration validates nip format if provided', function () {
+    Livewire::test(Register::class)
+        ->set('form.name', 'PNS Aceh Timur')
+        ->set('form.nip', '123456') // Not 18 digits
+        ->set('form.email', 'pns@acehtimurkab.go.id')
+        ->set('form.phone_number', '081234567891')
+        ->set('form.address', 'Idi Rayeuk')
+        ->set('form.password', 'rahasia123')
+        ->set('form.password_confirmation', 'rahasia123')
+        ->call('register')
+        ->assertHasErrors(['form.nip'])
+        ->assertSee('NIP harus berjumlah 18 digit angka.');
+});
+
 test('registration validates required fields', function () {
     Livewire::test(Register::class)
         ->set('form.name', '')

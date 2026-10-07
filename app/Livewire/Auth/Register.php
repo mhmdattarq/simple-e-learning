@@ -20,6 +20,7 @@ class Register extends Component
      */
     public array $form = [
         'name' => '',
+        'nip' => '',
         'email' => '',
         'phone_number' => '',
         'address' => '',
@@ -43,6 +44,7 @@ class Register extends Component
     {
         return [
             'form.name' => 'required|string|max:255',
+            'form.nip' => 'nullable|numeric|digits:18|unique:users,nip',
             'form.email' => 'required|email|max:255|unique:users,email',
             'form.phone_number' => 'required|string|max:20',
             'form.address' => 'required|string|max:1000',
@@ -57,6 +59,9 @@ class Register extends Component
     {
         return [
             'form.name.required' => 'Nama lengkap wajib diisi.',
+            'form.nip.numeric' => 'NIP harus berupa angka.',
+            'form.nip.digits' => 'NIP harus berjumlah 18 digit angka.',
+            'form.nip.unique' => 'NIP ini sudah terdaftar dalam sistem.',
             'form.email.required' => 'Alamat email wajib diisi.',
             'form.email.email' => 'Format email tidak valid.',
             'form.email.unique' => 'Email ini sudah terdaftar dalam sistem.',
