@@ -53,6 +53,8 @@ test('user can update and complete their profile with audit logging', function (
         ->set('form.name', 'Fauzan Akbar, S.Kom')
         ->set('form.phone_number', '081234567890')
         ->set('form.address', 'Jl. Medan - B. Aceh No. 12, Idi Rayeuk')
+        ->set('form.password', 'password123')
+        ->set('form.password_confirmation', 'password123')
         ->call('save')
         ->assertHasNoErrors()
         ->assertSee('Profil Anda berhasil disimpan dan diperbarui.');
@@ -62,6 +64,7 @@ test('user can update and complete their profile with audit logging', function (
     expect($user->name)->toBe('Fauzan Akbar, S.Kom');
     expect($user->phone_number)->toBe('081234567890');
     expect($user->address)->toBe('Jl. Medan - B. Aceh No. 12, Idi Rayeuk');
+    expect(Hash::check('password123', $user->password))->toBeTrue();
 
     // Audit log recorded
     $audit = AuditLog::where('action', 'user.profile_updated')
@@ -73,7 +76,7 @@ test('user can update and complete their profile with audit logging', function (
     expect($audit->new_values['address'])->toBe('Jl. Medan - B. Aceh No. 12, Idi Rayeuk');
 });
 
-test('profile validation requires name, phone number, and address', function () {
+test('profile validation requires name, phone number, address, and password', function () {
     $currentUser = User::factory()->peserta()->create([
         'phone_number' => null,
         'address' => null,
@@ -84,8 +87,10 @@ test('profile validation requires name, phone number, and address', function () 
         ->set('form.name', '')
         ->set('form.phone_number', '')
         ->set('form.address', '')
+        ->set('form.password', '')
+        ->set('form.password_confirmation', '')
         ->call('save')
-        ->assertHasErrors(['form.name', 'form.phone_number', 'form.address']);
+        ->assertHasErrors(['form.name', 'form.phone_number', 'form.address', 'form.password']);
 });
 
 test('navbar renders profile link and completion indicator for authenticated user', function () {
@@ -168,7 +173,7 @@ test('user can set password from profile and subsequently login with email and n
     $this->assertAuthenticatedAs($user);
 });
 
-test('user can update profile without changing existing password when password field is empty', function () {
+test('profile validation enforces password requirement', function () {
     $user = User::factory()->peserta()->create([
         'name' => 'Nama Lama',
         'email' => 'peserta@gmail.com',
@@ -185,12 +190,8 @@ test('user can update profile without changing existing password when password f
         ->set('form.password', '')
         ->set('form.password_confirmation', '')
         ->call('save')
-        ->assertHasNoErrors();
-
-    $user->refresh();
-    expect($user->name)->toBe('Nama Baru');
-    expect($user->address)->toBe('Langsa');
-    expect(Hash::check('passwordlama123', $user->password))->toBeTrue();
+        ->assertHasErrors(['form.password'])
+        ->assertSee('Kata sandi wajib diisi.');
 });
 
 test('profile password validation enforces min 8 chars and matching confirmation', function () {
@@ -206,7 +207,7 @@ test('profile password validation enforces min 8 chars and matching confirmation
         ->set('form.password_confirmation', '12345')
         ->call('save')
         ->assertHasErrors(['form.password'])
-        ->assertSee('Kata sandi baru minimal 8 karakter.');
+        ->assertSee('Kata sandi minimal 8 karakter.');
 
     // 2. Mismatched confirmation
     Livewire::actingAs($user)
@@ -218,7 +219,7 @@ test('profile password validation enforces min 8 chars and matching confirmation
         ->set('form.password_confirmation', 'different123')
         ->call('save')
         ->assertHasErrors(['form.password'])
-        ->assertSee('Konfirmasi kata sandi baru tidak cocok.');
+        ->assertSee('Konfirmasi kata sandi tidak cocok.');
 });
 
 test('user can update nip in profile and use it to authenticate', function () {
@@ -230,6 +231,8 @@ test('user can update nip in profile and use it to authenticate', function () {
     Livewire::actingAs($user)
         ->test(ProfileIndex::class)
         ->set('form.nip', '12345')
+        ->set('form.password', 'password123')
+        ->set('form.password_confirmation', 'password123')
         ->call('save')
         ->assertHasErrors(['form.nip'])
         ->assertSee('NIP harus berjumlah 18 digit angka.');
@@ -241,6 +244,8 @@ test('user can update nip in profile and use it to authenticate', function () {
         ->set('form.nip', '199501012022011001')
         ->set('form.phone_number', '081234567890')
         ->set('form.address', 'Alamat Lengkap')
+        ->set('form.password', 'password123')
+        ->set('form.password_confirmation', 'password123')
         ->call('save')
         ->assertHasNoErrors()
         ->assertSee('Profil Anda berhasil disimpan dan diperbarui.');

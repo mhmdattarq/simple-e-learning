@@ -56,7 +56,8 @@ class ProfileIndex extends Component
             'form.nip' => ['nullable', 'numeric', 'digits:18', Rule::unique('users', 'nip')->ignore(Auth::id())],
             'form.phone_number' => ['required', 'string', 'max:20'],
             'form.address' => ['required', 'string', 'max:1000'],
-            'form.password' => ['nullable', 'string', 'min:8', 'confirmed'],
+            'form.password' => ['required', 'string', 'min:8', 'confirmed'],
+            'form.password_confirmation' => ['required', 'string'],
         ];
     }
 
@@ -69,8 +70,10 @@ class ProfileIndex extends Component
             'form.nip.unique' => 'NIP ini sudah digunakan oleh akun lain.',
             'form.phone_number.required' => 'Nomor WhatsApp / HP wajib diisi.',
             'form.address.required' => 'Alamat lengkap wajib diisi.',
-            'form.password.min' => 'Kata sandi baru minimal 8 karakter.',
-            'form.password.confirmed' => 'Konfirmasi kata sandi baru tidak cocok.',
+            'form.password.required' => 'Kata sandi wajib diisi.',
+            'form.password.min' => 'Kata sandi minimal 8 karakter.',
+            'form.password.confirmed' => 'Konfirmasi kata sandi tidak cocok.',
+            'form.password_confirmation.required' => 'Konfirmasi kata sandi wajib diisi.',
         ];
     }
 
@@ -95,28 +98,23 @@ class ProfileIndex extends Component
             'nip' => $cleanNip,
             'phone_number' => trim($this->form['phone_number']),
             'address' => trim($this->form['address']),
+            'password' => Hash::make($this->form['password']),
         ];
-
-        $passwordUpdated = ! empty($this->form['password']);
-        if ($passwordUpdated) {
-            $newValues['password'] = Hash::make($this->form['password']);
-        }
 
         $user->update($newValues);
 
+        $this->form['password'] = '';
+        $this->form['password_confirmation'] = '';
+
         $auditNewValues = $newValues;
-        if (isset($auditNewValues['password'])) {
-            $auditNewValues['password'] = '[UPDATED]';
-        }
+        $auditNewValues['password'] = '[UPDATED]';
 
         AuditLog::log(
             action: 'user.profile_updated',
             auditable: $user,
             oldValues: $oldValues,
             newValues: $auditNewValues,
-            notes: $passwordUpdated
-                ? 'Pembaruan data profil dan pengaturan kata sandi oleh pengguna.'
-                : 'Pembaruan data profil oleh pengguna.'
+            notes: 'Pembaruan data profil dan pengaturan kata sandi oleh pengguna.'
         );
 
         $this->form['password'] = '';
