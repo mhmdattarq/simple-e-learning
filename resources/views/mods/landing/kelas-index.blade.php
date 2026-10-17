@@ -146,17 +146,17 @@
                                     @endif
 
                                     <div class="position-absolute top-0 start-0 m-3 d-flex gap-2">
-                                        @if ($course->isPermanent())
+                                        @if ($course->isBangkom())
                                             <span class="badge bg-success text-white fw-bold fs-8 px-2_5 py-1">
-                                                <i class="ri-infinity-line me-1"></i>Mandiri 24/7
+                                                <i class="ri-infinity-line me-1"></i>Bangkom
                                             </span>
-                                        @elseif ($course->isBatch())
+                                        @elseif ($course->isBulanan())
                                             <span class="badge bg-primary text-white fw-bold fs-8 px-2_5 py-1">
-                                                <i class="ri-calendar-event-line me-1"></i>Batch Terjadwal
+                                                <i class="ri-calendar-event-line me-1"></i>Bulanan
                                             </span>
                                         @else
                                             <span class="badge bg-gold text-navy fw-bold fs-8 px-2_5 py-1">
-                                                <i class="ri-money-dollar-circle-line me-1"></i>Berbayar
+                                                <i class="ri-money-dollar-circle-line me-1"></i>Bangkom External
                                             </span>
                                         @endif
 
@@ -169,9 +169,9 @@
 
                                     <div class="position-absolute bottom-0 start-0 m-3">
                                         <span class="badge bg-dark bg-opacity-75 text-white fs-8">
-                                            @if ($course->isPermanent())
+                                            @if ($course->isBangkom())
                                                 <i class="ri-time-line me-1"></i>Akses Fleksibel 24/7
-                                            @elseif ($course->isPaid())
+                                            @elseif ($course->isBangkomExternal())
                                                 <i class="ri-price-tag-3-line me-1"></i>Rp
                                                 {{ number_format($course->price, 0, ',', '.') }}
                                             @else
@@ -195,7 +195,7 @@
                                             </span>
                                         @else
                                             <span class="badge bg-light text-navy border border-simpel">
-                                                {{ $course->isPaid() ? 'Berbayar' : 'Gratis' }}
+                                                {{ $course->isBangkomExternal() ? 'Bangkom External' : 'Gratis' }}
                                             </span>
                                         @endif
                                     </div>
@@ -216,12 +216,12 @@
                                         class="pt-3 border-top border-simpel d-flex align-items-center justify-content-between mt-auto">
                                         <div>
                                             <small class="text-muted d-block" style="font-size: 11px;">
-                                                {{ $course->isPaid() ? 'Biaya Kelas' : ($course->isPermanent() ? 'Jadwal Akses' : 'Jadwal Diklat') }}
+                                                {{ $course->isBangkomExternal() ? 'Biaya Program' : ($course->isBangkom() ? 'Jadwal Akses' : 'Jadwal Diklat') }}
                                             </small>
                                             <span class="fw-bold text-navy fs-7">
-                                                @if ($course->isPaid())
+                                                @if ($course->isBangkomExternal())
                                                     Rp {{ number_format($course->price, 0, ',', '.') }}
-                                                @elseif ($course->isPermanent())
+                                                @elseif ($course->isBangkom())
                                                     <span class="text-success"><i
                                                             class="ri-checkbox-circle-line me-1"></i>Kapan Saja</span>
                                                 @else

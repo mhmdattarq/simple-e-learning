@@ -294,15 +294,15 @@
                                 let detailUrl = "{{ route('evaluasi.detail', ':id') }}".replace(':id', row.id);
 
                                 let typeBadge = '';
-                                if (row.type === 'permanent') {
+                                if (row.type === 'bangkom' || row.type === 'permanent') {
                                     typeBadge =
-                                        '<span class="badge bg-success-subtle text-success" style="font-size: 10.5px;"><i class="ri-infinity-line me-1"></i>Permanen</span>';
-                                } else if (row.type === 'paid' || row.type === 'berbayar') {
+                                        '<span class="badge bg-success-subtle text-success" style="font-size: 10.5px;"><i class="ri-infinity-line me-1"></i>Bangkom</span>';
+                                } else if (row.type === 'bangkom_external' || row.type === 'paid' || row.type === 'berbayar') {
                                     typeBadge =
-                                        '<span class="badge bg-warning-subtle text-dark border border-warning" style="font-size: 10.5px;"><i class="ri-money-dollar-circle-line me-1"></i>Berbayar</span>';
+                                        '<span class="badge bg-warning-subtle text-dark border border-warning" style="font-size: 10.5px;"><i class="ri-money-dollar-circle-line me-1"></i>Bangkom External</span>';
                                 } else {
                                     typeBadge =
-                                        '<span class="badge bg-primary-subtle text-primary" style="font-size: 10.5px;"><i class="ri-calendar-line me-1"></i>Batch</span>';
+                                        '<span class="badge bg-primary-subtle text-primary" style="font-size: 10.5px;"><i class="ri-calendar-line me-1"></i>Bulanan</span>';
                                 }
 
                                 let catText = row.category ? `<span class="text-muted" style="font-size: 11.5px;"><i class="ri-folder-3-line me-1"></i>${row.category.name}</span>` : '';

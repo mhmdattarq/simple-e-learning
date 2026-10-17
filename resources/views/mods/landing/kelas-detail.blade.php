@@ -24,17 +24,17 @@
             <div class="row align-items-center g-4">
                 <div class="col-lg-8 wow fadeInLeft" data-wow-delay="100ms">
                     <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
-                        @if ($course->isPermanent())
+                        @if ($course->isBangkom())
                             <span class="badge bg-gold text-navy fw-bold fs-8 px-3 py-1_5">
-                                <i class="ri-infinity-line me-1"></i>Belajar Mandiri (Self-Paced)
+                                <i class="ri-infinity-line me-1"></i>Bangkom
                             </span>
-                        @elseif ($course->isBatch())
+                        @elseif ($course->isBulanan())
                             <span class="badge bg-gold text-navy fw-bold fs-8 px-3 py-1_5">
-                                <i class="ri-calendar-event-line me-1"></i>Batch Terjadwal
+                                <i class="ri-calendar-event-line me-1"></i>Bulanan
                             </span>
                         @else
                             <span class="badge bg-gold text-navy fw-bold fs-8 px-3 py-1_5">
-                                <i class="ri-money-dollar-circle-line me-1"></i>Kelas Berbayar
+                                <i class="ri-money-dollar-circle-line me-1"></i>Bangkom External
                             </span>
                         @endif
 
@@ -266,7 +266,7 @@
                                         class="btn btn-secondary w-100 py-3 fw-bold text-white shadow-none d-flex align-items-center justify-content-center gap-2 radius-10 mb-2 opacity-75"
                                         disabled>
                                         <i class="ri-time-line fs-5"></i>
-                                        <span>Batch Belum Dibuka</span>
+                                        <span>Bulanan Belum Dibuka</span>
                                     </button>
                                     <div class="p-2_5 bg-warning-subtle text-dark border border-warning-subtle radius-10 fs-8 mb-3 text-center">
                                         <i class="ri-calendar-event-line text-warning me-1"></i>
@@ -277,7 +277,7 @@
                                         class="btn btn-secondary w-100 py-3 fw-bold text-white shadow-none d-flex align-items-center justify-content-center gap-2 radius-10 mb-2 opacity-75"
                                         disabled>
                                         <i class="ri-forbid-line fs-5"></i>
-                                        <span>Batch Telah Berakhir</span>
+                                        <span>Bulanan Telah Berakhir</span>
                                     </button>
                                     <div class="p-2_5 bg-danger-subtle text-danger border border-danger-subtle radius-10 fs-8 mb-3 text-center">
                                         <i class="ri-error-warning-line me-1"></i>
@@ -298,7 +298,7 @@
                                         class="btn btn-secondary w-100 py-3 fw-bold text-white shadow-none d-flex align-items-center justify-content-center gap-2 radius-10 mb-2 opacity-75"
                                         disabled>
                                         <i class="ri-forbid-line fs-5"></i>
-                                        <span>Batch Telah Berakhir</span>
+                                        <span>Bulanan Telah Berakhir</span>
                                     </button>
                                 @else
                                     <a href="{{ route('login', ['redirect' => route('peserta.materi', $course)]) }}"

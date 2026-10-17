@@ -73,7 +73,7 @@
                     </button>
                 @else
                     <button type="button" class="btn btn-secondary w-100 py-12 radius-8 fw-semibold" disabled>
-                        <i class="ri-lock-2-line me-1"></i> Materi Terkunci (Batch Sedang Aktif Berjalan)
+                        <i class="ri-lock-2-line me-1"></i> Materi Terkunci (Bulanan Sedang Aktif Berjalan)
                     </button>
                 @endif
             </div>

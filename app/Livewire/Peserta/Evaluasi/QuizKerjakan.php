@@ -125,21 +125,21 @@ class QuizKerjakan extends Component
             return;
         }
 
-        // 4. Validasi Prasyarat Akses (Prerequisite Completion & Periode Batch)
+        // 4. Validasi Prasyarat Akses (Prerequisite Completion & Periode Bulanan)
         if (! $user->hasAdminAccess()) {
-            if ($this->quiz->course->isBatch()) {
-                if ($this->quiz->course->isBatchNotStarted()) {
+            if ($this->quiz->course->isBulanan()) {
+                if ($this->quiz->course->isBulananNotStarted()) {
                     $this->quizState = 'locked';
                     $formattedStart = $this->quiz->course->start_date?->translatedFormat('d F Y, H:i') ?? '-';
-                    $this->lockedReason = "Evaluasi kuis belum dapat diakses karena batch pelatihan baru dibuka pada tanggal {$formattedStart} WIB.";
+                    $this->lockedReason = "Evaluasi kuis belum dapat diakses karena program Bulanan baru dibuka pada tanggal {$formattedStart} WIB.";
 
                     return;
                 }
 
-                if ($this->quiz->course->isBatchEnded()) {
+                if ($this->quiz->course->isBulananEnded()) {
                     $this->quizState = 'locked';
                     $formattedEnd = $this->quiz->course->end_date?->translatedFormat('d F Y, H:i') ?? '-';
-                    $this->lockedReason = "Evaluasi kuis tidak dapat diakses lagi karena masa batch pelatihan telah berakhir pada {$formattedEnd} WIB.";
+                    $this->lockedReason = "Evaluasi kuis tidak dapat diakses lagi karena masa program Bulanan telah berakhir pada {$formattedEnd} WIB.";
 
                     return;
                 }

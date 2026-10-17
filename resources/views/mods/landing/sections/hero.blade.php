@@ -21,9 +21,9 @@
                 <p class="text-white-80 fs-6 mb-4 pe-lg-4 lh-base">
                     Platform pembelajaran digital terintegrasi <strong>SIMPEL E-Learning</strong> BKPSDM Kabupaten Aceh
                     Timur.
-                    Tingkatkan keahlian melalui <strong>Kelas Batch</strong> berjadwal, <strong>Kelas Permanen</strong>
+                    Tingkatkan keahlian melalui <strong>Bulanan</strong> berjadwal, <strong>Bangkom</strong>
                     mandiri,
-                    serta <strong>Kelas Berbayar</strong> intensif dengan kurikulum terstruktur dan evaluasi kompetensi
+                    serta <strong>Bangkom External</strong> intensif dengan kurikulum terstruktur dan evaluasi kompetensi
                     terarah.
                 </p>
 
@@ -50,7 +50,7 @@
                     </div>
                     <div class="col-4 border-start border-white-15 ps-3 simpel-metric-col">
                         <h4 class="mb-0 fw-extrabold text-gold">3 Model</h4>
-                        <small class="text-white-70 fs-8">Batch, Permanen, Berbayar</small>
+                        <small class="text-white-70 fs-8">Bulanan, Bangkom, Bangkom External</small>
                     </div>
                     <div class="col-4 border-start border-white-15 ps-3 simpel-metric-col">
                         <h4 class="mb-0 fw-extrabold text-gold">Online</h4>
@@ -62,7 +62,7 @@
             {{-- Right Column: 2 Stacked Feature Cards Highlighting Class Architectures --}}
             <div class="col-lg-5 wow fadeInRight" data-wow-delay="200ms">
                 <div class="d-flex flex-column gap-3">
-                    {{-- Highlight Card 1: Kelas Batch --}}
+                    {{-- Highlight Card 1: Bulanan --}}
                     <div class="card border border-white-15 rounded-4 p-3 p-lg-4 text-white shadow-lg transition-all simpel-hero-card"
                         style="background: rgba(7, 26, 51, 0.75); backdrop-filter: blur(12px);">
                         <div class="d-flex align-items-start gap-3">
@@ -72,7 +72,7 @@
                             </div>
                             <div class="flex-grow-1 min-w-0">
                                 <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-1 pe-2 pe-lg-3">
-                                    <span class="badge bg-gold text-navy fw-bold fs-8">Kelas Batch</span>
+                                    <span class="badge bg-gold text-navy fw-bold fs-8">Bulanan</span>
                                     <small class="text-white-60 fs-8 pe-1 simpel-hero-card-meta"><i class="ri-time-line me-1"></i>Pelatihan
                                         Berjadwal</small>
                                 </div>
@@ -82,16 +82,16 @@
                                     Program pelatihan berkala dengan periode pendaftaran, kuota peserta terarah, serta
                                     evaluasi komprehensif.
                                 </p>
-                                <a href="{{ route('landing.kelas.batch') }}"
+                                <a href="{{ route('landing.kelas.bulanan') }}"
                                     class="text-gold text-decoration-none fs-8 fw-semibold d-inline-flex align-items-center gap-1 hover-gold">
-                                    <span>Lihat Jadwal Kelas Batch</span>
+                                    <span>Lihat Jadwal Bulanan</span>
                                     <i class="ri-arrow-right-line"></i>
                                 </a>
                             </div>
                         </div>
                     </div>
 
-                    {{-- Highlight Card 2: Kelas Permanen & Berbayar --}}
+                    {{-- Highlight Card 2: Bangkom & Bangkom External --}}
                     <div class="card border border-white-15 rounded-4 p-3 p-lg-4 text-white shadow-lg transition-all simpel-hero-card"
                         style="background: rgba(12, 49, 88, 0.75); backdrop-filter: blur(12px);">
                         <div class="d-flex align-items-start gap-3">
@@ -101,19 +101,19 @@
                             </div>
                             <div class="flex-grow-1 min-w-0">
                                 <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-1 pe-2 pe-lg-3">
-                                    <span class="badge bg-white-15 text-white fw-medium fs-8">Permanen &amp;
-                                        Berbayar</span>
+                                    <span class="badge bg-white-15 text-white fw-medium fs-8">Bangkom &amp;
+                                        External</span>
                                     <small class="text-white-60 fs-8 pe-1 simpel-hero-card-meta"><i class="ri-flashlight-line me-1"></i>Akses
                                         Fleksibel</small>
                                 </div>
                                 <h6 class="fw-bold text-white mb-1">Belajar Mandiri &amp; Program Intensif</h6>
                                 <p class="text-white-70 fs-8 mb-2 lh-sm">
-                                    Akses materi pembelajaran mandiri kapan saja atau ikuti kelas berbayar untuk
+                                    Akses materi pembelajaran mandiri kapan saja atau ikuti program Bangkom External untuk
                                     pendalaman materi spesialisasi.
                                 </p>
-                                <a href="{{ route('landing.kelas.permanen') }}"
+                                <a href="{{ route('landing.kelas.bangkom') }}"
                                     class="text-gold text-decoration-none fs-8 fw-semibold d-inline-flex align-items-center gap-1 hover-gold">
-                                    <span>Jelajahi Kelas Mandiri</span>
+                                    <span>Jelajahi Bangkom</span>
                                     <i class="ri-arrow-right-line"></i>
                                 </a>
                             </div>

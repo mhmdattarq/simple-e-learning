@@ -48,20 +48,20 @@ class MateriBelajar extends Component
             abort(404, 'Kelas tidak ditemukan atau belum dipublikasikan.');
         }
 
-        // Validasi Periode Pelaksanaan Batch untuk Peserta
-        if (! $user->hasAdminAccess() && $this->course->isBatch()) {
-            if ($this->course->isBatchNotStarted()) {
+        // Validasi Periode Pelaksanaan Bulanan untuk Peserta
+        if (! $user->hasAdminAccess() && $this->course->isBulanan()) {
+            if ($this->course->isBulananNotStarted()) {
                 $formattedStart = $this->course->start_date?->translatedFormat('d F Y, H:i') ?? '-';
-                session()->flash('warning', "Kelas batch ini belum dimulai. Pembelajaran baru dapat diakses pada {$formattedStart} WIB.");
+                session()->flash('warning', "Program Bulanan ini belum dimulai. Pembelajaran baru dapat diakses pada {$formattedStart} WIB.");
 
                 $this->redirect(route('landing.kelas.detail', $this->course), navigate: true);
 
                 return;
             }
 
-            if ($this->course->isBatchEnded()) {
+            if ($this->course->isBulananEnded()) {
                 $formattedEnd = $this->course->end_date?->translatedFormat('d F Y, H:i') ?? '-';
-                session()->flash('warning', "Masa pembelajaran batch kelas ini telah berakhir pada {$formattedEnd} WIB.");
+                session()->flash('warning', "Masa pembelajaran Bulanan ini telah berakhir pada {$formattedEnd} WIB.");
 
                 $this->redirect(route('landing.kelas.detail', $this->course), navigate: true);
 

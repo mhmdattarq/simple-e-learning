@@ -349,14 +349,14 @@
                     <li class="{{ request()->routeIs('landing') && !request()->is('kelas*') ? 'current' : '' }}">
                         <a href="{{ route('landing') }}">Beranda</a>
                     </li>
-                    <li class="{{ request()->routeIs('landing.kelas.batch*') || request()->is('kelas-batch*') ? 'current' : '' }}">
-                        <a href="{{ route('landing.kelas.batch') }}">Kelas Batch</a>
+                    <li class="{{ request()->routeIs(['landing.kelas.bulanan*', 'landing.kelas.batch*']) || request()->is(['bulanan*', 'kelas-batch*']) ? 'current' : '' }}">
+                        <a href="{{ route('landing.kelas.bulanan') }}">Bulanan</a>
                     </li>
-                    <li class="{{ request()->routeIs('landing.kelas.permanen*') || request()->is('kelas-permanen*') ? 'current' : '' }}">
-                        <a href="{{ route('landing.kelas.permanen') }}">Kelas Permanen</a>
+                    <li class="{{ (request()->routeIs(['landing.kelas.bangkom*', 'landing.kelas.permanen*']) && !request()->routeIs(['landing.kelas.bangkom_external*', 'landing.kelas.berbayar*'])) || (request()->is(['bangkom', 'bangkom/*', 'kelas-permanen*']) && !request()->is('bangkom-external*')) ? 'current' : '' }}">
+                        <a href="{{ route('landing.kelas.bangkom') }}">Bangkom</a>
                     </li>
-                    <li class="{{ request()->routeIs('landing.kelas.berbayar*') || request()->is('kelas-berbayar*') ? 'current' : '' }}">
-                        <a href="{{ route('landing.kelas.berbayar') }}">Kelas Berbayar</a>
+                    <li class="{{ request()->routeIs(['landing.kelas.bangkom_external*', 'landing.kelas.berbayar*']) || request()->is(['bangkom-external*', 'kelas-berbayar*']) ? 'current' : '' }}">
+                        <a href="{{ route('landing.kelas.bangkom_external') }}">Bangkom External</a>
                     </li>
                     <li class="{{ request()->routeIs('kontak*') ? 'current' : '' }}">
                         <a href="{{ route('kontak') }}">Kontak</a>

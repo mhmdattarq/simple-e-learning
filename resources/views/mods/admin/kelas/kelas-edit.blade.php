@@ -13,7 +13,7 @@
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
         <div>
             <h5 class="fw-bold text-dark mb-1">Edit Kelas</h5>
-            <p class="text-muted mb-0">Formulir pembaruan data kelas (Batch, Permanen, dan Berbayar).</p>
+            <p class="text-muted mb-0">Formulir pembaruan data kelas (Bulanan, Bangkom, dan Bangkom External).</p>
         </div>
         <div>
             <a href="{{ route('kelas.data') }}" class="btn btn-danger d-flex align-items-center" wire:navigate>
@@ -125,15 +125,15 @@
                             </label>
                             <select id="edit_input_type" class="form-select @error('form.type') is-invalid @enderror"
                                 wire:model.live="form.type">
-                                <option value="batch">Batch (Berdasarkan Gelombang / Periode)</option>
-                                <option value="permanent">Permanen (Akses Mandiri / Self-Paced)</option>
-                                <option value="paid">Berbayar (Kelas Berbayar)</option>
+                                <option value="bulanan">Bulanan</option>
+                                <option value="bangkom">Bangkom</option>
+                                <option value="bangkom_external">Bangkom External</option>
                             </select>
                             <div class="form-text text-xs text-muted mt-1">
-                                @if (($form['type'] ?? '') === 'batch')
-                                    <i class="ri-calendar-check-line me-1"></i>Berdasarkan jadwal gelombang.
-                                @elseif(in_array($form['type'] ?? '', ['paid', 'berbayar']))
-                                    <i class="ri-money-dollar-circle-line me-1"></i>Program berbayar dengan penetapan
+                                @if (in_array($form['type'] ?? '', ['bulanan', 'batch'], true))
+                                    <i class="ri-calendar-check-line me-1"></i>Berdasarkan jadwal gelombang periode bulanan.
+                                @elseif(in_array($form['type'] ?? '', ['bangkom_external', 'paid', 'berbayar'], true))
+                                    <i class="ri-money-dollar-circle-line me-1"></i>Program pengembangan eksternal dengan penetapan
                                     tarif biaya.
                                 @else
                                     <i class="ri-time-line me-1"></i>Akses mandiri (self-paced) sepanjang waktu.
@@ -144,8 +144,8 @@
                             @enderror
                         </div>
 
-                        {{-- Row (Khusus Tipe Batch): Tanggal & Jam Mulai & Selesai --}}
-                        @if (($form['type'] ?? '') === 'batch')
+                        {{-- Row (Khusus Tipe Bulanan): Tanggal & Jam Mulai & Selesai --}}
+                        @if (in_array($form['type'] ?? '', ['bulanan', 'batch'], true))
                             <div class="col-md-6" wire:key="edit-field-start-date">
                                 <label class="form-label text-xs fw-semibold text-dark mb-1">
                                     Tanggal & Jam Mulai <span class="text-danger">*</span>
@@ -154,7 +154,7 @@
                                     class="form-control @error('form.start_date') is-invalid @enderror"
                                     wire:model="form.start_date">
                                 <div class="form-text text-xs text-muted mt-1">
-                                    Pilih tanggal dan jam mulai kelas batch.
+                                    Pilih tanggal dan jam mulai program bulanan.
                                 </div>
                                 @error('form.start_date')
                                     <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
@@ -169,7 +169,7 @@
                                     class="form-control @error('form.end_date') is-invalid @enderror"
                                     wire:model="form.end_date">
                                 <div class="form-text text-xs text-muted mt-1">
-                                    Pilih tanggal dan jam selesai kelas batch (harus setelah waktu mulai).
+                                    Pilih tanggal dan jam selesai program bulanan (harus setelah waktu mulai).
                                 </div>
                                 @error('form.end_date')
                                     <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
@@ -177,8 +177,8 @@
                             </div>
                         @endif
 
-                        {{-- Row Khusus Kelas Berbayar: Biaya Kelas --}}
-                        @if (in_array($form['type'] ?? '', ['paid', 'berbayar']))
+                        {{-- Row Khusus Bangkom External: Biaya Kelas --}}
+                        @if (in_array($form['type'] ?? '', ['bangkom_external', 'paid', 'berbayar'], true))
                             <div class="col-md-12" wire:key="edit-field-price">
                                 <label class="form-label text-xs fw-semibold text-dark mb-1">
                                     Biaya Kelas (Tarif Masuk) <span class="text-danger">*</span>
@@ -189,8 +189,8 @@
                                         class="form-control @error('form.price') is-invalid @enderror"
                                         wire:model="form.price" placeholder="Contoh: 150000">
                                 </div>
-                                <div class="form-text text-xs text-muted mt-1">Masukkan nominal biaya pendaftaran kelas
-                                    berbayar.</div>
+                                <div class="form-text text-xs text-muted mt-1">Masukkan nominal biaya pendaftaran program
+                                    Bangkom External.</div>
                                 @error('form.price')
                                     <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
                                 @enderror

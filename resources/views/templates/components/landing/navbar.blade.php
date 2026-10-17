@@ -23,28 +23,28 @@ new class extends Component {
     public function activeMenu(): string
     {
         // 1. Direct class routes (Catalog, Detail, Materi, Evaluasi)
-        if (request()->routeIs(['landing.kelas.batch*', 'peserta.materi.batch*', 'peserta.evaluasi.kerjakan.batch*']) || request()->is('kelas-batch*') || request()->routeIs('jadwal*') || request()->is('jadwal*')) {
-            return 'batch';
+        if (request()->routeIs(['landing.kelas.bulanan*', 'landing.kelas.batch*', 'peserta.materi.bulanan*', 'peserta.materi.batch*', 'peserta.evaluasi.kerjakan.bulanan*', 'peserta.evaluasi.kerjakan.batch*']) || request()->is('bulanan*') || request()->is('kelas-batch*') || request()->routeIs('jadwal*') || request()->is('jadwal*')) {
+            return 'bulanan';
         }
 
-        if (request()->routeIs(['landing.kelas.permanen*', 'peserta.materi.permanen*', 'peserta.evaluasi.kerjakan.permanen*']) || request()->is('kelas-permanen*')) {
-            return 'permanen';
+        if (request()->routeIs(['landing.kelas.bangkom_external*', 'landing.kelas.berbayar*', 'peserta.materi.bangkom_external*', 'peserta.materi.berbayar*', 'peserta.evaluasi.kerjakan.bangkom_external*', 'peserta.evaluasi.kerjakan.berbayar*']) || request()->is('bangkom-external*') || request()->is('kelas-berbayar*')) {
+            return 'bangkom_external';
         }
 
-        if (request()->routeIs(['landing.kelas.berbayar*', 'peserta.materi.berbayar*', 'peserta.evaluasi.kerjakan.berbayar*']) || request()->is('kelas-berbayar*')) {
-            return 'berbayar';
+        if (request()->routeIs(['landing.kelas.bangkom*', 'landing.kelas.permanen*', 'peserta.materi.bangkom*', 'peserta.materi.permanen*', 'peserta.evaluasi.kerjakan.bangkom*', 'peserta.evaluasi.kerjakan.permanen*']) || request()->is(['bangkom', 'bangkom/*']) || request()->is('kelas-permanen*')) {
+            return 'bangkom';
         }
 
-        // 2. Query param ?type=... (e.g. /kelas?type=batch)
+        // 2. Query param ?type=... (e.g. /kelas?type=bulanan)
         $queryType = request()->query('type');
-        if ($queryType === 'batch') {
-            return 'batch';
+        if (in_array($queryType, ['bulanan', 'batch'], true)) {
+            return 'bulanan';
         }
-        if ($queryType === 'permanent') {
-            return 'permanen';
+        if (in_array($queryType, ['bangkom', 'permanent'], true)) {
+            return 'bangkom';
         }
-        if (in_array($queryType, ['paid', 'berbayar'], true)) {
-            return 'berbayar';
+        if (in_array($queryType, ['bangkom_external', 'paid', 'berbayar'], true)) {
+            return 'bangkom_external';
         }
 
         // 3. Detail, Materi, or Evaluasi page with generic /kelas/{course} pattern
@@ -59,14 +59,14 @@ new class extends Component {
                 : Course::where('slug', $courseParam)->orWhere(fn ($q) => is_numeric($courseParam) ? $q->where('id', (int) $courseParam) : null)->first();
 
             if ($course) {
-                if ($course->type === 'batch') {
-                    return 'batch';
+                if (in_array($course->type, ['bulanan', 'batch'], true)) {
+                    return 'bulanan';
                 }
-                if ($course->type === 'permanent') {
-                    return 'permanen';
+                if (in_array($course->type, ['bangkom', 'permanent'], true)) {
+                    return 'bangkom';
                 }
-                if (in_array($course->type, ['paid', 'berbayar'], true)) {
-                    return 'berbayar';
+                if (in_array($course->type, ['bangkom_external', 'paid', 'berbayar'], true)) {
+                    return 'bangkom_external';
                 }
             }
         }
@@ -83,14 +83,14 @@ new class extends Component {
                         ->first();
 
                 $type = $quiz?->course?->type;
-                if ($type === 'batch') {
-                    return 'batch';
+                if (in_array($type, ['bulanan', 'batch'], true)) {
+                    return 'bulanan';
                 }
-                if ($type === 'permanent') {
-                    return 'permanen';
+                if (in_array($type, ['bangkom', 'permanent'], true)) {
+                    return 'bangkom';
                 }
-                if (in_array($type, ['paid', 'berbayar'], true)) {
-                    return 'berbayar';
+                if (in_array($type, ['bangkom_external', 'paid', 'berbayar'], true)) {
+                    return 'bangkom_external';
                 }
             }
         }
@@ -145,14 +145,14 @@ new class extends Component {
                                 <li class="{{ $activeMenu === 'beranda' ? 'current' : '' }}">
                                     <a href="{{ route('landing') }}">Beranda</a>
                                 </li>
-                                <li class="{{ $activeMenu === 'batch' ? 'current' : '' }}">
-                                    <a href="{{ route('landing.kelas.batch') }}">Kelas Batch</a>
+                                <li class="{{ $activeMenu === 'bulanan' ? 'current' : '' }}">
+                                    <a href="{{ route('landing.kelas.bulanan') }}">Bulanan</a>
                                 </li>
-                                <li class="{{ $activeMenu === 'permanen' ? 'current' : '' }}">
-                                    <a href="{{ route('landing.kelas.permanen') }}">Kelas Permanen</a>
+                                <li class="{{ $activeMenu === 'bangkom' ? 'current' : '' }}">
+                                    <a href="{{ route('landing.kelas.bangkom') }}">Bangkom</a>
                                 </li>
-                                <li class="{{ $activeMenu === 'berbayar' ? 'current' : '' }}">
-                                    <a href="{{ route('landing.kelas.berbayar') }}">Kelas Berbayar</a>
+                                <li class="{{ $activeMenu === 'bangkom_external' ? 'current' : '' }}">
+                                    <a href="{{ route('landing.kelas.bangkom_external') }}">Bangkom External</a>
                                 </li>
                                 <li class="{{ $activeMenu === 'kontak' ? 'current' : '' }}">
                                     <a href="{{ route('kontak') }}">Kontak</a>

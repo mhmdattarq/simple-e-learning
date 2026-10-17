@@ -354,7 +354,7 @@ test('participant cannot access quiz if batch has not started yet', function () 
     Livewire::actingAs($this->peserta)
         ->test(QuizKerjakan::class, ['quiz_id' => $batchQuiz->id, 'course_id' => $batchCourse->id])
         ->assertSet('quizState', 'locked')
-        ->assertSee('Evaluasi kuis belum dapat diakses karena batch pelatihan baru dibuka');
+        ->assertSee('Evaluasi kuis belum dapat diakses karena program Bulanan baru dibuka');
 });
 
 test('participant cannot access quiz if batch has already ended', function () {
@@ -378,7 +378,7 @@ test('participant cannot access quiz if batch has already ended', function () {
     Livewire::actingAs($this->peserta)
         ->test(QuizKerjakan::class, ['quiz_id' => $batchQuiz->id, 'course_id' => $batchCourse->id])
         ->assertSet('quizState', 'locked')
-        ->assertSee('Evaluasi kuis tidak dapat diakses lagi karena masa batch pelatihan telah berakhir');
+        ->assertSee('Evaluasi kuis tidak dapat diakses lagi karena masa program Bulanan telah berakhir');
 });
 
 test('participant active quiz session is automatically finalized upon logout', function () {

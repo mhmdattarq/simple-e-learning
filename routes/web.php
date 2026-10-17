@@ -42,18 +42,28 @@ use Illuminate\Support\Facades\Route;
 
 // 1. Landing Page (Public)
 Route::livewire('/', LandingIndex::class)->name('landing');
-Route::livewire('/kelas-batch', KelasIndex::class)->name('landing.kelas.batch');
-Route::livewire('/kelas-permanen', KelasIndex::class)->name('landing.kelas.permanen');
-Route::livewire('/kelas-berbayar', KelasIndex::class)->name('landing.kelas.berbayar');
+Route::livewire('/bulanan', KelasIndex::class)->name('landing.kelas.bulanan');
+Route::livewire('/bangkom', KelasIndex::class)->name('landing.kelas.bangkom');
+Route::livewire('/bangkom-external', KelasIndex::class)->name('landing.kelas.bangkom_external');
 Route::livewire('/jadwal', JadwalIndex::class)->name('jadwal');
 Route::livewire('/kontak', KontakIndex::class)->middleware('throttle:contact')->name('kontak');
 Route::redirect('/contact', '/kontak');
 Route::livewire('/kelas', KelasIndex::class)->name('pelatihan.index');
 
+// Backward-compatible redirect aliases for old URLs
+Route::get('/kelas-batch', fn () => redirect()->to(route('landing.kelas.bulanan'), 301))->name('landing.kelas.batch');
+Route::get('/kelas-permanen', fn () => redirect()->to(route('landing.kelas.bangkom'), 301))->name('landing.kelas.permanen');
+Route::get('/kelas-berbayar', fn () => redirect()->to(route('landing.kelas.bangkom_external'), 301))->name('landing.kelas.berbayar');
+
 // Detail Kelas per Jenis (Type-aware & SEO URLs)
-Route::livewire('/kelas-batch/{course}', KelasDetail::class)->name('landing.kelas.detail.batch');
-Route::livewire('/kelas-permanen/{course}', KelasDetail::class)->name('landing.kelas.detail.permanen');
-Route::livewire('/kelas-berbayar/{course}', KelasDetail::class)->name('landing.kelas.detail.berbayar');
+Route::livewire('/bulanan/{course}', KelasDetail::class)->name('landing.kelas.detail.bulanan');
+Route::livewire('/bangkom/{course}', KelasDetail::class)->name('landing.kelas.detail.bangkom');
+Route::livewire('/bangkom-external/{course}', KelasDetail::class)->name('landing.kelas.detail.bangkom_external');
+
+// Backward-compatible Detail Kelas Redirects
+Route::get('/kelas-batch/{course}', fn (Course $course) => redirect()->to(route('landing.kelas.detail', $course), 301))->name('landing.kelas.detail.batch');
+Route::get('/kelas-permanen/{course}', fn (Course $course) => redirect()->to(route('landing.kelas.detail', $course), 301))->name('landing.kelas.detail.permanen');
+Route::get('/kelas-berbayar/{course}', fn (Course $course) => redirect()->to(route('landing.kelas.detail', $course), 301))->name('landing.kelas.detail.berbayar');
 
 // Generic / Backward-compatible Detail Kelas
 Route::get('/kelas/{course}', fn (Course $course) => redirect()->to(route('landing.kelas.detail', $course)))
@@ -78,14 +88,24 @@ Route::middleware('auth')->group(function () {
     Route::livewire('/profil', ProfileIndex::class)->name('peserta.profil');
 
     // Ruang Belajar & Materi per Jenis
-    Route::livewire('/kelas-batch/{course}/materi', MateriBelajar::class)->name('peserta.materi.batch');
-    Route::livewire('/kelas-permanen/{course}/materi', MateriBelajar::class)->name('peserta.materi.permanen');
-    Route::livewire('/kelas-berbayar/{course}/materi', MateriBelajar::class)->name('peserta.materi.berbayar');
+    Route::livewire('/bulanan/{course}/materi', MateriBelajar::class)->name('peserta.materi.bulanan');
+    Route::livewire('/bangkom/{course}/materi', MateriBelajar::class)->name('peserta.materi.bangkom');
+    Route::livewire('/bangkom-external/{course}/materi', MateriBelajar::class)->name('peserta.materi.bangkom_external');
+
+    // Backward-compatible redirects for old materi URLs
+    Route::get('/kelas-batch/{course}/materi', fn (Course $course) => redirect()->to(route('peserta.materi', $course), 301))->name('peserta.materi.batch');
+    Route::get('/kelas-permanen/{course}/materi', fn (Course $course) => redirect()->to(route('peserta.materi', $course), 301))->name('peserta.materi.permanen');
+    Route::get('/kelas-berbayar/{course}/materi', fn (Course $course) => redirect()->to(route('peserta.materi', $course), 301))->name('peserta.materi.berbayar');
 
     // Evaluasi & Kuis per Jenis (Slug-based & Type-aware)
-    Route::livewire('/kelas-batch/{course}/evaluasi/{quiz}', QuizKerjakan::class)->name('peserta.evaluasi.kerjakan.batch');
-    Route::livewire('/kelas-permanen/{course}/evaluasi/{quiz}', QuizKerjakan::class)->name('peserta.evaluasi.kerjakan.permanen');
-    Route::livewire('/kelas-berbayar/{course}/evaluasi/{quiz}', QuizKerjakan::class)->name('peserta.evaluasi.kerjakan.berbayar');
+    Route::livewire('/bulanan/{course}/evaluasi/{quiz}', QuizKerjakan::class)->name('peserta.evaluasi.kerjakan.bulanan');
+    Route::livewire('/bangkom/{course}/evaluasi/{quiz}', QuizKerjakan::class)->name('peserta.evaluasi.kerjakan.bangkom');
+    Route::livewire('/bangkom-external/{course}/evaluasi/{quiz}', QuizKerjakan::class)->name('peserta.evaluasi.kerjakan.bangkom_external');
+
+    // Backward-compatible redirects for old evaluasi URLs
+    Route::get('/kelas-batch/{course}/evaluasi/{quiz}', fn (Course $course, $quiz) => redirect()->to(route('peserta.evaluasi.kerjakan', ['course' => $course, 'quiz' => $quiz]), 301))->name('peserta.evaluasi.kerjakan.batch');
+    Route::get('/kelas-permanen/{course}/evaluasi/{quiz}', fn (Course $course, $quiz) => redirect()->to(route('peserta.evaluasi.kerjakan', ['course' => $course, 'quiz' => $quiz]), 301))->name('peserta.evaluasi.kerjakan.permanen');
+    Route::get('/kelas-berbayar/{course}/evaluasi/{quiz}', fn (Course $course, $quiz) => redirect()->to(route('peserta.evaluasi.kerjakan', ['course' => $course, 'quiz' => $quiz]), 301))->name('peserta.evaluasi.kerjakan.berbayar');
 
     // Generic / Backward-compatible Redirects
     Route::get('/kelas/{course}/materi', fn (Course $course) => redirect()->to(route('peserta.materi', $course)));
