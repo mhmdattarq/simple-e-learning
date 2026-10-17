@@ -37,7 +37,7 @@ class KelasCreate extends Component
             'description' => '',
             'category_id' => '',
             'category_name' => '',
-            'type' => 'batch',
+            'type' => 'bulanan',
             'price' => 0,
             'start_date' => '',
             'end_date' => '',
@@ -96,15 +96,15 @@ class KelasCreate extends Component
 
         if ($step === 2) {
             $rules = [
-                'form.type' => 'required|in:permanent,batch,paid,berbayar',
+                'form.type' => 'required|in:bulanan,bangkom,bangkom_external,permanent,batch,paid,berbayar',
             ];
 
-            if (($this->form['type'] ?? '') === 'batch') {
+            if (in_array($this->form['type'] ?? '', ['bulanan', 'batch'], true)) {
                 $rules['form.start_date'] = 'required|date|after_or_equal:today';
                 $rules['form.end_date'] = 'required|date|after:form.start_date';
             }
 
-            if (in_array($this->form['type'] ?? '', ['paid', 'berbayar'])) {
+            if (in_array($this->form['type'] ?? '', ['bangkom_external', 'paid', 'berbayar'], true)) {
                 $rules['form.price'] = 'required|numeric|min:0';
             }
 
@@ -149,12 +149,12 @@ class KelasCreate extends Component
             $this->getRulesForStep(3),
         );
 
-        if (($this->form['type'] ?? '') !== 'batch') {
+        if (! in_array($this->form['type'] ?? '', ['bulanan', 'batch'], true)) {
             $rules['form.start_date'] = 'nullable|date';
             $rules['form.end_date'] = 'nullable|date';
         }
 
-        if (! in_array($this->form['type'] ?? '', ['paid', 'berbayar'])) {
+        if (! in_array($this->form['type'] ?? '', ['bangkom_external', 'paid', 'berbayar'], true)) {
             $rules['form.price'] = 'nullable|numeric|min:0';
         }
 
@@ -179,14 +179,14 @@ class KelasCreate extends Component
             'form.category_name.string' => 'Kategori kelas harus berupa teks.',
             'form.category_name.max' => 'Kategori kelas maksimal 100 karakter.',
             'form.type.required' => 'Jenis kelas wajib dipilih.',
-            'form.type.in' => 'Jenis kelas harus berupa Batch, Permanen, atau Berbayar.',
-            'form.price.required' => 'Biaya kelas wajib ditentukan untuk kelas berbayar.',
+            'form.type.in' => 'Jenis kelas harus berupa Bulanan, Bangkom, atau Bangkom External.',
+            'form.price.required' => 'Biaya kelas wajib ditentukan untuk Bangkom External.',
             'form.price.numeric' => 'Biaya kelas harus berupa nilai angka.',
             'form.price.min' => 'Biaya kelas minimal Rp 0.',
-            'form.start_date.required' => 'Tanggal & waktu mulai wajib diisi untuk kelas bertipe Batch.',
+            'form.start_date.required' => 'Tanggal & waktu mulai wajib diisi untuk kelas bertipe Bulanan.',
             'form.start_date.date' => 'Format tanggal & waktu mulai tidak valid.',
             'form.start_date.after_or_equal' => 'Tanggal & waktu mulai tidak boleh sebelum tanggal hari ini.',
-            'form.end_date.required' => 'Tanggal & waktu selesai wajib diisi untuk kelas bertipe Batch.',
+            'form.end_date.required' => 'Tanggal & waktu selesai wajib diisi untuk kelas bertipe Bulanan.',
             'form.end_date.date' => 'Format tanggal & waktu selesai tidak valid.',
             'form.end_date.after' => 'Tanggal & waktu selesai harus setelah tanggal & waktu mulai (tidak boleh sama atau lebih awal).',
             'form.status.required' => 'Status kelas wajib dipilih.',
@@ -224,23 +224,30 @@ class KelasCreate extends Component
             }
         }
 
-        $isBatch = $this->form['type'] === 'batch';
-        $isPaid = in_array($this->form['type'], ['paid', 'berbayar']);
+        $isBulanan = in_array($this->form['type'], ['bulanan', 'batch'], true);
+        $isPaid = in_array($this->form['type'], ['bangkom_external', 'paid', 'berbayar'], true);
 
         $startDate = null;
         $endDate = null;
-        if ($isBatch && ! empty($this->form['start_date'])) {
+        if ($isBulanan && ! empty($this->form['start_date'])) {
             $startDate = Carbon::parse($this->form['start_date'])->format('Y-m-d H:i:s');
         }
-        if ($isBatch && ! empty($this->form['end_date'])) {
+        if ($isBulanan && ! empty($this->form['end_date'])) {
             $endDate = Carbon::parse($this->form['end_date'])->format('Y-m-d H:i:s');
         }
+
+        $normalizedType = match ($this->form['type']) {
+            'batch' => 'bulanan',
+            'permanent' => 'bangkom',
+            'paid', 'berbayar' => 'bangkom_external',
+            default => $this->form['type'],
+        };
 
         $payload = [
             'title' => trim($this->form['title']),
             'description' => ! empty($this->form['description']) ? trim($this->form['description']) : null,
             'category_id' => $resolvedCategoryId,
-            'type' => $this->form['type'],
+            'type' => $normalizedType,
             'price' => $isPaid ? (float) ($this->form['price'] ?? 0) : 0,
             'start_date' => $startDate,
             'end_date' => $endDate,

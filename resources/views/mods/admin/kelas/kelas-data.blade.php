@@ -3,7 +3,7 @@
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
         <div>
             <h5 class="fw-bold text-dark mb-1">Data Kelas</h5>
-            <p class="text-muted mb-0">Manajemen katalog seluruh kelas (Batch, Permanen, dan Berbayar).</p>
+            <p class="text-muted mb-0">Manajemen katalog seluruh kelas (Bulanan, Bangkom, dan Bangkom External).</p>
         </div>
         {{-- <div class="d-flex align-items-center gap-2">
             <a href="{{ route('kelas.create') }}" class="btn btn-simple-gold" wire:navigate>

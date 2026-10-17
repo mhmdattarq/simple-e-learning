@@ -28,19 +28,19 @@
                         Semua Kelas
                     </button>
                     <button type="button"
-                        class="btn btn-sm rounded-pill px-3 fw-medium {{ ($selectedType ?? 'all') === 'batch' ? 'bg-navy text-white fw-bold' : 'text-secondary hover-navy' }}"
-                        wire:click="filterType('batch')">
-                        Kelas Batch
+                        class="btn btn-sm rounded-pill px-3 fw-medium {{ in_array($selectedType ?? 'all', ['bulanan', 'batch'], true) ? 'bg-navy text-white fw-bold' : 'text-secondary hover-navy' }}"
+                        wire:click="filterType('bulanan')">
+                        Bulanan
                     </button>
                     <button type="button"
-                        class="btn btn-sm rounded-pill px-3 fw-medium {{ ($selectedType ?? 'all') === 'permanent' ? 'bg-navy text-white fw-bold' : 'text-secondary hover-navy' }}"
-                        wire:click="filterType('permanent')">
-                        Kelas Permanen
+                        class="btn btn-sm rounded-pill px-3 fw-medium {{ in_array($selectedType ?? 'all', ['bangkom', 'permanent'], true) ? 'bg-navy text-white fw-bold' : 'text-secondary hover-navy' }}"
+                        wire:click="filterType('bangkom')">
+                        Bangkom
                     </button>
                     <button type="button"
-                        class="btn btn-sm rounded-pill px-3 fw-medium {{ ($selectedType ?? 'all') === 'paid' ? 'bg-navy text-white fw-bold' : 'text-secondary hover-navy' }}"
-                        wire:click="filterType('paid')">
-                        Kelas Berbayar
+                        class="btn btn-sm rounded-pill px-3 fw-medium {{ in_array($selectedType ?? 'all', ['bangkom_external', 'paid'], true) ? 'bg-navy text-white fw-bold' : 'text-secondary hover-navy' }}"
+                        wire:click="filterType('bangkom_external')">
+                        Bangkom External
                     </button>
                 </div>
             </div>
@@ -61,9 +61,9 @@
                                 @else
                                     <div class="w-100 h-100 d-flex align-items-center justify-content-center text-white"
                                         style="background: linear-gradient(135deg, #071a33 0%, #0c3158 100%);">
-                                        @if ($course->isPermanent())
+                                        @if ($course->isBangkom())
                                             <i class="ri-infinity-line display-4 text-gold"></i>
-                                        @elseif ($course->isPaid())
+                                        @elseif ($course->isBangkomExternal())
                                             <i class="ri-money-dollar-circle-line display-4 text-gold"></i>
                                         @else
                                             <i class="ri-calendar-line display-4 text-gold"></i>
@@ -72,18 +72,18 @@
                                 @endif
 
                                 <div class="position-absolute top-0 start-0 m-3 d-flex gap-2">
-                                    @if ($course->isBatch())
+                                    @if ($course->isBulanan())
                                         <span class="badge bg-primary text-white fw-bold fs-8 px-2_5 py-1">
-                                            <i class="ri-calendar-line me-1"></i>Batch
+                                            <i class="ri-calendar-line me-1"></i>Bulanan
                                         </span>
-                                    @elseif ($course->isPermanent())
+                                    @elseif ($course->isBangkom())
                                         <span class="badge bg-success text-white fw-bold fs-8 px-2_5 py-1">
-                                            <i class="ri-infinity-line me-1"></i>Permanen
+                                            <i class="ri-infinity-line me-1"></i>Bangkom
                                         </span>
                                     @else
                                         <span
                                             class="badge bg-warning-subtle text-dark border border-warning fw-bold fs-8 px-2_5 py-1">
-                                            <i class="ri-money-dollar-circle-line me-1"></i>Berbayar
+                                            <i class="ri-money-dollar-circle-line me-1"></i>Bangkom External
                                         </span>
                                     @endif
 
@@ -95,17 +95,17 @@
                                 </div>
 
                                 <div class="position-absolute bottom-0 end-0 m-3">
-                                    @if ($course->isPaid())
+                                    @if ($course->isBangkomExternal())
                                         <span class="badge bg-gold text-dark fs-8 fw-bold shadow-sm">
                                             Rp {{ number_format($course->price, 0, ',', '.') }}
                                         </span>
-                                    @elseif ($course->isPermanent())
+                                    @elseif ($course->isBangkom())
                                         <span class="badge bg-dark bg-opacity-75 text-white fs-8">
                                             Mandiri 24/7
                                         </span>
                                     @else
                                         <span class="badge bg-dark bg-opacity-75 text-white fs-8">
-                                            {{ $course->start_date ? $course->start_date->format('d M Y') : 'Batch' }}
+                                            {{ $course->start_date ? $course->start_date->format('d M Y') : 'Bulanan' }}
                                         </span>
                                     @endif
                                 </div>
@@ -140,12 +140,12 @@
                                     <div>
                                         <small class="text-muted d-block fs-8">Tipe Kelas</small>
                                         <span class="fw-extrabold text-navy fs-7">
-                                            @if ($course->isPaid())
-                                                Berbayar
-                                            @elseif ($course->isPermanent())
-                                                Permanen
+                                            @if ($course->isBangkomExternal())
+                                                Bangkom External
+                                            @elseif ($course->isBangkom())
+                                                Bangkom
                                             @else
-                                                Batch
+                                                Bulanan
                                             @endif
                                         </span>
                                     </div>

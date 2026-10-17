@@ -6,18 +6,18 @@
                 <span class="badge bg-secondary-subtle text-secondary py-1 px-2" style="font-size: 11px;">
                     <i class="ri-folder-3-line me-1"></i>{{ $course->category?->name ?? 'Tanpa Kategori' }}
                 </span>
-                @if ($course->type === 'permanent')
+                @if ($course->isBangkom())
                     <span class="badge bg-success-subtle text-success py-1 px-2" style="font-size: 11px;">
-                        <i class="ri-infinity-line me-1"></i>Permanen
+                        <i class="ri-infinity-line me-1"></i>Bangkom
                     </span>
-                @elseif($course->type === 'paid' || $course->type === 'berbayar')
+                @elseif($course->isBangkomExternal())
                     <span class="badge bg-warning-subtle text-dark border border-warning-subtle py-1 px-2"
                         style="font-size: 11px;">
-                        <i class="ri-money-dollar-circle-line me-1"></i>Berbayar
+                        <i class="ri-money-dollar-circle-line me-1"></i>Bangkom External
                     </span>
                 @else
                     <span class="badge bg-primary-subtle text-primary py-1 px-2" style="font-size: 11px;">
-                        <i class="ri-calendar-line me-1"></i>Batch
+                        <i class="ri-calendar-line me-1"></i>Bulanan
                     </span>
                 @endif
             </div>

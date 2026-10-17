@@ -24,15 +24,26 @@ class KelasIndex extends Component
     public function mount(?string $type = null): void
     {
         if ($type) {
-            $this->type = $type;
-        } elseif (request()->routeIs('landing.kelas.batch') || request()->is('kelas-batch*')) {
-            $this->type = 'batch';
-        } elseif (request()->routeIs('landing.kelas.permanen') || request()->is('kelas-permanen*')) {
-            $this->type = 'permanent';
-        } elseif (request()->routeIs('landing.kelas.berbayar') || request()->is('kelas-berbayar*')) {
-            $this->type = 'paid';
+            $this->type = match ($type) {
+                'batch' => 'bulanan',
+                'permanent' => 'bangkom',
+                'paid', 'berbayar' => 'bangkom_external',
+                default => $type,
+            };
+        } elseif (request()->routeIs(['landing.kelas.bulanan', 'landing.kelas.batch']) || request()->is(['bulanan*', 'kelas-batch*'])) {
+            $this->type = 'bulanan';
+        } elseif (request()->routeIs(['landing.kelas.bangkom_external', 'landing.kelas.berbayar']) || request()->is(['bangkom-external*', 'kelas-berbayar*'])) {
+            $this->type = 'bangkom_external';
+        } elseif (request()->routeIs(['landing.kelas.bangkom', 'landing.kelas.permanen']) || request()->is(['bangkom', 'bangkom/*', 'kelas-permanen*'])) {
+            $this->type = 'bangkom';
         } elseif (request()->has('type')) {
-            $this->type = (string) request()->query('type');
+            $rawType = (string) request()->query('type');
+            $this->type = match ($rawType) {
+                'batch' => 'bulanan',
+                'permanent' => 'bangkom',
+                'paid', 'berbayar' => 'bangkom_external',
+                default => $rawType,
+            };
         } else {
             $this->type = 'all';
         }
@@ -55,35 +66,35 @@ class KelasIndex extends Component
         $tablesExist = Schema::hasTable('courses');
 
         $config = match ($this->type) {
-            'batch' => [
-                'badge' => 'Kelas Terjadwal (Batch)',
+            'bulanan', 'batch' => [
+                'badge' => 'Bulanan (Terjadwal)',
                 'icon' => 'ri-calendar-event-line',
                 'title_prefix' => 'Katalog',
-                'title_highlight' => 'Kelas Batch',
-                'subtitle' => 'Program diklat dan kelas kedinasan berjadwal dengan kuota dan periode registrasi berkala untuk ASN BKPSDM Kabupaten Aceh Timur.',
-                'page_title' => 'Katalog Kelas Batch – SIMPEL BKPSDM Aceh Timur',
-                'empty_title' => 'Belum Ada Kelas Batch Tersedia',
-                'empty_desc' => 'Program diklat batch berjadwal akan segera dibuka. Pantau terus halaman ini.',
+                'title_highlight' => 'Bulanan',
+                'subtitle' => 'Program diklat dan kelas kedinasan bulanan dengan kuota dan periode registrasi berkala untuk ASN BKPSDM Kabupaten Aceh Timur.',
+                'page_title' => 'Katalog Bulanan – SIMPEL BKPSDM Aceh Timur',
+                'empty_title' => 'Belum Ada Bulanan Tersedia',
+                'empty_desc' => 'Program bulanan berjadwal akan segera dibuka. Pantau terus halaman ini.',
             ],
-            'permanent' => [
-                'badge' => 'Belajar Mandiri (Self-Paced)',
+            'bangkom', 'permanent' => [
+                'badge' => 'Bangkom (Mandiri 24/7)',
                 'icon' => 'ri-infinity-line',
                 'title_prefix' => 'Katalog',
-                'title_highlight' => 'Kelas Permanen',
-                'subtitle' => 'Kelas digital fleksibel tanpa batas waktu pendaftaran. Pelajari materi secara mandiri kapan saja untuk akselerasi kompetensi ASN.',
-                'page_title' => 'Katalog Kelas Permanen – SIMPEL BKPSDM Aceh Timur',
-                'empty_title' => 'Belum Ada Kelas Permanen Tersedia',
-                'empty_desc' => 'Kelas mandiri fleksibel sedang disiapkan oleh pengampu.',
+                'title_highlight' => 'Bangkom',
+                'subtitle' => 'Program pengembangan kompetensi mandiri fleksibel tanpa batas waktu pendaftaran. Pelajari materi kapan saja untuk akselerasi kompetensi ASN.',
+                'page_title' => 'Katalog Bangkom – SIMPEL BKPSDM Aceh Timur',
+                'empty_title' => 'Belum Ada Bangkom Tersedia',
+                'empty_desc' => 'Program Bangkom mandiri fleksibel sedang disiapkan oleh pengampu.',
             ],
-            'paid' => [
-                'badge' => 'Kelas Spesialisasi & Sertifikasi',
+            'bangkom_external', 'paid', 'berbayar' => [
+                'badge' => 'Bangkom External',
                 'icon' => 'ri-money-dollar-circle-line',
                 'title_prefix' => 'Katalog',
-                'title_highlight' => 'Kelas Berbayar',
-                'subtitle' => 'Program sertifikasi keahlian khusus dan kelas profesi lanjutan yang diselenggarakan bersama lembaga diklat terakreditasi resmi.',
-                'page_title' => 'Katalog Kelas Berbayar – SIMPEL BKPSDM Aceh Timur',
-                'empty_title' => 'Belum Ada Kelas Berbayar Tersedia',
-                'empty_desc' => 'Program sertifikasi berbayar sedang disiapkan.',
+                'title_highlight' => 'Bangkom External',
+                'subtitle' => 'Program pengembangan kompetensi eksternal dan sertifikasi keahlian khusus yang diselenggarakan bersama lembaga diklat terakreditasi resmi.',
+                'page_title' => 'Katalog Bangkom External – SIMPEL BKPSDM Aceh Timur',
+                'empty_title' => 'Belum Ada Bangkom External Tersedia',
+                'empty_desc' => 'Program Bangkom External sedang disiapkan.',
             ],
             default => [
                 'badge' => 'Program Kelas ASN',
@@ -108,12 +119,12 @@ class KelasIndex extends Component
                 ->withCount(['chapters', 'lessons', 'registrations'])
                 ->where('status', 'published');
 
-            if ($this->type === 'batch') {
-                $query->where('type', 'batch');
-            } elseif ($this->type === 'permanent') {
-                $query->where('type', 'permanent');
-            } elseif ($this->type === 'paid') {
-                $query->whereIn('type', ['paid', 'berbayar']);
+            if (in_array($this->type, ['bulanan', 'batch'], true)) {
+                $query->whereIn('type', ['bulanan', 'batch']);
+            } elseif (in_array($this->type, ['bangkom', 'permanent'], true)) {
+                $query->whereIn('type', ['bangkom', 'permanent']);
+            } elseif (in_array($this->type, ['bangkom_external', 'paid', 'berbayar'], true)) {
+                $query->whereIn('type', ['bangkom_external', 'paid', 'berbayar']);
             }
 
             $trimmedSearch = trim($this->search);

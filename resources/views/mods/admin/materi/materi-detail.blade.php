@@ -88,20 +88,20 @@
                 <span class="badge bg-secondary-subtle text-secondary px-2 py-1 radius-4 fs-8">
                     {{ $course->category?->name ?? 'Kelas' }}
                 </span>
-                @if ($course->isPaid())
+                @if ($course->isBangkomExternal())
                     <span
                         class="badge bg-warning-subtle text-warning border border-warning-subtle px-2 py-1 radius-4 fs-8">
-                        <i class="ri-money-dollar-circle-line me-1"></i>Berbayar (Rp
+                        <i class="ri-money-dollar-circle-line me-1"></i>Bangkom External (Rp
                         {{ number_format($course->price, 0, ',', '.') }})
                     </span>
-                @elseif ($course->isBatch())
+                @elseif ($course->isBulanan())
                     <span
                         class="badge bg-warning-subtle text-warning border border-warning-subtle px-2 py-1 radius-4 fs-8">
-                        <i class="ri-calendar-line me-1"></i>Batch (Angkatan)
+                        <i class="ri-calendar-line me-1"></i>Bulanan
                     </span>
                 @else
                     <span class="badge bg-info-subtle text-info border border-info-subtle px-2 py-1 radius-4 fs-8">
-                        <i class="ri-infinity-line me-1"></i>Permanen (Self-Paced)
+                        <i class="ri-infinity-line me-1"></i>Bangkom
                     </span>
                 @endif
 
@@ -156,7 +156,7 @@
                     <h6 class="fw-bold text-warning-emphasis mb-1 fs-6">Curriculum Freeze Aktif
                     </h6>
                     <p class="mb-0 fs-8 text-muted">
-                        Kelas tipe Batch ini telah dimulai pada
+                        Kelas tipe Bulanan ini telah dimulai pada
                         <strong>{{ $course->start_date?->format('d M Y') }}</strong>.
                         Sesuai standar mutu pembelajaran sekuensial, struktur kurikulum (tambah/edit/hapus bab dan
                         materi)
@@ -366,10 +366,13 @@
                             </li>
                             <li class="d-flex justify-content-between py-1 border-bottom">
                                 <span class="text-muted">Model Pembelajaran:</span>
-                                <span
-                                    class="badge {{ $course->isBatch() ? 'bg-warning-subtle text-warning' : 'bg-info-subtle text-info' }}">
-                                    {{ $course->isBatch() ? 'Batch (Angkatan)' : 'Permanen' }}
-                                </span>
+                                @if ($course->isBangkomExternal())
+                                    <span class="badge bg-warning-subtle text-warning">Bangkom External</span>
+                                @elseif ($course->isBulanan())
+                                    <span class="badge bg-warning-subtle text-warning">Bulanan</span>
+                                @else
+                                    <span class="badge bg-info-subtle text-info">Bangkom</span>
+                                @endif
                             </li>
                             <li class="d-flex justify-content-between py-1 border-bottom">
                                 <span class="text-muted">Biaya Kelas:</span>

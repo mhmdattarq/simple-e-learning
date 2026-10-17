@@ -11,30 +11,30 @@ use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
 
-test('landing navbar renders menu items for Beranda, Kelas Batch, Kelas Permanen, Kelas Berbayar, and Kontak', function () {
+test('landing navbar renders menu items for Beranda, Bulanan, Bangkom, Bangkom External, and Kontak', function () {
     $response = $this->get(route('landing'));
 
     $response->assertStatus(200);
     $response->assertSee(route('landing'));
-    $response->assertSee(route('landing.kelas.batch'));
-    $response->assertSee(route('landing.kelas.permanen'));
-    $response->assertSee(route('landing.kelas.berbayar'));
-    $response->assertSee('Kelas Batch');
-    $response->assertSee('Kelas Permanen');
-    $response->assertSee('Kelas Berbayar');
+    $response->assertSee(route('landing.kelas.bulanan'));
+    $response->assertSee(route('landing.kelas.bangkom'));
+    $response->assertSee(route('landing.kelas.bangkom_external'));
+    $response->assertSee('Bulanan');
+    $response->assertSee('Bangkom');
+    $response->assertSee('Bangkom External');
     $response->assertSee('Kontak');
 });
 
 test('navbar highlights current menu depending on active route', function () {
-    $responseBatch = $this->get(route('landing.kelas.batch'));
+    $responseBatch = $this->get(route('landing.kelas.bulanan'));
     $responseBatch->assertStatus(200);
     $responseBatch->assertSee('<li class="current">', false);
 
-    $responsePermanen = $this->get(route('landing.kelas.permanen'));
+    $responsePermanen = $this->get(route('landing.kelas.bangkom'));
     $responsePermanen->assertStatus(200);
     $responsePermanen->assertSee('<li class="current">', false);
 
-    $responseBerbayar = $this->get(route('landing.kelas.berbayar'));
+    $responseBerbayar = $this->get(route('landing.kelas.bangkom_external'));
     $responseBerbayar->assertStatus(200);
     $responseBerbayar->assertSee('<li class="current">', false);
 });
@@ -356,47 +356,47 @@ test('navbar active menu reflects current page and course context across index, 
     $resHome->assertStatus(200);
     $resHome->assertSeeInOrder(['<li class="current"', 'Beranda']);
 
-    // 2. Kelas Batch Index, Detail, and Materi
-    $resBatchIndex = $this->get(route('landing.kelas.batch'));
+    // 2. Bulanan Index, Detail, and Materi
+    $resBatchIndex = $this->get(route('landing.kelas.bulanan'));
     $resBatchIndex->assertStatus(200);
-    $resBatchIndex->assertSeeInOrder(['<li class="current"', 'Kelas Batch']);
+    $resBatchIndex->assertSeeInOrder(['<li class="current"', 'Bulanan']);
 
     $resBatchDetail = $this->get(route('landing.kelas.detail', $batchCourse->id));
     $resBatchDetail->assertStatus(200);
-    $resBatchDetail->assertSeeInOrder(['<li class="current"', 'Kelas Batch']);
+    $resBatchDetail->assertSeeInOrder(['<li class="current"', 'Bulanan']);
 
     $resBatchMateri = $this->actingAs($user)->get(route('peserta.materi', $batchCourse->id));
     $resBatchMateri->assertStatus(200);
-    $resBatchMateri->assertSeeInOrder(['<li class="current"', 'Kelas Batch']);
+    $resBatchMateri->assertSeeInOrder(['<li class="current"', 'Bulanan']);
 
-    // 3. Kelas Permanen Index, Detail, and Materi
-    $resPermIndex = $this->get(route('landing.kelas.permanen'));
+    // 3. Bangkom Index, Detail, and Materi
+    $resPermIndex = $this->get(route('landing.kelas.bangkom'));
     $resPermIndex->assertStatus(200);
-    $resPermIndex->assertSeeInOrder(['<li class="current"', 'Kelas Permanen']);
+    $resPermIndex->assertSeeInOrder(['<li class="current"', 'Bangkom']);
 
     $resPermDetail = $this->get(route('landing.kelas.detail', $permanentCourse->id));
     $resPermDetail->assertStatus(200);
-    $resPermDetail->assertSeeInOrder(['<li class="current"', 'Kelas Permanen']);
+    $resPermDetail->assertSeeInOrder(['<li class="current"', 'Bangkom']);
 
     $resPermMateri = $this->actingAs($user)->get(route('peserta.materi', $permanentCourse->id));
     $resPermMateri->assertStatus(200);
-    $resPermMateri->assertSeeInOrder(['<li class="current"', 'Kelas Permanen']);
+    $resPermMateri->assertSeeInOrder(['<li class="current"', 'Bangkom']);
 
     $quiz = Quiz::factory()->create([
         'course_id' => $permanentCourse->id,
-        'title' => 'Evaluasi Permanen',
+        'title' => 'Evaluasi Bangkom',
         'type' => 'final',
     ]);
     $evaluasiUrl = route('peserta.evaluasi.kerjakan', ['course' => $permanentCourse, 'quiz_id' => $quiz->id]);
-    expect($evaluasiUrl)->toContain('/kelas-permanen/'.$permanentCourse->slug.'/evaluasi/'.$quiz->slug);
+    expect($evaluasiUrl)->toContain('/bangkom/'.$permanentCourse->slug.'/evaluasi/'.$quiz->slug);
     expect($evaluasiUrl)->not->toContain('/evaluasi/'.$quiz->id);
 
     $resPermEvaluasi = $this->actingAs($user)->get($evaluasiUrl);
     $resPermEvaluasi->assertStatus(200);
-    $resPermEvaluasi->assertSeeInOrder(['<li class="current"', 'Kelas Permanen']);
+    $resPermEvaluasi->assertSeeInOrder(['<li class="current"', 'Bangkom']);
 
     // Redirect when accessing via numeric ID
-    $rawIdUrl = url('/kelas-permanen/'.$permanentCourse->slug.'/evaluasi/'.$quiz->id);
+    $rawIdUrl = url('/bangkom/'.$permanentCourse->slug.'/evaluasi/'.$quiz->id);
     $resRawRedirect = $this->actingAs($user)->get($rawIdUrl);
     $resRawRedirect->assertRedirect($evaluasiUrl);
 
@@ -404,32 +404,32 @@ test('navbar active menu reflects current page and course context across index, 
     $resStandaloneRedirect = $this->actingAs($user)->get(route('peserta.evaluasi.show', ['quiz' => $quiz->slug]));
     $resStandaloneRedirect->assertRedirect($evaluasiUrl);
 
-    // 4. Kelas Berbayar Index, Detail, Materi, and Evaluasi
-    $resPaidIndex = $this->get(route('landing.kelas.berbayar'));
+    // 4. Bangkom External Index, Detail, Materi, and Evaluasi
+    $resPaidIndex = $this->get(route('landing.kelas.bangkom_external'));
     $resPaidIndex->assertStatus(200);
-    $resPaidIndex->assertSeeInOrder(['<li class="current"', 'Kelas Berbayar']);
+    $resPaidIndex->assertSeeInOrder(['<li class="current"', 'Bangkom External']);
 
     $resPaidDetail = $this->get(route('landing.kelas.detail', $paidCourse->id));
     $resPaidDetail->assertStatus(200);
-    $resPaidDetail->assertSeeInOrder(['<li class="current"', 'Kelas Berbayar']);
+    $resPaidDetail->assertSeeInOrder(['<li class="current"', 'Bangkom External']);
 
     $resPaidMateri = $this->actingAs($user)->get(route('peserta.materi', $paidCourse->id));
     $resPaidMateri->assertStatus(200);
-    $resPaidMateri->assertSeeInOrder(['<li class="current"', 'Kelas Berbayar']);
+    $resPaidMateri->assertSeeInOrder(['<li class="current"', 'Bangkom External']);
 
     $paidQuiz = Quiz::factory()->create([
         'course_id' => $paidCourse->id,
-        'title' => 'Evaluasi Berbayar',
+        'title' => 'Evaluasi Bangkom External',
         'type' => 'final',
     ]);
     $paidEvaluasiUrl = route('peserta.evaluasi.kerjakan', ['course' => $paidCourse, 'quiz' => $paidQuiz]);
-    expect($paidEvaluasiUrl)->toContain('/kelas-berbayar/'.$paidCourse->slug.'/evaluasi/'.$paidQuiz->slug);
+    expect($paidEvaluasiUrl)->toContain('/bangkom-external/'.$paidCourse->slug.'/evaluasi/'.$paidQuiz->slug);
     $resPaidEvaluasi = $this->actingAs($user)->get($paidEvaluasiUrl);
     $resPaidEvaluasi->assertStatus(200);
-    $resPaidEvaluasi->assertSeeInOrder(['<li class="current"', 'Kelas Berbayar']);
+    $resPaidEvaluasi->assertSeeInOrder(['<li class="current"', 'Bangkom External']);
 });
 
-test('batch course detail page displays Batch Belum Dibuka for upcoming batch and Batch Telah Berakhir for expired batch', function () {
+test('batch course detail page displays Bulanan Belum Dibuka for upcoming batch and Bulanan Telah Berakhir for expired batch', function () {
     $category = Category::factory()->create();
     $admin = User::factory()->admin()->create();
     $user = User::factory()->peserta()->create();
@@ -456,11 +456,17 @@ test('batch course detail page displays Batch Belum Dibuka for upcoming batch an
 
     $resFuture = $this->actingAs($user)->get(route('landing.kelas.detail', $futureBatch));
     $resFuture->assertOk();
-    $resFuture->assertSee('Batch Belum Dibuka');
+    $resFuture->assertSee('Bulanan Belum Dibuka');
     $resFuture->assertSee('Materi dapat diakses mulai');
 
     $resExpired = $this->actingAs($user)->get(route('landing.kelas.detail', $expiredBatch));
     $resExpired->assertOk();
-    $resExpired->assertSee('Batch Telah Berakhir');
+    $resExpired->assertSee('Bulanan Telah Berakhir');
     $resExpired->assertSee('Masa pembelajaran kelas ini telah selesai pada');
+});
+
+test('legacy urls redirect with 301 to new bulanan, bangkom, and bangkom-external routes', function () {
+    $this->get('/kelas-batch')->assertStatus(301)->assertRedirect('/bulanan');
+    $this->get('/kelas-permanen')->assertStatus(301)->assertRedirect('/bangkom');
+    $this->get('/kelas-berbayar')->assertStatus(301)->assertRedirect('/bangkom-external');
 });

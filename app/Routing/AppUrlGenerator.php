@@ -9,39 +9,25 @@ use Illuminate\Routing\UrlGenerator;
 class AppUrlGenerator extends UrlGenerator
 {
     /**
-     * Resolve type suffix for course (batch, permanen, or berbayar).
+     * Resolve type suffix for course (bulanan, bangkom, or bangkom_external).
      */
     protected function resolveCourseTypeSuffix(mixed $course): string
     {
+        $type = null;
+
         if ($course instanceof Course) {
-            return match ($course->type) {
-                'permanent' => 'permanen',
-                'paid' => 'berbayar',
-                default => 'batch',
-            };
-        }
-
-        if (is_numeric($course)) {
+            $type = $course->type;
+        } elseif (is_numeric($course)) {
             $type = Course::where('id', (int) $course)->value('type');
-
-            return match ($type) {
-                'permanent' => 'permanen',
-                'paid' => 'berbayar',
-                default => 'batch',
-            };
-        }
-
-        if (is_string($course) && ! empty($course)) {
+        } elseif (is_string($course) && ! empty($course)) {
             $type = Course::where('slug', $course)->value('type');
-
-            return match ($type) {
-                'permanent' => 'permanen',
-                'paid' => 'berbayar',
-                default => 'batch',
-            };
         }
 
-        return 'batch';
+        return match ($type) {
+            'bangkom', 'permanent' => 'bangkom',
+            'bangkom_external', 'paid', 'berbayar' => 'bangkom_external',
+            default => 'bulanan',
+        };
     }
 
     /**
@@ -54,6 +40,26 @@ class AppUrlGenerator extends UrlGenerator
      */
     public function route($name, $parameters = [], $absolute = true)
     {
+        // 1. Backward-compatible mapping for catalog list route names
+        $aliasMap = [
+            'landing.kelas.batch' => 'landing.kelas.bulanan',
+            'landing.kelas.permanen' => 'landing.kelas.bangkom',
+            'landing.kelas.berbayar' => 'landing.kelas.bangkom_external',
+            'landing.kelas.detail.batch' => 'landing.kelas.detail.bulanan',
+            'landing.kelas.detail.permanen' => 'landing.kelas.detail.bangkom',
+            'landing.kelas.detail.berbayar' => 'landing.kelas.detail.bangkom_external',
+            'peserta.materi.batch' => 'peserta.materi.bulanan',
+            'peserta.materi.permanen' => 'peserta.materi.bangkom',
+            'peserta.materi.berbayar' => 'peserta.materi.bangkom_external',
+            'peserta.evaluasi.kerjakan.batch' => 'peserta.evaluasi.kerjakan.bulanan',
+            'peserta.evaluasi.kerjakan.permanen' => 'peserta.evaluasi.kerjakan.bangkom',
+            'peserta.evaluasi.kerjakan.berbayar' => 'peserta.evaluasi.kerjakan.bangkom_external',
+        ];
+
+        if (isset($aliasMap[$name])) {
+            $name = $aliasMap[$name];
+        }
+
         if ($name === 'landing.kelas.detail') {
             $course = is_array($parameters) ? ($parameters['course'] ?? reset($parameters)) : $parameters;
             $typeSuffix = $this->resolveCourseTypeSuffix($course);

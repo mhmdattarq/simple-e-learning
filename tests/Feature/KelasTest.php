@@ -279,7 +279,7 @@ test('admin can create and save classes with paid, batch, and permanent types', 
 
     $this->assertDatabaseHas('courses', [
         'title' => 'Kelas Pemrograman Fullstack Web',
-        'type' => 'paid',
+        'type' => 'bangkom_external',
         'price' => 350000,
     ]);
 
@@ -301,7 +301,7 @@ test('admin can create and save classes with paid, batch, and permanent types', 
 
     $this->assertDatabaseHas('courses', [
         'title' => 'Kelas Batch Kepemimpinan 2026',
-        'type' => 'batch',
+        'type' => 'bulanan',
         'price' => 0,
     ]);
 });
@@ -485,7 +485,7 @@ test('kelas create wizard step-by-step navigation and validation works properly'
 
     $this->assertDatabaseHas('courses', [
         'title' => 'Pelatihan Kepemimpinan Pengawas 2026',
-        'type' => 'batch',
+        'type' => 'bulanan',
         'status' => 'draft',
     ]);
 });

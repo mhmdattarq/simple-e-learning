@@ -15,7 +15,7 @@ class JadwalIndex extends Component
         $jadwals = Schema::hasTable('courses')
             ? Course::with('category')
                 ->where('status', 'published')
-                ->where('type', 'batch')
+                ->whereIn('type', ['bulanan', 'batch'])
                 ->whereNotNull('start_date')
                 ->orderBy('start_date', 'asc')
                 ->get()

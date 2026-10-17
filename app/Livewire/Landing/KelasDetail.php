@@ -52,9 +52,9 @@ class KelasDetail extends Component
         $totalLessons = $course->chapters->sum(fn ($ch) => $ch->lessons->count());
 
         $backUrl = match (true) {
-            $course->isPaid() => route('landing.kelas.berbayar'),
-            $course->isBatch() => route('landing.kelas.batch'),
-            default => route('landing.kelas.permanen'),
+            $course->isBangkomExternal() => route('landing.kelas.bangkom_external'),
+            $course->isBulanan() => route('landing.kelas.bulanan'),
+            default => route('landing.kelas.bangkom'),
         };
 
         return view('mods.landing.kelas-detail', compact(

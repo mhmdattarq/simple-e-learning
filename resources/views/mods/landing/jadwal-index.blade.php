@@ -14,7 +14,7 @@
                         Jadwal Kelas <span class="text-gold">ASN</span>
                     </h1>
                     <p class="text-white-80 fs-6 mb-0 pe-lg-4">
-                        Daftar program kelas batch yang sedang dan akan diselenggarakan oleh BKPSDM Kabupaten Aceh
+                        Daftar program bulanan yang sedang dan akan diselenggarakan oleh BKPSDM Kabupaten Aceh
                         Timur. Pilih kelas yang sesuai dan daftarkan diri Anda sebelum kuota habis.
                     </p>
                 </div>
@@ -60,7 +60,7 @@
                                                     {{ $jadwal->category?->name ?? 'Diklat ASN' }}
                                                 </span>
                                                 <span class="badge bg-gold text-navy fw-bold fs-8 px-2_5 py-1">
-                                                    Batch Terjadwal
+                                                    Bulanan
                                                 </span>
                                             </div>
                                             <h5 class="fw-bold text-navy mb-1">{{ $jadwal->title }}</h5>
@@ -89,7 +89,7 @@
 
                                         {{-- Right: CTA Button --}}
                                         <div class="col-auto">
-                                            <a href="{{ route('landing.kelas.batch') }}"
+                                            <a href="{{ route('landing.kelas.bulanan') }}"
                                                 class="btn-simpel-cta-gold">
                                                 <span>Lihat Kelas</span>
                                                 <i class="ri-arrow-right-line"></i>
@@ -120,7 +120,7 @@
                     </div>
                     <h4 class="fw-bold text-navy mb-2">Belum Ada Jadwal Kelas</h4>
                     <p class="text-muted fs-6 mb-4 max-w-500 mx-auto">
-                        Jadwal batch kelas akan segera diumumkan. Pantau terus halaman ini atau
+                        Jadwal program Bulanan akan segera diumumkan. Pantau terus halaman ini atau
                         kunjungi katalog kelas yang bisa diakses kapan saja.
                     </p>
                     <a href="{{ route('landing') }}#katalog-kelas"

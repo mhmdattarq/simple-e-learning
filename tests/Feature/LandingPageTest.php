@@ -21,9 +21,9 @@ test('landing page can be accessed successfully and displays core sections', fun
     $response->assertSee('Kelas');
     $response->assertSee('Katalog');
     $response->assertSee('Alur Mudah Pendaftaran');
-    $response->assertSee('Kelas Batch');
-    $response->assertSee('Kelas Permanen');
-    $response->assertSee('Kelas Berbayar');
+    $response->assertSee('Bulanan');
+    $response->assertSee('Bangkom');
+    $response->assertSee('Bangkom External');
     $response->assertSee('SIMPEL');
     $response->assertSee('BKPSDM Aceh Timur');
     $response->assertSee('Beranda');
@@ -214,12 +214,12 @@ test('daftar jenis kelas section on landing page displays 3 course types with dy
 
     $response->assertStatus(200);
     $response->assertSee('Daftar Jenis');
-    $response->assertSee('Kelas Batch');
-    $response->assertSee('Kelas Permanen');
-    $response->assertSee('Kelas Berbayar');
-    $response->assertSee(route('landing.kelas.batch'));
-    $response->assertSee(route('landing.kelas.permanen'));
-    $response->assertSee(route('landing.kelas.berbayar'));
+    $response->assertSee('Bulanan');
+    $response->assertSee('Bangkom');
+    $response->assertSee('Bangkom External');
+    $response->assertSee(route('landing.kelas.bulanan'));
+    $response->assertSee(route('landing.kelas.bangkom'));
+    $response->assertSee(route('landing.kelas.bangkom_external'));
 });
 
 test('landing page catalog allows filtering active courses by type', function () {

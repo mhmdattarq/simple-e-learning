@@ -43,13 +43,13 @@ class DummyCourseCurriculumSeeder extends Seeder
         // 2. Definisi Data Kursus
         $coursesData = [
             // ==========================================
-            // KELAS BATCH 1: Pelayanan Publik Prima
+            // BULANAN 1: Pelayanan Publik Prima
             // ==========================================
             [
                 'title' => 'Pelayanan Publik Prima (Service Excellence) bagi Aparatur',
                 'slug' => 'dummy-pelayanan-publik-prima',
                 'category_id' => $catFungsional->id,
-                'type' => 'batch',
+                'type' => 'bulanan',
                 'price' => 0,
                 'status' => CourseStatus::Published,
                 'start_date' => $now->copy()->addDays(7)->setTime(8, 0),
@@ -178,13 +178,13 @@ class DummyCourseCurriculumSeeder extends Seeder
             ],
 
             // ==========================================
-            // KELAS BATCH 2: Manajemen Proyek & Kinerja
+            // BULANAN 2: Manajemen Proyek & Kinerja
             // ==========================================
             [
                 'title' => 'Manajemen Proyek & Eksekusi Program Berorientasi Hasil',
                 'slug' => 'dummy-manajemen-proyek-kinerja',
                 'category_id' => $catKepemimpinan->id,
-                'type' => 'batch',
+                'type' => 'bulanan',
                 'price' => 0,
                 'status' => CourseStatus::Published,
                 'start_date' => $now->copy()->addDays(14)->setTime(9, 0),
@@ -279,13 +279,13 @@ class DummyCourseCurriculumSeeder extends Seeder
             ],
 
             // ==========================================
-            // KELAS BATCH 3: Kepemimpinan Adaptif
+            // BULANAN 3: Kepemimpinan Adaptif
             // ==========================================
             [
                 'title' => 'Kepemimpinan Adaptif & Manajemen Perubahan Organisasi',
                 'slug' => 'dummy-kepemimpinan-adaptif',
                 'category_id' => $catKepemimpinan->id,
-                'type' => 'batch',
+                'type' => 'bulanan',
                 'price' => 0,
                 'status' => CourseStatus::Published,
                 'start_date' => $now->copy()->addDays(20)->setTime(8, 30),
@@ -354,13 +354,13 @@ class DummyCourseCurriculumSeeder extends Seeder
             ],
 
             // ==========================================
-            // KELAS PERMANEN 1: Core Values BerAKHLAK
+            // BANGKOM 1: Core Values BerAKHLAK
             // ==========================================
             [
                 'title' => 'Budaya Kerja & Core Values BerAKHLAK',
                 'slug' => 'dummy-core-values-berakhlak',
                 'category_id' => $catFungsional->id,
-                'type' => 'permanent',
+                'type' => 'bangkom',
                 'price' => 0,
                 'status' => CourseStatus::Published,
                 'start_date' => null,
@@ -455,13 +455,13 @@ class DummyCourseCurriculumSeeder extends Seeder
             ],
 
             // ==========================================
-            // KELAS PERMANEN 2: Keamanan Siber & Privasi Data
+            // BANGKOM 2: Keamanan Siber & Privasi Data
             // ==========================================
             [
                 'title' => 'Keamanan Informasi & Kesadaran Siber (Cybersecurity)',
                 'slug' => 'dummy-keamanan-siber-kesadaran-data',
                 'category_id' => $catTeknis->id,
-                'type' => 'permanent',
+                'type' => 'bangkom',
                 'price' => 0,
                 'status' => CourseStatus::Published,
                 'start_date' => null,
@@ -555,13 +555,13 @@ class DummyCourseCurriculumSeeder extends Seeder
             ],
 
             // ==========================================
-            // KELAS PERMANEN 3: Manajemen Waktu & Fokus
+            // BANGKOM 3: Manajemen Waktu & Fokus
             // ==========================================
             [
                 'title' => 'Manajemen Waktu & Fokus Kerja Produktif',
                 'slug' => 'dummy-manajemen-waktu-fokus-kerja',
                 'category_id' => $catTeknis->id,
-                'type' => 'permanent',
+                'type' => 'bangkom',
                 'price' => 0,
                 'status' => CourseStatus::Published,
                 'start_date' => null,
@@ -823,7 +823,7 @@ class DummyCourseCurriculumSeeder extends Seeder
   <g transform="translate(60, 60)">
     <rect width="130" height="34" rx="17" fill="#134e4a" stroke="#2dd4bf" stroke-width="1.5" />
     <circle cx="20" cy="17" r="5" fill="#2dd4bf" />
-    <text x="34" y="22" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="700" fill="#ccfbf1" letter-spacing="1">KELAS BATCH</text>
+    <text x="34" y="22" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="700" fill="#ccfbf1" letter-spacing="1">BULANAN</text>
   </g>
   <g transform="translate(560, 160)">
     <circle cx="90" cy="90" r="85" fill="#134e4a" stroke="#2dd4bf" stroke-width="3" opacity="0.7"/>
@@ -870,7 +870,7 @@ SVG,
   <g transform="translate(60, 60)">
     <rect width="130" height="34" rx="17" fill="#312e81" stroke="#818cf8" stroke-width="1.5" />
     <circle cx="20" cy="17" r="5" fill="#818cf8" />
-    <text x="34" y="22" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="700" fill="#e0e7ff" letter-spacing="1">KELAS BATCH</text>
+    <text x="34" y="22" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="700" fill="#e0e7ff" letter-spacing="1">BULANAN</text>
   </g>
   <g transform="translate(550, 150)">
     <rect width="180" height="150" rx="16" fill="#3730a3" stroke="#818cf8" stroke-width="2" opacity="0.8"/>
@@ -916,7 +916,7 @@ SVG,
   <g transform="translate(60, 60)">
     <rect width="130" height="34" rx="17" fill="#431407" stroke="#fb923c" stroke-width="1.5" />
     <circle cx="20" cy="17" r="5" fill="#fb923c" />
-    <text x="34" y="22" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="700" fill="#ffedd5" letter-spacing="1">KELAS BATCH</text>
+    <text x="34" y="22" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="700" fill="#ffedd5" letter-spacing="1">BULANAN</text>
   </g>
   <g transform="translate(560, 160)">
     <circle cx="85" cy="85" r="80" fill="#431407" stroke="#fb923c" stroke-width="2.5" opacity="0.8"/>
@@ -959,7 +959,7 @@ SVG,
   <g transform="translate(60, 60)">
     <rect width="165" height="34" rx="17" fill="#4c0519" stroke="#fb7185" stroke-width="1.5" />
     <circle cx="20" cy="17" r="5" fill="#fb7185" />
-    <text x="34" y="22" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="700" fill="#ffe4e6" letter-spacing="1">KELAS PERMANEN</text>
+    <text x="34" y="22" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="700" fill="#ffe4e6" letter-spacing="1">BANGKOM</text>
   </g>
   <g transform="translate(560, 150)">
     <path d="M85,30 L150,55 L150,115 C150,155 85,185 85,185 C85,185 20,155 20,115 L20,55 Z" fill="#4c0519" stroke="#fb7185" stroke-width="2.5" opacity="0.85"/>
@@ -1002,7 +1002,7 @@ SVG,
   <g transform="translate(60, 60)">
     <rect width="165" height="34" rx="17" fill="#164e63" stroke="#22d3ee" stroke-width="1.5" />
     <circle cx="20" cy="17" r="5" fill="#22d3ee" />
-    <text x="34" y="22" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="700" fill="#cffafe" letter-spacing="1">KELAS PERMANEN</text>
+    <text x="34" y="22" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="700" fill="#cffafe" letter-spacing="1">BANGKOM</text>
   </g>
   <g transform="translate(560, 150)">
     <rect width="160" height="150" rx="20" fill="#155e75" stroke="#38bdf8" stroke-width="2" opacity="0.8"/>
@@ -1045,7 +1045,7 @@ SVG,
   <g transform="translate(60, 60)">
     <rect width="165" height="34" rx="17" fill="#3b0764" stroke="#c084fc" stroke-width="1.5" />
     <circle cx="20" cy="17" r="5" fill="#c084fc" />
-    <text x="34" y="22" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="700" fill="#f3e8ff" letter-spacing="1">KELAS PERMANEN</text>
+    <text x="34" y="22" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="700" fill="#f3e8ff" letter-spacing="1">BANGKOM</text>
   </g>
   <g transform="translate(560, 150)">
     <circle cx="85" cy="85" r="75" fill="#3b0764" stroke="#c084fc" stroke-width="2.5" opacity="0.85"/>

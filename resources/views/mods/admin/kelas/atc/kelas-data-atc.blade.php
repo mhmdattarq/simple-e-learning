@@ -414,21 +414,21 @@
                                 }
 
                                 let typeBadge = '';
-                                if (row.type === 'permanent') {
+                                if (row.type === 'bangkom' || row.type === 'permanent') {
                                     typeBadge =
-                                        '<span class="badge bg-success-subtle text-success" style="font-size: 10.5px;"><i class="ri-infinity-line me-1"></i>Permanen (Self-Paced)</span>';
-                                } else if (row.type === 'paid' || row.type === 'berbayar') {
+                                        '<span class="badge bg-success-subtle text-success" style="font-size: 10.5px;"><i class="ri-infinity-line me-1"></i>Bangkom</span>';
+                                } else if (row.type === 'bangkom_external' || row.type === 'paid' || row.type === 'berbayar') {
                                     let priceFormatted = row.price ? 'Rp ' + Number(row.price)
                                         .toLocaleString('id-ID') : 'Rp 0';
                                     typeBadge =
-                                        `<span class="badge bg-warning-subtle text-dark border border-warning" style="font-size: 10.5px;"><i class="ri-money-dollar-circle-line me-1"></i>Berbayar (${priceFormatted})</span>`;
+                                        `<span class="badge bg-warning-subtle text-dark border border-warning" style="font-size: 10.5px;"><i class="ri-money-dollar-circle-line me-1"></i>Bangkom External (${priceFormatted})</span>`;
                                 } else {
                                     let startDate = row.start_date ? row.start_date.substring(0, 10) : '';
                                     let endDate = row.end_date ? row.end_date.substring(0, 10) : '';
                                     let dates = (startDate && endDate) ? ` (${startDate} s.d ${endDate})` :
                                         '';
                                     typeBadge =
-                                        `<span class="badge bg-primary-subtle text-primary" style="font-size: 10.5px;"><i class="ri-calendar-line me-1"></i>Batch${dates}</span>`;
+                                        `<span class="badge bg-primary-subtle text-primary" style="font-size: 10.5px;"><i class="ri-calendar-line me-1"></i>Bulanan${dates}</span>`;
                                 }
 
                                 return `

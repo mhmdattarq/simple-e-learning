@@ -129,37 +129,61 @@ class Course extends Model
     }
 
     /**
-     * Check if course is permanent (open anytime).
+     * Check if course is Bangkom (open anytime / self-paced).
+     */
+    public function isBangkom(): bool
+    {
+        return in_array($this->type, ['bangkom', 'permanent'], true);
+    }
+
+    /**
+     * Check if course is Bulanan (scheduled period).
+     */
+    public function isBulanan(): bool
+    {
+        return in_array($this->type, ['bulanan', 'batch'], true);
+    }
+
+    /**
+     * Check if course is Bangkom External (berbayar).
+     */
+    public function isBangkomExternal(): bool
+    {
+        return in_array($this->type, ['bangkom_external', 'paid', 'berbayar'], true);
+    }
+
+    /**
+     * Backward compatibility alias for isBangkom().
      */
     public function isPermanent(): bool
     {
-        return $this->type === 'permanent';
+        return $this->isBangkom();
     }
 
     /**
-     * Check if course is batch-based (scheduled period).
+     * Backward compatibility alias for isBulanan().
      */
     public function isBatch(): bool
     {
-        return $this->type === 'batch';
+        return $this->isBulanan();
     }
 
     /**
-     * Check if course is paid (berbayar).
+     * Backward compatibility alias for isBangkomExternal().
      */
     public function isPaid(): bool
     {
-        return $this->type === 'paid' || $this->type === 'berbayar';
+        return $this->isBangkomExternal();
     }
 
     /**
-     * Check if curriculum is frozen (Batch rule: locked once active/started).
+     * Check if curriculum is frozen (Bulanan rule: locked once active/started).
      * Locking is based on exact datetime, not day-level comparison, so admin
      * can still manage curriculum up until the precise start_date moment.
      */
     public function isCurriculumFrozen(): bool
     {
-        if ($this->isBatch() && $this->start_date) {
+        if ($this->isBulanan() && $this->start_date) {
             return now()->gte($this->start_date);
         }
 
@@ -167,11 +191,11 @@ class Course extends Model
     }
 
     /**
-     * Check if batch course has not started yet.
+     * Check if bulanan course has not started yet.
      */
-    public function isBatchNotStarted(): bool
+    public function isBulananNotStarted(): bool
     {
-        if ($this->isBatch() && $this->start_date) {
+        if ($this->isBulanan() && $this->start_date) {
             return now()->lt($this->start_date);
         }
 
@@ -179,11 +203,19 @@ class Course extends Model
     }
 
     /**
-     * Check if batch course has ended.
+     * Backward compatibility alias for isBulananNotStarted().
      */
-    public function isBatchEnded(): bool
+    public function isBatchNotStarted(): bool
     {
-        if ($this->isBatch() && $this->end_date) {
+        return $this->isBulananNotStarted();
+    }
+
+    /**
+     * Check if bulanan course has ended.
+     */
+    public function isBulananEnded(): bool
+    {
+        if ($this->isBulanan() && $this->end_date) {
             return now()->gt($this->end_date);
         }
 
@@ -191,11 +223,19 @@ class Course extends Model
     }
 
     /**
-     * Check if batch course is currently active (between start and end date).
+     * Backward compatibility alias for isBulananEnded().
      */
-    public function isBatchActive(): bool
+    public function isBatchEnded(): bool
     {
-        if (! $this->isBatch()) {
+        return $this->isBulananEnded();
+    }
+
+    /**
+     * Check if bulanan course is currently active (between start and end date).
+     */
+    public function isBulananActive(): bool
+    {
+        if (! $this->isBulanan()) {
             return true;
         }
 
@@ -203,6 +243,14 @@ class Course extends Model
         $notEnded = ! $this->end_date || now()->lte($this->end_date);
 
         return $started && $notEnded;
+    }
+
+    /**
+     * Backward compatibility alias for isBulananActive().
+     */
+    public function isBatchActive(): bool
+    {
+        return $this->isBulananActive();
     }
 
     /**

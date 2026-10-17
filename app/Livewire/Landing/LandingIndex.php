@@ -35,7 +35,15 @@ class LandingIndex extends Component
             ->where('status', 'published');
 
         if ($this->selectedType !== 'all') {
-            $coursesQuery->where('type', $this->selectedType);
+            if (in_array($this->selectedType, ['bulanan', 'batch'], true)) {
+                $coursesQuery->whereIn('type', ['bulanan', 'batch']);
+            } elseif (in_array($this->selectedType, ['bangkom', 'permanent'], true)) {
+                $coursesQuery->whereIn('type', ['bangkom', 'permanent']);
+            } elseif (in_array($this->selectedType, ['bangkom_external', 'paid', 'berbayar'], true)) {
+                $coursesQuery->whereIn('type', ['bangkom_external', 'paid', 'berbayar']);
+            } else {
+                $coursesQuery->where('type', $this->selectedType);
+            }
         }
 
         $courses = $tablesExist
@@ -49,16 +57,20 @@ class LandingIndex extends Component
             : 0;
 
         $batchCoursesCount = $tablesExist
-            ? Course::where('status', 'published')->where('type', 'batch')->count()
+            ? Course::where('status', 'published')->whereIn('type', ['bulanan', 'batch'])->count()
             : 0;
 
         $permanentCoursesCount = $tablesExist
-            ? Course::where('status', 'published')->where('type', 'permanent')->count()
+            ? Course::where('status', 'published')->whereIn('type', ['bangkom', 'permanent'])->count()
             : 0;
 
         $paidCoursesCount = $tablesExist
-            ? Course::where('status', 'published')->where('type', 'paid')->count()
+            ? Course::where('status', 'published')->whereIn('type', ['bangkom_external', 'paid', 'berbayar'])->count()
             : 0;
+
+        $bulananCoursesCount = $batchCoursesCount;
+        $bangkomCoursesCount = $permanentCoursesCount;
+        $bangkomExternalCoursesCount = $paidCoursesCount;
 
         $totalApprovedParticipants = $tablesExist && Schema::hasTable('course_user')
             ? CourseUser::where('status', 'approved')->count()
@@ -67,7 +79,7 @@ class LandingIndex extends Component
         $upcomingJadwals = $tablesExist
             ? Course::with('category')
                 ->where('status', 'published')
-                ->where('type', 'batch')
+                ->whereIn('type', ['bulanan', 'batch'])
                 ->whereNotNull('start_date')
                 ->orderBy('start_date', 'asc')
                 ->take(3)
@@ -80,6 +92,9 @@ class LandingIndex extends Component
             'batchCoursesCount',
             'permanentCoursesCount',
             'paidCoursesCount',
+            'bulananCoursesCount',
+            'bangkomCoursesCount',
+            'bangkomExternalCoursesCount',
             'totalApprovedParticipants',
             'upcomingJadwals',
         ));

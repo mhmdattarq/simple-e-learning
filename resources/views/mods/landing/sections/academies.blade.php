@@ -14,7 +14,7 @@
                     Daftar Jenis <span class="text-gold">Kelas</span>
                 </h2>
                 <p class="text-muted fs-6 mb-0">
-                    Pilih skema kelas yang sesuai dengan kebutuhan pengembangan kompetensi Anda: Kelas Berjadwal (Batch), Pembelajaran Mandiri (Permanen), atau Program Sertifikasi Lanjutan (Berbayar).
+                    Pilih skema kelas yang sesuai dengan kebutuhan pengembangan kompetensi Anda: Bulanan (Kelas Berjadwal), Bangkom (Pembelajaran Mandiri), atau Bangkom External (Program Sertifikasi Lanjutan).
                 </p>
             </div>
             <div class="col-lg-4 text-lg-end">
@@ -28,7 +28,7 @@
 
         {{-- 3 Jenis Kelas Cards --}}
         <div class="row g-4">
-            {{-- Card 1: Kelas Batch --}}
+            {{-- Card 1: Bulanan --}}
             <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="150ms">
                 <div class="card h-100 border border-simpel rounded-4 bg-white shadow-xs overflow-hidden simpel-academy-card position-relative d-flex flex-column">
                     {{-- Top Color Bar --}}
@@ -46,14 +46,14 @@
                                 </div>
                                 <div>
                                     <div class="fw-extrabold text-navy" style="font-size: 22px; line-height: 1.1;">
-                                        {{ $batchCoursesCount ?? 0 }}
+                                        {{ $bulananCoursesCount ?? ($batchCoursesCount ?? 0) }}
                                         <span class="fs-8 fw-semibold text-muted">Kelas Aktif</span>
                                     </div>
                                     <small class="text-muted" style="font-size: 11px;">Jadwal Berkala</small>
                                 </div>
                             </div>
                             <span class="badge bg-primary text-white rounded-pill fw-bold fs-8">
-                                Batch Terjadwal
+                                Bulanan
                             </span>
                         </div>
 
@@ -64,7 +64,7 @@
 
                         {{-- Title & Description --}}
                         <h5 class="fw-bold text-navy mb-2 lh-sm" style="font-size: 17px;">
-                            Kelas Batch
+                            Bulanan
                         </h5>
                         <p class="text-muted fs-7 mb-3 flex-grow-1">
                             Program kelas kedinasan berjadwal dengan kuota dan periode registrasi berkala untuk aparatur sipil negara.
@@ -78,8 +78,8 @@
 
                         {{-- Quick Action CTA --}}
                         <div class="pt-3 border-top border-simpel mt-auto">
-                            <a href="{{ route('landing.kelas.batch') }}" class="btn-simpel-cta-gold w-100">
-                                <span>Jelajahi Kelas Batch</span>
+                            <a href="{{ route('landing.kelas.bulanan') }}" class="btn-simpel-cta-gold w-100">
+                                <span>Jelajahi Bulanan</span>
                                 <i class="ri-arrow-right-line ms-1"></i>
                             </a>
                         </div>
@@ -87,7 +87,7 @@
                 </div>
             </div>
 
-            {{-- Card 2: Kelas Permanen --}}
+            {{-- Card 2: Bangkom --}}
             <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="250ms">
                 <div class="card h-100 border border-simpel rounded-4 bg-white shadow-xs overflow-hidden simpel-academy-card position-relative d-flex flex-column">
                     {{-- Top Color Bar --}}
@@ -105,14 +105,14 @@
                                 </div>
                                 <div>
                                     <div class="fw-extrabold text-navy" style="font-size: 22px; line-height: 1.1;">
-                                        {{ $permanentCoursesCount ?? 0 }}
+                                        {{ $bangkomCoursesCount ?? ($permanentCoursesCount ?? 0) }}
                                         <span class="fs-8 fw-semibold text-muted">Kelas Aktif</span>
                                     </div>
                                     <small class="text-muted" style="font-size: 11px;">Mandiri 24/7</small>
                                 </div>
                             </div>
                             <span class="badge bg-success text-white rounded-pill fw-bold fs-8">
-                                Self-Paced
+                                Bangkom
                             </span>
                         </div>
 
@@ -123,7 +123,7 @@
 
                         {{-- Title & Description --}}
                         <h5 class="fw-bold text-navy mb-2 lh-sm" style="font-size: 17px;">
-                            Kelas Permanen
+                            Bangkom
                         </h5>
                         <p class="text-muted fs-7 mb-3 flex-grow-1">
                             Kelas digital mandiri yang dapat diakses kapan saja dan di mana saja tanpa batasan jadwal atau tanggal berakhir.
@@ -137,8 +137,8 @@
 
                         {{-- Quick Action CTA --}}
                         <div class="pt-3 border-top border-simpel mt-auto">
-                            <a href="{{ route('landing.kelas.permanen') }}" class="btn-simpel-cta-gold w-100">
-                                <span>Jelajahi Kelas Permanen</span>
+                            <a href="{{ route('landing.kelas.bangkom') }}" class="btn-simpel-cta-gold w-100">
+                                <span>Jelajahi Bangkom</span>
                                 <i class="ri-arrow-right-line ms-1"></i>
                             </a>
                         </div>
@@ -146,7 +146,7 @@
                 </div>
             </div>
 
-            {{-- Card 3: Kelas Berbayar --}}
+            {{-- Card 3: Bangkom External --}}
             <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="350ms">
                 <div class="card h-100 border border-simpel rounded-4 bg-white shadow-xs overflow-hidden simpel-academy-card position-relative d-flex flex-column">
                     {{-- Top Color Bar --}}
@@ -164,14 +164,14 @@
                                 </div>
                                 <div>
                                     <div class="fw-extrabold text-navy" style="font-size: 22px; line-height: 1.1;">
-                                        {{ $paidCoursesCount ?? 0 }}
+                                        {{ $bangkomExternalCoursesCount ?? ($paidCoursesCount ?? 0) }}
                                         <span class="fs-8 fw-semibold text-muted">Kelas Aktif</span>
                                     </div>
                                     <small class="text-muted" style="font-size: 11px;">Sertifikasi Resmi</small>
                                 </div>
                             </div>
                             <span class="badge bg-warning-subtle text-dark border border-warning rounded-pill fw-bold fs-8">
-                                Spesialisasi
+                                Bangkom External
                             </span>
                         </div>
 
@@ -182,7 +182,7 @@
 
                         {{-- Title & Description --}}
                         <h5 class="fw-bold text-navy mb-2 lh-sm" style="font-size: 17px;">
-                            Kelas Berbayar
+                            Bangkom External
                         </h5>
                         <p class="text-muted fs-7 mb-3 flex-grow-1">
                             Program sertifikasi keahlian khusus dan kelas profesi lanjutan yang diselenggarakan bersama mitra terakreditasi resmi.
@@ -196,8 +196,8 @@
 
                         {{-- Quick Action CTA --}}
                         <div class="pt-3 border-top border-simpel mt-auto">
-                            <a href="{{ route('landing.kelas.berbayar') }}" class="btn-simpel-cta-gold w-100">
-                                <span>Jelajahi Kelas Berbayar</span>
+                            <a href="{{ route('landing.kelas.bangkom_external') }}" class="btn-simpel-cta-gold w-100">
+                                <span>Jelajahi Bangkom External</span>
                                 <i class="ri-arrow-right-line ms-1"></i>
                             </a>
                         </div>
