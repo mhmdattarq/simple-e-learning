@@ -27,7 +27,16 @@ class Course extends Model
             'registration_open_at' => 'datetime',
             'registration_close_at' => 'datetime',
             'price' => 'decimal:2',
+            'jam_pelajaran' => 'integer',
         ];
+    }
+
+    /**
+     * Get jam pelajaran (JP) with fallback to 24.
+     */
+    public function getJpAttribute(): int
+    {
+        return (int) ($this->jam_pelajaran ?? 24);
     }
 
     /**

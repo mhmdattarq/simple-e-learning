@@ -866,3 +866,49 @@ test('kelas create validates description requirements and length constraints', f
         ->assertHasErrors(['form.description' => 'min'])
         ->assertSee('Deskripsi kelas minimal 10 karakter.');
 });
+
+test('kelas create and edit properly saves and validates jam_pelajaran', function () {
+    $admin = User::factory()->admin()->create();
+    $category = Category::first();
+
+    // 1. Validation test on create
+    Livewire::actingAs($admin)
+        ->test(KelasCreate::class)
+        ->set('form.title', 'Kelas Validasi JP')
+        ->set('form.category_id', $category->id)
+        ->set('form.description', 'Deskripsi kelas validasi jam pelajaran pelatihan.')
+        ->call('nextStep')
+        ->assertSet('currentStep', 2)
+        ->set('form.type', 'bangkom')
+        ->set('form.jam_pelajaran', 0)
+        ->call('nextStep')
+        ->assertHasErrors(['form.jam_pelajaran' => 'min'])
+        ->assertSee('Jam pelajaran (JP) minimal 1 JP.');
+
+    // 2. Successful creation with custom JP
+    Livewire::actingAs($admin)
+        ->test(KelasCreate::class)
+        ->set('form.title', 'Kelas Tata Kelola SPBE 32 JP')
+        ->set('form.category_id', $category->id)
+        ->set('form.description', 'Deskripsi pelatihan SPBE dengan estimasi 32 jam pelajaran.')
+        ->set('form.type', 'bangkom')
+        ->set('form.jam_pelajaran', 32)
+        ->call('formSubmit')
+        ->assertHasNoErrors();
+
+    $course = Course::where('title', 'Kelas Tata Kelola SPBE 32 JP')->first();
+    expect($course)->not->toBeNull();
+    expect($course->jam_pelajaran)->toBe(32);
+    expect($course->jp)->toBe(32);
+
+    // 3. Edit course jam_pelajaran
+    Livewire::actingAs($admin)
+        ->test(KelasEdit::class, ['id' => $course->id])
+        ->assertSet('form.jam_pelajaran', 32)
+        ->set('form.jam_pelajaran', 48)
+        ->call('formSubmit')
+        ->assertHasNoErrors();
+
+    expect($course->fresh()->jam_pelajaran)->toBe(48);
+    expect($course->fresh()->jp)->toBe(48);
+});

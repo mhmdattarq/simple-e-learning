@@ -355,11 +355,42 @@
                                                 {{ $attempt->submitted_at ? $attempt->submitted_at->format('d M Y, H:i') : '-' }}
                                             </td>
                                             <td class="text-center">
-                                                <a href="{{ route('peserta.evaluasi.kerjakan', ['course' => $attempt->quiz?->course ?? $attempt->quiz?->course_id, 'quiz' => $attempt->quiz ?? $attempt->quiz_id]) }}"
-                                                    class="btn btn-sm btn-outline-primary py-1 px-2 radius-6 text-xxs fw-semibold"
-                                                    title="Buka Lembar Hasil Evaluasi" wire:navigate>
-                                                    <i class="ri-eye-line me-1"></i>Lihat
-                                                </a>
+                                                <div class="d-inline-flex align-items-center gap-1">
+                                                    <a href="{{ route('peserta.evaluasi.kerjakan', ['course' => $attempt->quiz?->course ?? $attempt->quiz?->course_id, 'quiz' => $attempt->quiz ?? $attempt->quiz_id]) }}"
+                                                        class="btn btn-sm btn-outline-primary py-1 px-2 radius-6 text-xxs fw-semibold"
+                                                        title="Buka Lembar Hasil Evaluasi" wire:navigate>
+                                                        <i class="ri-eye-line me-1"></i>Lihat
+                                                    </a>
+                                                    @if ($attempt->is_passed && $attempt->quiz?->isFinalQuiz() && $attempt->quiz?->course)
+                                                        <div class="dropdown">
+                                                            <button class="btn btn-sm btn-success py-1 px-2 radius-6 text-xxs fw-semibold dropdown-toggle"
+                                                                type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Unduh Sertifikat">
+                                                                <i class="ri-award-fill me-1"></i>Sertifikat
+                                                            </button>
+                                                            <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 fs-8 radius-8">
+                                                                <li>
+                                                                    <a class="dropdown-item py-2 d-flex align-items-center gap-2"
+                                                                        href="{{ route('peserta.sertifikat.unduh-pdf', $attempt->quiz->course) }}">
+                                                                        <i class="ri-file-pdf-fill text-danger"></i> Unduh PDF
+                                                                    </a>
+                                                                </li>
+                                                                <li>
+                                                                    <a class="dropdown-item py-2 d-flex align-items-center gap-2"
+                                                                        href="{{ route('peserta.sertifikat.unduh-gambar', $attempt->quiz->course) }}">
+                                                                        <i class="ri-image-fill text-primary"></i> Unduh Gambar (PNG)
+                                                                    </a>
+                                                                </li>
+                                                                <li><hr class="dropdown-divider my-1"></li>
+                                                                <li>
+                                                                    <a class="dropdown-item py-2 d-flex align-items-center gap-2"
+                                                                        href="{{ route('peserta.sertifikat.preview', $attempt->quiz->course) }}" target="_blank">
+                                                                        <i class="ri-eye-line text-secondary"></i> Pratinjau
+                                                                    </a>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    @endif
+                                                </div>
                                             </td>
                                         </tr>
                                     @endforeach

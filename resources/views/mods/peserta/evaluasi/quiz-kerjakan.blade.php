@@ -632,6 +632,36 @@
                         </div>
                     </div>
 
+                    {{-- Banner Penerbitan Sertifikat Kelulusan (Workflow ala Dicoding) --}}
+                    @if ($savedAttempt->is_passed && $quiz->isFinalQuiz())
+                        <div class="card border border-success-subtle bg-success-subtle bg-opacity-25 radius-16 p-4 mb-4 mx-auto text-center shadow-sm"
+                            style="max-width: 650px;">
+                            <div class="d-inline-flex align-items-center justify-content-center bg-white shadow-sm rounded-circle mx-auto mb-2"
+                                style="width: 56px; height: 56px;">
+                                <i class="ri-award-fill text-warning fs-3"></i>
+                            </div>
+                            <h5 class="fw-bold text-dark mb-1">Selamat! Sertifikat Kelulusan Anda Telah Terbit</h5>
+                            <p class="text-muted fs-7 mb-3">
+                                Anda telah berhasil menyelesaikan seluruh rangkaian pelatihan dan dinyatakan lulus ujian akhir. Unduh sertifikat resmi Anda di bawah ini:
+                            </p>
+                            <div class="d-flex flex-wrap align-items-center justify-content-center gap-2">
+                                <a href="{{ route('peserta.sertifikat.unduh-pdf', $quiz->course ?? $quiz->course_id) }}"
+                                    class="btn btn-danger px-3 py-2 radius-8 fw-semibold fs-7 d-inline-flex align-items-center gap-2 shadow-sm">
+                                    <i class="ri-file-pdf-fill fs-6"></i> Unduh PDF
+                                </a>
+                                <a href="{{ route('peserta.sertifikat.unduh-gambar', $quiz->course ?? $quiz->course_id) }}"
+                                    class="btn btn-primary px-3 py-2 radius-8 fw-semibold fs-7 d-inline-flex align-items-center gap-2 shadow-sm">
+                                    <i class="ri-image-fill fs-6"></i> Unduh Gambar (PNG)
+                                </a>
+                                <a href="{{ route('peserta.sertifikat.preview', $quiz->course ?? $quiz->course_id) }}"
+                                    target="_blank"
+                                    class="btn btn-outline-secondary px-3 py-2 radius-8 fw-semibold fs-7 d-inline-flex align-items-center gap-2">
+                                    <i class="ri-eye-line fs-6"></i> Pratinjau
+                                </a>
+                            </div>
+                        </div>
+                    @endif
+
                     {{-- Catatan Single Attempt --}}
                     <div class="alert alert-secondary border-0 p-3 radius-12 text-xs text-muted mb-4 mx-auto"
                         style="max-width: 600px;">

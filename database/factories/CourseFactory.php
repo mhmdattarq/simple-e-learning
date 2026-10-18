@@ -29,6 +29,7 @@ class CourseFactory extends Factory
             'category_id' => null,
             'type' => $type,
             'price' => 0,
+            'jam_pelajaran' => 24,
             'start_date' => $startDate,
             'end_date' => $endDate,
             'thumbnail' => null,

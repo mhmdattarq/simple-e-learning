@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\GoogleAuthController;
+use App\Http\Controllers\CertificateController;
 use App\Http\Controllers\ContactMessageController;
 use App\Http\Controllers\EvaluasiController;
 use App\Http\Controllers\KategoriController;
@@ -112,6 +113,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/pelatihan/{course}/materi', fn (Course $course) => redirect()->to(route('peserta.materi', $course)));
     Route::get('/kelas/{course}/evaluasi/{quiz}', fn (Course $course, $quiz) => redirect()->to(route('peserta.evaluasi.kerjakan', ['course' => $course, 'quiz' => $quiz])));
     Route::livewire('/evaluasi/kerjakan/{quiz}', QuizKerjakan::class)->name('peserta.evaluasi.show');
+
+    // Unduh & Pratinjau Sertifikat Pelatihan (PDF & Gambar)
+    Route::get('/kursus/{course}/sertifikat/unduh-pdf', [CertificateController::class, 'downloadPdf'])->name('peserta.sertifikat.unduh-pdf');
+    Route::get('/kursus/{course}/sertifikat/unduh-gambar', [CertificateController::class, 'downloadImage'])->name('peserta.sertifikat.unduh-gambar');
+    Route::get('/kursus/{course}/sertifikat/preview', [CertificateController::class, 'preview'])->name('peserta.sertifikat.preview');
+
+    // Route alias / generic sertifikat
+    Route::get('/sertifikat/{course}/unduh/pdf', [CertificateController::class, 'downloadPdf'])->name('peserta.sertifikat.pdf');
+    Route::get('/sertifikat/{course}/unduh/gambar', [CertificateController::class, 'downloadImage'])->name('peserta.sertifikat.gambar');
 });
 
 // 4. Logout (Authenticated)
