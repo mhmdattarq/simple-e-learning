@@ -222,6 +222,25 @@
                                 @enderror
                             </div>
 
+                            {{-- Estimasi Jam Pelajaran (JP) --}}
+                            <div class="col-md-12" wire:key="field-jam-pelajaran">
+                                <label class="form-label text-xs fw-semibold text-dark mb-1">
+                                    Jam Pelajaran (JP) / Bobot Pelatihan <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <input id="input_jam_pelajaran" type="number" min="1" max="999"
+                                        class="form-control @error('form.jam_pelajaran') is-invalid @enderror"
+                                        wire:model="form.jam_pelajaran" placeholder="Contoh: 24">
+                                    <span class="input-group-text bg-light text-dark fw-bold">JP</span>
+                                </div>
+                                <div class="form-text text-xs text-muted mt-1">
+                                    Estimasi bobot jam pelajaran (1 JP = 45 menit) yang akan tercantum pada sertifikat kelulusan peserta.
+                                </div>
+                                @error('form.jam_pelajaran')
+                                    <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
+
                             {{-- Row (Khusus Tipe Bulanan): Tanggal & Jam Mulai & Selesai --}}
                             @if (in_array($form['type'] ?? '', ['bulanan', 'batch'], true))
                                 <div class="col-md-6" wire:key="field-start-date">

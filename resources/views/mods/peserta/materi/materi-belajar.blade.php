@@ -2,8 +2,8 @@
     {{-- Page Header Section --}}
     <section class="page-header py-4" style="background: linear-gradient(135deg, #071a33 0%, #102a43 100%);">
         <div class="container">
-            <div class="page-header__inner d-flex flex-wrap align-items-center justify-content-between gap-3">
-                <div>
+            <div class="row align-items-center g-3">
+                <div class="col-lg-8 col-md-7">
                     <span class="badge px-3 py-2 text-white border border-light-subtle rounded-pill mb-2 fs-8"
                         style="background: rgba(255, 255, 255, 0.1);">
                         <i class="ri-book-open-line text-warning me-1"></i> Ruang Belajar Mandiri
@@ -13,9 +13,10 @@
                         Akses seluruh modul dan silabus materi pembelajaran interaktif Anda.
                     </p>
                 </div>
-                <div class="d-flex align-items-center gap-2 w-100 w-sm-auto">
-                    <a href="{{ route('landing.kelas.detail', $course) }}" class="btn btn-simpel-outline-light w-100 w-sm-auto text-center">
-                        <i class="ri-arrow-left-line me-1"></i> Kembali ke Detail Kelas
+                <div class="col-lg-4 col-md-5 text-md-end">
+                    <a href="{{ route('landing.kelas.detail', $course) }}" class="btn-simpel-outline-light">
+                        <i class="ri-arrow-left-line"></i>
+                        <span>Kembali ke Detail Kelas</span>
                     </a>
                 </div>
             </div>
@@ -176,6 +177,20 @@
                                                 {{ $finalAttempt->is_passed ? 'Lulus' : 'Belum Lulus' }}
                                             </span>
                                         </a>
+                                        @if ($finalAttempt->is_passed)
+                                            <div class="mt-2 pt-2 border-top d-flex gap-1">
+                                                <a href="{{ route('peserta.sertifikat.unduh-pdf', $course) }}"
+                                                    class="btn btn-sm btn-outline-danger py-1 px-2 radius-6 text-xxs fw-semibold flex-fill text-center"
+                                                    title="Unduh Sertifikat PDF">
+                                                    <i class="ri-file-pdf-fill me-1"></i>Sertifikat PDF
+                                                </a>
+                                                <a href="{{ route('peserta.sertifikat.unduh-gambar', $course) }}"
+                                                    class="btn btn-sm btn-outline-primary py-1 px-2 radius-6 text-xxs fw-semibold flex-fill text-center"
+                                                    title="Unduh Sertifikat PNG">
+                                                    <i class="ri-image-fill me-1"></i>Gambar PNG
+                                                </a>
+                                            </div>
+                                        @endif
                                     @elseif ($allLessonsDone)
                                         <a href="{{ route('peserta.evaluasi.kerjakan', ['course' => $course, 'quiz' => $course->finalQuiz]) }}"
                                             class="list-group-item list-group-item-action d-flex align-items-center justify-content-between p-2 fs-8 rounded-2 border border-warning bg-warning-subtle text-warning fw-bold text-decoration-none shadow-sm"
