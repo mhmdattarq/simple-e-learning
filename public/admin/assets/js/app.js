@@ -1,21 +1,31 @@
 (function ($) {
   'use strict';
 
-  // sidebar toggle with delegation
-  $(document).on("click", ".sidebar-toggle", function(){
-    $(this).toggleClass("active");
-    $(".sidebar").toggleClass("active");
-    $(".dashboard-main").toggleClass("active");
+  // sidebar toggle with delegation (responsive: mobile drawer vs desktop collapse)
+  $(document).on("click", ".sidebar-toggle, .sidebar-mobile-toggle", function (e) {
+    e.preventDefault();
+    if (window.innerWidth < 1200) {
+      $(".sidebar").addClass("sidebar-open");
+      $("body").addClass("overlay-active");
+    } else {
+      $("body").toggleClass("sidebar-collapsed");
+      $(".sidebar").toggleClass("sidebar-collapsed");
+      $(".dashboard-main").toggleClass("sidebar-collapsed");
+      $("body").removeClass("overlay-active");
+      $(".sidebar").removeClass("sidebar-open");
+    }
   });
 
-  $(document).on("click", ".sidebar-mobile-toggle", function(){
-    $(".sidebar").addClass("sidebar-open");
-    $("body").addClass("overlay-active");
-  });
-
-  $(document).on("click", ".sidebar-close-btn", function(){
+  $(document).on("click", ".sidebar-close-btn", function () {
     $(".sidebar").removeClass("sidebar-open");
     $("body").removeClass("overlay-active");
+  });
+
+  $(window).on("resize", function () {
+    if (window.innerWidth >= 1200) {
+      $(".sidebar").removeClass("sidebar-open");
+      $("body").removeClass("overlay-active");
+    }
   });
 
 /**
