@@ -53,7 +53,12 @@ class KelasRepo
             AuditLog::log(
                 action: 'course.created',
                 auditable: $course,
-                newValues: ['title' => $course->title, 'type' => $course->type, 'status' => $course->status],
+                newValues: [
+                    'title' => $course->title,
+                    'type' => $course->type,
+                    'status' => $course->status,
+                    'jam_pelajaran' => $course->jam_pelajaran,
+                ],
                 notes: 'Admin membuat kelas baru: '.$course->title
             );
 
@@ -81,6 +86,7 @@ class KelasRepo
                 'type' => $course->type,
                 'status' => $course->status,
                 'category_id' => $course->category_id,
+                'jam_pelajaran' => $course->jam_pelajaran,
             ];
 
             if (! empty($data['title']) && empty($data['slug'])) {
@@ -113,6 +119,7 @@ class KelasRepo
                     'type' => $course->type,
                     'status' => $course->status,
                     'category_id' => $course->category_id,
+                    'jam_pelajaran' => $course->jam_pelajaran,
                 ],
                 notes: 'Admin memperbarui kelas: '.$course->title
             );

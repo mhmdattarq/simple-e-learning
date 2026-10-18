@@ -39,7 +39,7 @@ class KelasCreate extends Component
             'category_name' => '',
             'type' => 'bulanan',
             'price' => 0,
-            'jam_pelajaran' => 24,
+            'jam_pelajaran' => '24',
             'start_date' => '',
             'end_date' => '',
             'status' => 'published',
@@ -98,7 +98,7 @@ class KelasCreate extends Component
         if ($step === 2) {
             $rules = [
                 'form.type' => 'required|in:bulanan,bangkom,bangkom_external,permanent,batch,paid,berbayar',
-                'form.jam_pelajaran' => 'required|integer|min:1|max:999',
+                'form.jam_pelajaran' => 'required|string|max:50',
             ];
 
             if (in_array($this->form['type'] ?? '', ['bulanan', 'batch'], true)) {
@@ -183,9 +183,8 @@ class KelasCreate extends Component
             'form.type.required' => 'Jenis kelas wajib dipilih.',
             'form.type.in' => 'Jenis kelas harus berupa Bulanan, Bangkom, atau Bangkom External.',
             'form.jam_pelajaran.required' => 'Jam pelajaran (JP) wajib diisi.',
-            'form.jam_pelajaran.integer' => 'Jam pelajaran (JP) harus berupa angka bulat.',
-            'form.jam_pelajaran.min' => 'Jam pelajaran (JP) minimal 1 JP.',
-            'form.jam_pelajaran.max' => 'Jam pelajaran (JP) maksimal 999 JP.',
+            'form.jam_pelajaran.string' => 'Jam pelajaran (JP) harus berupa teks atau angka.',
+            'form.jam_pelajaran.max' => 'Jam pelajaran (JP) maksimal 50 karakter.',
             'form.price.required' => 'Biaya kelas wajib ditentukan untuk Bangkom External.',
             'form.price.numeric' => 'Biaya kelas harus berupa nilai angka.',
             'form.price.min' => 'Biaya kelas minimal Rp 0.',
@@ -256,7 +255,7 @@ class KelasCreate extends Component
             'category_id' => $resolvedCategoryId,
             'type' => $normalizedType,
             'price' => $isPaid ? (float) ($this->form['price'] ?? 0) : 0,
-            'jam_pelajaran' => (int) ($this->form['jam_pelajaran'] ?? 24),
+            'jam_pelajaran' => trim((string) ($this->form['jam_pelajaran'] ?? '24')),
             'start_date' => $startDate,
             'end_date' => $endDate,
             'status' => $this->form['status'] ?? 'published',

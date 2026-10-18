@@ -166,11 +166,11 @@ class CertificateRepo
         // Tipografi: Menggunakan font Serif dengan lining figures 29pt yang sejajar presisi dan proporsional.
         $jpText = (string) ($course->jp ?? 24);
         $jpFontSize = 29;
-        $jpBox = imagettfbbox($jpFontSize, 0, $serifDisplay, $jpText);
+        $jpBox = imagettfbbox($jpFontSize, 0, $serifBody, $jpText);
         $jpWidth = abs($jpBox[4] - $jpBox[0]);
         $jpX = (int) (618 - ($jpWidth / 2));
         $jpY = 1019;
-        imagettftext($image, $jpFontSize, 0, $jpX, $jpY, $darkNavy, $serifDisplay, $jpText);
+        imagettftext($image, $jpFontSize, 0, $jpX, $jpY, $darkNavy, $serifBody, $jpText);
 
         // 4. TEMPAT DAN TANGGAL TERBIT (Garis Biru)
         // Celah: Bawah 'diselenggarakan...' (Y=1026) s.d Atas 'KEPALA BADAN...' (Y=1084).
