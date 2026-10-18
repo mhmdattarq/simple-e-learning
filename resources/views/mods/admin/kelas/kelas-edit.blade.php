@@ -150,9 +150,9 @@
                                 Jam Pelajaran (JP) / Bobot Pelatihan <span class="text-danger">*</span>
                             </label>
                             <div class="input-group">
-                                <input id="edit_input_jam_pelajaran" type="number" min="1" max="999"
+                                <input id="edit_input_jam_pelajaran" type="text"
                                     class="form-control @error('form.jam_pelajaran') is-invalid @enderror"
-                                    wire:model="form.jam_pelajaran" placeholder="Contoh: 24">
+                                    wire:model="form.jam_pelajaran" placeholder="Contoh: 24 atau 3,5">
                                 <span class="input-group-text bg-light text-dark fw-bold">JP</span>
                             </div>
                             <div class="form-text text-xs text-muted mt-1">

@@ -5,6 +5,7 @@ use App\Enums\RegistrationStatus;
 use App\Livewire\Admin\Kelas\KelasCreate;
 use App\Livewire\Admin\Kelas\KelasData;
 use App\Livewire\Admin\Kelas\KelasEdit;
+use App\Models\AuditLog;
 use App\Models\Category;
 use App\Models\Chapter;
 use App\Models\Course;
@@ -867,11 +868,11 @@ test('kelas create validates description requirements and length constraints', f
         ->assertSee('Deskripsi kelas minimal 10 karakter.');
 });
 
-test('kelas create and edit properly saves and validates jam_pelajaran', function () {
+test('kelas create and edit properly saves and validates jam_pelajaran as string and tracks audit logs', function () {
     $admin = User::factory()->admin()->create();
     $category = Category::first();
 
-    // 1. Validation test on create
+    // 1. Validation test on create (required & max length)
     Livewire::actingAs($admin)
         ->test(KelasCreate::class)
         ->set('form.title', 'Kelas Validasi JP')
@@ -880,35 +881,52 @@ test('kelas create and edit properly saves and validates jam_pelajaran', functio
         ->call('nextStep')
         ->assertSet('currentStep', 2)
         ->set('form.type', 'bangkom')
-        ->set('form.jam_pelajaran', 0)
+        ->set('form.jam_pelajaran', '')
         ->call('nextStep')
-        ->assertHasErrors(['form.jam_pelajaran' => 'min'])
-        ->assertSee('Jam pelajaran (JP) minimal 1 JP.');
+        ->assertHasErrors(['form.jam_pelajaran' => 'required'])
+        ->assertSee('Jam pelajaran (JP) wajib diisi.');
 
-    // 2. Successful creation with custom JP
+    // 2. Successful creation with decimal / string JP (e.g. "3.5")
     Livewire::actingAs($admin)
         ->test(KelasCreate::class)
-        ->set('form.title', 'Kelas Tata Kelola SPBE 32 JP')
+        ->set('form.title', 'Kelas Tata Kelola SPBE 3.5 JP')
         ->set('form.category_id', $category->id)
-        ->set('form.description', 'Deskripsi pelatihan SPBE dengan estimasi 32 jam pelajaran.')
+        ->set('form.description', 'Deskripsi pelatihan SPBE dengan estimasi 3.5 jam pelajaran.')
         ->set('form.type', 'bangkom')
-        ->set('form.jam_pelajaran', 32)
+        ->set('form.jam_pelajaran', '3.5')
         ->call('formSubmit')
         ->assertHasNoErrors();
 
-    $course = Course::where('title', 'Kelas Tata Kelola SPBE 32 JP')->first();
+    $course = Course::where('title', 'Kelas Tata Kelola SPBE 3.5 JP')->first();
     expect($course)->not->toBeNull();
-    expect($course->jam_pelajaran)->toBe(32);
-    expect($course->jp)->toBe(32);
+    expect($course->jam_pelajaran)->toBe('3.5');
+    expect($course->jp)->toBe('3.5');
 
-    // 3. Edit course jam_pelajaran
+    // 3. Verify audit log tracks jam_pelajaran on create
+    $createLog = AuditLog::where('action', 'course.created')
+        ->where('auditable_id', $course->id)
+        ->latest('id')
+        ->first();
+    expect($createLog)->not->toBeNull();
+    expect($createLog->new_values)->toHaveKey('jam_pelajaran', '3.5');
+
+    // 4. Edit course jam_pelajaran to a new value (e.g. "48")
     Livewire::actingAs($admin)
         ->test(KelasEdit::class, ['id' => $course->id])
-        ->assertSet('form.jam_pelajaran', 32)
-        ->set('form.jam_pelajaran', 48)
+        ->assertSet('form.jam_pelajaran', '3.5')
+        ->set('form.jam_pelajaran', '48')
         ->call('formSubmit')
         ->assertHasNoErrors();
 
-    expect($course->fresh()->jam_pelajaran)->toBe(48);
-    expect($course->fresh()->jp)->toBe(48);
+    expect($course->fresh()->jam_pelajaran)->toBe('48');
+    expect($course->fresh()->jp)->toBe('48');
+
+    // 5. Verify audit log tracks old and new jam_pelajaran on update
+    $updateLog = AuditLog::where('action', 'course.updated')
+        ->where('auditable_id', $course->id)
+        ->latest('id')
+        ->first();
+    expect($updateLog)->not->toBeNull();
+    expect($updateLog->old_values)->toHaveKey('jam_pelajaran', '3.5');
+    expect($updateLog->new_values)->toHaveKey('jam_pelajaran', '48');
 });
