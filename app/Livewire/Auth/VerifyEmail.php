@@ -10,11 +10,9 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Layout;
-use Livewire\Attributes\Title;
 use Livewire\Component;
 
 #[Layout('templates.layouts.auth')]
-#[Title('Verifikasi Email - SIMPEL BKPSDM Aceh Timur')]
 class VerifyEmail extends Component
 {
     public string $token = '';

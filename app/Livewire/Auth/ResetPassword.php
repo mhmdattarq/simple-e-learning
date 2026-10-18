@@ -4,11 +4,9 @@ namespace App\Livewire\Auth;
 
 use App\Repositories\PasswordResetRepo;
 use Livewire\Attributes\Layout;
-use Livewire\Attributes\Title;
 use Livewire\Component;
 
 #[Layout('templates.layouts.auth')]
-#[Title('Atur Ulang Kata Sandi - SIMPEL BKPSDM Aceh Timur')]
 class ResetPassword extends Component
 {
     public string $token = '';

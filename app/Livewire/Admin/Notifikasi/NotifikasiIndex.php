@@ -13,7 +13,6 @@ use Livewire\Component;
 use Livewire\WithPagination;
 
 #[Layout('templates.layouts.app')]
-#[Title('Notifikasi & Riwayat Aktivitas - SIMPEL BKPSDM')]
 class NotifikasiIndex extends Component
 {
     use WithPagination;

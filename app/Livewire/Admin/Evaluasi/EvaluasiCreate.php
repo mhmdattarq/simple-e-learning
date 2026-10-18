@@ -13,11 +13,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
-use Livewire\Attributes\Title;
 use Livewire\Component;
 
 #[Layout('templates.layouts.app')]
-#[Title('Tambah Evaluasi & Kuis - SIMPEL BKPSDM')]
 class EvaluasiCreate extends Component
 {
     public ?int $course_id = null;

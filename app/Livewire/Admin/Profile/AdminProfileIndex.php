@@ -9,11 +9,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
-use Livewire\Attributes\Title;
 use Livewire\Component;
 
 #[Layout('templates.layouts.app')]
-#[Title('Profil Saya - SIMPEL BKPSDM')]
 class AdminProfileIndex extends Component
 {
     public array $form = [
