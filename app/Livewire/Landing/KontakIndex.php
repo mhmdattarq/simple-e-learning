@@ -9,11 +9,9 @@ use App\Models\ContactSetting;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
-use Livewire\Attributes\Title;
 use Livewire\Component;
 
 #[Layout('templates.layouts.landing')]
-#[Title('Hubungi Kami - SIMPEL BKPSDM')]
 class KontakIndex extends Component
 {
     public string $name = '';

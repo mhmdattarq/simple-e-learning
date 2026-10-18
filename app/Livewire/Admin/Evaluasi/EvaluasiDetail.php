@@ -6,10 +6,8 @@ use App\Models\Course;
 use App\Models\Quiz;
 use App\Repositories\EvaluasiRepo;
 use Livewire\Attributes\On;
-use Livewire\Attributes\Title;
 use Livewire\Component;
 
-#[Title('Detail & Monitoring Evaluasi Kelas - SIMPEL BKPSDM')]
 class EvaluasiDetail extends Component
 {
     public int $courseId;

@@ -5,11 +5,9 @@ namespace App\Livewire\Auth;
 use App\Repositories\PasswordResetRepo;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Layout;
-use Livewire\Attributes\Title;
 use Livewire\Component;
 
 #[Layout('templates.layouts.auth')]
-#[Title('Lupa Kata Sandi - SIMPEL BKPSDM Aceh Timur')]
 class ForgotPassword extends Component
 {
     public string $email = '';
