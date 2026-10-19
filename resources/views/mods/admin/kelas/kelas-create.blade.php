@@ -139,14 +139,14 @@
                             <h6 class="fw-bold mb-0 fs-6" style="color: #071a33;">Informasi Dasar Kelas</h6>
                         </div>
                         <div class="row g-3">
-                            {{-- Nama Lengkap Kelas --}}
+                            {{-- Nama Lengkap Kelas / Platform --}}
                             <div class="col-12">
                                 <label class="form-label text-xs fw-semibold text-dark mb-1">
-                                    Nama Program Kelas <span class="text-danger">*</span>
+                                    {{ ($form['type'] ?? '') === 'bangkom_external' ? 'Nama Platform / Pelatihan Eksternal' : 'Nama Program Kelas' }} <span class="text-danger">*</span>
                                 </label>
                                 <input type="text" class="form-control @error('form.title') is-invalid @enderror"
                                     wire:model.blur="form.title"
-                                    placeholder="Contoh: Manajemen Administrator Angkatan I">
+                                    placeholder="{{ ($form['type'] ?? '') === 'bangkom_external' ? 'Contoh: SiBangkom LAN RI / Kemenkeu Learning Center' : 'Contoh: Manajemen Administrator Angkatan I' }}">
                                 @error('form.title')
                                     <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
                                 @enderror
@@ -172,10 +172,10 @@
                             {{-- Deskripsi Program Kelas --}}
                             <div class="col-12">
                                 <label class="form-label text-xs fw-semibold text-dark mb-1">
-                                    Deskripsi Kelas <span class="text-danger">*</span>
+                                    {{ ($form['type'] ?? '') === 'bangkom_external' ? 'Deskripsi Singkat Pelatihan Eksternal' : 'Deskripsi Kelas' }} <span class="text-danger">*</span>
                                 </label>
                                 <textarea class="form-control @error('form.description') is-invalid @enderror" wire:model.blur="form.description"
-                                    rows="4" placeholder="Tuliskan deskripsi lengkap, tujuan pembelajaran, atau ringkasan kelas ini..."></textarea>
+                                    rows="4" placeholder="{{ ($form['type'] ?? '') === 'bangkom_external' ? 'Ringkasan singkat mengenai platform pelatihan eksternal ini (maks. 255 karakter)...' : 'Tuliskan deskripsi lengkap, tujuan pembelajaran, atau ringkasan kelas ini...' }}"></textarea>
                                 @error('form.description')
                                     <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
                                 @enderror
@@ -192,7 +192,9 @@
                             <span
                                 class="badge rounded-circle d-inline-flex align-items-center justify-content-center fw-bold"
                                 style="width: 24px; height: 24px; font-size: 11.5px; background-color: #071a33; color: #f3bc42;">2</span>
-                            <h6 class="fw-bold mb-0 fs-6" style="color: #071a33;">Jenis Kelas & Jadwal Waktu</h6>
+                            <h6 class="fw-bold mb-0 fs-6" style="color: #071a33;">
+                                {{ ($form['type'] ?? '') === 'bangkom_external' ? 'Jenis & Tautan Pelatihan Eksternal' : 'Jenis Kelas & Jadwal Waktu' }}
+                            </h6>
                         </div>
                         <div class="row g-3">
                             <div class="col-md-12" wire:key="field-type">
@@ -209,10 +211,8 @@
                                     @if (in_array($form['type'] ?? '', ['bulanan', 'batch'], true))
                                         <i class="ri-calendar-check-line me-1"></i>Berdasarkan jadwal gelombang periode
                                         bulanan.
-                                    @elseif(in_array($form['type'] ?? '', ['bangkom_external', 'paid', 'berbayar'], true))
-                                        <i class="ri-money-dollar-circle-line me-1"></i>Program pengembangan eksternal
-                                        dengan
-                                        penetapan tarif biaya.
+                                    @elseif(($form['type'] ?? '') === 'bangkom_external')
+                                        <i class="ri-external-link-line me-1"></i>Direktori rujukan pelatihan eksternal dari portal atau instansi luar.
                                     @else
                                         <i class="ri-time-line me-1"></i>Akses mandiri (self-paced) sepanjang waktu.
                                     @endif
@@ -222,76 +222,108 @@
                                 @enderror
                             </div>
 
-                            {{-- Estimasi Jam Pelajaran (JP) --}}
-                            <div class="col-md-12" wire:key="field-jam-pelajaran">
-                                <label class="form-label text-xs fw-semibold text-dark mb-1">
-                                    Jam Pelajaran (JP) / Bobot Pelatihan <span class="text-danger">*</span>
-                                </label>
-                                <div class="input-group">
-                                    <input id="input_jam_pelajaran" type="text"
-                                        class="form-control @error('form.jam_pelajaran') is-invalid @enderror"
-                                        wire:model="form.jam_pelajaran" placeholder="Contoh: 24 atau 3,5">
-                                    <span class="input-group-text bg-light text-dark fw-bold">JP</span>
-                                </div>
-                                <div class="form-text text-xs text-muted mt-1">
-                                    Estimasi bobot jam pelajaran (1 JP = 45 menit) yang akan tercantum pada sertifikat kelulusan peserta.
-                                </div>
-                                @error('form.jam_pelajaran')
-                                    <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            {{-- Row (Khusus Tipe Bulanan): Tanggal & Jam Mulai & Selesai --}}
-                            @if (in_array($form['type'] ?? '', ['bulanan', 'batch'], true))
-                                <div class="col-md-6" wire:key="field-start-date">
+                            @if (($form['type'] ?? '') === 'bangkom_external')
+                                {{-- Link URL Bangkom Eksternal --}}
+                                <div class="col-md-12" wire:key="field-url">
                                     <label class="form-label text-xs fw-semibold text-dark mb-1">
-                                        Tanggal & Jam Mulai <span class="text-danger">*</span>
-                                    </label>
-                                    <input id="input_start_date" type="datetime-local"
-                                        class="form-control @error('form.start_date') is-invalid @enderror"
-                                        wire:model="form.start_date">
-                                    <div class="form-text text-xs text-muted mt-1">
-                                        Pilih tanggal dan jam mulai program bulanan (tidak boleh sebelum hari ini).
-                                    </div>
-                                    @error('form.start_date')
-                                        <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
-                                    @enderror
-                                </div>
-
-                                <div class="col-md-6" wire:key="field-end-date">
-                                    <label class="form-label text-xs fw-semibold text-dark mb-1">
-                                        Tanggal & Jam Selesai <span class="text-danger">*</span>
-                                    </label>
-                                    <input id="input_end_date" type="datetime-local"
-                                        class="form-control @error('form.end_date') is-invalid @enderror"
-                                        wire:model="form.end_date">
-                                    <div class="form-text text-xs text-muted mt-1">
-                                        Pilih tanggal dan jam selesai program bulanan (harus setelah waktu mulai).
-                                    </div>
-                                    @error('form.end_date')
-                                        <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                            @endif
-
-                            {{-- Row Khusus Bangkom External: Biaya Kelas --}}
-                            @if (in_array($form['type'] ?? '', ['bangkom_external', 'paid', 'berbayar'], true))
-                                <div class="col-md-12" wire:key="field-price">
-                                    <label class="form-label text-xs fw-semibold text-dark mb-1">
-                                        Biaya Kelas (Tarif Masuk) <span class="text-danger">*</span>
+                                        Link URL Pelatihan Eksternal <span class="text-danger">*</span>
                                     </label>
                                     <div class="input-group">
-                                        <span class="input-group-text bg-light text-dark fw-bold">Rp</span>
-                                        <input id="input_price" type="number" min="0" step="1000"
-                                            class="form-control @error('form.price') is-invalid @enderror"
-                                            wire:model="form.price" placeholder="Contoh: 150000">
+                                        <span class="input-group-text bg-light text-muted"><i class="ri-link"></i></span>
+                                        <input id="input_url" type="url"
+                                            class="form-control @error('form.url') is-invalid @enderror"
+                                            wire:model="form.url" placeholder="https://contoh-pelatihan.go.id">
                                     </div>
-                                    <div class="form-text text-xs text-muted mt-1">Masukkan nominal biaya pendaftaran
-                                        program Bangkom External.</div>
-                                    @error('form.price')
+                                    <div class="form-text text-xs text-muted mt-1">Alamat website tujuan yang dapat diakses publik (contoh: https://sibangkom.lan.go.id).</div>
+                                    @error('form.url')
                                         <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
                                     @enderror
                                 </div>
+
+                                {{-- Tipe Biaya: Gratis atau Berbayar --}}
+                                <div class="col-md-6" wire:key="field-external-type">
+                                    <label class="form-label text-xs fw-semibold text-dark mb-1">
+                                        Tipe Pelatihan Eksternal <span class="text-danger">*</span>
+                                    </label>
+                                    <select id="input_external_type" class="form-select @error('form.external_type') is-invalid @enderror"
+                                        wire:model="form.external_type">
+                                        <option value="gratis">Gratis</option>
+                                        <option value="berbayar">Berbayar</option>
+                                    </select>
+                                    <div class="form-text text-xs text-muted mt-1">Keterangan apakah pelatihan eksternal ini gratis atau berbayar.</div>
+                                    @error('form.external_type')
+                                        <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                {{-- Benefit Pelatihan (contoh: Sertifikat, Piagam dkk) --}}
+                                <div class="col-md-6" wire:key="field-benefit">
+                                    <label class="form-label text-xs fw-semibold text-dark mb-1">
+                                        Benefit Pelatihan <span class="text-muted fw-normal">(Opsional)</span>
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light text-muted"><i class="ri-award-line"></i></span>
+                                        <input id="input_benefit" type="text"
+                                            class="form-control @error('form.benefit') is-invalid @enderror"
+                                            wire:model="form.benefit" placeholder="Contoh: Sertifikat, Piagam dkk">
+                                    </div>
+                                    <div class="form-text text-xs text-muted mt-1">Benefit atau penghargaan kelulusan (contoh: Sertifikat, Piagam dkk).</div>
+                                    @error('form.benefit')
+                                        <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            @else
+                                {{-- Estimasi Jam Pelajaran (JP) --}}
+                                <div class="col-md-12" wire:key="field-jam-pelajaran">
+                                    <label class="form-label text-xs fw-semibold text-dark mb-1">
+                                        Jam Pelajaran (JP) / Bobot Pelatihan <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="input-group">
+                                        <input id="input_jam_pelajaran" type="text"
+                                            class="form-control @error('form.jam_pelajaran') is-invalid @enderror"
+                                            wire:model="form.jam_pelajaran" placeholder="Contoh: 24 atau 3,5">
+                                        <span class="input-group-text bg-light text-dark fw-bold">JP</span>
+                                    </div>
+                                    <div class="form-text text-xs text-muted mt-1">
+                                        Estimasi bobot jam pelajaran (1 JP = 45 menit) yang akan tercantum pada sertifikat kelulusan peserta.
+                                    </div>
+                                    @error('form.jam_pelajaran')
+                                        <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                {{-- Row (Khusus Tipe Bulanan): Tanggal & Jam Mulai & Selesai --}}
+                                @if (in_array($form['type'] ?? '', ['bulanan', 'batch'], true))
+                                    <div class="col-md-6" wire:key="field-start-date">
+                                        <label class="form-label text-xs fw-semibold text-dark mb-1">
+                                            Tanggal & Jam Mulai <span class="text-danger">*</span>
+                                        </label>
+                                        <input id="input_start_date" type="datetime-local"
+                                            class="form-control @error('form.start_date') is-invalid @enderror"
+                                            wire:model="form.start_date">
+                                        <div class="form-text text-xs text-muted mt-1">
+                                            Pilih tanggal dan jam mulai program bulanan (tidak boleh sebelum hari ini).
+                                        </div>
+                                        @error('form.start_date')
+                                            <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    <div class="col-md-6" wire:key="field-end-date">
+                                        <label class="form-label text-xs fw-semibold text-dark mb-1">
+                                            Tanggal & Jam Selesai <span class="text-danger">*</span>
+                                        </label>
+                                        <input id="input_end_date" type="datetime-local"
+                                            class="form-control @error('form.end_date') is-invalid @enderror"
+                                            wire:model="form.end_date">
+                                        <div class="form-text text-xs text-muted mt-1">
+                                            Pilih tanggal dan jam selesai program bulanan (harus setelah waktu mulai).
+                                        </div>
+                                        @error('form.end_date')
+                                            <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                @endif
                             @endif
                         </div>
                     </div>
@@ -329,10 +361,10 @@
                                 @enderror
                             </div>
 
-                            {{-- Poster Thumbnail (Single Upload) --}}
+                            {{-- Poster / Logo Thumbnail (Single Upload) --}}
                             <div class="col-12">
                                 <label class="form-label text-xs fw-semibold text-dark mb-1">
-                                    Poster / Sampul Thumbnail Kelas (JPG/PNG) <span
+                                    {{ ($form['type'] ?? '') === 'bangkom_external' ? 'Logo Platform / Instansi Pelatihan Eksternal (JPG/PNG)' : 'Poster / Sampul Thumbnail Kelas (JPG/PNG)' }} <span
                                         class="text-muted fw-normal">(Opsional)</span>
                                 </label>
                                 <div class="input-group">
@@ -342,20 +374,23 @@
                                         class="form-control @error('thumbnailFile') is-invalid @enderror"
                                         wire:model="thumbnailFile" accept="image/jpeg,image/png,image/jpg">
                                 </div>
-                                <div class="form-text text-xs text-muted mt-1">Format gambar JPG, JPEG, atau PNG
-                                    (maksimal 2 MB). Gambar ini digunakan sebagai sampul visual utama kelas.</div>
+                                <div class="form-text text-xs text-muted mt-1">
+                                    {{ ($form['type'] ?? '') === 'bangkom_external' ? 'Format gambar JPG, JPEG, atau PNG (maksimal 2 MB). Logo ini akan ditampilkan pada kartu direktori Bangkom Eksternal.' : 'Format gambar JPG, JPEG, atau PNG (maksimal 2 MB). Gambar ini digunakan sebagai sampul visual utama kelas.' }}
+                                </div>
                                 @error('thumbnailFile')
                                     <div class="invalid-feedback d-block text-xs mt-1">{{ $message }}</div>
                                 @enderror
 
-                                {{-- Preview Poster --}}
+                                {{-- Preview Poster / Logo --}}
                                 @if ($thumbnailFile)
                                     <div class="mt-3 p-3 border rounded-8 bg-light d-flex align-items-center gap-3">
                                         <img src="{{ $thumbnailFile->temporaryUrl() }}" class="rounded-8 border"
-                                            style="height: 64px; width: 64px; object-fit: cover;"
-                                            alt="Preview Poster">
+                                            style="height: 64px; width: 64px; object-fit: contain; background-color: #fff;"
+                                            alt="Preview Poster/Logo">
                                         <div class="text-xs">
-                                            <span class="fw-semibold text-dark d-block">Poster Baru Terpilih</span>
+                                            <span class="fw-semibold text-dark d-block">
+                                                {{ ($form['type'] ?? '') === 'bangkom_external' ? 'Logo Baru Terpilih' : 'Poster Baru Terpilih' }}
+                                            </span>
                                             <span class="text-muted">Berkas akan tersimpan otomatis saat formulir
                                                 disubmit.</span>
                                         </div>
@@ -392,18 +427,33 @@
                                 </span>
                             </button>
                         @else
-                            <button type="submit"
-                                class="btn btn-simpel-gold d-flex align-items-center gap-2 shadow-sm"
-                                wire:loading.attr="disabled">
-                                <span wire:loading.remove class="d-inline-flex align-items-center gap-2">
-                                    <span>Simpan & Lanjut Kelola Materi</span>
-                                    <i class="ri-arrow-right-line"></i>
-                                </span>
-                                <span wire:loading style="display: none;">
-                                    <span class="spinner-border spinner-border-sm"></span>
-                                    <span>Menyimpan & Membuka Materi...</span>
-                                </span>
-                            </button>
+                            @if (($form['type'] ?? '') === 'bangkom_external')
+                                <button type="submit"
+                                    class="btn btn-simpel-gold d-flex align-items-center gap-2 shadow-sm"
+                                    wire:loading.attr="disabled">
+                                    <span wire:loading.remove class="d-inline-flex align-items-center gap-2">
+                                        <i class="ri-checkbox-circle-line fs-5"></i>
+                                        <span>Simpan Pelatihan Eksternal</span>
+                                    </span>
+                                    <span wire:loading style="display: none;">
+                                        <span class="spinner-border spinner-border-sm"></span>
+                                        <span>Menyimpan Pelatihan Eksternal...</span>
+                                    </span>
+                                </button>
+                            @else
+                                <button type="submit"
+                                    class="btn btn-simpel-gold d-flex align-items-center gap-2 shadow-sm"
+                                    wire:loading.attr="disabled">
+                                    <span wire:loading.remove class="d-inline-flex align-items-center gap-2">
+                                        <span>Simpan & Lanjut Kelola Materi</span>
+                                        <i class="ri-arrow-right-line"></i>
+                                    </span>
+                                    <span wire:loading style="display: none;">
+                                        <span class="spinner-border spinner-border-sm"></span>
+                                        <span>Menyimpan & Membuka Materi...</span>
+                                    </span>
+                                </button>
+                            @endif
                         @endif
                     </div>
                 </div>

@@ -242,6 +242,18 @@ body,
     -ms-overflow-style: none !important; /* IE and Edge */
 }
 
+/* Modal active scroll lock - completely prevent background page scrolling */
+body.modal-open,
+html.modal-open,
+html:has(body.modal-open) {
+    overflow: hidden !important;
+    height: 100vh !important;
+}
+
+body.modal-open .dashboard-main {
+    overflow: hidden !important;
+}
+
 *::-webkit-scrollbar,
 html::-webkit-scrollbar,
 body::-webkit-scrollbar,
@@ -964,6 +976,88 @@ select::placeholder,
     color: #9a6700 !important;
 }
 
+.bg-label-simple,
+.badge.bg-label-simple {
+    background-color: #fff4d8 !important;
+    color: #9a6700 !important;
+    border: 1px solid rgba(243, 188, 66, 0.45) !important;
+    font-weight: 600 !important;
+}
+
+/* === Unified Modal Meta Badges === */
+.modal-meta-badge {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 26px !important;
+    padding: 0 10px !important;
+    font-size: 11.5px !important;
+    font-weight: 600 !important;
+    line-height: 1 !important;
+    border-radius: 6px !important;
+    border: 1px solid transparent !important;
+    box-sizing: border-box !important;
+    white-space: nowrap !important;
+    vertical-align: middle !important;
+}
+
+.modal-meta-badge i {
+    font-size: 13px !important;
+    line-height: 1 !important;
+    vertical-align: middle !important;
+}
+
+.modal-meta-badge.bg-success {
+    background-color: #198754 !important;
+    color: #ffffff !important;
+    border-color: #198754 !important;
+}
+
+.modal-meta-badge.bg-secondary {
+    background-color: #64748b !important;
+    color: #ffffff !important;
+    border-color: #64748b !important;
+}
+
+.modal-meta-badge.bg-secondary-subtle {
+    background-color: #f1f5f9 !important;
+    color: #475569 !important;
+    border-color: #cbd5e1 !important;
+}
+
+/* === Filter Pills Styling (SIMPEL theme matching landing page) === */
+.simpel-filter-pills {
+    background-color: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 50rem !important;
+    padding: 4px !important;
+}
+
+.simpel-filter-pills .btn {
+    font-size: 12.5px !important;
+    border-radius: 50rem !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    transition: all 0.2s ease-in-out !important;
+    color: #64748b;
+}
+
+.simpel-filter-pills .btn:hover:not(.bg-navy) {
+    color: #071a33 !important;
+    background-color: #f1f5f9 !important;
+}
+
+.simpel-filter-pills .btn.bg-navy,
+.simpel-filter-pills .btn.bg-navy:hover,
+.simpel-filter-pills .btn.bg-navy:focus,
+.simpel-filter-pills .btn.bg-navy:active {
+    background-color: #071a33 !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    box-shadow: 0 1px 3px rgba(7, 26, 51, 0.25) !important;
+}
+
 /* === Text Color Utilities === */
 .text-simple,
 .text-simpel,
@@ -1479,6 +1573,28 @@ select::placeholder,
 .simpel-course-card:hover {
     transform: translateY(-4px);
     box-shadow: 0 14px 34px rgba(14, 35, 75, 0.1) !important;
+}
+
+.simpel-course-card .position-relative.overflow-hidden {
+    background-color: var(--simpel-navy, #071a33) !important;
+    width: 100% !important;
+}
+
+.simpel-course-card .position-relative.overflow-hidden img,
+.simpel-course-card img.object-fit-cover {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    object-position: center !important;
+    display: block !important;
+}
+
+.object-fit-cover {
+    object-fit: cover !important;
+}
+
+.object-fit-contain {
+    object-fit: contain !important;
 }
 
 .simpel-course-thumb {

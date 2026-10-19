@@ -34,7 +34,7 @@
                             </span>
                         @else
                             <span class="badge bg-gold text-navy fw-bold fs-8 px-3 py-1_5">
-                                <i class="ri-money-dollar-circle-line me-1"></i>Bangkom External
+                                <i class="ri-global-line me-1"></i>Bangkom External
                             </span>
                         @endif
 

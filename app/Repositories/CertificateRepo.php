@@ -7,6 +7,7 @@ use App\Models\QuizAttempt;
 use App\Models\User;
 use Carbon\Carbon;
 use GdImage;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use RuntimeException;
@@ -76,6 +77,80 @@ class CertificateRepo
         }
 
         return Carbon::now();
+    }
+
+    /**
+     * Mengambil seluruh daftar kelas beserta sertifikat yang telah diselesaikan / dicapai oleh pengguna.
+     * Menggunakan eager loading terstruktur untuk performa optimal tanpa N+1 query.
+     *
+     * @return Collection<int, Course>
+     */
+    public static function getUserCertificates(User $user): Collection
+    {
+        $completedCourses = collect();
+        $processedCourseIds = [];
+
+        // 1. Ambil seluruh attempt kuis akhir (final quiz) yang berstatus lulus (is_passed = true) milik user
+        $passedAttempts = QuizAttempt::with(['quiz.course.category', 'quiz.course.finalQuiz'])
+            ->where('user_id', $user->id)
+            ->where('is_passed', true)
+            ->whereHas('quiz', function ($query) {
+                $query->where('type', 'final')->whereNotNull('course_id');
+            })
+            ->latest('submitted_at')
+            ->get();
+
+        foreach ($passedAttempts as $attempt) {
+            $course = $attempt->quiz?->course;
+            if (! $course || in_array($course->id, $processedCourseIds, true)) {
+                continue;
+            }
+
+            $processedCourseIds[] = $course->id;
+
+            $course->completed_at = $attempt->submitted_at ? Carbon::parse($attempt->submitted_at) : Carbon::now();
+            $course->final_score = $attempt->percentage ?? $attempt->total_earned_score;
+            $course->passing_score = $attempt->quiz?->passing_score;
+            $course->latest_attempt = $attempt;
+
+            $completedCourses->push($course);
+        }
+
+        // 2. Evaluasi kursus tanpa final quiz yang telah tuntas 100% materinya
+        $enrolledWithoutFinal = $user->enrolledCourses()
+            ->with('category')
+            ->whereDoesntHave('finalQuiz')
+            ->whereNotIn('courses.id', $processedCourseIds)
+            ->get();
+
+        foreach ($enrolledWithoutFinal as $course) {
+            $allLessonIds = DB::table('lessons')
+                ->join('chapters', 'lessons.chapter_id', '=', 'chapters.id')
+                ->where('chapters.course_id', $course->id)
+                ->pluck('lessons.id')
+                ->toArray();
+
+            $totalLessons = count($allLessonIds);
+            if ($totalLessons > 0) {
+                $completedCount = DB::table('lesson_user')
+                    ->where('user_id', $user->id)
+                    ->whereIn('lesson_id', $allLessonIds)
+                    ->where('is_completed', true)
+                    ->count();
+
+                if ($completedCount >= $totalLessons) {
+                    $course->completed_at = Carbon::now();
+                    $course->final_score = 100;
+                    $course->passing_score = null;
+                    $course->latest_attempt = null;
+
+                    $completedCourses->push($course);
+                    $processedCourseIds[] = $course->id;
+                }
+            }
+        }
+
+        return $completedCourses->sortByDesc('completed_at')->values();
     }
 
     /**
@@ -176,7 +251,7 @@ class CertificateRepo
         // Celah: Bawah 'diselenggarakan...' (Y=1026) s.d Atas 'KEPALA BADAN...' (Y=1084).
         // Titik tengah vertikal = Y=1055. Baseline ideal = Y=1063 (margin atas-bawah simetris 21px).
         // Format: 'Idi, [Tanggal Bulan Tahun]' (e.g. 'Idi, 17 Oktober 2026')
-        $formattedDate = 'IDI, ' . $completionDate->locale('id')->translatedFormat('d F Y');
+        $formattedDate = 'IDI, '.$completionDate->locale('id')->translatedFormat('d F Y');
         $dateFontSize = 22;
         $dateBox = imagettfbbox($dateFontSize, 0, $serifBody, $formattedDate);
         $dateWidth = abs($dateBox[4] - $dateBox[0]);
@@ -267,7 +342,7 @@ class CertificateRepo
 
         $xrefOffset = strlen($pdf);
         $pdf .= "xref\n";
-        $pdf .= '0 ' . (count($objects) + 1) . "\n";
+        $pdf .= '0 '.(count($objects) + 1)."\n";
         $pdf .= "0000000000 65535 f \n";
 
         for ($i = 1; $i <= count($objects); $i++) {
@@ -275,7 +350,7 @@ class CertificateRepo
         }
 
         $pdf .= "trailer\n";
-        $pdf .= '<< /Size ' . (count($objects) + 1) . " /Root 1 0 R >>\n";
+        $pdf .= '<< /Size '.(count($objects) + 1)." /Root 1 0 R >>\n";
         $pdf .= "startxref\n{$xrefOffset}\n%%EOF";
 
         return $pdf;

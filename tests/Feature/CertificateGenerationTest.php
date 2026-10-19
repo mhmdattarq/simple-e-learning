@@ -193,3 +193,27 @@ test('admin dapat mengunduh sertifikat atas nama peserta tertentu melalui parame
     $response->assertHeader('Content-Type', 'application/pdf');
     expect($response->headers->get('Content-Disposition'))->toContain('ahmad-dahlan-sstp');
 });
+
+test('CertificateRepo::getUserCertificates mengembalikan koleksi kursus yang telah diselesaikan peserta', function () {
+    // 1. Kondisi awal: belum ada kursus yang diselesaikan
+    $initialCerts = CertificateRepo::getUserCertificates($this->user);
+    expect($initialCerts)->toBeEmpty();
+
+    // 2. Peserta lulus ujian akhir
+    QuizAttempt::create([
+        'quiz_id' => $this->finalQuiz->id,
+        'user_id' => $this->user->id,
+        'total_earned_score' => 88,
+        'total_possible_score' => 100,
+        'percentage' => 88.0,
+        'is_passed' => true,
+        'submitted_at' => now(),
+    ]);
+
+    $certs = CertificateRepo::getUserCertificates($this->user);
+    expect($certs)->toHaveCount(1)
+        ->and($certs->first()->id)->toBe($this->course->id)
+        ->and($certs->first()->final_score)->toBe(88.0)
+        ->and($certs->first()->jp)->toBe('32')
+        ->and($certs->first()->completed_at)->not->toBeNull();
+});

@@ -156,6 +156,38 @@ new class extends Component {
             );
         }
     }
+
+    public $externalDetail = null;
+
+    #[On('modal-detail-external-set')]
+    public function setDetailExternal($id = null, $data = null)
+    {
+        $targetId = $id ?? (is_array($data) ? $data['id'] ?? null : $data);
+        if (! $targetId) {
+            return;
+        }
+
+        $item = \App\Models\CourseExternal::with('category')->find($targetId);
+        if (! $item) {
+            return;
+        }
+
+        $this->externalDetail = [
+            'id' => $item->id,
+            'title' => $item->name,
+            'slug' => $item->slug,
+            'category_name' => $item->category?->name ?? 'Tidak Berkategori',
+            'type' => $item->type ?? 'gratis',
+            'type_label' => ucfirst($item->type ?? 'gratis'),
+            'benefit' => $item->benefit ?: '-',
+            'description' => $item->description ?: 'Tidak ada deskripsi singkat untuk pelatihan ini.',
+            'url' => $item->url,
+            'status' => $item->status instanceof \BackedEnum ? $item->status->value : (string) ($item->status ?? 'published'),
+            'logo_url' => $item->logo ? asset('storage/'.$item->logo) : asset('mine/logo_aceh_timur.webp'),
+        ];
+
+        $this->dispatch('openModal', id: 'modalDetailExternal');
+    }
 };
 ?>
 
@@ -357,6 +389,67 @@ new class extends Component {
                 padding-left: 20px !important;
                 padding-right: 20px !important;
             }
+        }
+
+        /* Modal active scroll lock - completely prevent background page scrolling */
+        body.modal-open,
+        html.modal-open,
+        html:has(body.modal-open) {
+            overflow: hidden !important;
+            height: 100vh !important;
+        }
+
+        body.modal-open .dashboard-main {
+            overflow: hidden !important;
+        }
+
+        .bg-label-simple,
+        .badge.bg-label-simple {
+            background-color: #fff4d8 !important;
+            color: #9a6700 !important;
+            border: 1px solid rgba(243, 188, 66, 0.45) !important;
+            font-weight: 600 !important;
+        }
+
+        /* Unified Modal Meta Badges */
+        .modal-meta-badge {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            height: 26px !important;
+            padding: 0 10px !important;
+            font-size: 11.5px !important;
+            font-weight: 600 !important;
+            line-height: 1 !important;
+            border-radius: 6px !important;
+            border: 1px solid transparent !important;
+            box-sizing: border-box !important;
+            white-space: nowrap !important;
+            vertical-align: middle !important;
+        }
+
+        .modal-meta-badge i {
+            font-size: 13px !important;
+            line-height: 1 !important;
+            vertical-align: middle !important;
+        }
+
+        .modal-meta-badge.bg-success {
+            background-color: #198754 !important;
+            color: #ffffff !important;
+            border-color: #198754 !important;
+        }
+
+        .modal-meta-badge.bg-secondary {
+            background-color: #64748b !important;
+            color: #ffffff !important;
+            border-color: #64748b !important;
+        }
+
+        .modal-meta-badge.bg-secondary-subtle {
+            background-color: #f1f5f9 !important;
+            color: #475569 !important;
+            border-color: #cbd5e1 !important;
         }
     </style>
 
@@ -650,6 +743,133 @@ new class extends Component {
 
                 <div class="modal-footer pesan-modal-footer d-flex justify-content-end">
                     <button type="button" class="btn btn-danger px-4 py-2" data-bs-dismiss="modal">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Modal Detail Pelatihan Bangkom Eksternal (Global Admin Modal) --}}
+    <div wire:ignore.self class="modal fade" id="modalDetailExternal" tabindex="-1"
+        aria-labelledby="modalDetailExternalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered pesan-modal-dialog">
+            <div class="modal-content pesan-modal-content border-0 radius-20 shadow-lg overflow-hidden">
+                <div class="modal-header py-16 px-24 border-bottom bg-white d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="rounded-circle d-inline-flex align-items-center justify-content-center bg-simple-gold-subtle text-warning"
+                            style="width: 38px; height: 38px;">
+                            <i class="ri-external-link-line fs-5"></i>
+                        </div>
+                        <div>
+                            <h6 class="modal-title fw-bold text-dark mb-0 fs-6" id="modalDetailExternalLabel">Detail Bangkom Eksternal</h6>
+                            <small class="text-muted fs-8">Informasi rujukan program dan tautan portal pelatihan</small>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-24">
+                    @if ($externalDetail)
+                        {{-- Header Kartu Info --}}
+                        <div class="d-flex align-items-start gap-3 p-3 bg-light rounded-12 border mb-3">
+                            <div class="rounded-8 border bg-white p-2 d-flex align-items-center justify-content-center flex-shrink-0"
+                                style="width: 72px; height: 72px;">
+                                <img src="{{ $externalDetail['logo_url'] }}" alt="Logo Pelatihan"
+                                    style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                            </div>
+                            <div class="flex-grow-1 min-w-0">
+                                <h5 class="fw-bold text-dark mb-1 fs-6">{{ $externalDetail['title'] }}</h5>
+                                <div class="d-flex flex-wrap align-items-center gap-2 mt-2">
+                                    <span class="modal-meta-badge bg-label-simple">
+                                        <i class="ri-external-link-line me-1"></i>Bangkom Eksternal
+                                    </span>
+                                    <span class="modal-meta-badge {{ $externalDetail['type'] === 'berbayar' ? 'bg-warning-subtle text-warning-emphasis border border-warning-subtle' : 'bg-success-subtle text-success border border-success-subtle' }}">
+                                        @if ($externalDetail['type'] === 'berbayar')
+                                            <i class="ri-money-dollar-circle-line me-1"></i>
+                                        @else
+                                            <i class="ri-price-tag-3-line me-1"></i>
+                                        @endif
+                                        {{ $externalDetail['type_label'] }}
+                                    </span>
+                                    @if ($externalDetail['status'] === 'published')
+                                        <span class="modal-meta-badge bg-success text-white">
+                                            <i class="ri-broadcast-line me-1"></i>Dibuka
+                                        </span>
+                                    @elseif ($externalDetail['status'] === 'draft')
+                                        <span class="modal-meta-badge bg-secondary-subtle">
+                                            <i class="ri-draft-line me-1"></i>Draft
+                                        </span>
+                                    @elseif ($externalDetail['status'] === 'archived')
+                                        <span class="modal-meta-badge bg-secondary text-white">
+                                            <i class="ri-archive-line me-1"></i>Diarsipkan
+                                        </span>
+                                    @else
+                                        <span class="modal-meta-badge bg-light text-muted border">
+                                            <i class="ri-information-line me-1"></i>{{ ucfirst($externalDetail['status']) }}
+                                        </span>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Metadata Grid --}}
+                        <div class="row g-3 mb-3">
+                            <div class="col-sm-6">
+                                <div class="p-3 border rounded-10 bg-white h-100">
+                                    <span class="text-muted fs-8 d-block mb-1">
+                                        <i class="ri-bookmark-3-line text-warning me-1"></i>Kategori
+                                    </span>
+                                    <span class="fw-semibold text-dark fs-7">{{ $externalDetail['category_name'] }}</span>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="p-3 border rounded-10 bg-white h-100">
+                                    <span class="text-muted fs-8 d-block mb-1">
+                                        <i class="ri-award-line text-warning me-1"></i>Benefit / Fasilitas
+                                    </span>
+                                    <span class="fw-semibold text-dark fs-7">{{ $externalDetail['benefit'] }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Deskripsi --}}
+                        <div class="mb-3">
+                            <label class="form-label text-muted fs-8 fw-semibold mb-1">
+                                <i class="ri-file-text-line text-primary me-1"></i>Deskripsi Pelatihan
+                            </label>
+                            <div class="p-3 bg-light rounded-10 border text-secondary"
+                                style="font-size: 13px; line-height: 1.6; max-height: 180px; overflow-y: auto;">
+                                {{ $externalDetail['description'] }}
+                            </div>
+                        </div>
+
+                        {{-- Tautan URL Eksternal --}}
+                        <div>
+                            <label class="form-label text-muted fs-8 fw-semibold mb-1">
+                                <i class="ri-link text-success me-1"></i>Tautan Portal Resmi
+                            </label>
+                            <div class="p-2_5 px-3 bg-white rounded-8 border d-flex align-items-center justify-content-between gap-2">
+                                <span class="text-truncate text-dark fs-8 font-monospace">{{ $externalDetail['url'] }}</span>
+                                <button type="button" class="btn btn-sm btn-link text-muted p-0 flex-shrink-0" title="Salin tautan"
+                                    onclick="navigator.clipboard.writeText('{{ $externalDetail['url'] }}'); alert('Tautan berhasil disalin ke clipboard!');">
+                                    <i class="ri-file-copy-line fs-6"></i>
+                                </button>
+                            </div>
+                        </div>
+                    @else
+                        <div class="text-center py-4">
+                            <div class="spinner-border text-warning" role="status">
+                                <span class="visually-hidden">Memuat data...</span>
+                            </div>
+                        </div>
+                    @endif
+                </div>
+                <div class="modal-footer py-14 px-24 bg-light border-top">
+                    @if ($externalDetail && !empty($externalDetail['url']))
+                        <a href="{{ $externalDetail['url'] }}" target="_blank" rel="noopener noreferrer"
+                            class="btn btn-simple-gold w-100 d-inline-flex align-items-center justify-content-center gap-2 py-2 px-4 fw-semibold shadow-sm">
+                            <i class="ri-external-link-line fs-5"></i>
+                            <span>Kunjungi Bangkom</span>
+                        </a>
+                    @endif
                 </div>
             </div>
         </div>

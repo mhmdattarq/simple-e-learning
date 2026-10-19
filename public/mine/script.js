@@ -32,7 +32,7 @@ window.addEventListener("closeModal", (param) => {
             if (typeof $ !== "undefined") {
                 if (!$(".modal.show").length) {
                     $(".modal-backdrop").remove();
-                    $("body")
+                    $("html, body")
                         .removeClass("modal-open")
                         .css("overflow", "")
                         .css("padding-right", "");
@@ -40,6 +40,7 @@ window.addEventListener("closeModal", (param) => {
             } else {
                 const backdrops = document.querySelectorAll(".modal-backdrop");
                 backdrops.forEach((b) => b.remove());
+                document.documentElement.classList.remove("modal-open");
                 document.body.classList.remove("modal-open");
                 document.body.style.overflow = "";
                 document.body.style.paddingRight = "";
@@ -59,6 +60,9 @@ const handleShowModal = (param) => {
         if (typeof $ !== "undefined") {
             $(".modal-backdrop").not(".show").remove();
         }
+        document.documentElement.classList.add("modal-open");
+        document.body.classList.add("modal-open");
+
         let shown = false;
         if (el && typeof bootstrap !== "undefined" && bootstrap.Modal) {
             try {
@@ -87,6 +91,22 @@ const handleShowModal = (param) => {
 };
 window.addEventListener("showModal", handleShowModal);
 window.addEventListener("openModal", handleShowModal);
+
+// Global modal scroll lock events
+if (typeof document !== "undefined") {
+    document.addEventListener("show.bs.modal", function () {
+        document.documentElement.classList.add("modal-open");
+        document.body.classList.add("modal-open");
+    });
+    document.addEventListener("hidden.bs.modal", function () {
+        setTimeout(function () {
+            if (!document.querySelectorAll(".modal.show").length) {
+                document.documentElement.classList.remove("modal-open");
+                document.body.classList.remove("modal-open");
+            }
+        }, 50);
+    });
+}
 
 // 3. Listener Reload DataTables Reaktif Tanpa Refresh Halaman (Robust multi-table & SPA safe)
 window.addEventListener("reloadDT", (param) => {

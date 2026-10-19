@@ -4,6 +4,7 @@ namespace App\Livewire\Landing;
 
 use App\Models\Category;
 use App\Models\Course;
+use App\Models\CourseExternal;
 use App\Models\CourseUser;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
@@ -87,14 +88,14 @@ class KelasIndex extends Component
                 'empty_desc' => 'Program Bangkom mandiri fleksibel sedang disiapkan oleh pengampu.',
             ],
             'bangkom_external', 'paid', 'berbayar' => [
-                'badge' => 'Bangkom External',
-                'icon' => 'ri-money-dollar-circle-line',
-                'title_prefix' => 'Katalog',
-                'title_highlight' => 'Bangkom External',
-                'subtitle' => 'Program pengembangan kompetensi eksternal dan sertifikasi keahlian khusus yang diselenggarakan bersama lembaga diklat terakreditasi resmi.',
-                'page_title' => 'Katalog Bangkom External – SIMPEL BKPSDM Aceh Timur',
-                'empty_title' => 'Belum Ada Bangkom External Tersedia',
-                'empty_desc' => 'Program Bangkom External sedang disiapkan.',
+                'badge' => 'Bangkom Eksternal',
+                'icon' => 'ri-external-link-line',
+                'title_prefix' => 'Direktori',
+                'title_highlight' => 'Bangkom Eksternal',
+                'subtitle' => 'Direktori link rujukan portal dan platform pengembangan kompetensi ASN terpercaya dari berbagai kementerian dan lembaga pemerintah.',
+                'page_title' => 'Direktori Bangkom Eksternal – SIMPEL BKPSDM Aceh Timur',
+                'empty_title' => 'Belum Ada Pelatihan Eksternal Tersedia',
+                'empty_desc' => 'Daftar rujukan portal pelatihan eksternal sedang dipersiapkan oleh pengampu.',
             ],
             default => [
                 'badge' => 'Program Kelas ASN',
@@ -110,39 +111,56 @@ class KelasIndex extends Component
 
         $categories = collect();
         $courses = collect();
+        $externals = collect();
         $userRegistrations = collect();
 
         if ($tablesExist) {
             $categories = Category::orderBy('name')->get();
-
-            $query = Course::with(['category', 'chapters.lessons'])
-                ->withCount(['chapters', 'lessons', 'registrations'])
-                ->where('status', 'published');
-
-            if (in_array($this->type, ['bulanan', 'batch'], true)) {
-                $query->whereIn('type', ['bulanan', 'batch']);
-            } elseif (in_array($this->type, ['bangkom', 'permanent'], true)) {
-                $query->whereIn('type', ['bangkom', 'permanent']);
-            } elseif (in_array($this->type, ['bangkom_external', 'paid', 'berbayar'], true)) {
-                $query->whereIn('type', ['bangkom_external', 'paid', 'berbayar']);
-            }
-
             $trimmedSearch = trim($this->search);
-            if ($trimmedSearch !== '') {
-                $query->where('title', 'like', '%'.$trimmedSearch.'%');
-            }
 
-            if ($this->selectedCategory !== 'all' && $this->selectedCategory !== '') {
-                $query->whereHas('category', fn ($q) => $q->where('slug', $this->selectedCategory));
-            }
+            if (in_array($this->type, ['bangkom_external', 'paid', 'berbayar'], true)) {
+                $externalsQuery = CourseExternal::with('category')
+                    ->where('status', 'published');
 
-            $courses = $query->latest('id')->get();
+                if ($trimmedSearch !== '') {
+                    $externalsQuery->where(function ($q) use ($trimmedSearch) {
+                        $q->where('name', 'like', '%'.$trimmedSearch.'%')
+                            ->orWhere('description', 'like', '%'.$trimmedSearch.'%');
+                    });
+                }
 
-            if ($user && $courses->isNotEmpty() && Schema::hasTable('course_user')) {
-                $userRegistrations = CourseUser::where('user_id', $user->id)
-                    ->whereIn('course_id', $courses->pluck('id'))
-                    ->get()
-                    ->keyBy('course_id');
+                if ($this->selectedCategory !== 'all' && $this->selectedCategory !== '') {
+                    $externalsQuery->whereHas('category', fn ($q) => $q->where('slug', $this->selectedCategory));
+                }
+
+                $externals = $externalsQuery->latest('id')->get();
+            } else {
+                $query = Course::with(['category', 'chapters.lessons'])
+                    ->withCount(['chapters', 'lessons', 'registrations'])
+                    ->where('status', 'published');
+
+                if (in_array($this->type, ['bulanan', 'batch'], true)) {
+                    $query->whereIn('type', ['bulanan', 'batch']);
+                } elseif (in_array($this->type, ['bangkom', 'permanent'], true)) {
+                    $query->whereIn('type', ['bangkom', 'permanent']);
+                }
+
+                if ($trimmedSearch !== '') {
+                    $query->where('title', 'like', '%'.$trimmedSearch.'%');
+                }
+
+                if ($this->selectedCategory !== 'all' && $this->selectedCategory !== '') {
+                    $query->whereHas('category', fn ($q) => $q->where('slug', $this->selectedCategory));
+                }
+
+                $courses = $query->latest('id')->get();
+
+                if ($user && $courses->isNotEmpty() && Schema::hasTable('course_user')) {
+                    $userRegistrations = CourseUser::where('user_id', $user->id)
+                        ->whereIn('course_id', $courses->pluck('id'))
+                        ->get()
+                        ->keyBy('course_id');
+                }
             }
         }
 
@@ -150,6 +168,7 @@ class KelasIndex extends Component
             'config',
             'categories',
             'courses',
+            'externals',
             'userRegistrations'
         ));
     }

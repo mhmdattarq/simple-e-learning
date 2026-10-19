@@ -6,7 +6,8 @@ use App\Enums\CourseStatus;
 use App\Models\AuditLog;
 use App\Models\Category;
 use App\Models\Course;
-use Illuminate\Database\Eloquent\Builder;
+use App\Models\CourseExternal;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -14,14 +15,116 @@ use Illuminate\Support\Str;
 class KelasRepo
 {
     /**
-     * Query builder for Yajra DataTables server-side rendering.
-     * Note: Mengembalikan instance query Builder untuk pagination server-side Yajra DataTables.
+     * Map Course model to DataTables-friendly object.
      */
-    public static function getDt(): Builder
+    protected static function mapCourseItem(Course $course): object
     {
-        return Course::query()
-            ->with(['category', 'creator'])
-            ->withCount(['chapters', 'lessons', 'registrations']);
+        $statusVal = $course->status instanceof \BackedEnum
+            ? $course->status->value
+            : (string) ($course->status ?? 'draft');
+
+        return (object) [
+            'id' => $course->id,
+            'title' => $course->title,
+            'slug' => $course->slug,
+            'type' => $course->type,
+            'is_external' => false,
+            'category' => $course->category ? (object) ['name' => $course->category->name] : null,
+            'category_id' => $course->category_id,
+            'chapters_count' => (int) ($course->chapters_count ?? 0),
+            'lessons_count' => (int) ($course->lessons_count ?? 0),
+            'registrations_count' => (int) ($course->registrations_count ?? 0),
+            'status' => $statusVal,
+            'start_date' => $course->start_date ? $course->start_date->format('Y-m-d') : null,
+            'end_date' => $course->end_date ? $course->end_date->format('Y-m-d') : null,
+            'price' => $course->price,
+            'url' => null,
+            'external_type' => null,
+            'benefit' => null,
+            'created_at' => $course->created_at,
+        ];
+    }
+
+    /**
+     * Map CourseExternal model to DataTables-friendly object.
+     */
+    protected static function mapExternalItem(CourseExternal $item): object
+    {
+        $statusVal = $item->status instanceof \BackedEnum
+            ? $item->status->value
+            : (string) ($item->status ?? 'published');
+
+        return (object) [
+            'id' => $item->id,
+            'title' => $item->name,
+            'slug' => $item->slug,
+            'type' => 'bangkom_external',
+            'is_external' => true,
+            'category' => $item->category ? (object) ['name' => $item->category->name] : null,
+            'category_id' => $item->category_id,
+            'chapters_count' => 0,
+            'lessons_count' => 0,
+            'registrations_count' => 0,
+            'status' => $statusVal,
+            'start_date' => null,
+            'end_date' => null,
+            'price' => null,
+            'url' => $item->url,
+            'external_type' => $item->type ?? 'gratis',
+            'benefit' => $item->benefit,
+            'description' => $item->description,
+            'logo' => $item->logo,
+            'logo_url' => $item->logo ? asset('storage/'.$item->logo) : asset('mine/logo_aceh_timur.webp'),
+            'created_at' => $item->created_at,
+        ];
+    }
+
+    /**
+     * Data provider for Yajra DataTables server-side rendering.
+     * Mengembalikan collection berisi kelas internal maupun direktori eksternal sesuai filter tipe.
+     */
+    public static function getDt(?string $type = 'all'): mixed
+    {
+        $type = $type ?? 'all';
+
+        if (in_array($type, ['bulanan', 'batch'], true)) {
+            return Course::with(['category', 'creator'])
+                ->withCount(['chapters', 'lessons', 'registrations'])
+                ->whereIn('type', ['bulanan', 'batch'])
+                ->latest('id')
+                ->get()
+                ->map(fn ($c) => self::mapCourseItem($c));
+        }
+
+        if (in_array($type, ['bangkom', 'permanent'], true)) {
+            return Course::with(['category', 'creator'])
+                ->withCount(['chapters', 'lessons', 'registrations'])
+                ->whereIn('type', ['bangkom', 'permanent'])
+                ->latest('id')
+                ->get()
+                ->map(fn ($c) => self::mapCourseItem($c));
+        }
+
+        if (in_array($type, ['bangkom_external', 'external'], true)) {
+            return CourseExternal::with(['category', 'creator'])
+                ->latest('id')
+                ->get()
+                ->map(fn ($e) => self::mapExternalItem($e));
+        }
+
+        // 'all': Seluruh kelas internal (Bulanan & Bangkom) dan direktori Bangkom Eksternal
+        $courses = Course::with(['category', 'creator'])
+            ->withCount(['chapters', 'lessons', 'registrations'])
+            ->latest('id')
+            ->get()
+            ->map(fn ($c) => self::mapCourseItem($c));
+
+        $externals = CourseExternal::with(['category', 'creator'])
+            ->latest('id')
+            ->get()
+            ->map(fn ($e) => self::mapExternalItem($e));
+
+        return $courses->concat($externals)->sortByDesc('created_at')->values();
     }
 
     /**
