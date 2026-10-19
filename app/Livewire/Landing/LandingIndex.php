@@ -3,7 +3,10 @@
 namespace App\Livewire\Landing;
 
 use App\Models\Course;
+use App\Models\CourseExternal;
 use App\Models\CourseUser;
+use App\Repositories\CertificateRepo;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -30,27 +33,37 @@ class LandingIndex extends Component
     public function render()
     {
         $tablesExist = Schema::hasTable('courses');
+        $externalsExist = Schema::hasTable('courses_externals');
 
-        $coursesQuery = Course::with('category')
-            ->where('status', 'published');
+        $courses = collect();
+        $externals = collect();
 
-        if ($this->selectedType !== 'all') {
-            if (in_array($this->selectedType, ['bulanan', 'batch'], true)) {
-                $coursesQuery->whereIn('type', ['bulanan', 'batch']);
-            } elseif (in_array($this->selectedType, ['bangkom', 'permanent'], true)) {
-                $coursesQuery->whereIn('type', ['bangkom', 'permanent']);
-            } elseif (in_array($this->selectedType, ['bangkom_external', 'paid', 'berbayar'], true)) {
-                $coursesQuery->whereIn('type', ['bangkom_external', 'paid', 'berbayar']);
-            } else {
-                $coursesQuery->where('type', $this->selectedType);
+        if (in_array($this->selectedType, ['bangkom_external', 'paid', 'berbayar'], true)) {
+            $externals = $externalsExist
+                ? CourseExternal::with('category')
+                    ->where('status', 'published')
+                    ->latest('id')
+                    ->take(8)
+                    ->get()
+                : collect();
+        } elseif ($tablesExist) {
+            $coursesQuery = Course::with('category')
+                ->where('status', 'published');
+
+            if ($this->selectedType !== 'all') {
+                if (in_array($this->selectedType, ['bulanan', 'batch'], true)) {
+                    $coursesQuery->whereIn('type', ['bulanan', 'batch']);
+                } elseif (in_array($this->selectedType, ['bangkom', 'permanent'], true)) {
+                    $coursesQuery->whereIn('type', ['bangkom', 'permanent']);
+                } else {
+                    $coursesQuery->where('type', $this->selectedType);
+                }
             }
-        }
 
-        $courses = $tablesExist
-            ? $coursesQuery->latest('id')
+            $courses = $coursesQuery->latest('id')
                 ->take(6)
-                ->get()
-            : collect();
+                ->get();
+        }
 
         $totalPublishedCourses = $tablesExist
             ? Course::where('status', 'published')->count()
@@ -64,9 +77,8 @@ class LandingIndex extends Component
             ? Course::where('status', 'published')->whereIn('type', ['bangkom', 'permanent'])->count()
             : 0;
 
-        $paidCoursesCount = $tablesExist
-            ? Course::where('status', 'published')->whereIn('type', ['bangkom_external', 'paid', 'berbayar'])->count()
-            : 0;
+        $paidCoursesCount = ($externalsExist ? CourseExternal::where('status', 'published')->count() : 0)
+            + ($tablesExist ? Course::where('status', 'published')->whereIn('type', ['bangkom_external', 'paid', 'berbayar'])->count() : 0);
 
         $bulananCoursesCount = $batchCoursesCount;
         $bangkomCoursesCount = $permanentCoursesCount;
@@ -86,8 +98,14 @@ class LandingIndex extends Component
                 ->get()
             : collect();
 
+        $user = Auth::user();
+        $myCertificates = ($user && $tablesExist)
+            ? CertificateRepo::getUserCertificates($user)
+            : collect();
+
         return view('mods.landing.landing-index', compact(
             'courses',
+            'externals',
             'totalPublishedCourses',
             'batchCoursesCount',
             'permanentCoursesCount',
@@ -97,6 +115,7 @@ class LandingIndex extends Component
             'bangkomExternalCoursesCount',
             'totalApprovedParticipants',
             'upcomingJadwals',
+            'myCertificates',
         ));
     }
 }

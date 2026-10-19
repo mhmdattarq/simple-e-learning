@@ -2,7 +2,9 @@
 
 namespace App\Livewire\Admin\Kelas;
 
+use App\Models\AuditLog;
 use App\Models\Category;
+use App\Models\CourseExternal;
 use App\Repositories\KelasRepo;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -38,6 +40,9 @@ class KelasCreate extends Component
             'category_id' => '',
             'category_name' => '',
             'type' => 'bulanan',
+            'url' => '',
+            'external_type' => 'gratis',
+            'benefit' => 'Sertifikat',
             'price' => 0,
             'jam_pelajaran' => '24',
             'start_date' => '',
@@ -86,16 +91,30 @@ class KelasCreate extends Component
 
     public function getRulesForStep(int $step): array
     {
+        $isExternal = ($this->form['type'] ?? '') === 'bangkom_external';
+
         if ($step === 1) {
+            $titleMax = $isExternal ? 150 : 255;
+            $descMax = $isExternal ? 255 : 5000;
+
             return [
-                'form.title' => 'required|string|min:3|max:255',
-                'form.description' => 'required|string|min:10|max:5000',
+                'form.title' => "required|string|min:3|max:{$titleMax}",
+                'form.description' => "required|string|min:10|max:{$descMax}",
                 'form.category_id' => 'required_without:form.category_name|nullable|exists:categories,id',
                 'form.category_name' => 'required_without:form.category_id|nullable|string|max:100',
             ];
         }
 
         if ($step === 2) {
+            if ($isExternal) {
+                return [
+                    'form.type' => 'required|in:bulanan,bangkom,bangkom_external,permanent,batch,paid,berbayar',
+                    'form.url' => 'required|url|max:500',
+                    'form.external_type' => 'required|in:gratis,berbayar',
+                    'form.benefit' => 'nullable|string|max:100',
+                ];
+            }
+
             $rules = [
                 'form.type' => 'required|in:bulanan,bangkom,bangkom_external,permanent,batch,paid,berbayar',
                 'form.jam_pelajaran' => 'required|string|max:50',
@@ -104,10 +123,6 @@ class KelasCreate extends Component
             if (in_array($this->form['type'] ?? '', ['bulanan', 'batch'], true)) {
                 $rules['form.start_date'] = 'required|date|after_or_equal:today';
                 $rules['form.end_date'] = 'required|date|after:form.start_date';
-            }
-
-            if (in_array($this->form['type'] ?? '', ['bangkom_external', 'paid', 'berbayar'], true)) {
-                $rules['form.price'] = 'required|numeric|min:0';
             }
 
             return $rules;
@@ -122,7 +137,7 @@ class KelasCreate extends Component
     public function updated($propertyName): void
     {
         if ($propertyName === 'form.type') {
-            $this->resetErrorBag(['form.start_date', 'form.end_date', 'form.price']);
+            $this->resetErrorBag(['form.start_date', 'form.end_date', 'form.price', 'form.url', 'form.external_type', 'form.benefit']);
         }
 
         if ($propertyName === 'form.start_date' && ! empty($this->form['end_date'])) {
@@ -145,19 +160,19 @@ class KelasCreate extends Component
 
     public function rules(): array
     {
+        $isExternal = ($this->form['type'] ?? '') === 'bangkom_external';
+
         $rules = array_merge(
             $this->getRulesForStep(1),
             $this->getRulesForStep(2),
             $this->getRulesForStep(3),
         );
 
-        if (! in_array($this->form['type'] ?? '', ['bulanan', 'batch'], true)) {
-            $rules['form.start_date'] = 'nullable|date';
-            $rules['form.end_date'] = 'nullable|date';
-        }
-
-        if (! in_array($this->form['type'] ?? '', ['bangkom_external', 'paid', 'berbayar'], true)) {
-            $rules['form.price'] = 'nullable|numeric|min:0';
+        if (! $isExternal) {
+            if (! in_array($this->form['type'] ?? '', ['bulanan', 'batch'], true)) {
+                $rules['form.start_date'] = 'nullable|date';
+                $rules['form.end_date'] = 'nullable|date';
+            }
         }
 
         return $rules;
@@ -169,11 +184,11 @@ class KelasCreate extends Component
             'form.title.required' => 'Nama kelas wajib diisi.',
             'form.title.string' => 'Nama kelas harus berupa teks.',
             'form.title.min' => 'Nama kelas minimal 3 karakter.',
-            'form.title.max' => 'Nama kelas maksimal 255 karakter.',
+            'form.title.max' => 'Nama kelas maksimal 255 karakter (atau 150 karakter untuk Bangkom Eksternal).',
             'form.description.required' => 'Deskripsi kelas wajib diisi.',
             'form.description.string' => 'Deskripsi kelas harus berupa teks.',
             'form.description.min' => 'Deskripsi kelas minimal 10 karakter.',
-            'form.description.max' => 'Deskripsi kelas maksimal 5.000 karakter.',
+            'form.description.max' => 'Deskripsi kelas maksimal 5.000 karakter (atau 255 karakter untuk Bangkom Eksternal).',
             'form.category_id.required' => 'Kategori kelas wajib dipilih.',
             'form.category_id.required_without' => 'Kategori kelas wajib dipilih.',
             'form.category_id.exists' => 'Kategori kelas yang dipilih tidak valid.',
@@ -182,12 +197,15 @@ class KelasCreate extends Component
             'form.category_name.max' => 'Kategori kelas maksimal 100 karakter.',
             'form.type.required' => 'Jenis kelas wajib dipilih.',
             'form.type.in' => 'Jenis kelas harus berupa Bulanan, Bangkom, atau Bangkom External.',
+            'form.url.required' => 'Link URL rujukan pelatihan eksternal wajib diisi.',
+            'form.url.url' => 'Format tautan URL tidak valid (harus diawali http:// atau https://).',
+            'form.url.max' => 'Tautan URL maksimal 500 karakter.',
+            'form.external_type.required' => 'Tipe biaya pelatihan eksternal wajib dipilih.',
+            'form.external_type.in' => 'Tipe biaya harus Gratis atau Berbayar.',
+            'form.benefit.max' => 'Benefit pelatihan maksimal 100 karakter.',
             'form.jam_pelajaran.required' => 'Jam pelajaran (JP) wajib diisi.',
             'form.jam_pelajaran.string' => 'Jam pelajaran (JP) harus berupa teks atau angka.',
             'form.jam_pelajaran.max' => 'Jam pelajaran (JP) maksimal 50 karakter.',
-            'form.price.required' => 'Biaya kelas wajib ditentukan untuk Bangkom External.',
-            'form.price.numeric' => 'Biaya kelas harus berupa nilai angka.',
-            'form.price.min' => 'Biaya kelas minimal Rp 0.',
             'form.start_date.required' => 'Tanggal & waktu mulai wajib diisi untuk kelas bertipe Bulanan.',
             'form.start_date.date' => 'Format tanggal & waktu mulai tidak valid.',
             'form.start_date.after_or_equal' => 'Tanggal & waktu mulai tidak boleh sebelum tanggal hari ini.',
@@ -202,17 +220,20 @@ class KelasCreate extends Component
     }
 
     public array $validationAttributes = [
-        'form.title' => 'Nama Kelas',
+        'form.title' => 'Nama Kelas / Platform',
         'form.description' => 'Deskripsi Kelas',
         'form.category_id' => 'Kategori Kelas',
         'form.category_name' => 'Kategori Kelas',
         'form.type' => 'Jenis Kelas',
+        'form.url' => 'Link URL Bangkom Eksternal',
+        'form.external_type' => 'Tipe Biaya Pelatihan',
+        'form.benefit' => 'Benefit Pelatihan',
         'form.jam_pelajaran' => 'Jam Pelajaran (JP)',
         'form.price' => 'Biaya Kelas',
         'form.start_date' => 'Tanggal & Waktu Mulai',
         'form.end_date' => 'Tanggal & Waktu Selesai',
         'form.status' => 'Status Kelas',
-        'thumbnailFile' => 'Poster / Sampul Kelas',
+        'thumbnailFile' => 'Poster / Logo Sampul',
     ];
 
     public function formSubmit(string $target = 'materi')
@@ -230,8 +251,48 @@ class KelasCreate extends Component
             }
         }
 
+        // Branching untuk Bangkom External: simpan ke tabel courses_externals
+        if (($this->form['type'] ?? '') === 'bangkom_external') {
+            $logoPath = null;
+            if ($this->thumbnailFile) {
+                $logoPath = $this->thumbnailFile->store('courses_externals/logos', 'public');
+            }
+
+            $courseExternal = CourseExternal::create([
+                'name' => trim($this->form['title']),
+                'category_id' => $resolvedCategoryId,
+                'description' => trim($this->form['description']),
+                'url' => trim($this->form['url']),
+                'type' => $this->form['external_type'] ?? 'gratis',
+                'benefit' => ! empty($this->form['benefit']) ? trim($this->form['benefit']) : 'Sertifikat',
+                'logo' => $logoPath,
+                'status' => $this->form['status'] ?? 'published',
+                'created_by' => Auth::id(),
+            ]);
+
+            AuditLog::log(
+                action: 'course_external.created',
+                auditable: $courseExternal,
+                newValues: [
+                    'name' => $courseExternal->name,
+                    'url' => $courseExternal->url,
+                    'type' => $courseExternal->type,
+                    'benefit' => $courseExternal->benefit,
+                    'status' => $courseExternal->status,
+                ],
+                notes: 'Admin membuat rujukan bangkom eksternal: '.$courseExternal->name
+            );
+
+            session()->flash('alert-show', [
+                'type' => 'success',
+                'title' => 'Pelatihan Eksternal Berhasil Disimpan',
+                'message' => 'Rujukan pelatihan eksternal "'.$courseExternal->name.'" berhasil ditambahkan ke katalog.',
+            ]);
+
+            return $this->redirectRoute('kelas.data', navigate: true);
+        }
+
         $isBulanan = in_array($this->form['type'], ['bulanan', 'batch'], true);
-        $isPaid = in_array($this->form['type'], ['bangkom_external', 'paid', 'berbayar'], true);
 
         $startDate = null;
         $endDate = null;
@@ -245,7 +306,6 @@ class KelasCreate extends Component
         $normalizedType = match ($this->form['type']) {
             'batch' => 'bulanan',
             'permanent' => 'bangkom',
-            'paid', 'berbayar' => 'bangkom_external',
             default => $this->form['type'],
         };
 
@@ -254,7 +314,7 @@ class KelasCreate extends Component
             'description' => ! empty($this->form['description']) ? trim($this->form['description']) : null,
             'category_id' => $resolvedCategoryId,
             'type' => $normalizedType,
-            'price' => $isPaid ? (float) ($this->form['price'] ?? 0) : 0,
+            'price' => 0,
             'jam_pelajaran' => trim((string) ($this->form['jam_pelajaran'] ?? '24')),
             'start_date' => $startDate,
             'end_date' => $endDate,

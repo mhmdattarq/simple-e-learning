@@ -160,14 +160,14 @@
                             <div class="d-flex align-items-center gap-2">
                                 <div class="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0"
                                     style="width: 44px; height: 44px; background: rgba(217, 119, 6, 0.08); color: #d97706;">
-                                    <i class="ri-money-dollar-circle-line fs-4"></i>
+                                    <i class="ri-global-line fs-4"></i>
                                 </div>
                                 <div>
                                     <div class="fw-extrabold text-navy" style="font-size: 22px; line-height: 1.1;">
                                         {{ $bangkomExternalCoursesCount ?? ($paidCoursesCount ?? 0) }}
                                         <span class="fs-8 fw-semibold text-muted">Kelas Aktif</span>
                                     </div>
-                                    <small class="text-muted" style="font-size: 11px;">Sertifikasi Resmi</small>
+                                    <small class="text-muted" style="font-size: 11px;">Portal Eksternal</small>
                                 </div>
                             </div>
                             <span class="badge bg-warning-subtle text-dark border border-warning rounded-pill fw-bold fs-8">
@@ -177,7 +177,7 @@
 
                         {{-- Tag --}}
                         <span class="badge bg-warning-subtle text-dark border border-warning fw-medium fs-8 mb-2 align-self-start">
-                            <i class="ri-award-line me-1"></i>Sertifikasi Profesi
+                            <i class="ri-external-link-line me-1"></i>Direktori Pelatihan
                         </span>
 
                         {{-- Title & Description --}}
@@ -185,13 +185,13 @@
                             Bangkom External
                         </h5>
                         <p class="text-muted fs-7 mb-3 flex-grow-1">
-                            Program sertifikasi keahlian khusus dan kelas profesi lanjutan yang diselenggarakan bersama mitra terakreditasi resmi.
+                            Rujukan portal dan platform pengembangan kompetensi ASN terpercaya dari berbagai kementerian dan lembaga pemerintah.
                         </p>
 
                         {{-- Highlight Feature --}}
                         <div class="d-flex align-items-center gap-2 text-muted fs-8 mb-4">
                             <i class="ri-checkbox-circle-fill text-success fs-6"></i>
-                            <span>Kurikulum standar nasional & sertifikat resmi</span>
+                            <span>Tautan langsung ke portal pelatihan resmi pemerintah</span>
                         </div>
 
                         {{-- Quick Action CTA --}}

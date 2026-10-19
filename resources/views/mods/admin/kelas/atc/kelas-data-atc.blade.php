@@ -251,17 +251,66 @@
         }
 
         #tableKelas .btn-materi-action {
-            padding: 5px 12px;
-            font-size: 12px;
-            border-radius: 8px;
-            font-weight: 500;
-            transition: all 0.2s ease-in-out;
+            width: 154px !important;
+            min-width: 154px !important;
+            max-width: 154px !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            padding: 5px 10px !important;
+            font-size: 12px !important;
+            border-radius: 8px !important;
+            font-weight: 600 !important;
+            transition: all 0.2s ease-in-out !important;
+            box-sizing: border-box !important;
         }
 
         #tableKelas .btn-materi-action .badge-materi-count {
-            font-size: 10px;
-            padding: 2px 7px;
-            transition: all 0.2s ease-in-out;
+            font-size: 10px !important;
+            padding: 2px 7px !important;
+            transition: all 0.2s ease-in-out !important;
+        }
+
+        /* Label badge soft/subtle style for Bangkom Eksternal */
+        .bg-label-simple,
+        .badge.bg-label-simple {
+            background-color: #fff4d8 !important;
+            color: #9a6700 !important;
+            border: 1px solid rgba(243, 188, 66, 0.45) !important;
+            font-weight: 600 !important;
+        }
+
+        /* === Filter Pills Styling (SIMPEL theme matching landing page) === */
+        .simpel-filter-pills {
+            background-color: #ffffff !important;
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 50rem !important;
+            padding: 4px !important;
+        }
+
+        .simpel-filter-pills .btn {
+            font-size: 12.5px !important;
+            border-radius: 50rem !important;
+            border: none !important;
+            outline: none !important;
+            box-shadow: none !important;
+            transition: all 0.2s ease-in-out !important;
+            color: #64748b;
+        }
+
+        .simpel-filter-pills .btn:hover:not(.bg-navy) {
+            color: #071a33 !important;
+            background-color: #f1f5f9 !important;
+        }
+
+        .simpel-filter-pills .btn.bg-navy,
+        .simpel-filter-pills .btn.bg-navy:hover,
+        .simpel-filter-pills .btn.bg-navy:focus,
+        .simpel-filter-pills .btn.bg-navy:active {
+            background-color: #071a33 !important;
+            color: #ffffff !important;
+            font-weight: 700 !important;
+            box-shadow: 0 1px 3px rgba(7, 26, 51, 0.25) !important;
         }
     </style>
 @endpush
@@ -291,7 +340,12 @@
                     order: [
                         [3, 'asc'] // Default order by Nama Kelas
                     ],
-                    ajax: '{{ route('kelas.dt') }}',
+                    ajax: {
+                        url: '{{ route('kelas.dt') }}',
+                        data: function(d) {
+                            d.type = window.currentKelasType || 'all';
+                        }
+                    },
                     columns: [
                         // Kolom 0: Checkbox Baris
                         {
@@ -300,9 +354,9 @@
                             orderable: false,
                             searchable: false,
                             className: 'text-center',
-                            render: function(data) {
+                            render: function(data, type, row) {
                                 return '<input class="form-check-input check-data-item" type="checkbox" value="' +
-                                    data.id + '">';
+                                    data.id + '" data-external="' + (row.is_external ? '1' : '0') + '">';
                             }
                         },
 
@@ -314,9 +368,48 @@
                             searchable: false,
                             className: 'text-center',
                             render: function(data, type, row) {
+                                let identity = String(row.title || '').replace(/'/g, "\\'");
+
+                                // Aksi khusus pelatihan eksternal
+                                if (row.is_external) {
+                                    let editExtUrl = "{{ route('kelas.edit', ':id') }}?external=1".replace(':id', row.id);
+                                    let actions = `
+                                        <li>
+                                            <a class="dropdown-item d-flex align-items-center gap-2 py-2 px-3 rounded text-dark" href="${editExtUrl}" wire:navigate>
+                                                <i class="ri-edit-line text-warning fs-6"></i>
+                                                <span class="fw-medium">Edit Pelatihan</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <button type="button" class="dropdown-item text-danger d-flex align-items-center gap-2 py-2 px-3 rounded border-0 bg-transparent w-100 text-start"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#modalDelete"
+                                                wire:click="hookModalDeleteExternal(${row.id}, '${identity}')">
+                                                <i class="ri-delete-bin-line fs-6"></i>
+                                                <span class="fw-medium">Hapus Pelatihan</span>
+                                            </button>
+                                        </li>
+                                    `;
+
+                                    return `
+                                    <div class="dropdown">
+                                        <button type="button" class="btn btn-sm btn-light border text-muted d-inline-flex align-items-center justify-content-center"
+                                            data-bs-toggle="dropdown"
+                                            data-bs-display="static"
+                                            aria-expanded="false"
+                                            title="Opsi Aksi"
+                                            style="width: 32px; height: 32px; padding: 0; border-radius: 6px;">
+                                            <i class="ri-more-2-fill fs-5"></i>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-start shadow-sm border-0 p-2" style="border-radius: 10px; min-width: 175px;">
+                                            ${actions}
+                                        </ul>
+                                    </div>
+                                    `;
+                                }
+
+                                // Aksi kelas internal (SIMPEL)
                                 let editUrl = "{{ route('kelas.edit', ':id') }}".replace(':id', row.id);
-                                let materiUrl = "{{ route('materi.detail', ':id') }}".replace(':id', row.id);
-                                let identity = String(data.title || '').replace(/'/g, "\\'");
                                 let regCount = Number(row.registrations_count || 0);
                                 let hasRegistrations = (regCount > 0);
                                 let isArchived = (row.status === 'archived');
@@ -359,9 +452,9 @@
                                     actions += `
                                         <li>
                                             <button type="button" class="dropdown-item text-danger d-flex align-items-center gap-2 py-2 px-3 rounded border-0 bg-transparent w-100 text-start"
-                                               data-bs-toggle="modal"
-                                               data-bs-target="#modalDelete"
-                                               wire:click="hookModalDelete(${data.id}, '${identity}')">
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#modalDelete"
+                                                wire:click="hookModalDelete(${data.id}, '${identity}')">
                                                 <i class="ri-delete-bin-line fs-6"></i>
                                                 <span class="fw-medium">Hapus Kelas</span>
                                             </button>
@@ -405,8 +498,24 @@
                             orderable: true,
                             searchable: true,
                             render: function(data, type, row) {
-                                let materiUrl = "{{ route('materi.detail', ':id') }}".replace(':id', row
-                                    .id);
+                                if (row.is_external) {
+                                    return `
+                                    <div>
+                                        <div class="fw-semibold text-dark mb-1" style="font-size: 13.5px; line-height: 1.4;">
+                                            <a href="javascript:void(0)" class="text-dark text-decoration-none hover-text-primary btn-detail-external cursor-pointer" title="Klik untuk lihat detail kelas" data-id="${row.id}">
+                                                ${data}
+                                            </a>
+                                        </div>
+                                        <div class="d-flex flex-wrap align-items-center gap-1">
+                                            <span class="badge bg-label-simple" style="font-size: 10.5px;">
+                                                <i class="ri-external-link-line me-1"></i>Bangkom Eksternal
+                                            </span>
+                                        </div>
+                                    </div>
+                                    `;
+                                }
+
+                                let materiUrl = "{{ route('materi.detail', ':id') }}".replace(':id', row.id);
                                 let regCount = Number(row.registrations_count || 0);
                                 let regBadge = '';
                                 if (regCount > 0) {
@@ -421,7 +530,7 @@
                                     let priceFormatted = row.price ? 'Rp ' + Number(row.price)
                                         .toLocaleString('id-ID') : 'Rp 0';
                                     typeBadge =
-                                        `<span class="badge bg-warning-subtle text-dark border border-warning" style="font-size: 10.5px;"><i class="ri-money-dollar-circle-line me-1"></i>Bangkom External (${priceFormatted})</span>`;
+                                        `<span class="badge bg-warning-subtle text-dark border border-warning" style="font-size: 10.5px;"><i class="ri-global-line me-1"></i>Bangkom External (${priceFormatted})</span>`;
                                 } else {
                                     let startDate = row.start_date ? row.start_date.substring(0, 10) : '';
                                     let endDate = row.end_date ? row.end_date.substring(0, 10) : '';
@@ -464,8 +573,24 @@
                             searchable: false,
                             className: 'text-center',
                             render: function(data, type, row) {
-                                let materiUrl = "{{ route('materi.detail', ':id') }}".replace(':id', row
-                                    .id);
+                                if (row.is_external) {
+                                    return `
+                                    <div class="d-flex flex-column align-items-center gap-1 py-1">
+                                        <button type="button"
+                                           class="btn btn-sm btn-simple-gold btn-materi-action btn-detail-external d-inline-flex align-items-center justify-content-center gap-2 fw-semibold text-nowrap shadow-sm"
+                                           title="Klik untuk membuka detail kelas"
+                                           data-id="${row.id}">
+                                            <i class="ri-information-line fs-6"></i>
+                                            <span>Detail Kelas</span>
+                                        </button>
+                                        <span class="text-muted" style="font-size: 11px;">
+                                            <i class="ri-global-line me-1"></i>Portal Eksternal
+                                        </span>
+                                    </div>
+                                    `;
+                                }
+
+                                let materiUrl = "{{ route('materi.detail', ':id') }}".replace(':id', row.id);
                                 let chaptersCount = Number(row.chapters_count || 0);
                                 let lessonsCount = Number(row.lessons_count || 0);
 
@@ -483,7 +608,7 @@
                                 return `
                                 <div class="d-flex flex-column align-items-center gap-1 py-1">
                                     <a href="${materiUrl}" 
-                                       class="btn btn-sm btn-simple-gold btn-materi-action d-inline-flex align-items-center gap-2 fw-semibold text-nowrap shadow-sm"
+                                       class="btn btn-sm btn-simple-gold btn-materi-action d-inline-flex align-items-center justify-content-center gap-2 fw-semibold text-nowrap shadow-sm"
                                        title="Kelola Kurikulum & Materi Kelas"
                                        wire:navigate>
                                         <i class="ri-book-open-line fs-6"></i>
@@ -545,7 +670,17 @@
             }
         }
 
-        // 5. Lifecycle Pengaktifan Tabel:
+        // 5. Global state & filter helper
+        window.currentKelasType = '{{ $selectedType }}';
+
+        window.setKelasTypeFilter = function(type) {
+            window.currentKelasType = type || 'all';
+            if (window.dtTable && typeof window.dtTable.ajax?.reload === 'function') {
+                window.dtTable.ajax.reload(null, false);
+            }
+        };
+
+        // 6. Lifecycle Pengaktifan Tabel:
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', initKelasTable);
         } else {
@@ -558,6 +693,67 @@
         window.addEventListener('reloadDT', function() {
             if (window.dtTable && typeof window.dtTable.ajax?.reload === 'function') {
                 window.dtTable.ajax.reload(null, false);
+            }
+        });
+
+        // 7. Event listeners filter tipe kelas
+        if (window.Livewire) {
+            Livewire.on('filterTypeChanged', function(event) {
+                let type = 'all';
+                if (typeof event === 'string') {
+                    type = event;
+                } else if (Array.isArray(event) && event.length > 0) {
+                    type = typeof event[0] === 'object' ? (event[0].type || 'all') : event[0];
+                } else if (typeof event === 'object' && event !== null) {
+                    type = event.type || 'all';
+                }
+                window.setKelasTypeFilter(type);
+            });
+        }
+
+        document.addEventListener('livewire:initialized', function() {
+            if (window.Livewire) {
+                Livewire.on('filterTypeChanged', function(event) {
+                    let type = 'all';
+                    if (typeof event === 'string') {
+                        type = event;
+                    } else if (Array.isArray(event) && event.length > 0) {
+                        type = typeof event[0] === 'object' ? (event[0].type || 'all') : event[0];
+                    } else if (typeof event === 'object' && event !== null) {
+                        type = event.type || 'all';
+                    }
+                    window.setKelasTypeFilter(type);
+                });
+            }
+        });
+
+        window.addEventListener('filterTypeChanged', function(e) {
+            let type = 'all';
+            let detail = e.detail;
+            if (typeof detail === 'string') {
+                type = detail;
+            } else if (Array.isArray(detail) && detail.length > 0) {
+                type = typeof detail[0] === 'object' ? (detail[0].type || 'all') : detail[0];
+            } else if (typeof detail === 'object' && detail !== null) {
+                type = detail.type || 'all';
+            }
+            window.setKelasTypeFilter(type);
+        });
+
+        // 8. Handler Modal Detail Bangkom Eksternal (Global Admin Modal)
+        $(document).on('click', '.btn-detail-external', function(e) {
+            e.preventDefault();
+            let courseId = $(this).data('id');
+            if (!courseId) {
+                let tr = $(this).closest('tr');
+                if (window.dtTable) {
+                    let rowData = window.dtTable.row(tr).data();
+                    courseId = rowData ? rowData.id : null;
+                }
+            }
+
+            if (courseId && window.Livewire) {
+                Livewire.dispatch('modal-detail-external-set', { id: courseId });
             }
         });
     </script>

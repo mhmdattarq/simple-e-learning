@@ -4,6 +4,8 @@ use App\Livewire\Admin\Dashboard\DashboardIndex;
 use App\Livewire\Landing\LandingIndex;
 use App\Models\Category;
 use App\Models\Course;
+use App\Models\Quiz;
+use App\Models\QuizAttempt;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
@@ -267,4 +269,52 @@ test('landing page catalog allows filtering active courses by type', function ()
         ->assertViewHas('courses', function ($courses) {
             return $courses->count() === 2;
         });
+});
+
+test('landing page supplies myCertificates to view for authenticated user with passed quiz', function () {
+    // Tamu tidak memiliki sertifikat
+    Livewire::test(LandingIndex::class)
+        ->assertViewHas('myCertificates', function ($certs) {
+            return $certs->isEmpty();
+        });
+
+    $user = User::factory()->create();
+    $category = Category::factory()->create();
+    $course = Course::factory()->create([
+        'category_id' => $category->id,
+        'title' => 'Kelas Bangkom Bersertifikat',
+        'status' => 'published',
+    ]);
+    $quiz = Quiz::factory()->create([
+        'course_id' => $course->id,
+        'type' => 'final',
+        'passing_score' => 70,
+    ]);
+
+    QuizAttempt::create([
+        'quiz_id' => $quiz->id,
+        'user_id' => $user->id,
+        'total_earned_score' => 90,
+        'total_possible_score' => 100,
+        'percentage' => 90.0,
+        'is_passed' => true,
+        'submitted_at' => now(),
+    ]);
+
+    Livewire::actingAs($user)
+        ->test(LandingIndex::class)
+        ->assertViewHas('myCertificates', function ($certs) use ($course) {
+            return $certs->count() === 1 && $certs->first()->id === $course->id;
+        })
+        ->assertSee('Pencapaian Belajar Anda')
+        ->assertSee('Kelas Selesai')
+        ->assertSee('Pratinjau')
+        ->assertSee('Unduh')
+        ->assertSee($course->title);
+
+    // Pengguna login tanpa sertifikat tidak melihat section ini (Opsi A)
+    $otherUser = User::factory()->create();
+    Livewire::actingAs($otherUser)
+        ->test(LandingIndex::class)
+        ->assertDontSee('Pencapaian Belajar Anda');
 });

@@ -2,6 +2,9 @@
     {{-- 1. Hero Highlight (Grid Banner + Highlight Cards) --}}
     @include('mods.landing.sections.hero')
 
+    {{-- 1b. Sertifikat & Kelas Selesai (Khusus Pengguna Login yang Memiliki Sertifikat) --}}
+    @include('mods.landing.sections.user-achievements')
+
     {{-- 2. Quick Info Jenis Kelas --}}
     @include('mods.landing.sections.academies')
 

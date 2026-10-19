@@ -9,6 +9,7 @@ use App\Models\AuditLog;
 use App\Models\Category;
 use App\Models\Chapter;
 use App\Models\Course;
+use App\Models\CourseExternal;
 use App\Models\CourseUser;
 use App\Models\Lesson;
 use App\Models\User;
@@ -266,22 +267,25 @@ test('admin can create and save classes with paid, batch, and permanent types', 
     $admin = User::factory()->admin()->create();
     $category = Category::first();
 
-    // 1. Paid Class
+    // 1. Bangkom External (Rujukan Pelatihan Luar)
     Livewire::actingAs($admin)
         ->test(KelasCreate::class)
-        ->set('form.title', 'Kelas Pemrograman Fullstack Web')
+        ->set('form.title', 'Pelatihan SiBangkom LAN RI')
         ->set('form.category_id', $category->id)
-        ->set('form.description', 'Kelas pemrograman fullstack web modern dengan framework terpercaya.')
-        ->set('form.type', 'paid')
-        ->set('form.price', 350000)
+        ->set('form.description', 'Pelatihan eksternal dari Lembaga Administrasi Negara Republik Indonesia.')
+        ->set('form.type', 'bangkom_external')
+        ->set('form.url', 'https://sibangkom.lan.go.id')
+        ->set('form.external_type', 'gratis')
+        ->set('form.benefit', 'Sertifikat Resmi')
         ->call('formSubmit')
         ->assertHasNoErrors()
-        ->assertRedirect(route('materi.detail', 1));
+        ->assertRedirect(route('kelas.data'));
 
-    $this->assertDatabaseHas('courses', [
-        'title' => 'Kelas Pemrograman Fullstack Web',
-        'type' => 'bangkom_external',
-        'price' => 350000,
+    $this->assertDatabaseHas('courses_externals', [
+        'name' => 'Pelatihan SiBangkom LAN RI',
+        'url' => 'https://sibangkom.lan.go.id',
+        'type' => 'gratis',
+        'benefit' => 'Sertifikat Resmi',
     ]);
 
     // 2. Batch Class with dates
@@ -298,13 +302,53 @@ test('admin can create and save classes with paid, batch, and permanent types', 
         ->set('form.end_date', $batchEnd)
         ->call('formSubmit')
         ->assertHasNoErrors()
-        ->assertRedirect(route('materi.detail', 2));
+        ->assertRedirect(route('materi.detail', 1));
 
     $this->assertDatabaseHas('courses', [
         'title' => 'Kelas Batch Kepemimpinan 2026',
         'type' => 'bulanan',
         'price' => 0,
     ]);
+});
+
+test('admin can edit and delete external bangkom training directory', function () {
+    $admin = User::factory()->admin()->create();
+    $category = Category::first();
+
+    $external = CourseExternal::create([
+        'name' => 'ASN Unggul LAN',
+        'category_id' => $category->id,
+        'url' => 'https://asn-unggul.lan.go.id',
+        'description' => 'Portal pengembangan kompetensi ASN Unggul LAN RI',
+        'type' => 'gratis',
+        'benefit' => 'Sertifikat & Piagam',
+        'status' => 'published',
+        'created_by' => $admin->id,
+    ]);
+
+    // Admin can edit external training
+    Livewire::withQueryParams(['external' => 1])
+        ->actingAs($admin)
+        ->test(KelasEdit::class, ['id' => $external->id])
+        ->assertSet('isExternal', true)
+        ->assertSet('form.title', 'ASN Unggul LAN')
+        ->set('form.title', 'ASN Unggul LAN RI (Updated)')
+        ->set('form.external_type', 'berbayar')
+        ->call('formSubmit')
+        ->assertHasNoErrors()
+        ->assertRedirect(route('kelas.data'));
+
+    expect($external->fresh()->name)->toBe('ASN Unggul LAN RI (Updated)');
+    expect($external->fresh()->type)->toBe('berbayar');
+
+    // Admin can delete external training
+    Livewire::actingAs($admin)
+        ->test(KelasData::class)
+        ->call('deleteExternal', $external->id)
+        ->assertDispatched('alert-show');
+
+    expect(CourseExternal::find($external->id))->toBeNull();
+    expect(CourseExternal::withTrashed()->find($external->id))->not->toBeNull();
 });
 
 test('admin can archive completed course in kelas', function () {
@@ -929,4 +973,87 @@ test('kelas create and edit properly saves and validates jam_pelajaran as string
     expect($updateLog)->not->toBeNull();
     expect($updateLog->old_values)->toHaveKey('jam_pelajaran', '3.5');
     expect($updateLog->new_values)->toHaveKey('jam_pelajaran', '48');
+});
+
+test('admin can filter unified kelas data by type with livewire and datatables endpoint', function () {
+    $admin = User::factory()->admin()->create();
+    $category = Category::factory()->create();
+
+    $bulanan = Course::factory()->create([
+        'title' => 'Kelas Bulanan Terpadu',
+        'type' => 'bulanan',
+        'status' => 'published',
+        'category_id' => $category->id,
+        'created_by' => $admin->id,
+    ]);
+
+    $bangkom = Course::factory()->create([
+        'title' => 'Kelas Bangkom Mandiri Terpadu',
+        'type' => 'bangkom',
+        'status' => 'published',
+        'category_id' => $category->id,
+        'created_by' => $admin->id,
+    ]);
+
+    $external = CourseExternal::factory()->create([
+        'name' => 'Platform Diklat Eksternal LAN',
+        'url' => 'https://lan.go.id',
+        'type' => 'gratis',
+        'status' => 'published',
+        'category_id' => $category->id,
+        'created_by' => $admin->id,
+    ]);
+
+    // 1. Livewire Component interaction: switching type filters
+    Livewire::actingAs($admin)
+        ->test(KelasData::class)
+        ->assertSet('selectedType', 'all')
+        ->assertSee('Semua Kelas')
+        ->assertSee('Bulanan')
+        ->assertSee('Bangkom')
+        ->assertSee('Bangkom Eksternal')
+        ->call('filterType', 'bulanan')
+        ->assertSet('selectedType', 'bulanan')
+        ->assertDispatched('filterTypeChanged', type: 'bulanan')
+        ->call('filterType', 'bangkom')
+        ->assertSet('selectedType', 'bangkom')
+        ->assertDispatched('filterTypeChanged', type: 'bangkom')
+        ->call('filterType', 'bangkom_external')
+        ->assertSet('selectedType', 'bangkom_external')
+        ->assertDispatched('filterTypeChanged', type: 'bangkom_external');
+
+    // 2. DataTables endpoint returns all courses (internal + external) when type=all
+    $resAll = $this->actingAs($admin)->getJson(route('kelas.dt', ['type' => 'all']));
+    $resAll->assertOk();
+    $dataAll = $resAll->json('data');
+    expect($dataAll)->toHaveCount(3);
+    expect(collect($dataAll)->pluck('title'))->toContain('Kelas Bulanan Terpadu');
+    expect(collect($dataAll)->pluck('title'))->toContain('Kelas Bangkom Mandiri Terpadu');
+    expect(collect($dataAll)->pluck('title'))->toContain('Platform Diklat Eksternal LAN');
+
+    // 3. DataTables endpoint filters by type=bulanan
+    $resBulanan = $this->actingAs($admin)->getJson(route('kelas.dt', ['type' => 'bulanan']));
+    $resBulanan->assertOk();
+    $dataBulanan = $resBulanan->json('data');
+    expect($dataBulanan)->toHaveCount(1);
+    expect($dataBulanan[0]['title'])->toBe('Kelas Bulanan Terpadu');
+    expect($dataBulanan[0]['is_external'])->toBeFalse();
+
+    // 4. DataTables endpoint filters by type=bangkom
+    $resBangkom = $this->actingAs($admin)->getJson(route('kelas.dt', ['type' => 'bangkom']));
+    $resBangkom->assertOk();
+    $dataBangkom = $resBangkom->json('data');
+    expect($dataBangkom)->toHaveCount(1);
+    expect($dataBangkom[0]['title'])->toBe('Kelas Bangkom Mandiri Terpadu');
+    expect($dataBangkom[0]['is_external'])->toBeFalse();
+
+    // 5. DataTables endpoint filters by type=bangkom_external
+    $resExternal = $this->actingAs($admin)->getJson(route('kelas.dt', ['type' => 'bangkom_external']));
+    $resExternal->assertOk();
+    $dataExternal = $resExternal->json('data');
+    expect($dataExternal)->toHaveCount(1);
+    expect($dataExternal[0]['title'])->toBe('Platform Diklat Eksternal LAN');
+    expect($dataExternal[0]['is_external'])->toBeTrue();
+    expect($dataExternal[0]['url'])->toBe('https://lan.go.id');
+    expect($dataExternal[0]['external_type'])->toBe('gratis');
 });

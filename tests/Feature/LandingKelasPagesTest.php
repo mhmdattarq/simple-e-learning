@@ -3,6 +3,7 @@
 use App\Livewire\Landing\KelasIndex;
 use App\Models\Category;
 use App\Models\Course;
+use App\Models\CourseExternal;
 use App\Models\Quiz;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -123,17 +124,22 @@ test('kelas permanen page displays only published permanent courses', function (
         });
 });
 
-test('kelas berbayar page displays only published paid courses and price', function () {
+test('bangkom external page displays only published external courses and platforms', function () {
     $category = Category::factory()->create(['name' => 'Sertifikasi Keahlian']);
-    $admin = User::factory()->admin()->create();
 
-    $publishedPaid = Course::factory()->create([
-        'title' => 'Sertifikasi Ahli Pengadaan Barang dan Jasa Pemerintah',
-        'type' => 'paid',
-        'price' => 750000,
+    $publishedExternal = CourseExternal::factory()->create([
+        'name' => 'Portal SI-BANGKOM LAN RI',
+        'url' => 'https://sibangkom.lan.go.id',
         'status' => 'published',
+        'type' => 'gratis',
+        'benefit' => 'Sertifikat Resmi LAN RI',
         'category_id' => $category->id,
-        'created_by' => $admin->id,
+    ]);
+
+    $draftExternal = CourseExternal::factory()->create([
+        'name' => 'Draft Portal Rahasia',
+        'status' => 'draft',
+        'category_id' => $category->id,
     ]);
 
     $publishedPermanent = Course::factory()->create([
@@ -141,19 +147,20 @@ test('kelas berbayar page displays only published paid courses and price', funct
         'type' => 'permanent',
         'status' => 'published',
         'category_id' => $category->id,
-        'created_by' => $admin->id,
     ]);
 
-    $response = $this->get(route('landing.kelas.berbayar'));
+    $response = $this->get(route('landing.kelas.bangkom_external'));
     $response->assertStatus(200);
-    $response->assertSee('Sertifikasi Ahli Pengadaan Barang dan Jasa Pemerintah');
-    $response->assertSee('750.000');
+    $response->assertSee('Portal SI-BANGKOM LAN RI');
+    $response->assertSee('https://sibangkom.lan.go.id');
+    $response->assertSee('Sertifikat Resmi LAN RI');
+    $response->assertDontSee('Draft Portal Rahasia');
     $response->assertDontSee('Kursus Gratis Permanen Tidak Muncul');
 
-    Livewire::test(KelasIndex::class, ['type' => 'paid'])
-        ->assertViewHas('courses', function ($courses) use ($publishedPaid) {
-            return $courses->count() === 1
-                && $courses->contains('id', $publishedPaid->id);
+    Livewire::test(KelasIndex::class, ['type' => 'bangkom_external'])
+        ->assertViewHas('externals', function ($externals) use ($publishedExternal) {
+            return $externals->count() === 1
+                && $externals->contains('id', $publishedExternal->id);
         });
 });
 
@@ -233,14 +240,14 @@ test('setting selectedCategory directly filters courses by category slug across 
             return $courses->count() === 1 && $courses->contains('id', $permA->id);
         });
 
-    // Berbayar courses
-    $paidA = Course::factory()->create(['type' => 'paid', 'status' => 'published', 'category_id' => $categoryA->id, 'created_by' => $admin->id]);
-    $paidB = Course::factory()->create(['type' => 'paid', 'status' => 'published', 'category_id' => $categoryB->id, 'created_by' => $admin->id]);
+    // Bangkom External courses
+    $extA = CourseExternal::factory()->create(['status' => 'published', 'category_id' => $categoryA->id]);
+    $extB = CourseExternal::factory()->create(['status' => 'published', 'category_id' => $categoryB->id]);
 
-    Livewire::test(KelasIndex::class, ['type' => 'paid'])
+    Livewire::test(KelasIndex::class, ['type' => 'bangkom_external'])
         ->set('selectedCategory', 'frontend-development')
-        ->assertViewHas('courses', function ($courses) use ($paidB) {
-            return $courses->count() === 1 && $courses->contains('id', $paidB->id);
+        ->assertViewHas('externals', function ($externals) use ($extB) {
+            return $externals->count() === 1 && $externals->contains('id', $extB->id);
         });
 });
 
@@ -265,12 +272,11 @@ test('tombol aksi kelas mengarahkan pengguna login langsung ke ruang materi', fu
         'created_by' => $admin->id,
     ]);
 
-    $paidCourse = Course::factory()->create([
-        'title' => 'Kelas Berbayar Spesial',
-        'type' => 'paid',
+    $externalCourse = CourseExternal::factory()->create([
+        'name' => 'Platform ASN Unggul',
+        'url' => 'https://asn.lan.go.id',
         'status' => 'published',
         'category_id' => $category->id,
-        'created_by' => $admin->id,
     ]);
 
     // Guest and Authenticated users see direct link to detail page
@@ -284,15 +290,15 @@ test('tombol aksi kelas mengarahkan pengguna login langsung ke ruang materi', fu
         ->assertSee(route('landing.kelas.detail', $batchCourse))
         ->assertSee('Lihat Detail');
 
-    $this->actingAs($user)->get(route('landing.kelas.permanen'))
+    $this->actingAs($user)->get(route('landing.kelas.bangkom'))
         ->assertStatus(200)
         ->assertSee(route('landing.kelas.detail', $permanentCourse))
         ->assertSee('Lihat Detail');
 
-    $this->actingAs($user)->get(route('landing.kelas.berbayar'))
+    $this->actingAs($user)->get(route('landing.kelas.bangkom_external'))
         ->assertStatus(200)
-        ->assertSee(route('landing.kelas.detail', $paidCourse))
-        ->assertSee('Lihat Detail');
+        ->assertSee('Platform ASN Unggul')
+        ->assertSee('https://asn.lan.go.id');
 });
 
 test('new category without courses appears in category filter dropdown on landing pages', function () {

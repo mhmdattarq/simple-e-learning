@@ -2,13 +2,23 @@
 
 namespace App\Livewire\Admin\Kelas;
 
+use App\Models\AuditLog;
 use App\Models\Course;
+use App\Models\CourseExternal;
 use App\Repositories\KelasRepo;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
 class KelasData extends Component
 {
+    public string $selectedType = 'all';
+
+    public function filterType(string $type): void
+    {
+        $this->selectedType = $type;
+        $this->dispatch('filterTypeChanged', type: $type);
+    }
+
     public function hookModalDelete($id, $identity)
     {
         $course = Course::withCount(['lessons', 'registrations'])->find($id);
@@ -82,6 +92,45 @@ class KelasData extends Component
         }
     }
 
+    public function hookModalDeleteExternal($id, $identity)
+    {
+        $dtHook = [
+            'id' => $id,
+            'title' => 'Konfirmasi Hapus Pelatihan Eksternal',
+            'msg' => "Apakah Anda yakin ingin menghapus rujukan pelatihan eksternal \"{$identity}\"?\nData akan dihapus dari direktori Bangkom Eksternal.",
+            'msgBoxClass' => '',
+            'dispatch' => 'KelasData-deleteExternal',
+        ];
+
+        $this->dispatch('modal-delete-setDeleteId', $dtHook);
+    }
+
+    #[On('KelasData-deleteExternal')]
+    public function deleteExternal($data)
+    {
+        $id = is_array($data) ? ($data['id'] ?? null) : $data;
+        $item = CourseExternal::find($id);
+
+        if ($item) {
+            AuditLog::log(
+                action: 'course_external.deleted',
+                auditable: $item,
+                oldValues: ['name' => $item->name, 'url' => $item->url],
+                notes: 'Admin menghapus rujukan bangkom eksternal: '.$item->name
+            );
+
+            $item->delete();
+
+            $this->dispatch('closeModal', id: 'modalDelete');
+            $this->dispatch('alert-show', data: [
+                'type' => 'success',
+                'title' => 'Berhasil',
+                'message' => 'Data Pelatihan Eksternal berhasil dihapus.',
+            ]);
+            $this->dispatch('reloadDT', data: 'dtTable');
+        }
+    }
+
     public function archiveCourse($id)
     {
         $process = KelasRepo::archiveCourse($id);
@@ -104,6 +153,22 @@ class KelasData extends Component
 
     public function render()
     {
-        return view('mods.admin.kelas.kelas-data');
+        $internalCount = Course::count();
+        $externalCount = CourseExternal::count();
+        $totalCount = $internalCount + $externalCount;
+
+        $typeLabels = [
+            'all' => 'Semua Tipe',
+            'bulanan' => 'Bulanan',
+            'bangkom' => 'Bangkom',
+            'bangkom_external' => 'Bangkom Eksternal',
+        ];
+
+        return view('mods.admin.kelas.kelas-data', compact(
+            'internalCount',
+            'externalCount',
+            'totalCount',
+            'typeLabels'
+        ));
     }
 }

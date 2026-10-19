@@ -2,24 +2,44 @@
     {{-- Header & Aksi Tambah --}}
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
         <div>
-            <h5 class="fw-bold text-dark mb-1">Data Kelas</h5>
-            <p class="text-muted mb-0">Manajemen katalog seluruh kelas (Bulanan, Bangkom, dan Bangkom External).</p>
+            <h5 class="fw-bold text-dark mb-1">Data Kelas & Pelatihan</h5>
+            <p class="text-muted mb-0">Manajemen seluruh katalog kelas internal (Bulanan & Bangkom) dan direktori Bangkom
+                Eksternal.</p>
         </div>
-        {{-- <div class="d-flex align-items-center gap-2">
-            <a href="{{ route('kelas.create') }}" class="btn btn-simple-gold" wire:navigate>
-                <i class="ri-add-line fs-5"></i>
-                <span>Tambah Kelas Baru</span>
-            </a>
-        </div> --}}
     </div>
 
-    {{-- Main Card with Table --}}
+    {{-- Main Card with Unified Table (Mencakup Seluruh Kelas Internal & Eksternal) --}}
     <div class="card simpel-card border-0 shadow-sm radius-16">
         <div
-            class="card-header bg-white pt-20 pb-0 px-20 border-0 d-flex align-items-center justify-content-between flex-wrap gap-2">
+            class="card-header bg-white pt-20 pb-16 px-20 border-bottom d-flex align-items-center justify-content-between flex-wrap gap-2">
             <div class="d-flex align-items-center gap-2">
                 <i class="ri-file-list-3-fill text-simple fs-5"></i>
-                <h6 class="fw-bold text-dark mb-0 fs-6">Daftar Kelas</h6>
+                <h6 class="fw-bold text-dark mb-0 fs-6">Daftar Kelas & Pelatihan</h6>
+                <span class="badge bg-light text-muted border rounded-pill">{{ $totalCount }} Total</span>
+            </div>
+
+            {{-- Filter Pills Jenis Kelas (Sama seperti di Landing Page) --}}
+            <div class="d-inline-flex flex-wrap gap-1 p-1 bg-white border border-simpel rounded-pill shadow-xs simpel-filter-pills">
+                <button type="button"
+                    class="btn btn-sm rounded-pill px-3 py-1_5 fw-medium fs-8 {{ $selectedType === 'all' ? 'bg-navy text-white fw-bold shadow-xs' : 'text-secondary hover-navy' }}"
+                    wire:click="filterType('all')" onclick="setKelasTypeFilter('all')">
+                    Semua Kelas
+                </button>
+                <button type="button"
+                    class="btn btn-sm rounded-pill px-3 py-1_5 fw-medium fs-8 {{ $selectedType === 'bulanan' ? 'bg-navy text-white fw-bold shadow-xs' : 'text-secondary hover-navy' }}"
+                    wire:click="filterType('bulanan')" onclick="setKelasTypeFilter('bulanan')">
+                    Bulanan
+                </button>
+                <button type="button"
+                    class="btn btn-sm rounded-pill px-3 py-1_5 fw-medium fs-8 {{ $selectedType === 'bangkom' ? 'bg-navy text-white fw-bold shadow-xs' : 'text-secondary hover-navy' }}"
+                    wire:click="filterType('bangkom')" onclick="setKelasTypeFilter('bangkom')">
+                    Bangkom
+                </button>
+                <button type="button"
+                    class="btn btn-sm rounded-pill px-3 py-1_5 fw-medium fs-8 {{ $selectedType === 'bangkom_external' ? 'bg-navy text-white fw-bold shadow-xs' : 'text-secondary hover-navy' }}"
+                    wire:click="filterType('bangkom_external')" onclick="setKelasTypeFilter('bangkom_external')">
+                    Bangkom Eksternal
+                </button>
             </div>
         </div>
 

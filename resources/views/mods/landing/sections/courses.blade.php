@@ -21,7 +21,8 @@
 
             {{-- Filter Pills Jenis Kelas --}}
             <div class="col-lg-6 text-lg-end">
-                <div class="d-inline-flex flex-wrap gap-1 p-1 bg-white border border-simpel rounded-pill shadow-xs simpel-filter-pills">
+                <div
+                    class="d-inline-flex flex-wrap gap-1 p-1 bg-white border border-simpel rounded-pill shadow-xs simpel-filter-pills">
                     <button type="button"
                         class="btn btn-sm rounded-pill px-3 fw-medium {{ ($selectedType ?? 'all') === 'all' ? 'bg-navy text-white fw-bold' : 'text-secondary hover-navy' }}"
                         wire:click="filterType('all')">
@@ -48,23 +49,118 @@
 
         {{-- Courses Grid (Max 6 Kelas Aktif) --}}
         <div class="row g-4">
-            @if (isset($courses) && $courses->isNotEmpty())
+            @if (($selectedType ?? 'all') === 'bangkom_external')
+                @if (isset($externals) && $externals->isNotEmpty())
+                    @foreach ($externals as $external)
+                        <div class="col-lg-4 col-md-6 wow fadeInUp"
+                            data-wow-delay="{{ $loop->index * 50 + 150 }}ms">
+                            <div
+                                class="card h-100 border border-simpel rounded-4 bg-white p-4 shadow-xs simpel-course-card d-flex flex-column text-center position-relative">
+                                {{-- Header Row: Type Badge (Left) & Category Badge (Right) --}}
+                                <div class="d-flex align-items-center justify-content-between gap-2 mb-3 w-100">
+                                    <span class="badge bg-label-simple px-2_5 py-1 radius-6 fw-semibold fs-9">
+                                        <i class="ri-external-link-line me-1"></i>Bangkom Eksternal
+                                    </span>
+                                    @if ($external->category)
+                                        <span class="badge bg-light text-navy border border-simpel fw-medium fs-9 px-2_5 py-1 radius-6">
+                                            {{ $external->category->name }}
+                                        </span>
+                                    @endif
+                                </div>
+
+                                {{-- Framed Logo / Image Container --}}
+                                <div class="d-flex align-items-center justify-content-center mx-auto mb-3 p-2 bg-light rounded-12 border border-simpel w-100"
+                                    style="height: 110px;">
+                                    @if ($external->logo)
+                                        <img src="{{ $external->logo_url }}" alt="{{ $external->name }}"
+                                            style="max-height: 90px; max-width: 100%; object-fit: contain;">
+                                    @else
+                                        <div class="d-flex flex-column align-items-center justify-content-center text-muted">
+                                            <i class="ri-external-link-line fs-2 text-gold mb-1"></i>
+                                            <span class="fs-9 fw-semibold text-navy">Portal Resmi</span>
+                                        </div>
+                                    @endif
+                                </div>
+
+                                {{-- Action Button with Title --}}
+                                <div class="mb-3">
+                                    <a href="{{ $external->url }}" target="_blank" rel="noopener noreferrer"
+                                        class="btn btn-navy rounded-pill fw-bold fs-7 px-4 py-2_5 w-100 text-truncate text-white d-inline-flex align-items-center justify-content-center gap-2 shadow-xs hover-shadow"
+                                        style="background-color: #071a33; border-color: #071a33; letter-spacing: 0.3px;">
+                                        <span class="text-truncate">{{ $external->name }}</span>
+                                        <i class="ri-arrow-right-up-line fs-6 flex-shrink-0 text-gold"></i>
+                                    </a>
+                                </div>
+
+                                {{-- Description --}}
+                                <p class="text-muted fs-8 mb-4 flex-grow-1"
+                                    style="min-height: 42px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.6;">
+                                    {{ $external->description ?: 'Portal dan platform pelatihan resmi untuk peningkatan kompetensi ASN.' }}
+                                </p>
+
+                                {{-- Footer Badges --}}
+                                <div
+                                    class="pt-3 border-top border-simpel mt-auto d-flex align-items-center justify-content-center gap-3 fs-8 flex-wrap">
+                                    <span class="d-inline-flex align-items-center gap-2 text-navy fw-semibold">
+                                        <span
+                                            class="rounded-circle d-inline-flex align-items-center justify-content-center text-success flex-shrink-0"
+                                            style="width: 20px; height: 20px; background: rgba(25, 135, 84, 0.12);">
+                                            <i class="ri-check-line fw-bold fs-8"></i>
+                                        </span>
+                                        <span class="text-capitalize">{{ $external->external_type ?? 'Gratis' }}</span>
+                                    </span>
+                                    @if ($external->benefit)
+                                        <span class="d-inline-flex align-items-center gap-2 text-muted fw-medium">
+                                            <i class="ri-award-line text-gold fs-7"></i>
+                                            <span class="text-truncate" style="max-width: 140px;"
+                                                title="{{ $external->benefit }}">{{ $external->benefit }}</span>
+                                        </span>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                @else
+                    {{-- Empty State Eksternal --}}
+                    <div class="col-12">
+                        <div class="card border border-simpel rounded-4 bg-white p-5 text-center shadow-xs">
+                            <div class="mb-3">
+                                <div class="d-inline-flex p-3 rounded-circle bg-light text-navy">
+                                    <i class="ri-external-link-line display-5"></i>
+                                </div>
+                            </div>
+                            <h5 class="text-navy fw-bold mb-1">Belum Ada Pelatihan Eksternal Tersedia</h5>
+                            <p class="text-muted fs-6 mb-3">
+                                Daftar rujukan portal pelatihan eksternal sedang dipersiapkan oleh pengampu.
+                            </p>
+                            <div>
+                                <button type="button" class="btn btn-sm btn-simpel-gold rounded-pill px-4"
+                                    wire:click="filterType('all')">
+                                    <i class="ri-refresh-line me-1"></i>Tampilkan Semua Kelas
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+            @elseif (isset($courses) && $courses->isNotEmpty())
                 @foreach ($courses as $course)
                     <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="{{ $loop->index * 50 + 150 }}ms">
                         <div
                             class="card h-100 border border-simpel rounded-4 bg-white overflow-hidden shadow-xs simpel-course-card d-flex flex-column">
                             {{-- Card Thumbnail & Badges --}}
-                            <div class="position-relative overflow-hidden" style="height: 190px;">
+                            <div class="position-relative overflow-hidden w-100"
+                                style="height: 190px; background-color: var(--simpel-navy, #071a33);">
                                 @if ($course->thumbnail)
                                     <img src="{{ asset('storage/' . $course->thumbnail) }}" alt="{{ $course->title }}"
-                                        class="w-100 h-100 object-fit-cover">
+                                        class="w-100 h-100 object-fit-cover"
+                                        style="object-fit: cover; object-position: center; display: block;">
                                 @else
                                     <div class="w-100 h-100 d-flex align-items-center justify-content-center text-white"
                                         style="background: linear-gradient(135deg, #071a33 0%, #0c3158 100%);">
                                         @if ($course->isBangkom())
                                             <i class="ri-infinity-line display-4 text-gold"></i>
                                         @elseif ($course->isBangkomExternal())
-                                            <i class="ri-money-dollar-circle-line display-4 text-gold"></i>
+                                            <i class="ri-global-line display-4 text-gold"></i>
                                         @else
                                             <i class="ri-calendar-line display-4 text-gold"></i>
                                         @endif
@@ -83,7 +179,7 @@
                                     @else
                                         <span
                                             class="badge bg-warning-subtle text-dark border border-warning fw-bold fs-8 px-2_5 py-1">
-                                            <i class="ri-money-dollar-circle-line me-1"></i>Bangkom External
+                                            <i class="ri-global-line me-1"></i>Bangkom External
                                         </span>
                                     @endif
 
@@ -183,6 +279,5 @@
                 </div>
             @endif
         </div>
-
     </div>
 </section>

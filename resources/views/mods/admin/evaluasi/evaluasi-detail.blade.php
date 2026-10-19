@@ -13,7 +13,7 @@
                 @elseif($course->isBangkomExternal())
                     <span class="badge bg-warning-subtle text-dark border border-warning-subtle py-1 px-2"
                         style="font-size: 11px;">
-                        <i class="ri-money-dollar-circle-line me-1"></i>Bangkom External
+                        <i class="ri-global-line me-1"></i>Bangkom External
                     </span>
                 @else
                     <span class="badge bg-primary-subtle text-primary py-1 px-2" style="font-size: 11px;">
