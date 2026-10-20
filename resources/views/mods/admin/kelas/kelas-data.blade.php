@@ -21,23 +21,27 @@
             {{-- Filter Pills Jenis Kelas (Sama seperti di Landing Page) --}}
             <div class="d-inline-flex flex-wrap gap-1 p-1 bg-white border border-simpel rounded-pill shadow-xs simpel-filter-pills">
                 <button type="button"
-                    class="btn btn-sm rounded-pill px-3 py-1_5 fw-medium fs-8 {{ $selectedType === 'all' ? 'bg-navy text-white fw-bold shadow-xs' : 'text-secondary hover-navy' }}"
-                    wire:click="filterType('all')" onclick="setKelasTypeFilter('all')">
+                    data-type="all"
+                    class="btn btn-sm btn-filter-type rounded-pill px-3 py-1_5 fw-medium fs-8 {{ $selectedType === 'all' ? 'bg-navy text-white fw-bold shadow-xs' : 'text-secondary hover-navy' }}"
+                    onclick="setKelasTypeFilter('all')">
                     Semua Kelas
                 </button>
                 <button type="button"
-                    class="btn btn-sm rounded-pill px-3 py-1_5 fw-medium fs-8 {{ $selectedType === 'bulanan' ? 'bg-navy text-white fw-bold shadow-xs' : 'text-secondary hover-navy' }}"
-                    wire:click="filterType('bulanan')" onclick="setKelasTypeFilter('bulanan')">
+                    data-type="bulanan"
+                    class="btn btn-sm btn-filter-type rounded-pill px-3 py-1_5 fw-medium fs-8 {{ $selectedType === 'bulanan' ? 'bg-navy text-white fw-bold shadow-xs' : 'text-secondary hover-navy' }}"
+                    onclick="setKelasTypeFilter('bulanan')">
                     Bulanan
                 </button>
                 <button type="button"
-                    class="btn btn-sm rounded-pill px-3 py-1_5 fw-medium fs-8 {{ $selectedType === 'bangkom' ? 'bg-navy text-white fw-bold shadow-xs' : 'text-secondary hover-navy' }}"
-                    wire:click="filterType('bangkom')" onclick="setKelasTypeFilter('bangkom')">
+                    data-type="bangkom"
+                    class="btn btn-sm btn-filter-type rounded-pill px-3 py-1_5 fw-medium fs-8 {{ $selectedType === 'bangkom' ? 'bg-navy text-white fw-bold shadow-xs' : 'text-secondary hover-navy' }}"
+                    onclick="setKelasTypeFilter('bangkom')">
                     Bangkom
                 </button>
                 <button type="button"
-                    class="btn btn-sm rounded-pill px-3 py-1_5 fw-medium fs-8 {{ $selectedType === 'bangkom_external' ? 'bg-navy text-white fw-bold shadow-xs' : 'text-secondary hover-navy' }}"
-                    wire:click="filterType('bangkom_external')" onclick="setKelasTypeFilter('bangkom_external')">
+                    data-type="bangkom_external"
+                    class="btn btn-sm btn-filter-type rounded-pill px-3 py-1_5 fw-medium fs-8 {{ $selectedType === 'bangkom_external' ? 'bg-navy text-white fw-bold shadow-xs' : 'text-secondary hover-navy' }}"
+                    onclick="setKelasTypeFilter('bangkom_external')">
                     Bangkom Eksternal
                 </button>
             </div>
