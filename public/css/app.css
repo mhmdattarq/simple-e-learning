@@ -1608,6 +1608,30 @@ select::placeholder,
     overflow: hidden;
 }
 
+.line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.simpel-external-card-desc {
+    max-width: 300px;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 0.9375rem !important;
+    min-height: 4.5em;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1.5;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    white-space: pre-line;
+    text-align: center;
+}
+
 /* 8-Stage Lifecycle Box */
 .simpel-stage-box {
     transition: transform 0.2s ease, box-shadow 0.2s ease;

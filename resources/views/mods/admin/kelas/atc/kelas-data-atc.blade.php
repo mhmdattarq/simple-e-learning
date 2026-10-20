@@ -321,6 +321,11 @@
             var tableEl = document.getElementById('tableKelas');
             if (!tableEl) return;
 
+            // 0. Nonaktifkan popup alert bawaan DataTables untuk mencegah alert saat request dibatalkan/di-abort
+            if ($.fn.DataTable) {
+                $.fn.dataTable.ext.errMode = 'none';
+            }
+
             // 1. Hancurkan instance lama jika sudah terinisialisasi
             if ($.fn.DataTable && $.fn.DataTable.isDataTable('#tableKelas')) {
                 $('#tableKelas').DataTable().destroy();
@@ -344,6 +349,13 @@
                         url: '{{ route('kelas.dt') }}',
                         data: function(d) {
                             d.type = window.currentKelasType || 'all';
+                        },
+                        error: function(xhr, error, thrown) {
+                            // Abaikan request yang dibatalkan (abort) karena ganti tab cepat atau navigasi
+                            if (xhr.status === 0 || error === 'abort' || xhr.statusText === 'abort') {
+                                return;
+                            }
+                            console.error('DataTables Ajax error (tableKelas):', xhr.status, error, thrown);
                         }
                     },
                     columns: [
@@ -675,6 +687,18 @@
 
         window.setKelasTypeFilter = function(type) {
             window.currentKelasType = type || 'all';
+
+            // 1. Update visual status tombol filter seketika di browser tanpa delay
+            $('.simpel-filter-pills .btn-filter-type').each(function() {
+                var btnType = $(this).data('type');
+                if (btnType === window.currentKelasType) {
+                    $(this).addClass('bg-navy text-white fw-bold shadow-xs').removeClass('text-secondary hover-navy');
+                } else {
+                    $(this).removeClass('bg-navy text-white fw-bold shadow-xs').addClass('text-secondary hover-navy');
+                }
+            });
+
+            // 2. Muat ulang DataTables (hanya 1 panggilan AJAX tunggal yang bersih)
             if (window.dtTable && typeof window.dtTable.ajax?.reload === 'function') {
                 window.dtTable.ajax.reload(null, false);
             }
@@ -696,47 +720,9 @@
             }
         });
 
-        // 7. Event listeners filter tipe kelas
-        if (window.Livewire) {
-            Livewire.on('filterTypeChanged', function(event) {
-                let type = 'all';
-                if (typeof event === 'string') {
-                    type = event;
-                } else if (Array.isArray(event) && event.length > 0) {
-                    type = typeof event[0] === 'object' ? (event[0].type || 'all') : event[0];
-                } else if (typeof event === 'object' && event !== null) {
-                    type = event.type || 'all';
-                }
-                window.setKelasTypeFilter(type);
-            });
-        }
-
-        document.addEventListener('livewire:initialized', function() {
-            if (window.Livewire) {
-                Livewire.on('filterTypeChanged', function(event) {
-                    let type = 'all';
-                    if (typeof event === 'string') {
-                        type = event;
-                    } else if (Array.isArray(event) && event.length > 0) {
-                        type = typeof event[0] === 'object' ? (event[0].type || 'all') : event[0];
-                    } else if (typeof event === 'object' && event !== null) {
-                        type = event.type || 'all';
-                    }
-                    window.setKelasTypeFilter(type);
-                });
-            }
-        });
-
+        // 7. Event listener tunggal jika dipicu dari luar/Livewire
         window.addEventListener('filterTypeChanged', function(e) {
-            let type = 'all';
-            let detail = e.detail;
-            if (typeof detail === 'string') {
-                type = detail;
-            } else if (Array.isArray(detail) && detail.length > 0) {
-                type = typeof detail[0] === 'object' ? (detail[0].type || 'all') : detail[0];
-            } else if (typeof detail === 'object' && detail !== null) {
-                type = detail.type || 'all';
-            }
+            let type = e.detail?.type || (typeof e.detail === 'string' ? e.detail : 'all');
             window.setKelasTypeFilter(type);
         });
 

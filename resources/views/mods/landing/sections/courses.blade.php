@@ -93,8 +93,8 @@
                                 </div>
 
                                 {{-- Description --}}
-                                <p class="text-muted fs-8 mb-4 flex-grow-1"
-                                    style="min-height: 42px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.6;">
+                                <p class="text-muted mb-4 flex-grow-1 text-center simpel-external-card-desc"
+                                    style="max-width: 300px; margin-left: auto; margin-right: auto; font-size: 0.9375rem; min-height: 4.5em; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.5; word-break: break-word; overflow-wrap: break-word; white-space: pre-line;">
                                     {{ $external->description ?: 'Portal dan platform pelatihan resmi untuk peningkatan kompetensi ASN.' }}
                                 </p>
 
