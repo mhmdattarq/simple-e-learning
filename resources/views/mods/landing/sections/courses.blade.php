@@ -11,7 +11,7 @@
                     </span>
                 </div>
                 <h2 class="fw-extrabold text-navy display-6 mb-2">
-                    Daftar Katalog <span class="text-gold">Kelas</span>
+                    Daftar Singkat Katalog <span class="text-gold">Kelas</span>
                 </h2>
                 <p class="text-muted fs-6 mb-0">
                     Pilih dan ikuti kelas aktif dari berbagai bidang kompetensi aparatur yang diselenggarakan BKPSDM
@@ -52,8 +52,7 @@
             @if (($selectedType ?? 'all') === 'bangkom_external')
                 @if (isset($externals) && $externals->isNotEmpty())
                     @foreach ($externals as $external)
-                        <div class="col-lg-4 col-md-6 wow fadeInUp"
-                            data-wow-delay="{{ $loop->index * 50 + 150 }}ms">
+                        <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="{{ $loop->index * 50 + 150 }}ms">
                             <div
                                 class="card h-100 border border-simpel rounded-4 bg-white p-4 shadow-xs simpel-course-card d-flex flex-column text-center position-relative">
                                 {{-- Header Row: Type Badge (Left) & Category Badge (Right) --}}
@@ -62,7 +61,8 @@
                                         <i class="ri-external-link-line me-1"></i>Bangkom Eksternal
                                     </span>
                                     @if ($external->category)
-                                        <span class="badge bg-light text-navy border border-simpel fw-medium fs-9 px-2_5 py-1 radius-6">
+                                        <span
+                                            class="badge bg-light text-navy border border-simpel fw-medium fs-9 px-2_5 py-1 radius-6">
                                             {{ $external->category->name }}
                                         </span>
                                     @endif
@@ -75,7 +75,8 @@
                                         <img src="{{ $external->logo_url }}" alt="{{ $external->name }}"
                                             style="max-height: 90px; max-width: 100%; object-fit: contain;">
                                     @else
-                                        <div class="d-flex flex-column align-items-center justify-content-center text-muted">
+                                        <div
+                                            class="d-flex flex-column align-items-center justify-content-center text-muted">
                                             <i class="ri-external-link-line fs-2 text-gold mb-1"></i>
                                             <span class="fs-9 fw-semibold text-navy">Portal Resmi</span>
                                         </div>

@@ -43,25 +43,28 @@ class LandingIndex extends Component
                 ? CourseExternal::with('category')
                     ->where('status', 'published')
                     ->latest('id')
-                    ->take(8)
+                    ->take(3)
                     ->get()
                 : collect();
         } elseif ($tablesExist) {
             $coursesQuery = Course::with('category')
                 ->where('status', 'published');
 
+            $limit = 6;
             if ($this->selectedType !== 'all') {
                 if (in_array($this->selectedType, ['bulanan', 'batch'], true)) {
                     $coursesQuery->whereIn('type', ['bulanan', 'batch']);
+                    $limit = 3;
                 } elseif (in_array($this->selectedType, ['bangkom', 'permanent'], true)) {
                     $coursesQuery->whereIn('type', ['bangkom', 'permanent']);
+                    $limit = 3;
                 } else {
                     $coursesQuery->where('type', $this->selectedType);
                 }
             }
 
             $courses = $coursesQuery->latest('id')
-                ->take(6)
+                ->take($limit)
                 ->get();
         }
 
